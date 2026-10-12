@@ -3531,6 +3531,111 @@
                 <Field Id="CatalogModification" Index="3" />
             </String>
         </Instances>
+        <Instances Id="LunaraPoisoner">
+            <String String="Assets/Textures/storm_ui_icon_lunara_pollencloud_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dryad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DryadSiphoningToxin">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DryadUnfairAdvantage">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 DryadPoisonerTokenCounter">
+                <Field Id="Behavior" />
+            </String>
+            <String String="AffixAdded libAffx_LunaraQuestStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="LunaraSplinteredHuntress">
+            <String String="Assets/Textures/storm_ui_icon_Lunara_WildSpear.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dryad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DryadSplinteredSpear">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DryadWildVigor">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="DryadStarWoodSpear">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="DryadInvigoratingSpores">
+                <Field Id="TalentsAdd" Index="3" />
+            </String>
+            <String String="1 0 DryadHuntressTokenCounter">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Add Abil,DryadCripplingSpores,Cost.Cooldown.TimeUse -2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,DryadHuntressAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_LunaraQuestStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="LunaraPollinator">
+            <String String="Assets/Textures/storm_ui_icon_lunara_fullbloom.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dryad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DryadBlossomSwell">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DryadChokingPollen">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="DryadAcceleratedContamination">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 DryadPollinatorTokenCounter">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Set Abil,DryadNoxiousBlossom,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DryadNoxiousBlossom,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DryadNoxiousBlossom,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DryadNoxiousBlossom,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,DryadNoxiousBlossom,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,DryadAcceleratedContaminationModifyCooldown,Cost.ChargeTimeUse -0.0468">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,DryadPollinatorAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_LunaraQuestStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
         <Instances Id="TyrandeTheMark">
             <String String="Assets/Textures/storm_ui_icon_tyrande_huntersmark.dds">
                 <Field Id="Icon" />

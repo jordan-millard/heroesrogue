@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- Golden Lunara (Dryad). Quest stacks carry over between games: see HeroTriggers/Lunara.galaxy -->
+
+  <!-- Poisoner: stacks come from time enemies spend poisoned (counted by script) -->
+  <CBehaviorTokenCounter id="DryadPoisonerTokenCounter" parent="StormQuestToken">
+    <Face value="DryadPoisonerTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DryadPoisonerAccumulator" parent="BaseAccumulator">
+    <SourceEffect value="DryadNaturesToxinDamage" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DryadPoisonerTokenCounter" />
+    <Scale value="0.05" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DryadNaturesToxinDamage">
+    <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DryadNaturesToxinUnfairAdvantageMasteryDamage">
+    <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DryadNaturesToxinNaturesCullingMasteryDamage">
+    <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerAccumulator" />
+  </CEffectDamage>
+
+  <!-- Splintered Huntress: Crippling Spores hitting enemy Heroes grants stacks; stacks add Attack Damage -->
+  <CBehaviorTokenCounter id="DryadHuntressTokenCounter" parent="StormQuestToken">
+    <Face value="DryadHuntressTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectModifyTokenCount id="DryadHuntressAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectCategory index="Quest" value="1" />
+    <TokenId value="DryadHuntressTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="DryadCripplingSporesImpactSet">
+    <EffectArray value="DryadHuntressAddToken" />
+  </CEffectSet>
+  <CAccumulatorToken id="DryadHuntressAccumulator" parent="BaseAccumulator">
+    <SourceEffect value="DryadHeroWeaponDamage" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DryadHuntressTokenCounter" />
+    <Scale value="0.3" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DryadHeroWeaponDamage">
+    <Amount>
+      <AccumulatorArray value="DryadHuntressAccumulator" />
+    </Amount>
+  </CEffectDamage>
+  <CEffectDamage id="DryadHeroWeaponDamageSplinteredSpearMastery">
+    <Amount>
+      <AccumulatorArray value="DryadHuntressAccumulator" />
+    </Amount>
+  </CEffectDamage>
+
+  <!-- Pollinator: Noxious Blossom hitting enemy Heroes grants stacks; stacks add Noxious Blossom damage -->
+  <CBehaviorTokenCounter id="DryadPollinatorTokenCounter" parent="StormQuestToken">
+    <Face value="DryadPollinatorTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectModifyTokenCount id="DryadPollinatorAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectCategory index="Quest" value="1" />
+    <TokenId value="DryadPollinatorTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="DryadNoxiousBlossomImpactSet">
+    <EffectArray value="DryadPollinatorAddToken" />
+  </CEffectSet>
+  <CAccumulatorToken id="DryadPollinatorAccumulator" parent="BaseAccumulator">
+    <SourceEffect value="DryadNoxiousBlossomDamage" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DryadPollinatorTokenCounter" />
+    <Scale value="0.01" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DryadNoxiousBlossomDamage">
+    <MultiplicativeModifierArray index="Pollinator" Accumulator="DryadPollinatorAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DryadNoxiousBlossomChokingPollenMasteryDamage">
+    <MultiplicativeModifierArray index="Pollinator" Accumulator="DryadPollinatorAccumulator" />
+  </CEffectDamage>
+
+  <!-- Pollinator reward: Noxious Blossom explodes a second time 1 second later -->
+  <CBehaviorBuff id="DryadPollinatorSecondBloom" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="DryadHasPollinatorSecondBloom">
+    <WhichUnit Value="Caster" />
+    <Behavior value="DryadPollinatorSecondBloom" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectCreatePersistent id="DryadPollinatorSecondBloomPersistent">
+    <ValidatorArray value="DryadHasPollinatorSecondBloom" />
+    <InitialDelay value="1.5" />
+    <ExpireDelay value="0.25" />
+    <PeriodCount value="1" />
+    <PeriodicEffectArray value="DryadNoxiousBlossomSearch" />
+    <PeriodicPeriodArray value="0" />
+    <RevealRadius value="1.6" />
+    <RevealFlags index="Unfog" value="1" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="DryadNoxiousBlossomCastSet">
+    <EffectArray value="DryadPollinatorSecondBloomPersistent" />
+  </CEffectSet>
+
+  <CButton id="DryadPoisonerTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_lunara_pollencloud_b.dds" />
+  </CButton>
+  <CButton id="DryadHuntressTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Lunara_WildSpear.dds" />
+  </CButton>
+  <CButton id="DryadPollinatorTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_lunara_fullbloom.dds" />
+  </CButton>
+</Catalog>

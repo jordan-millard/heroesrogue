@@ -3488,6 +3488,7 @@ void libAffx_SaveBank() {
         }
     }
     BankSave(BankLastCreated());
+    libAffx_LunaraSaveBank();
 }
 void libAffx_LoadBank() {
     string affixName;
@@ -5873,6 +5874,7 @@ void libAffx_InitVariables () {
     libAffx_SetGoldenHero("Probius");
     libAffx_SetGoldenHero("SgtHammer");
     libAffx_SetGoldenHero("Illidan");
+    libAffx_SetGoldenHero("Dryad");
     libAffx_SetGoldenHero("LostVikings");
 
     libAffx_InitVariables_completed = true;
