@@ -63,7 +63,11 @@ bool libAffx_HeroSelectionTrigger_Func (bool testConds, bool runActions) {
                     libAffx_gallPlayer = libAffx_player;
                     libAffx_choPlayer = player;
                 } else {
-                    libGame_gv_players[player].lv_heroIndex = libGame_gf_HeroSelectionRandomlyPickMetaUnusedHero(player);
+                    // Rosters chosen on the map choice screen take priority over random picks
+                    libGame_gv_players[player].lv_heroIndex = libAffx_MapChoiceGetPresetHero(player);
+                    if (libGame_gv_players[player].lv_heroIndex == 0) {
+                        libGame_gv_players[player].lv_heroIndex = libGame_gf_HeroSelectionRandomlyPickMetaUnusedHero(player);
+                    }
                     if (libGame_gv_players[player].lv_heroIndex == 0) {
                         libGame_gv_players[player].lv_heroIndex = libGame_gf_HeroSelectionRandomlyPickUnusedHeroWithRole(player, true, true, true, true, true, false);
                     }
@@ -1546,6 +1550,7 @@ void libAffx_CreateOptionsDialog() {
     libAffx_dialogControlOptionsSpeedUpDeath = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsSpeedupDeath"));
     libAffx_dialogControlOptionsSpeedUpGates = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsSpeedup"));
     libAffx_dialogControlOptionsDisplayPicksBans = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsPicksBans"));
+    libAffx_dialogControlOptionsExtraMaps = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsExtraMaps"));
     libAffx_dialogControlOptionsAchievementsButton = libAffx_CreateOptionDialogButton(StringExternal("Button/Name/OptionsAchievements"));
     libAffx_dialogControlOptionsRestartButton = libAffx_CreateOptionDialogButton(StringExternal("Button/Name/OptionsRestart"));
     libAffx_dialogControlOptionsReturnButton = libAffx_CreateOptionDialogButton(StringExternal("Button/Name/OptionsReturn"));
@@ -1581,6 +1586,7 @@ void libAffx_UpdateOptionsDialog() {
     } else {
         libAffx_SetDialogControlEnabled(libAffx_dialogControlOwnedAffixesButton, true);
     }
+    libAffx_MapChoiceUpdateVisibility();
 }
 void libAffx_ShowOptionsDialog(bool show) {
     libAffx_SetDialogVisible(libAffx_dialogOptions.dialog, show);
@@ -2158,7 +2164,8 @@ bool libAffx_OptionsClickedTrigger_Func (bool testConds, bool runActions) {
     int eventDialog = EventDialogControl();
     if (testConds) {
         if (eventDialog != libAffx_dialogControlOptionsButton && eventDialog != libAffx_dialogControlOptionsSpeedUpGates
-        && eventDialog != libAffx_dialogControlOptionsSpeedUpDeath && eventDialog != libAffx_dialogControlOptionsDisplayPicksBans) {
+        && eventDialog != libAffx_dialogControlOptionsSpeedUpDeath && eventDialog != libAffx_dialogControlOptionsDisplayPicksBans
+        && eventDialog != libAffx_dialogControlOptionsExtraMaps) {
             return false;
         }
     }
@@ -2181,6 +2188,8 @@ bool libAffx_OptionsClickedTrigger_Func (bool testConds, bool runActions) {
             TriggerExecute(libAffx_SpeedUpDeathTrigger, true, false);
         }
     } else if (eventDialog == libAffx_dialogControlOptionsDisplayPicksBans && !libAffx_IsAchievementsDialogVisible()) {
+        libAffx_SaveSettingsBank();
+    } else if (eventDialog == libAffx_dialogControlOptionsExtraMaps && !libAffx_IsAchievementsDialogVisible()) {
         libAffx_SaveSettingsBank();
     }
     return true;
@@ -3283,6 +3292,7 @@ void libAffx_SaveSettingsBank() {
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "SpeedUp", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsSpeedUpGates, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "SpeedUpDeath", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsSpeedUpDeath, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "DisplayPicksBans", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsDisplayPicksBans, libAffx_player)));
+    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "ExtraMaps", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsExtraMaps, libAffx_player)));
     BankSave(BankLastCreated());
 }
 void libAffx_LoadSettingsBank() {
@@ -3310,6 +3320,13 @@ void libAffx_LoadSettingsBank() {
             libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsDisplayPicksBans, true);
         } else {
             libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsDisplayPicksBans, false);
+        }
+    }
+    if (BankKeyExists(BankLastCreated(), libAffx_BankSectionSettings, "ExtraMaps")) {
+        if (BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionSettings, "ExtraMaps") == 1) {
+            libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsExtraMaps, true);
+        } else {
+            libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsExtraMaps, false);
         }
     }
     libPBU2_SetDifficulty(libAffx_difficulty);
@@ -3551,24 +3568,12 @@ void libAffx_AddSaveBankFixed(int affix, string key, fixed value) {
 
 bool libAffx_GameOverCallbackTrigger_Func (bool testConds, bool runActions) {
     int winningTeam = libGame_winningTeam;
-    int map = libAffx_GetMapID(libCore_gv_mAPMapStringID);
 
     libAffx_EvaluateAllAchievements();
 
     if (winningTeam == libAffx_teamOrderIndex) {
-        if (map == libAffx_map1) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorialmapmechanics.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map2);
-        } else if (map == libAffx_map2) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorial01.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map3);
-        } else if (map == libAffx_map3) {
-            GameSetNextMap("heroes/singleplayermaps/(10)trymemode.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map4);
-        } else if (map == libAffx_map4) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorialveteran.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map1);
-        }
+        // The player picks the next map (and AI rosters) on the map choice screen
+        libAffx_MapChoiceRun();
         if (libAffx_currentRun == libAffx_winningRound) {
             libAffx_SetDialogControlText(libAffx_dialogGameover.label, StringExternal("Label/Name/Victory"));
             libAffx_SetDialogControlEnabled(libAffx_dialogGameover.continueButton, true);
@@ -4286,6 +4291,8 @@ bool libAffx_TestCommandTrigger_Func (bool testConds, bool runActions) {
     int afxaddallAffixes;
     int afxaddallAmount;
     int nextmapValue;
+    int nextmapSlots;
+    int nextmapMap;
     int rerollsAmount;
     int cooldownId;
     int affixAmount;
@@ -4423,19 +4430,17 @@ bool libAffx_TestCommandTrigger_Func (bool testConds, bool runActions) {
         } else {
             nextmapValue = libAffx_currentRun + 1;
         }
-        if ((nextmapValue - 1) % 4 == 0) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorialveteran.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map1);
-        } else if ((nextmapValue - 1) % 4 == 1) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorialmapmechanics.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map2);
-        } else if ((nextmapValue - 1) % 4 == 2) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorial01.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map3);
-        } else {
-            GameSetNextMap("heroes/singleplayermaps/(10)trymemode.stormmap");
-            libAffx_nextMap = libAffx_GetMapString(libAffx_map4);
+        nextmapSlots = 4;
+        nextmapMap = libAffx_map1;
+        if ((nextmapValue - 1) % nextmapSlots == 1) {
+            nextmapMap = libAffx_map2;
+        } else if ((nextmapValue - 1) % nextmapSlots == 2) {
+            nextmapMap = libAffx_map3;
+        } else if ((nextmapValue - 1) % nextmapSlots == 3) {
+            nextmapMap = libAffx_map4;
         }
+        GameSetNextMap(libAffx_MapChoiceGetMapPath(nextmapMap));
+        libAffx_nextMap = libAffx_GetMapString(nextmapMap);
         libAffx_SaveBank();
         Wait(1, c_timeGame);
         KickFromGame(PlayerGroupAll());
@@ -4791,9 +4796,14 @@ bool libAffx_MapInitTrigger_Func (bool testConds, bool runActions) {
         libGame_gv_pickingHeroesCallback = libAffx_HeroSelectionTrigger;
     } else if (libAffx_playerSelectedHero == 0) {
         libGame_gv_pickingHeroesCallback = libAffx_CurateHeroesTrigger;
+        libPBU2_heroesPickedCallback = TriggerCreate("libAffx_MapChoiceFirstRound_Func");
     } else {
         libGame_gv_players[libAffx_player].lv_heroIndex = libAffx_playerSelectedHero;
         libAffx_playersHeroIndex[libAffx_player] = libAffx_playerSelectedHero;
+        // Keep the hero select difficulty when round 1 reloads after the map choice
+        if (libAffx_difficulty != 0) {
+            libPBU2_difficulty = libAffx_difficulty;
+        }
         libCore_gf_DataLoadHeroDataIntoIndex(libCore_gf_GetHeroFromIndex(libGame_gv_players[libAffx_player].lv_heroIndex), libAffx_player);
         libGame_gf_HeroSelectionRandomlyPickSkin(libAffx_player);
         libGame_gf_HeroSelectionRandomlyPickMount(libAffx_player);
@@ -4819,19 +4829,26 @@ bool libAffx_MapInitTrigger_Func (bool testConds, bool runActions) {
 
     Wait(0.0625, c_timeGame);
     if (libAffx_currentMap != libAffx_GetMapID(libCore_gv_mAPMapStringID) && !libAffx_debug_ignoreMap) {
-        if (libAffx_currentMap == libAffx_map1) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorialveteran.stormmap");
-            KickFromGame(PlayerGroupAll());
-        } else if (libAffx_currentMap == libAffx_map2) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorialmapmechanics.stormmap");
-            KickFromGame(PlayerGroupAll());
-        } else if (libAffx_currentMap == libAffx_map3) {
-            GameSetNextMap("heroes/singleplayermaps/startingexperience/tutorial01.stormmap");
-            KickFromGame(PlayerGroupAll());
-        } else if (libAffx_currentMap == libAffx_map4) {
-            GameSetNextMap("heroes/singleplayermaps/(10)trymemode.stormmap");
+        if (libAffx_MapChoiceIsRotationMap(libAffx_currentMap) && libAffx_MapChoiceIsRotationMap(libAffx_GetMapID(libCore_gv_mAPMapStringID))) {
+            // The rotating slot holds a different map than the one chosen (rotation helper not running): play this one
+            libAffx_DisplayChatMessage(StringToText("Map rotation helper did not swap in " + libAffx_GetMapString(libAffx_currentMap) + ", playing " + libCore_gv_mAPMapStringID));
+            libAffx_currentMap = libAffx_GetMapID(libCore_gv_mAPMapStringID);
+            libAffx_BankSaveValueString("Map", libCore_gv_mAPMapStringID);
+            libAffx_BankSaveValueString("RotationMap", libCore_gv_mAPMapStringID);
+            libAffx_BankSaveValueString("MapLoadAttempt", "");
+        } else if (libAffx_BankLoadValueString("MapLoadAttempt") == libAffx_GetMapString(libAffx_currentMap)) {
+            // The last attempt to load the saved map failed (we are back on the default map), so stay here
+            libAffx_DisplayChatMessage(StringToText("Could not load " + libAffx_GetMapString(libAffx_currentMap) + ", continuing on " + libCore_gv_mAPMapStringID));
+            libAffx_currentMap = libAffx_GetMapID(libCore_gv_mAPMapStringID);
+            libAffx_BankSaveValueString("Map", libCore_gv_mAPMapStringID);
+            libAffx_BankSaveValueString("MapLoadAttempt", "");
+        } else if (libAffx_MapChoiceGetMapPath(libAffx_currentMap) != "") {
+            libAffx_BankSaveValueString("MapLoadAttempt", libAffx_GetMapString(libAffx_currentMap));
+            GameSetNextMap(libAffx_MapChoiceGetMapPath(libAffx_currentMap));
             KickFromGame(PlayerGroupAll());
         }
+    } else if (libAffx_BankLoadValueString("MapLoadAttempt") != "") {
+        libAffx_BankSaveValueString("MapLoadAttempt", "");
     }
     
     while (!libAffx_playersFirstSpawnIn[libAffx_player]) {
@@ -5691,6 +5708,7 @@ void libAffx_InitVariables () {
     libAffx_dialogControlOptionsSpeedUpDeath = c_invalidDialogControlId;
     libAffx_dialogControlOptionsSpeedUpGates = c_invalidDialogControlId;
     libAffx_dialogControlOptionsDisplayPicksBans = c_invalidDialogControlId;
+    libAffx_dialogControlOptionsExtraMaps = c_invalidDialogControlId;
     libAffx_dialogControlOptionsAchievementsButton = c_invalidDialogControlId;
     libAffx_dialogControlOptionsRestartButton = c_invalidDialogControlId;
     libAffx_dialogControlOptionsReturnButton = c_invalidDialogControlId;

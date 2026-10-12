@@ -1,0 +1,378 @@
+include "AffixTriggers"
+
+// ============================================================
+// Map choice
+// After a win, offer two options (map + AI rosters) for the next round.
+// The chosen rosters are saved to the bank and used by hero selection.
+// ============================================================
+
+const int libAffx_mapChoiceOptions = 3;
+const int libAffx_mapChoiceMaxHeroIndex = 120;
+const int libAffx_mapChoiceColumnOffsetX = 620;
+const int libAffx_mapChoiceFrameWidth = 600;
+const int libAffx_mapChoiceFrameHeight = 900;
+const int libAffx_mapChoiceMapImageWidth = 540;
+const int libAffx_mapChoiceMapImageHeight = 304;
+const int libAffx_mapChoicePortraitSize = 90;
+const int libAffx_mapChoicePortraitSpacing = 102;
+
+int[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceMaps;
+int[libAffx_mapChoiceOptions + 1][libCore_gv_bALMaxPlayers + 1] libAffx_mapChoiceHeroes;
+bool[libAffx_mapChoiceOptions + 1][libAffx_mapChoiceMaxHeroIndex + 1] libAffx_mapChoiceUsed;
+int[libAffx_mapChoiceOptions + 1][24] libAffx_mapChoiceRoleCounts; // index: team * 8 + role
+int[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceButtons;
+int libAffx_mapChoiceDialog = c_invalidDialogId;
+int libAffx_mapChoiceSelected;
+bool libAffx_mapChoiceTriggerRegistered;
+
+// Maps that can occupy the rotating slot
+int libAffx_MapChoiceRotationMap(int index) {
+    if (index == 1) { return libAffx_mapSkyTemple; }
+    if (index == 2) { return libAffx_mapHauntedMines; }
+    if (index == 3) { return libAffx_mapShrines; }
+    if (index == 4) { return libAffx_mapCrypts; }
+    return 0;
+}
+// Extra maps need the map rotation helper (tools/map-rotation) running, so they are opt-in
+bool libAffx_MapChoiceExtraMapsEnabled() {
+    return libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsExtraMaps, libAffx_player);
+}
+bool libAffx_MapChoiceIsRotationMap(int map) {
+    int i;
+    for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
+        if (map != 0 && libAffx_MapChoiceRotationMap(i) == map) {
+            return true;
+        }
+    }
+    return false;
+}
+string libAffx_MapChoiceGetMapPath(int map) {
+    if (map == libAffx_map1) {
+        return "heroes/singleplayermaps/startingexperience/tutorialveteran.stormmap";
+    } else if (map == libAffx_map2) {
+        return "heroes/singleplayermaps/startingexperience/tutorialmapmechanics.stormmap";
+    } else if (map == libAffx_map3) {
+        return "heroes/singleplayermaps/startingexperience/tutorial01.stormmap";
+    } else if (map == libAffx_map4 || libAffx_MapChoiceIsRotationMap(map)) {
+        return libAffx_rotationSlotPath;
+    }
+    return "";
+}
+string libAffx_MapChoiceGetMapImage(int map) {
+    if (map == libAffx_mapCursedHollow) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_cursedhollow.dds";
+    } else if (map == libAffx_mapGardenofTerror) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_gardenofterror.dds";
+    } else if (map == libAffx_mapBlackheartsBay) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_blackheartsbay.dds";
+    } else if (map == libAffx_mapSkyTemple) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_skytemple.dds";
+    } else if (map == libAffx_mapHauntedMines) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_hauntedmines.dds";
+    } else if (map == libAffx_mapShrines) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_shrines.dds";
+    } else if (map == libAffx_mapCrypts) {
+        return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_tombofthespiderqueen.dds";
+    }
+    return "";
+}
+
+// ------------------------------------------------------------
+// Rolling
+// ------------------------------------------------------------
+int libAffx_MapChoiceTeam(int player) {
+    if (player <= 5) {
+        return 1;
+    }
+    return 2;
+}
+void libAffx_MapChoiceMarkHero(int option, int player, int heroIndex) {
+    int role;
+    if (heroIndex <= 0 || heroIndex > libAffx_mapChoiceMaxHeroIndex) {
+        return;
+    }
+    role = CatalogFieldValueGetAsInt(c_gameCatalogHero, libCore_gf_GetHeroFromIndex(heroIndex), "ExpandedRole", c_playerAny);
+    libAffx_mapChoiceHeroes[option][player] = heroIndex;
+    libAffx_mapChoiceUsed[option][heroIndex] = true;
+    if (role >= 0 && role < 8) {
+        libAffx_mapChoiceRoleCounts[option][libAffx_MapChoiceTeam(player) * 8 + role] += 1;
+    }
+}
+int libAffx_MapChoicePickHero(int option, int player, bool useRoles, bool checkAI) {
+    int[libAffx_mapChoiceMaxHeroIndex + 1] candidates;
+    int candidateCount = 0;
+    int team = libAffx_MapChoiceTeam(player);
+    int heroIndex;
+    int role;
+    string heroName;
+    bool allowTank = false;
+    bool allowBruiser = false;
+    bool allowRanged = false;
+    bool allowMelee = false;
+    bool allowHealer = false;
+    bool allowSupport = false;
+
+    if (libAffx_mapChoiceRoleCounts[option][team * 8 + c_expandedRoleHealer] == 0) {
+        allowHealer = true;
+    } else if (libAffx_mapChoiceRoleCounts[option][team * 8 + c_expandedRoleTank] == 0) {
+        allowTank = true;
+    } else if (libAffx_mapChoiceRoleCounts[option][team * 8 + c_expandedRoleRangedAssassin] == 0) {
+        allowRanged = true;
+    } else {
+        allowMelee = true;
+        allowBruiser = true;
+        allowSupport = true;
+    }
+
+    for (heroIndex = 1; heroIndex <= MinI(libCore_gv_dataHeroesNumberOfHeroes, libAffx_mapChoiceMaxHeroIndex); heroIndex += 1) {
+        heroName = libCore_gf_GetHeroFromIndex(heroIndex);
+        if (heroName == "" || heroName == null) { continue; }
+        if (GameIsHeroDisabled(heroName)) { continue; }
+        if (libAffx_mapChoiceUsed[option][heroIndex]) { continue; }
+        if (heroName == "Cho" || heroName == "Gall") { continue; }
+        if (!libCore_gf_MetagameDoesPlayerHaveAccessToHero(player, heroIndex)) { continue; }
+        if (checkAI && PlayerType(player) == c_playerTypeComputer && !libAIAI_gf_HeroAIAIDifficultyLevelShouldUseHero(player, heroIndex)) { continue; }
+        if (useRoles) {
+            role = CatalogFieldValueGetAsInt(c_gameCatalogHero, heroName, "ExpandedRole", c_playerAny);
+            if (role == c_expandedRoleTank && !allowTank) { continue; }
+            if (role == c_expandedRoleBruiser && !allowBruiser) { continue; }
+            if (role == c_expandedRoleRangedAssassin && !allowRanged) { continue; }
+            if (role == c_expandedRoleMeleeAssassin && !allowMelee) { continue; }
+            if (role == c_expandedRoleHealer && !allowHealer) { continue; }
+            if (role == c_expandedRoleSupport && !allowSupport) { continue; }
+        }
+        candidateCount += 1;
+        candidates[candidateCount] = heroIndex;
+    }
+    if (candidateCount == 0) {
+        return 0;
+    }
+    return candidates[RandomInt(1, candidateCount)];
+}
+void libAffx_MapChoiceRollOption(int option, int map) {
+    int player;
+    int heroIndex;
+    int team;
+    int role;
+    int humanHero = libAffx_playersHeroIndex[libAffx_player];
+    string humanHeroName = libCore_gf_GetHeroFromIndex(humanHero);
+
+    libAffx_mapChoiceMaps[option] = map;
+    for (heroIndex = 0; heroIndex <= libAffx_mapChoiceMaxHeroIndex; heroIndex += 1) {
+        libAffx_mapChoiceUsed[option][heroIndex] = false;
+    }
+    for (team = 0; team <= 2; team += 1) {
+        for (role = 0; role < 8; role += 1) {
+            libAffx_mapChoiceRoleCounts[option][team * 8 + role] = 0;
+        }
+    }
+    for (player = 0; player <= libCore_gv_bALMaxPlayers; player += 1) {
+        libAffx_mapChoiceHeroes[option][player] = 0;
+    }
+
+    libAffx_MapChoiceMarkHero(option, libAffx_player, humanHero);
+    // Cho'Gall keeps its partner on player 2 (handled by hero selection)
+    if (humanHeroName == "Cho") {
+        libAffx_MapChoiceMarkHero(option, 2, libCore_gf_GetIndexFromHero("Gall"));
+    } else if (humanHeroName == "Gall") {
+        libAffx_MapChoiceMarkHero(option, 2, libCore_gf_GetIndexFromHero("Cho"));
+    }
+
+    for (player = 1; player <= 10; player += 1) {
+        if (player == libAffx_player || libAffx_mapChoiceHeroes[option][player] != 0) { continue; }
+        if (PlayerStatus(player) == c_playerStatusUnused) { continue; }
+        heroIndex = libAffx_MapChoicePickHero(option, player, true, true);
+        if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, false, true); }
+        if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, false, false); }
+        if (heroIndex != 0) {
+            libAffx_MapChoiceMarkHero(option, player, heroIndex);
+        }
+    }
+}
+void libAffx_MapChoiceRollMaps(bool includeCurrentMap) {
+    int[libAffx_rotationMapCount + 4] pool;
+    int poolCount = 0;
+    int currentMap = libAffx_GetMapID(libCore_gv_mAPMapStringID);
+    int pick;
+    int option;
+    int i;
+    if (includeCurrentMap) {
+        currentMap = 0;
+    }
+
+    if (libAffx_map1 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map1; }
+    if (libAffx_map2 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map2; }
+    if (libAffx_map3 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map3; }
+    for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
+        if (libAffx_MapChoiceRotationMap(i) == currentMap) { continue; }
+        if (libAffx_MapChoiceRotationMap(i) != libAffx_map4 && !libAffx_MapChoiceExtraMapsEnabled()) { continue; }
+        poolCount += 1;
+        pool[poolCount] = libAffx_MapChoiceRotationMap(i);
+    }
+
+    for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
+        pick = RandomInt(1, poolCount);
+        libAffx_MapChoiceRollOption(option, pool[pick]);
+        // remove picked map so all options differ
+        for (i = pick; i < poolCount; i += 1) {
+            pool[i] = pool[i + 1];
+        }
+        poolCount -= 1;
+    }
+}
+
+// ------------------------------------------------------------
+// UI
+// ------------------------------------------------------------
+void libAffx_MapChoiceCreatePortraitRow(int option, int firstPlayer, int lastPlayer, int offsetX, int offsetY) {
+    int player;
+    int count = 0;
+    int total = 0;
+    int x;
+    string heroName;
+    for (player = firstPlayer; player <= lastPlayer; player += 1) {
+        if (player != libAffx_player && libAffx_mapChoiceHeroes[option][player] != 0) {
+            total += 1;
+        }
+    }
+    for (player = firstPlayer; player <= lastPlayer; player += 1) {
+        if (player == libAffx_player || libAffx_mapChoiceHeroes[option][player] == 0) { continue; }
+        heroName = libCore_gf_GetHeroFromIndex(libAffx_mapChoiceHeroes[option][player]);
+        x = offsetX + (count * libAffx_mapChoicePortraitSpacing) - ((total - 1) * libAffx_mapChoicePortraitSpacing / 2);
+        libAffx_CreateDialogControlImage(libAffx_mapChoiceDialog, CatalogFieldValueGet(c_gameCatalogHero, heroName, "SelectScreenButtonImage", c_playerAny),
+            libAffx_mapChoicePortraitSize, libAffx_mapChoicePortraitSize, c_anchorCenter, x, offsetY,
+            StringExternal(CatalogFieldValueGet(c_gameCatalogHero, heroName, "Name", c_playerAny)));
+        count += 1;
+    }
+}
+void libAffx_MapChoiceCreateDialog() {
+    int option;
+    int x;
+    int frame;
+    libAffx_mapChoiceDialog = DialogCreate(500, 500, c_anchorCenter, 0, 0, true);
+    DialogSetFullscreen(libAffx_mapChoiceDialog, true);
+    DialogSetImageVisible(libAffx_mapChoiceDialog, false);
+    libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Title"), "Affix_Gameover",
+        1600, 120, c_anchorTop, 0, 20, ColorWithAlpha(0, 0, 0, 0), false);
+    for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
+        x = (option * 2 - libAffx_mapChoiceOptions - 1) * libAffx_mapChoiceColumnOffsetX / 2;
+        frame = DialogControlCreateFromTemplate(libAffx_mapChoiceDialog, c_triggerControlTypeImage, "StandardTemplates/StandardContextMenuFrame");
+        libAffx_SetDialogControlSize(frame, libAffx_mapChoiceFrameWidth, libAffx_mapChoiceFrameHeight);
+        libAffx_SetDialogControlPosition(frame, c_anchorCenter, x, 40);
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Map/" + libAffx_GetMapString(libAffx_mapChoiceMaps[option])), "Affix_Dialog",
+            580, 60, c_anchorCenter, x, -350, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_CreateDialogControlImage(libAffx_mapChoiceDialog, libAffx_MapChoiceGetMapImage(libAffx_mapChoiceMaps[option]),
+            libAffx_mapChoiceMapImageWidth, libAffx_mapChoiceMapImageHeight, c_anchorCenter, x, -150, StringToText(""));
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Allies"), "Affix_Dialog",
+            400, 50, c_anchorCenter, x, 45, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_MapChoiceCreatePortraitRow(option, 1, 5, x, 110);
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Enemies"), "Affix_Dialog",
+            400, 50, c_anchorCenter, x, 190, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_MapChoiceCreatePortraitRow(option, 6, 10, x, 255);
+        libAffx_mapChoiceButtons[option] = libAffx_CreateDialogControlButton(libAffx_mapChoiceDialog);
+        libAffx_SetDialogControlSize(libAffx_mapChoiceButtons[option], libAffx_gameoverButtonWidth, libAffx_gameoverButtonHeight);
+        libAffx_SetDialogControlPosition(libAffx_mapChoiceButtons[option], c_anchorCenter, x, 400);
+        libAffx_SetDialogControlText(libAffx_mapChoiceButtons[option], StringExternal("MapChoice/Choose"));
+    }
+}
+bool libAffx_MapChoiceClicked_Func (bool testConds, bool runActions) {
+    int eventDialog = EventDialogControl();
+    int option;
+    if (!runActions) {
+        return true;
+    }
+    for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
+        if (eventDialog == libAffx_mapChoiceButtons[option] && libAffx_mapChoiceButtons[option] != 0) {
+            libAffx_mapChoiceSelected = option;
+        }
+    }
+    return true;
+}
+
+// The options and boon list dialogs were created first and would render behind the map choice,
+// so hide the map choice while either of them is open.
+void libAffx_MapChoiceUpdateVisibility() {
+    if (libAffx_mapChoiceDialog == c_invalidDialogId) {
+        return;
+    }
+    DialogSetVisible(libAffx_mapChoiceDialog, libCore_gv_playerGroupFromPlayer[libAffx_player],
+        !libAffx_IsOptionsDialogVisible() && !libAffx_IsOwnedAffixesDialogVisible());
+}
+
+// ------------------------------------------------------------
+// Entry points
+// ------------------------------------------------------------
+// Shows the dialog, waits for a pick, and saves the chosen AI rosters. Returns the chosen map.
+int libAffx_MapChoiceShow(bool includeCurrentMap) {
+    int option;
+    int player;
+    if (!libAffx_mapChoiceTriggerRegistered) {
+        libAffx_mapChoiceTriggerRegistered = true;
+        TriggerAddEventDialogControl(TriggerCreate("libAffx_MapChoiceClicked_Func"), c_playerAny, c_invalidDialogControlId, c_triggerControlEventTypeClick);
+    }
+    libAffx_MapChoiceRollMaps(includeCurrentMap);
+    libAffx_mapChoiceSelected = 0;
+    libAffx_MapChoiceCreateDialog();
+    libAffx_MapChoiceUpdateVisibility();
+    while (libAffx_mapChoiceSelected == 0) {
+        Wait(0.125, c_timeReal);
+    }
+    option = libAffx_mapChoiceSelected;
+    DialogDestroy(libAffx_mapChoiceDialog);
+    libAffx_mapChoiceDialog = c_invalidDialogId;
+
+    for (player = 1; player <= libCore_gv_bALMaxPlayers; player += 1) {
+        if (player == libAffx_player) { continue; }
+        libAffx_BankSaveValueInt("NextHero_" + IntToString(player), libAffx_mapChoiceHeroes[option][player]);
+    }
+    // Tell the map rotation helper which map to put in the rotating slot
+    if (libAffx_MapChoiceIsRotationMap(libAffx_mapChoiceMaps[option])) {
+        libAffx_BankSaveValueString("RotationMap", libAffx_GetMapString(libAffx_mapChoiceMaps[option]));
+    }
+    return libAffx_mapChoiceMaps[option];
+}
+void libAffx_MapChoiceRun() {
+    int map = libAffx_MapChoiceShow(false);
+    GameSetNextMap(libAffx_MapChoiceGetMapPath(map));
+    libAffx_nextMap = libAffx_GetMapString(map);
+    libAffx_BankSaveValueString("MapLoadAttempt", libAffx_nextMap);
+}
+// Round 1: runs from the curated hero select once the human hero is locked.
+// Saves the hero and the chosen map, then reloads into it so the previewed rosters are used.
+bool libAffx_MapChoiceFirstRound_Func (bool testConds, bool runActions) {
+    int map;
+    if (!runActions) {
+        return true;
+    }
+    if (libAffx_currentRun != 1 || libGame_gv_players[libAffx_player].lv_heroIndex == 0) {
+        return true;
+    }
+    libAffx_playersHeroIndex[libAffx_player] = libGame_gv_players[libAffx_player].lv_heroIndex;
+    DialogSetVisible(libPBU2_gv_curateHeroSelectionUI.lv_dialog, PlayerGroupAll(), false);
+    map = libAffx_MapChoiceShow(true);
+
+    libAffx_SavePBUSettingsBank();
+    libAffx_BankSaveValueInt("Hero", libAffx_playersHeroIndex[libAffx_player]);
+    libAffx_BankSaveValueString("Map", libAffx_GetMapString(map));
+    libAffx_BankSaveValueString("MapLoadAttempt", libAffx_GetMapString(map));
+    libPBU2_heroPickAborted = true;
+    if (libAffx_MapChoiceIsRotationMap(map) && libAffx_MapChoiceExtraMapsEnabled()) {
+        Wait(3.0, c_timeReal); // give the rotation helper time to swap the map in
+    }
+    GameSetNextMap(libAffx_MapChoiceGetMapPath(map));
+    KickFromGame(PlayerGroupAll());
+    return true;
+}
+int libAffx_MapChoiceGetPresetHero(int player) {
+    int heroIndex = libAffx_BankLoadValueInt("NextHero_" + IntToString(player));
+    if (heroIndex <= 0) {
+        return 0;
+    }
+    if (GameIsHeroDisabled(libCore_gf_GetHeroFromIndex(heroIndex))) {
+        return 0;
+    }
+    if (libGame_gf_HeroSelectionIsHeroSelectedForAnyPlayer(heroIndex)) {
+        return 0;
+    }
+    return heroIndex;
+}

@@ -1714,6 +1714,13 @@ bool libPBU2_gt_CurateHSUICountdownTimerExpires_Func (bool testConds, bool runAc
         }
 
     }
+    // Lets the mod run the map choice once the human hero is known (may reload the map)
+    if (libPBU2_heroesPickedCallback != null) {
+        TriggerExecute(libPBU2_heroesPickedCallback, true, true);
+        if (libPBU2_heroPickAborted) {
+            return true;
+        }
+    }
     for ( ; ( (1 >= 0 && player <= libCore_gv_bALMaxPlayers) || (1 < 0 && player >= libCore_gv_bALMaxPlayers) ) ; player += 1 ) {
         if ((PlayerStatus(player) != c_playerStatusUnused) && (PlayerType(player) != c_playerTypeHostile)) {
             if ((libGame_gv_players[player].lv_heroIndex == 0)) {

@@ -74,6 +74,10 @@ const int libAffx_map1 = libAffx_mapCursedHollow;
 const int libAffx_map2 = libAffx_mapGardenofTerror;
 const int libAffx_map3 = libAffx_mapBlackheartsBay;
 const int libAffx_map4 = libAffx_mapSkyTemple;
+// Rotating slot: the map4 path can hold any map from the rotation pool (MapChoice.galaxy).
+// An external helper swaps the chosen map into this path before it loads.
+const string libAffx_rotationSlotPath = "heroes/singleplayermaps/(10)trymemode.stormmap";
+const int libAffx_rotationMapCount = 4;
 const int libAffx_startingMap = libAffx_map1;
 
 // ============================================================
@@ -757,6 +761,7 @@ libAffx_DialogOptions libAffx_dialogOptionsRestart;
 int libAffx_dialogControlOptionsSpeedUpDeath;
 int libAffx_dialogControlOptionsSpeedUpGates;
 int libAffx_dialogControlOptionsDisplayPicksBans;
+int libAffx_dialogControlOptionsExtraMaps;
 int libAffx_dialogControlOptionsAchievementsButton;
 int libAffx_dialogControlOptionsRestartButton;
 int libAffx_dialogControlOptionsReturnButton;
@@ -1075,3 +1080,10 @@ void libAffx_InitLibraries();
 void libAffx_InitVariables();
 void libAffx_InitAffixes();
 void libAffx_InitTriggers();
+// Map choice (MapChoice.galaxy)
+void libAffx_MapChoiceRun();
+void libAffx_MapChoiceUpdateVisibility();
+string libAffx_MapChoiceGetMapPath(int map);
+bool libAffx_MapChoiceIsRotationMap(int map);
+bool libAffx_MapChoiceExtraMapsEnabled();
+int libAffx_MapChoiceGetPresetHero(int player);

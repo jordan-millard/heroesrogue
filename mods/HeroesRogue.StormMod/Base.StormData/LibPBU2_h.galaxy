@@ -149,6 +149,8 @@ trigger libPBU2_gt_CurateHSUIButtonClicked;
 trigger libPBU2_gt_CurateHSUICountdownTimerExpires;
 trigger libPBU2_gt_CurateHSUIForceSelection;
 trigger libPBU2_timerExpired;
+trigger libPBU2_heroesPickedCallback;
+bool libPBU2_heroPickAborted;
 
 // Library Initialization
 void libPBU2_InitVariables ();
