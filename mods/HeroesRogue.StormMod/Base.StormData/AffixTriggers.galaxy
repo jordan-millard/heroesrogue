@@ -3115,10 +3115,22 @@ bool libAffx_DrektharsCommandUnitDied (bool testConds, bool runActions) {
 // ============================================================
 // Brood Mother
 // ============================================================
-bool libAffx_BroodMotherAffixAdded (bool testConds, bool runActions) {
-    if (libAffx_currentMap == libAffx_mapBraxisHoldout) {
-        TriggerExecute(TriggerCreate("libAffx_BroodMother_Func"), true, false); // MapBraxisHoldout.galaxy
+bool libAffx_BroodMotherUnitCreated (bool testConds, bool runActions) {
+    unit zerg = EventUnitCreatedUnit();
+    string unitType = UnitGetType(zerg);
+    if (testConds) {
+        if (libAffx_currentMap != libAffx_mapBraxisHoldout || UnitGetOwner(zerg) != libAffx_teamChaos) {
+            return false;
+        }
+        if (unitType != "ZergZergling" && unitType != "ZergBaneling" && unitType != "ZergHydralisk" && unitType != "ZergUltralisk" && unitType != "ZergGuardian") {
+            return false;
+        }
     }
+    if (!runActions) {
+        return true;
+    }
+    UnitBehaviorAdd(zerg, "AffixBroodMother", zerg, 1);
+    UnitSetPropertyFixed(zerg, c_unitPropLifePercent, 100.0);
     return true;
 }
 // ============================================================
