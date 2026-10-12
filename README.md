@@ -14,7 +14,7 @@ Singleplayer rogue-like mod for Heroes of the Storm.
 
 ## **Extra Maps (optional)**
 
-The game only plays offline maps properly from a few fixed locations, so Haunted Mines, Infernal Shrines, and Tomb of the Spider Queen need a small helper that swaps the chosen map into place before it loads.
+The game only plays offline maps properly from a few fixed locations, so Haunted Mines, Infernal Shrines, Tomb of the Spider Queen, Towers of Doom, Dragon Shire, and Volskaya Foundry need a small helper that swaps the chosen map into place before it loads.
 
 - Double-click `tools/map-rotation/install-map-rotation.cmd` (from the downloaded zip) once. The helper starts right away and then every time you log in to Windows. It does nothing while the game is closed except keep the default maps in place.
 
@@ -32,7 +32,7 @@ The game only plays offline maps properly from a few fixed locations, so Haunted
 
 Welcome to Heroes Rogue! This is a singleplayer rogue-like mod for Heroes of the Storm. Throughout the game, you will have to choose Boons providing various permanent buffs and Curses which make the game more difficult. Your boons and curses are automatically saved after destroying the enemy Core, carrying them over into the next game. The game can be quit and played at another time, and will resume where you left off. You win by getting to round **14**! If your Core gets destroyed, the run ends and all boons and curses are reset.
 
-**Map Choice:** At the start of a run (after picking your Hero) and after every win, you choose the next battleground from 3 options. Each option shows the AI allies and enemies you will play with and against on that map. The map pool is Cursed Hollow, Garden of Terror, Blackheart's Bay, and Sky Temple, plus Haunted Mines, Infernal Shrines, and Tomb of the Spider Queen with Extra Maps installed.
+**Map Choice:** At the start of a run (after picking your Hero) and after every win, you choose the next battleground from 3 options. Each option shows the AI allies and enemies you will play with and against on that map. The map pool is Cursed Hollow, Garden of Terror, Blackheart's Bay, and Sky Temple, plus Haunted Mines, Infernal Shrines, Tomb of the Spider Queen, Towers of Doom, Dragon Shire, and Volskaya Foundry with Extra Maps installed.
 
 The following Heroes have special interactions with boons and curses:<br>
 - **Lost Vikings, Rexxar, Samuro, and Nova:** Boons and curses apply to all controlled units/clones.<br>
