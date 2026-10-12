@@ -219,6 +219,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ArmorModification AllArmorBonus="20" StackCount="3" />
   </CBehaviorBuff>
 
+  <CBehaviorBuff id="AffixDrektharsCommand" parent="StormArmorPermanent">
+    <Alignment value="Positive" />
+    <ArmorModification AllArmorBonus="30" />
+  </CBehaviorBuff>
+
   <CBehaviorBuff id="AffixUltimatePunishment" parent="CarryBehaviorParent">
     <Modification>
       <HealDealtAdditiveMultiplier index="Life" value="0.25" />

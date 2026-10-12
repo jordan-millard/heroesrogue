@@ -1,0 +1,41 @@
+// ============================================================
+// Brood Mother curse (Braxis Holdout): one more Ultralisk joins each enemy Zerg wave when it is released.
+// Included by the Braxis Holdout map script only, since it uses that map's Zerg wave data.
+// ============================================================
+
+fixed libAffx_broodMotherLastRelease = -1000.0;
+
+bool libAffx_BroodMotherZergReleased_Func (bool testConds, bool runActions) {
+    unit zerg = EventUnit();
+    unitgroup wave = libSCHO_gv_mMHO_AttackGroups[libGame_gv_teamChaosIndex_C][libSCHO_gv_mMHO_WaveTracker];
+    unit ultralisk;
+    if (testConds) {
+        if (UnitGetOwner(zerg) != libCore_gv_cOMPUTER_TeamChaos || !UnitGroupHasUnit(wave, zerg)) {
+            return false;
+        }
+        if (GameGetMissionTime() - libAffx_broodMotherLastRelease < 10.0) {
+            return false; // the whole wave is released at once; add one Ultralisk per wave
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+
+    libAffx_broodMotherLastRelease = GameGetMissionTime();
+    libNtve_gf_CreateUnitsAtPoint2(1, "ZergUltralisk", c_unitCreateIgnorePlacement, libCore_gv_cOMPUTER_TeamChaos, UnitGetPosition(zerg), null);
+    ultralisk = UnitLastCreated();
+    libAIAI_gf_MinionAIUnhookUnitFromMinionAI(ultralisk);
+    libNtve_gf_SendActorMessageToUnit(ultralisk, "StatusSet Released 1");
+    UnitXPAddXP(ultralisk, null, libSCHO_gv_mMHO_ScalingLevel);
+    UnitGroupAdd(wave, ultralisk); // the map moves the wave as a group from here on
+    if (UnitOrderCount(zerg) > 0) {
+        UnitIssueOrder(ultralisk, UnitOrder(zerg, 0), c_orderQueueReplace);
+    }
+    return true;
+}
+
+bool libAffx_BroodMother_Func (bool testConds, bool runActions) {
+    trigger t = TriggerCreate("libAffx_BroodMotherZergReleased_Func");
+    TriggerAddEventUnitBehaviorChange(t, null, "ZergStasisBehavior", c_unitBehaviorChangeDestroy);
+    return true;
+}

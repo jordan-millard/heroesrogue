@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog>
+    <CLight id="DefaultLight">
+        <ToDInfoArray index="0">
+            <Id value="DefaultLight"/>
+            <AmbientColor value="0.313726,0.376471,0.521569"/>
+            <AmbientEnvironmentMultiplier value="0.116000"/>
+            <OperatorHDR value="4"/>
+            <Colorize value="1"/>
+            <Param index="HDRExposure" value="1.600000"/>
+            <Param index="HDRBloomThreshold" value="0.900000"/>
+            <Param index="HDRWhitePoint" value="1.850000"/>
+            <Param index="HDRSpecMultiplier" value="2.050000"/>
+            <Param index="TerrainSpecularExp" value="21.719999"/>
+            <Param index="TerrainHDRSpecular" value="3.500000"/>
+            <Param index="CreepSpecularExp" value="1.000000"/>
+            <Param index="CreepHDRSpecMultiplier" value="3.000000"/>
+            <Param index="ColorizationInputHigh" value="0.975000"/>
+            <Param index="ColorizationHue" value="-0.000000"/>
+            <Param index="ColorizationBlend" value="0.000000"/>
+            <DirectionalLight index="Key" Color="0.960784,0.835294,0.588235" ColorMultiplier="1.000000" Direction="0.628775,0.314456,-0.711168"/>
+            <DirectionalLight index="Fill" Color="0.243137,0.317647,0.658824" ColorMultiplier="0.741000" Direction="-0.946825,-0.121627,-0.297874"/>
+            <DirectionalLight index="Back" Color="0.627451,0.662745,0.552941" ColorMultiplier="1.549000" Direction="0.268048,-0.823499,-0.500000"/>
+        </ToDInfoArray>
+    </CLight>
+    <CLight id="StarcraftZion">
+        <ToDInfoArray index="0">
+            <Id value="StarcraftZion"/>
+            <AmbientColor value="0.717647,0.658824,0.458824"/>
+            <OperatorHDR value="4"/>
+            <Colorize value="1"/>
+            <Param index="HDRExposure" value="1.650000"/>
+            <Param index="HDRBloomThreshold" value="1.625000"/>
+            <Param index="HDRWhitePoint" value="1.850000"/>
+            <Param index="TerrainSpecularExp" value="18.160000"/>
+            <Param index="TerrainHDRSpecular" value="3.000000"/>
+            <Param index="CreepSpecularExp" value="30.000000"/>
+            <Param index="CreepHDRSpecMultiplier" value="3.000000"/>
+            <Param index="ColorizationInputHigh" value="0.960000"/>
+            <Param index="ColorizationBlend" value="0.000000"/>
+            <Param index="ShadowPenumbraSize" value="0.100000"/>
+            <DirectionalLight index="Key" Color="0.952941,0.937255,0.878431" SpecularColor="0.756863,0.756863,0.756863" Direction="0.698779,0.313897,-0.642788"/>
+            <DirectionalLight index="Fill" Color="0.149020,0.192157,0.529412" ColorMultiplier="1.514000" Direction="-0.974851,-0.190198,0.116151"/>
+            <DirectionalLight index="Back" Color="0.627451,0.294118,0.239216" ColorMultiplier="0.716000" Direction="-0.691085,0.719399,0.069756"/>
+            <Variations Command="MoreGreen" Sensitivity="1" Region="Midtone"/>
+            <Variations Command="MoreMagenta" Sensitivity="1"/>
+            <Variations Command="MoreRed" Sensitivity="1"/>
+            <Variations Command="MoreYellow" Sensitivity="1" Region="Highlight"/>
+            <Variations Command="MoreYellow" Sensitivity="1" Region="Highlight"/>
+            <Variations Command="MoreYellow" Sensitivity="1" Region="Highlight"/>
+            <Variations Command="MoreGreen" Sensitivity="1" Region="Highlight"/>
+            <Variations Command="MoreRed" Sensitivity="1"/>
+            <Variations Command="MoreRed" Sensitivity="1" Region="Midtone"/>
+        </ToDInfoArray>
+        <EditorCategories value=""/>
+    </CLight>
+</Catalog>

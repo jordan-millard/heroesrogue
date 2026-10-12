@@ -5995,6 +5995,18 @@
             <String String="ControlPoints">
                 <Field Id="MapsExcluded" Index="1" />
             </String>
+            <String String="BattlefieldOfEternity">
+                <Field Id="MapsExcluded" Index="2" />
+            </String>
+            <String String="Hanamura">
+                <Field Id="MapsExcluded" Index="3" />
+            </String>
+            <String String="AlteracPass">
+                <Field Id="MapsExcluded" Index="4" />
+            </String>
+            <String String="BraxisHoldout">
+                <Field Id="MapsExcluded" Index="5" />
+            </String>
             <String String="AffixAdded libAffx_MacGuffinAffixAdded">
                 <Field Id="Trigger" />
             </String>
@@ -6068,6 +6080,165 @@
                 <Field Id="MapSpecific" />
             </String>
             <String String="AffixAdded libAffx_DoomedAffixAdded">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="HostileTakeover">
+            <Int Int="100000">
+                <Field Id="Weight" />
+            </Int>
+            <String String="Assets/Textures/affix_icon_rapid_capture.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="LevelMin" />
+            </Int>
+            <Int Int="4">
+                <Field Id="LevelMax" />
+            </Int>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="Volskaya">
+                <Field Id="MapSpecific" />
+            </String>
+            <String String="AffixAdded libAffx_HostileTakeoverAffixAdded">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="WoundedImmortal">
+            <Int Int="100000">
+                <Field Id="Weight" />
+            </Int>
+            <String String="Assets/Textures/affix_icon_immortal.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="LevelMin" />
+            </Int>
+            <Int Int="4">
+                <Field Id="LevelMax" />
+            </Int>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="BattlefieldOfEternity">
+                <Field Id="MapSpecific" />
+            </String>
+            <String String="UnitCreated libAffx_WoundedImmortalUnitCreated">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="DrektharsCommand">
+            <Int Int="100000">
+                <Field Id="Weight" />
+            </Int>
+            <String String="Assets/Textures/affix_icon_frostwolf_fury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="LevelMin" />
+            </Int>
+            <Int Int="4">
+                <Field Id="LevelMax" />
+            </Int>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="AlteracPass">
+                <Field Id="MapSpecific" />
+            </String>
+            <String String="AffixAdded libAffx_DrektharsCommandAffixAdded">
+                <Field Id="Trigger" />
+            </String>
+            <String String="UnitDied libAffx_DrektharsCommandUnitDied">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="BroodMother">
+            <Int Int="100000">
+                <Field Id="Weight" />
+            </Int>
+            <String String="Assets/Textures/affix_icon_invasion.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="LevelMin" />
+            </Int>
+            <Int Int="4">
+                <Field Id="LevelMax" />
+            </Int>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="BraxisHoldout">
+                <Field Id="MapSpecific" />
+            </String>
+            <String String="AffixAdded libAffx_BroodMotherAffixAdded">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="ShimadaHonor">
+            <Int Int="100000">
+                <Field Id="Weight" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="LevelMin" />
+            </Int>
+            <Int Int="4">
+                <Field Id="LevelMax" />
+            </Int>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="Hanamura">
+                <Field Id="MapSpecific" />
+            </String>
+            <String String="AffixAdded libAffx_ShimadaHonorAffixAdded">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="MutuallyAssuredDestruction">
+            <Int Int="100000">
+                <Field Id="Weight" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sgthammer_napalmstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="LevelMin" />
+            </Int>
+            <Int Int="4">
+                <Field Id="LevelMax" />
+            </Int>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="WarheadJunction">
+                <Field Id="MapSpecific" />
+            </String>
+            <String String="AffixAdded libAffx_MutuallyAssuredDestructionAffixAdded">
                 <Field Id="Trigger" />
             </String>
         </Instances>

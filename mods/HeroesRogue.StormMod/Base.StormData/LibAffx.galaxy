@@ -852,6 +852,16 @@ int libAffx_GetMapID(string mapString) {
         return libAffx_mapBlackheartsBay;
     } else if (map == "controlpoints") {
         return libAffx_mapSkyTemple;
+    } else if (map == "battlefieldofeternity") {
+        return libAffx_mapBattlefieldofEternity;
+    } else if (map == "hanamura") {
+        return libAffx_mapHanamura;
+    } else if (map == "alteracpass") {
+        return libAffx_mapAlteracPass;
+    } else if (map == "braxisholdout") {
+        return libAffx_mapBraxisHoldout;
+    } else if (map == "warheadjunction" || map == "warhead junction") {
+        return libAffx_mapWarheadJunction;
     }
     return 0;
 }
@@ -876,6 +886,16 @@ string libAffx_GetMapString(int map) {
         return "BlackheartsBay";
     } else if (map == libAffx_mapSkyTemple) {
         return "ControlPoints";
+    } else if (map == libAffx_mapBattlefieldofEternity) {
+        return "BattlefieldOfEternity";
+    } else if (map == libAffx_mapHanamura) {
+        return "Hanamura";
+    } else if (map == libAffx_mapAlteracPass) {
+        return "AlteracPass";
+    } else if (map == libAffx_mapBraxisHoldout) {
+        return "BraxisHoldout";
+    } else if (map == libAffx_mapWarheadJunction) {
+        return "WarheadJunction";
     }
     return "";
 }

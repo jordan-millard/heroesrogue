@@ -59,12 +59,13 @@ function Test-GameRunning {
     return [bool](Get-Process -Name 'HeroesOfTheStorm_x64', 'HeroesOfTheStorm' -ErrorAction SilentlyContinue)
 }
 
-# Map ID (e.g. "Shrines") of a map folder, read from its MapScript
+# Map ID (e.g. "Shrines") of a map folder, read from its MapScript. Spaces are dropped ("Warhead Junction"
+# is "WarheadJunction") to match the mod's map names and keep folder names simple.
 function Get-MapId([string]$mapDir) {
     $script = Join-Path $mapDir 'MapScript.galaxy'
     if (-not (Test-Path -LiteralPath $script)) { return $null }
     $m = [regex]::Match((Get-Content -LiteralPath $script -Raw), 'libCore_gv_mAPMapStringID = "([^"]+)"')
-    if ($m.Success) { return $m.Groups[1].Value }
+    if ($m.Success) { return $m.Groups[1].Value -replace ' ', '' }
     return $null
 }
 
