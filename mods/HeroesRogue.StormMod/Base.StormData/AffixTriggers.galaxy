@@ -3117,7 +3117,7 @@ bool libAffx_DrektharsCommandUnitDied (bool testConds, bool runActions) {
 // ============================================================
 bool libAffx_BroodMotherAffixAdded (bool testConds, bool runActions) {
     if (libAffx_currentMap == libAffx_mapBraxisHoldout) {
-        TriggerExecute(TriggerCreate("libAffx_BroodMother_Func"), true, false); // MapCursesBraxisHoldout.galaxy
+        TriggerExecute(TriggerCreate("libAffx_BroodMother_Func"), true, false); // MapBraxisHoldout.galaxy
     }
     return true;
 }
@@ -4208,3 +4208,4 @@ include "HeroTriggers/Uther"
 include "HeroTriggers/Whitemane"
 include "MapChoice"
 include "AramChallenge"
+include "MapObjectives"

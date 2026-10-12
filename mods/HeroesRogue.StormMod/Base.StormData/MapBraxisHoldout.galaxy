@@ -1,0 +1,55 @@
+// ============================================================
+// Braxis Holdout: objective results and the Brood Mother curse.
+// Included by the Braxis Holdout map script only, since it uses that map's Zerg wave data.
+// ============================================================
+
+bool libAffx_broodMother; // Brood Mother curse: one more Ultralisk joins each enemy Zerg wave when it is released
+fixed libAffx_braxisLastRelease = -1000.0;
+
+bool libAffx_BraxisZergReleased_Func (bool testConds, bool runActions) {
+    unitgroup zergWave = libSCHO_gv_mMHO_AttackGroups[libGame_gv_teamChaosIndex_C][libSCHO_gv_mMHO_WaveTracker];
+    unit leader;
+    unit ultralisk;
+    if (testConds) {
+        if (GameGetMissionTime() - libAffx_braxisLastRelease < 10.0) {
+            return false; // both waves are released at once; handle each release once
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+
+    libAffx_braxisLastRelease = GameGetMissionTime();
+    // The waves are released when a team fills its beacons to 100%
+    if (libSCHO_gv_mMHO_TeamProgress[libGame_gv_teamOrderIndex_C] >= 100.0) {
+        libAffx_MapObjectiveReport(libGame_gv_teamOrderIndex_C);
+    } else if (libSCHO_gv_mMHO_TeamProgress[libGame_gv_teamChaosIndex_C] >= 100.0) {
+        libAffx_MapObjectiveReport(libGame_gv_teamChaosIndex_C);
+    }
+
+    leader = UnitGroupUnit(zergWave, 1);
+    if (!libAffx_broodMother || leader == null) {
+        return true;
+    }
+    libNtve_gf_CreateUnitsAtPoint2(1, "ZergUltralisk", c_unitCreateIgnorePlacement, libCore_gv_cOMPUTER_TeamChaos, UnitGetPosition(leader), null);
+    ultralisk = UnitLastCreated();
+    libAIAI_gf_MinionAIUnhookUnitFromMinionAI(ultralisk);
+    libNtve_gf_SendActorMessageToUnit(ultralisk, "StatusSet Released 1");
+    UnitXPAddXP(ultralisk, null, libSCHO_gv_mMHO_ScalingLevel);
+    UnitGroupAdd(zergWave, ultralisk); // the map moves the wave as a group from here on
+    if (UnitOrderCount(leader) > 0) {
+        UnitIssueOrder(ultralisk, UnitOrder(leader, 0), c_orderQueueReplace);
+    }
+    return true;
+}
+
+bool libAffx_BraxisHoldoutStart_Func (bool testConds, bool runActions) {
+    trigger t = TriggerCreate("libAffx_BraxisZergReleased_Func");
+    TriggerAddEventUnitBehaviorChange(t, null, "ZergStasisBehavior", c_unitBehaviorChangeDestroy);
+    return true;
+}
+
+bool libAffx_BroodMother_Func (bool testConds, bool runActions) {
+    libAffx_broodMother = true;
+    return true;
+}

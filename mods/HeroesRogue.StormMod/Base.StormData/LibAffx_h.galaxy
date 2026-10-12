@@ -1098,6 +1098,9 @@ void libAffx_InitAffixes();
 void libAffx_InitTriggers();
 // Map choice (MapChoice.galaxy)
 void libAffx_MapChoiceRun();
+// Objective results on the extra maps (MapObjectives.galaxy)
+void libAffx_MapObjectiveReport(int team);
+void libAffx_MapObjectivesStart();
 void libAffx_MapChoiceUpdateVisibility();
 string libAffx_MapChoiceGetMapPath(int map);
 bool libAffx_MapChoiceIsRotationMap(int map);
