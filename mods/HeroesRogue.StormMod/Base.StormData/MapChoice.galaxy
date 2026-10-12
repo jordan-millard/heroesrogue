@@ -38,7 +38,7 @@ int libAffx_MapChoiceRotationMap(int index) {
 bool libAffx_MapChoiceExtraMapsEnabled() {
     return libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsExtraMaps, libAffx_player);
 }
-// ARAM maps (1v1 challenge)
+// ARAM maps (ARAM challenges)
 int libAffx_MapChoiceAramMap(int index) {
     if (index == 1) { return libAffx_mapIndustrialDistrict; }
     if (index == 2) { return libAffx_mapBraxisOutpost; }
@@ -157,9 +157,9 @@ int libAffx_MapChoicePickHero(int option, int player, bool useRoles, bool checkA
         allowSupport = true;
     }
     if (libAffx_mapChoiceAram) {
-        allowTank = false;
+        allowTank = libAffx_AramChallengeIndex() == 2;
         allowBruiser = false;
-        allowRanged = true;
+        allowRanged = libAffx_AramChallengeIndex() == 1;
         allowMelee = false;
         allowHealer = false;
         allowSupport = false;
@@ -307,7 +307,7 @@ void libAffx_MapChoiceCreateDialog() {
     if (libAffx_mapChoiceAram) {
         libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/AramTitle"), "Affix_Gameover",
             1600, 120, c_anchorTop, 0, 20, ColorWithAlpha(0, 0, 0, 0), false);
-        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/AramRules"), "Affix_Dialog",
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/AramRules" + IntToString(libAffx_AramChallengeIndex())), "Affix_Dialog",
             1600, 60, c_anchorTop, 0, 130, ColorWithAlpha(0, 0, 0, 0), false);
     } else {
         libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Title"), "Affix_Gameover",
