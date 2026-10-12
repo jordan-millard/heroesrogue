@@ -1,0 +1,71 @@
+// ============================================================
+// Objective results on the extra maps. The original maps report wins and losses from the mod's copies of
+// their objective libraries; these maps run the game's own libraries, so the results are picked up from
+// what the objectives do instead. A won objective can swap the next curse to a boon.
+// ============================================================
+
+const fixed libAffx_mapObjectiveDebounce = 10.0; // one result per objective, even when it spawns several units
+fixed libAffx_mapObjectiveLastReport = -1000.0;
+
+void libAffx_MapObjectiveReport(int team) {
+    if (GameGetMissionTime() - libAffx_mapObjectiveLastReport < libAffx_mapObjectiveDebounce) {
+        return;
+    }
+    libAffx_mapObjectiveLastReport = GameGetMissionTime();
+    if (team == libAffx_teamOrderIndex) {
+        TriggerSendEvent("AffixObjectiveWon");
+    } else if (team == libAffx_teamChaosIndex) {
+        TriggerSendEvent("AffixObjectiveLost");
+    }
+}
+
+// Battlefield of Eternity: the winning Immortal pushes a lane. Alterac Pass: the winning team's cavalry charges.
+bool libAffx_MapObjectiveUnitCreated_Func (bool testConds, bool runActions) {
+    unit created = EventUnitCreatedUnit();
+    string unitType = UnitGetType(created);
+    if (testConds) {
+        if (unitType != "BossDuelLanerHeaven" && unitType != "BossDuelLanerHell" && unitType != "AllianceCavalry" && unitType != "HordeCavalry") {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    libAffx_MapObjectiveReport(libGame_gf_TeamNumberOfPlayer(UnitGetOwner(created)));
+    return true;
+}
+
+// Hanamura Temple: the payload reached a team's destination
+bool libAffx_MapObjectivePayload_Func (bool testConds, bool runActions) {
+    if (!runActions) {
+        return true;
+    }
+    libAffx_MapObjectiveReport(DataTableGetInt(false, TriggerEventParamName("Payload Reached Destination", "Team")));
+    return true;
+}
+
+// Warhead Junction: a nuke lands
+bool libAffx_MapObjectiveNuke_Func (bool testConds, bool runActions) {
+    if (!runActions) {
+        return true;
+    }
+    libAffx_MapObjectiveReport(libGame_gf_TeamNumberOfPlayer(EventPlayer()));
+    return true;
+}
+
+// Called once the map is known
+void libAffx_MapObjectivesStart() {
+    trigger t;
+    if (libAffx_currentMap == libAffx_mapBattlefieldofEternity || libAffx_currentMap == libAffx_mapAlteracPass) {
+        t = TriggerCreate("libAffx_MapObjectiveUnitCreated_Func");
+        TriggerAddEventUnitCreated(t, null, null, null);
+    } else if (libAffx_currentMap == libAffx_mapHanamura) {
+        t = TriggerCreate("libAffx_MapObjectivePayload_Func");
+        TriggerAddEventGeneric(t, "Payload Reached Destination");
+    } else if (libAffx_currentMap == libAffx_mapWarheadJunction) {
+        t = TriggerCreate("libAffx_MapObjectiveNuke_Func");
+        TriggerAddEventPlayerEffectUsed(t, c_playerAny, "NukeImpactSearchArea");
+    } else if (libAffx_currentMap == libAffx_mapBraxisHoldout) {
+        TriggerExecute(TriggerCreate("libAffx_BraxisHoldoutStart_Func"), true, false); // MapBraxisHoldout.galaxy
+    }
+}

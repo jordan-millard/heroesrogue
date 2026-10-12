@@ -421,6 +421,11 @@ void libVLSK_gf_AwardCapturePointVictorytoTeam (int lp_capturePointIndex, int lp
     // Implementation
     libVLSK_gf_SendEventVolskayaPointCompleted(libVLSK_gv_capturePoints[lp_capturePointIndex].lv_region, lp_victoryTeam);
     libVLSK_gf_PlayVOControlPointCompleted(lp_victoryTeam);
+    if (lp_victoryTeam == libGame_gv_teamOrderIndex_C) {
+        TriggerSendEvent("AffixObjectiveWon");
+    } else if (lp_victoryTeam == libGame_gv_teamChaosIndex_C) {
+        TriggerSendEvent("AffixObjectiveLost");
+    }
     libVLSK_gf_EnableDisableCapturePoint(lp_capturePointIndex, false);
     StatEventCreate("VolskayaCapturePointComplete");
     StatEventAddDataInt(StatEventLastCreated(), "WinningTeam", lp_victoryTeam);
