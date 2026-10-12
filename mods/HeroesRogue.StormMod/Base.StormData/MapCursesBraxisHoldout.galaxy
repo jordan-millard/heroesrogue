@@ -1,20 +1,20 @@
 // ============================================================
-// Brood Mother curse (Braxis Holdout): one more Ultralisk joins each enemy Zerg wave when it is released.
-// Included by the Braxis Holdout map script only, since it uses that map's Zerg wave data.
+// Brood Mother curse (Braxis Holdout): one more Ultralisk joins each enemy Zerg zergWave when it is released.
+// Included by the Braxis Holdout map script only, since it uses that map's Zerg zergWave data.
 // ============================================================
 
 fixed libAffx_broodMotherLastRelease = -1000.0;
 
 bool libAffx_BroodMotherZergReleased_Func (bool testConds, bool runActions) {
     unit zerg = EventUnit();
-    unitgroup wave = libSCHO_gv_mMHO_AttackGroups[libGame_gv_teamChaosIndex_C][libSCHO_gv_mMHO_WaveTracker];
+    unitgroup zergWave = libSCHO_gv_mMHO_AttackGroups[libGame_gv_teamChaosIndex_C][libSCHO_gv_mMHO_WaveTracker];
     unit ultralisk;
     if (testConds) {
-        if (UnitGetOwner(zerg) != libCore_gv_cOMPUTER_TeamChaos || !UnitGroupHasUnit(wave, zerg)) {
+        if (UnitGetOwner(zerg) != libCore_gv_cOMPUTER_TeamChaos || !UnitGroupHasUnit(zergWave, zerg)) {
             return false;
         }
         if (GameGetMissionTime() - libAffx_broodMotherLastRelease < 10.0) {
-            return false; // the whole wave is released at once; add one Ultralisk per wave
+            return false; // the whole zergWave is released at once; add one Ultralisk per zergWave
         }
     }
     if (!runActions) {
@@ -27,7 +27,7 @@ bool libAffx_BroodMotherZergReleased_Func (bool testConds, bool runActions) {
     libAIAI_gf_MinionAIUnhookUnitFromMinionAI(ultralisk);
     libNtve_gf_SendActorMessageToUnit(ultralisk, "StatusSet Released 1");
     UnitXPAddXP(ultralisk, null, libSCHO_gv_mMHO_ScalingLevel);
-    UnitGroupAdd(wave, ultralisk); // the map moves the wave as a group from here on
+    UnitGroupAdd(zergWave, ultralisk); // the map moves the zergWave as a group from here on
     if (UnitOrderCount(zerg) > 0) {
         UnitIssueOrder(ultralisk, UnitOrder(zerg, 0), c_orderQueueReplace);
     }
