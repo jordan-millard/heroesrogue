@@ -1,0 +1,32 @@
+// ============================================================
+// ARAM challenge: a 1v1 on an ARAM map between rounds
+// ============================================================
+
+trigger libAffx_aramTalentsTrigger;
+bool libAffx_aramTalentsSeenPause;
+
+// ARAM maps turn talent picking off after HeroesRogue turns it on, so keep it on while the game runs.
+// Talents stay off until the first pause (the starter boon selection) has ended or the gates are open, like on other maps.
+// Runs on real time because game time is frozen while paused.
+bool libAffx_AramTalents_Func (bool testConds, bool runActions) {
+    if (testConds) {
+        if (!libAffx_MapChoiceIsAramMap(libAffx_GetMapID(libCore_gv_mAPMapStringID)) || libGame_gv_gameOver) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+
+    if (libAffx_gamePaused) {
+        libAffx_aramTalentsSeenPause = true;
+    } else if (libAffx_aramTalentsSeenPause || libAffx_GateIsOpen()) {
+        SetTalentsEnabled(true);
+    }
+    return true;
+}
+
+void libAffx_AramChallengeTriggers_Init() {
+    libAffx_aramTalentsTrigger = TriggerCreate("libAffx_AramTalents_Func");
+    TriggerAddEventTimePeriodic(libAffx_aramTalentsTrigger, 0.5, c_timeReal);
+}

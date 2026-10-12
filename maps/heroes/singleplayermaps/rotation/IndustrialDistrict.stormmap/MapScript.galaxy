@@ -1,0 +1,233 @@
+//==================================================================================================
+// 
+// Generated Map Script
+// 
+// Name:   Industrial District
+// 
+//==================================================================================================
+include "TriggerLibs/NativeLib"
+include "TriggerLibs/HeroesLib"
+include "TriggerLibs/GameLib"
+include "TriggerLibs/MapMechanicsLib"
+include "TriggerLibs/AILib"
+include "TriggerLibs/UILib"
+include "TriggerLibs/StartingExperienceLib"
+include "TriggerLibs/SoundLib"
+include "TriggerLibs/GameDataHelperLib"
+include "TriggerLibs/SupportLib"
+include "LibIGHS"
+include "LibOVER"
+include "LibTryMeMode"
+include "LibAffx"
+
+//--------------------------------------------------------------------------------------------------
+// Library Initialization
+//--------------------------------------------------------------------------------------------------
+void InitLibs () {
+    libNtve_InitLib();
+    libCore_InitLib();
+    libGame_InitLib();
+    libMapM_InitLib();
+    libAIAI_InitLib();
+    libUIUI_InitLib();
+    libStEx_InitLib();
+    libSond_InitLib();
+    libGDHL_InitLib();
+    libSprt_InitLib();
+    libIGHS_InitLib();
+    libOVER_InitLib();
+    libAffx_InitLib();
+    libTRYM_InitLib();
+}
+
+//--------------------------------------------------------------------------------------------------
+// Global Function Declarations
+//--------------------------------------------------------------------------------------------------
+void gf_HookupGlobalVariables ();
+void gf_HookupJungleCreepData ();
+void gf_HookupLaneData ();
+void gf_HookupTownData ();
+void gf_HookupRegionData ();
+
+//--------------------------------------------------------------------------------------------------
+// Trigger Variables
+//--------------------------------------------------------------------------------------------------
+trigger gt_InitializeMap;
+
+//--------------------------------------------------------------------------------------------------
+// Global Functions
+//--------------------------------------------------------------------------------------------------
+void gf_HookupGlobalVariables () {
+    // Automatic Variable Declarations
+    // Implementation
+    libCore_gv_mAPMapStringID = "IndustrialDistrict";
+    libCore_gv_mAPMapImage = "CustomMiniMap.tga";
+    libGame_gv_teams[libGame_gv_teamOrderIndex_C].lv_core = UnitFromId(22);
+    libGame_gv_teams[libGame_gv_teamChaosIndex_C].lv_core = UnitFromId(346);
+    libCore_gv_mAPOrderBaseRegion = RegionFromId(3);
+    libCore_gv_mAPChaosBaseRegion = RegionFromId(4);
+    libCore_gv_mAPMapSoundtrack[0] = "MX_Volskaya_Intro";
+    libCore_gv_mAPMapSoundtrack[1] = "MX_Volskaya_LVL_1";
+    libCore_gv_mAPMapSoundtrack[2] = "MX_Volskaya_LVL_10";
+    libCore_gv_mAPMapSoundtrack[3] = "MX_Volskaya_LVL_20";
+}
+
+void gf_HookupJungleCreepData () {
+    // Variable Declarations
+    int lv_jungleCamp;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+
+    // Implementation
+    lv_jungleCamp += 1;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCampType = libMapM_ge_JungleCampTypes_MercCamp;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCampDefenderType = libMapM_ge_JungleCampDefenderTypes_SiegeCamp1;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCampCaptainSpawnPoint = PointFromId(1316050275);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataDefenderSpawnPoints[1] = PointFromId(1316050275);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataDefenderSpawnPoints[2] = PointFromId(903988300);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataDefenderLeashRegion = RegionFromId(1);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCapturePointSplatModel = "Storm_Doodad_OWVol_MercCampSlab_Splat";
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataMercSpawnType = libMapM_ge_JungleCampMercTypes_SiegeCamp1;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_defenderCampTypeMinimapTitle = StringExternal("Param/Value/4670206B");
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_defenderSuppressActiveLanerCounter = true;
+    lv_jungleCamp += 1;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCampType = libMapM_ge_JungleCampTypes_MercCamp;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCampDefenderType = libMapM_ge_JungleCampDefenderTypes_SiegeCamp1;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCampCaptainSpawnPoint = PointFromId(1328869096);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataDefenderSpawnPoints[1] = PointFromId(1328869096);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataDefenderSpawnPoints[2] = PointFromId(2001242015);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataDefenderLeashRegion = RegionFromId(2);
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataCapturePointSplatModel = "Storm_Doodad_OWVol_MercCampSlab_Splat";
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_mapDataMercSpawnType = libMapM_ge_JungleCampMercTypes_SiegeCamp1;
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_defenderCampTypeMinimapTitle = StringExternal("Param/Value/F02DF16B");
+    libMapM_gv_jungleCreepCamps[lv_jungleCamp].lv_defenderSuppressActiveLanerCounter = true;
+    libMapM_gv_jungleNumberOfCreepCamps = lv_jungleCamp;
+}
+
+void gf_HookupLaneData () {
+    // Automatic Variable Declarations
+    // Implementation
+    libGame_gv_laneCount = 1;
+    libGame_gv_laneData[1].lv_laneName = StringExternal("Param/Value/3D4242A8");
+    libGame_gv_laneData[1].lv_structureCount = 1;
+    libGame_gv_laneData[1].lv_orderStructures[1] = UnitFromId(22);
+    libGame_gv_laneData[1].lv_chaosStructures[1] = UnitFromId(346);
+    libGame_gv_laneData[1].lv_waypointCount = 21;
+    libGame_gv_laneData[1].lv_waypoints[1] = PointFromId(2245);
+    libGame_gv_laneData[1].lv_waypoints[2] = PointFromId(536);
+    libGame_gv_laneData[1].lv_waypoints[3] = PointFromId(822);
+    libGame_gv_laneData[1].lv_waypoints[4] = PointFromId(823);
+    libGame_gv_laneData[1].lv_waypoints[5] = PointFromId(824);
+    libGame_gv_laneData[1].lv_waypoints[6] = PointFromId(825);
+    libGame_gv_laneData[1].lv_waypoints[7] = PointFromId(34);
+    libGame_gv_laneData[1].lv_waypoints[8] = PointFromId(37);
+    libGame_gv_laneData[1].lv_waypoints[9] = PointFromId(112);
+    libGame_gv_laneData[1].lv_waypoints[10] = PointFromId(542);
+    libGame_gv_laneData[1].lv_waypoints[11] = PointFromId(1);
+    libGame_gv_laneData[1].lv_waypoints[12] = PointFromId(14);
+    libGame_gv_laneData[1].lv_waypoints[13] = PointFromId(15);
+    libGame_gv_laneData[1].lv_waypoints[14] = PointFromId(17);
+    libGame_gv_laneData[1].lv_waypoints[15] = PointFromId(20);
+    libGame_gv_laneData[1].lv_waypoints[16] = PointFromId(30);
+    libGame_gv_laneData[1].lv_waypoints[17] = PointFromId(31);
+    libGame_gv_laneData[1].lv_waypoints[18] = PointFromId(39);
+    libGame_gv_laneData[1].lv_waypoints[19] = PointFromId(91);
+    libGame_gv_laneData[1].lv_waypoints[20] = PointFromId(47);
+    libGame_gv_laneData[1].lv_waypoints[21] = PointFromId(2246);
+}
+
+void gf_HookupTownData () {
+    // Variable Declarations
+    const int lv_midLaneNumber_C = 1;
+
+    // Automatic Variable Declarations
+    // Variable Initialization
+
+    // Implementation
+    libGame_gv_townTownCount = 4;
+    libGame_gv_townTownData[1].lv_lane = lv_midLaneNumber_C;
+    libGame_gv_townTownData[1].lv_owner = libCore_gv_cOMPUTER_TeamOrder;
+    libGame_gv_townTownData[1].lv_townRegion = RegionFromId(12);
+    libGame_gv_townTownData[1].lv_makesCoreVulnerableWhenKilled = true;
+    libGame_gv_townTownData[2].lv_lane = lv_midLaneNumber_C;
+    libGame_gv_townTownData[2].lv_owner = libCore_gv_cOMPUTER_TeamOrder;
+    libGame_gv_townTownData[2].lv_townRegion = RegionFromId(13);
+    libGame_gv_townTownData[2].lv_makesCoreVulnerableWhenKilled = false;
+    libGame_gv_townTownData[3].lv_lane = lv_midLaneNumber_C;
+    libGame_gv_townTownData[3].lv_owner = libCore_gv_cOMPUTER_TeamChaos;
+    libGame_gv_townTownData[3].lv_townRegion = RegionFromId(30);
+    libGame_gv_townTownData[3].lv_makesCoreVulnerableWhenKilled = true;
+    libGame_gv_townTownData[4].lv_lane = lv_midLaneNumber_C;
+    libGame_gv_townTownData[4].lv_owner = libCore_gv_cOMPUTER_TeamChaos;
+    libGame_gv_townTownData[4].lv_townRegion = RegionFromId(22);
+    libGame_gv_townTownData[4].lv_makesCoreVulnerableWhenKilled = false;
+}
+
+void gf_HookupRegionData () {
+    // Automatic Variable Declarations
+    // Implementation
+    libMapM_gf_MapSetRepulseRegion(libGame_gv_teamOrderIndex_C, RegionFromId(5), PointFromId(1519), PointFromId(1571), PointFromId(1594), null);
+    libMapM_gf_MapSetRepulseRegion(libGame_gv_teamChaosIndex_C, RegionFromId(6), PointFromId(1537), PointFromId(1552), PointFromId(1553), null);
+    libMapM_gf_MapSetSafeRegion(libGame_gv_teamOrderIndex_C, RegionFromId(5));
+    libMapM_gf_MapSetSafeRegion(libGame_gv_teamChaosIndex_C, RegionFromId(6));
+}
+
+//--------------------------------------------------------------------------------------------------
+// Trigger: Initialize Map
+//--------------------------------------------------------------------------------------------------
+bool gt_InitializeMap_Func (bool testConds, bool runActions) {
+    // Automatic Variable Declarations
+    // Actions
+    if (!runActions) {
+        return true;
+    }
+
+    TriggerExecute(libAIAI_gt_IncludeAI, true, false);
+    TriggerExecute(libGame_gt_IncludeGame, true, false);
+    TriggerExecute(libGDHL_gt_IncludeGameDataHelper, true, false);
+    TriggerExecute(libMapM_gt_IncludeMapMechanics, true, false);
+    TriggerExecute(libSond_gt_IncludeSound, true, false);
+    TriggerExecute(libSprt_gt_IncludeSupport, true, false);
+    TriggerExecute(libUIUI_gt_IncludeUI, true, false);
+    TriggerExecute(libStEx_gt_IncludeStartingExperience, true, false);
+    libOVER_gf_InitTurretMercCampSiegeCamp1();
+    gf_HookupGlobalVariables();
+    gf_HookupJungleCreepData();
+    gf_HookupLaneData();
+    gf_HookupTownData();
+    gf_HookupRegionData();
+    libCore_gv_sYSIsBrawlGame = true;
+    libCore_gv_dataXPBrawlMetaXPExpectedDuration = 22.0;
+    libCore_gv_sYSTowns = true;
+    libCore_gv_sYSJungleCreepCamps = true;
+    libCore_gv_sYSJungleWatchTowers = false;
+    libCore_gv_sYSTowerAI = true;
+    libCore_gv_sYSMinionAI = true;
+    // libIGHS_gf_InitializeShufflePickUnlocked(StringExternal("Param/Value/76A0F51C"), true, true, 30, 0.5, true); // HeroesRogue picks heroes
+    libCore_gv_sYSGameMode = libCore_ge_GameModes_Sandbox;
+    TriggerExecute(libCore_gt_InitializeStormMod, true, true);
+    libCore_gf_DataAnnouncerVOSetDefaultAnnouncerForPlayerGroup(PlayerGroupAll(), "Athena");
+    return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+void gt_InitializeMap_Init () {
+    gt_InitializeMap = TriggerCreate("gt_InitializeMap_Func");
+    TriggerAddEventMapInit(gt_InitializeMap);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Trigger Initialization
+//--------------------------------------------------------------------------------------------------
+void InitTriggers () {
+    gt_InitializeMap_Init();
+}
+
+//--------------------------------------------------------------------------------------------------
+// Map Initialization
+//--------------------------------------------------------------------------------------------------
+void InitMap () {
+    InitLibs();
+    InitTriggers();
+}

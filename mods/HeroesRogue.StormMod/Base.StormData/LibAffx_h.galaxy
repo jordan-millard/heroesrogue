@@ -69,6 +69,10 @@ const int libAffx_mapTowersofDoom   =   7;
 const int libAffx_mapSkyTemple      =   8;
 const int libAffx_mapGardenofTerror =   9;
 const int libAffx_mapBlackheartsBay =   10;
+const int libAffx_mapIndustrialDistrict = 11;
+const int libAffx_mapBraxisOutpost  =   12;
+const int libAffx_mapSilverCity     =   13;
+const int libAffx_mapLostCavern     =   14;
 
 const int libAffx_map1 = libAffx_mapCursedHollow;
 const int libAffx_map2 = libAffx_mapGardenofTerror;
@@ -78,6 +82,8 @@ const int libAffx_map4 = libAffx_mapSkyTemple;
 // An external helper swaps the chosen map into this path before it loads.
 const string libAffx_rotationSlotPath = "heroes/singleplayermaps/(10)trymemode.stormmap";
 const int libAffx_rotationMapCount = 4;
+// ARAM maps also use the rotating slot, but are not in the regular map choice pool
+const int libAffx_aramMapCount = 4;
 const int libAffx_startingMap = libAffx_map1;
 
 // ============================================================
@@ -1085,5 +1091,8 @@ void libAffx_MapChoiceRun();
 void libAffx_MapChoiceUpdateVisibility();
 string libAffx_MapChoiceGetMapPath(int map);
 bool libAffx_MapChoiceIsRotationMap(int map);
+bool libAffx_MapChoiceIsAramMap(int map);
+// ARAM challenge (AramChallenge.galaxy)
+void libAffx_AramChallengeTriggers_Init();
 bool libAffx_MapChoiceExtraMapsEnabled();
 int libAffx_MapChoiceGetPresetHero(int player);

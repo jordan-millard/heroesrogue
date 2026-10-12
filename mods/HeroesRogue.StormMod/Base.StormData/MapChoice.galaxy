@@ -37,8 +37,28 @@ int libAffx_MapChoiceRotationMap(int index) {
 bool libAffx_MapChoiceExtraMapsEnabled() {
     return libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsExtraMaps, libAffx_player);
 }
+// ARAM maps (1v1 challenge)
+int libAffx_MapChoiceAramMap(int index) {
+    if (index == 1) { return libAffx_mapIndustrialDistrict; }
+    if (index == 2) { return libAffx_mapBraxisOutpost; }
+    if (index == 3) { return libAffx_mapSilverCity; }
+    if (index == 4) { return libAffx_mapLostCavern; }
+    return 0;
+}
+bool libAffx_MapChoiceIsAramMap(int map) {
+    int i;
+    for (i = 1; i <= libAffx_aramMapCount; i += 1) {
+        if (map != 0 && libAffx_MapChoiceAramMap(i) == map) {
+            return true;
+        }
+    }
+    return false;
+}
 bool libAffx_MapChoiceIsRotationMap(int map) {
     int i;
+    if (libAffx_MapChoiceIsAramMap(map)) {
+        return true;
+    }
     for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
         if (map != 0 && libAffx_MapChoiceRotationMap(i) == map) {
             return true;

@@ -852,6 +852,14 @@ int libAffx_GetMapID(string mapString) {
         return libAffx_mapBlackheartsBay;
     } else if (map == "controlpoints") {
         return libAffx_mapSkyTemple;
+    } else if (map == "industrialdistrict") {
+        return libAffx_mapIndustrialDistrict;
+    } else if (map == "braxisoutpost") {
+        return libAffx_mapBraxisOutpost;
+    } else if (map == "silvercity") {
+        return libAffx_mapSilverCity;
+    } else if (map == "lostcavern") {
+        return libAffx_mapLostCavern;
     }
     return 0;
 }
@@ -876,6 +884,14 @@ string libAffx_GetMapString(int map) {
         return "BlackheartsBay";
     } else if (map == libAffx_mapSkyTemple) {
         return "ControlPoints";
+    } else if (map == libAffx_mapIndustrialDistrict) {
+        return "IndustrialDistrict";
+    } else if (map == libAffx_mapBraxisOutpost) {
+        return "BraxisOutpost";
+    } else if (map == libAffx_mapSilverCity) {
+        return "SilverCity";
+    } else if (map == libAffx_mapLostCavern) {
+        return "LostCavern";
     }
     return "";
 }
@@ -5055,6 +5071,7 @@ void libAffx_InitTriggers () {
     libAffx_RexxarTriggers_Init();
     libAffx_NovaTriggers_Init();
     libAffx_SamuroTriggers_Init();
+    libAffx_AramChallengeTriggers_Init();
 
     TriggerEnable(libGDHL_gt_HeroSylvanasPossessionRewire, true);
     libAffx_pauseVLSK = TriggerCreate("libVLSK_PauseTrigger_Func");
