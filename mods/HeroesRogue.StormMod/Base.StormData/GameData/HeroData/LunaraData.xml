@@ -4,7 +4,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- Golden Lunara (Dryad). Quest stacks carry over between games: see HeroTriggers/Lunara.galaxy -->
 
-  <!-- Poisoner: stacks come from time enemies spend poisoned (counted by script) -->
+  <!-- Poisoner: Basic Attacks on enemy Heroes grant stacks; stacks add Nature's Toxin damage. Script: duration -->
   <CBehaviorTokenCounter id="DryadPoisonerTokenCounter" parent="StormQuestToken">
     <Face value="DryadPoisonerTokenCounter" />
     <Max value="100000" />
@@ -13,9 +13,40 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <SourceEffect value="DryadNaturesToxinDamage" />
     <ApplicationRule value="Add" />
     <TokenId value="DryadPoisonerTokenCounter" />
-    <Scale value="0.05" />
+    <Scale value="0.005" />
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
+  <CEffectModifyTokenCount id="DryadPoisonerAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectCategory index="Quest" value="1" />
+    <TokenId value="DryadPoisonerTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="DryadHeroWeaponImpactSet">
+    <EffectArray value="DryadPoisonerAddToken" />
+  </CEffectSet>
+  <CEffectSet id="DryadHeroWeaponImpactSetSplinteredSpearMastery">
+    <EffectArray value="DryadPoisonerAddToken" />
+  </CEffectSet>
+  <!-- Poisoner: Basic Attacks and abilities deal 80% less damage (Nature's Toxin is unaffected) -->
+  <CValidatorUnitCompareBehaviorCount id="DryadHasPoisoner">
+    <WhichUnit Value="Caster" />
+    <Behavior value="DryadPoisonerTokenCounter" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectDamage id="DryadLeapingStrikeDamage">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
+  </CEffectDamage>
+  <CEffectDamage id="DryadThornwoodVineDamage">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
+  </CEffectDamage>
+  <CEffectDamage id="DryadDeadlyBlossomDamage">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
+  </CEffectDamage>
+  <CEffectDamage id="DryadPercentMaxHealthDamageInvigoratingSpores">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
+  </CEffectDamage>
   <CEffectDamage id="DryadNaturesToxinDamage">
     <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerAccumulator" />
   </CEffectDamage>
@@ -48,11 +79,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
   <CEffectDamage id="DryadHeroWeaponDamage">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
     <Amount>
       <AccumulatorArray value="DryadHuntressAccumulator" />
     </Amount>
   </CEffectDamage>
   <CEffectDamage id="DryadHeroWeaponDamageSplinteredSpearMastery">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
     <Amount>
       <AccumulatorArray value="DryadHuntressAccumulator" />
     </Amount>
@@ -80,9 +113,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
   <CEffectDamage id="DryadNoxiousBlossomDamage">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
     <MultiplicativeModifierArray index="Pollinator" Accumulator="DryadPollinatorAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="DryadNoxiousBlossomChokingPollenMasteryDamage">
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
     <MultiplicativeModifierArray index="Pollinator" Accumulator="DryadPollinatorAccumulator" />
   </CEffectDamage>
 

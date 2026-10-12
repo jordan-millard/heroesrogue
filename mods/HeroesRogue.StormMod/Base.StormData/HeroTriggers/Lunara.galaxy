@@ -1,15 +1,17 @@
 include "AffixTriggers"
 
 // ============================================================
-// Golden Lunara. Her quest stacks carry over between games: each hero level up to level 10 gives back
-// 10% of the stacks banked from previous games, and stacks earned this game are added on top.
+// Golden Lunara. Her quest stacks carry over between games and come back 10% per Hero level:
+// Poisoner keeps 80% of its stacks (levels 1-8), the other quests keep all of them (levels 1-10).
+// Stacks earned this game are added on top.
 // Quests: 1 Poisoner, 2 Splintered Huntress, 3 Pollinator.
 // ============================================================
 
 const int libAffx_lunaraQuests = 3;
-const int libAffx_lunaraPoisonerHeroSeconds = 10;    // poisoned enemy Hero time per stack
-const int libAffx_lunaraPoisonerOtherSeconds = 30;   // poisoned non-Hero time per stack
-const int libAffx_lunaraPoisonerStacksPerSecond = 50; // stacks per extra second of maximum poison duration
+const int libAffx_lunaraPoisoner = 1;
+const int libAffx_lunaraPoisonerCarryLevels = 8;        // 10% per level, so 80% of the stacks carry over
+const int libAffx_lunaraPoisonerStacksPerMaxSecond = 30; // stacks per extra second of maximum poison duration
+const int libAffx_lunaraPoisonerStacksPerApplySecond = 100; // stacks per extra second added by each application
 const fixed libAffx_lunaraToxinMaxDuration = 9.0;
 const fixed libAffx_lunaraToxinPerApplication = 3.0;
 const int libAffx_lunaraHuntressReward = 30;
@@ -18,8 +20,6 @@ const int libAffx_lunaraPollinatorReward = 40;
 bool libAffx_lunaraStarted;
 int[libAffx_lunaraQuests + 1] libAffx_lunaraBanked;   // stacks from previous games
 int[libAffx_lunaraQuests + 1] libAffx_lunaraRestored; // banked stacks given back so far this game
-int libAffx_lunaraPoisonedHeroSeconds;
-int libAffx_lunaraPoisonedOtherSeconds;
 bool libAffx_lunaraHuntressRewarded;
 
 string libAffx_LunaraQuestToken(int quest) {
@@ -27,47 +27,57 @@ string libAffx_LunaraQuestToken(int quest) {
     if (quest == 2) { return "DryadHuntressTokenCounter"; }
     return "DryadPollinatorTokenCounter";
 }
+// Levels that each give back 10% of the banked stacks
+int libAffx_LunaraCarryLevels(int quest) {
+    if (quest == libAffx_lunaraPoisoner) {
+        return libAffx_lunaraPoisonerCarryLevels;
+    }
+    return 10;
+}
 unit libAffx_LunaraHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
-}
-int libAffx_LunaraStacks(int quest) {
-    unit hero = libAffx_LunaraHero();
-    if (hero == null || !UnitHasBehavior2(hero, libAffx_LunaraQuestToken(quest))) {
-        return 0;
-    }
-    return FixedToInt(UnitGetTokenCount(hero, libAffx_LunaraQuestToken(quest)));
 }
 bool libAffx_LunaraHasQuest(int quest) {
     unit hero = libAffx_LunaraHero();
     return hero != null && UnitHasBehavior2(hero, libAffx_LunaraQuestToken(quest));
 }
+int libAffx_LunaraStacks(int quest) {
+    if (!libAffx_LunaraHasQuest(quest)) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(libAffx_LunaraHero(), libAffx_LunaraQuestToken(quest)));
+}
 
-// Banked stacks plus this game's progress; saved with the run after a win
+// Carried-over stacks plus this game's progress; saved with the run
 void libAffx_LunaraSaveBank() {
     int quest;
+    int carried;
     if (!libAffx_lunaraStarted) {
         return;
     }
     for (quest = 1; quest <= libAffx_lunaraQuests; quest += 1) {
         if (libAffx_LunaraHasQuest(quest)) {
+            carried = libAffx_lunaraBanked[quest] * libAffx_LunaraCarryLevels(quest) / 10;
             libAffx_BankSaveValueInt("Lunara_" + libAffx_LunaraQuestToken(quest),
-                libAffx_lunaraBanked[quest] + MaxI(0, libAffx_LunaraStacks(quest) - libAffx_lunaraRestored[quest]));
+                carried + MaxI(0, libAffx_LunaraStacks(quest) - libAffx_lunaraRestored[quest]));
         }
     }
 }
 
-// Poisoner: once the quest passes 50 stacks, Nature's Toxin can stack 1 second longer per 50 stacks.
-// Each application still adds 3 seconds; this only raises the 9 second maximum.
+// Poisoner: every 30 stacks raise Nature's Toxin's 9 second maximum by 1 second, and every 100 stacks
+// add 1 second to what each application adds (3 seconds base)
 bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     unit target = EventUnit();
     string key = "LunaraToxinExpires_" + IntToString(UnitGetTag(target));
     fixed now = GameGetMissionTime();
     fixed previous = MaxF(0.0, DataTableGetFixed(true, key) - now);
+    int stacks = libAffx_LunaraStacks(libAffx_lunaraPoisoner);
+    fixed maximum = libAffx_lunaraToxinMaxDuration + IntToFixed(stacks / libAffx_lunaraPoisonerStacksPerMaxSecond);
+    fixed perApplication = libAffx_lunaraToxinPerApplication + IntToFixed(stacks / libAffx_lunaraPoisonerStacksPerApplySecond);
     fixed current;
     fixed wanted;
-    int extraSeconds = libAffx_LunaraStacks(1) / libAffx_lunaraPoisonerStacksPerSecond;
     if (testConds) {
-        if (UnitBehaviorEffectPlayer(target, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
+        if (stacks <= 0 || UnitBehaviorEffectPlayer(target, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
             return false;
         }
     }
@@ -78,42 +88,12 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     if (EventUnitBehaviorChange() == c_unitBehaviorChangeCreate) {
         previous = 0.0;
     }
-    wanted = current;
-    if (extraSeconds > 0) {
-        wanted = MaxF(current, MinF(previous + libAffx_lunaraToxinPerApplication, libAffx_lunaraToxinMaxDuration + extraSeconds));
-        if (wanted > current) {
-            UnitBehaviorSetDurationRemaining(target, "DryadNaturesToxin", wanted);
-        }
+    wanted = MaxF(current, MinF(previous + perApplication, maximum));
+    if (wanted > current) {
+        UnitBehaviorSetDurationRemaining(target, "DryadNaturesToxin", wanted);
     }
     DataTableSetFixed(true, key, now + wanted);
     return true;
-}
-
-// Poisoner quest: count time enemies spend poisoned by Lunara
-void libAffx_LunaraCountPoison(unit hero) {
-    unitgroup enemies = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
-    int count = UnitGroupCount(enemies, c_unitCountAll);
-    int i;
-    unit enemy;
-    for (i = count; i > 0; i -= 1) {
-        enemy = UnitGroupUnitFromEnd(enemies, i);
-        if (!UnitHasBehavior2(enemy, "DryadNaturesToxin") || UnitBehaviorEffectPlayer(enemy, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
-            continue;
-        }
-        if (UnitTypeTestAttribute(UnitGetType(enemy), c_unitAttributeHeroic)) {
-            libAffx_lunaraPoisonedHeroSeconds += 1;
-        } else {
-            libAffx_lunaraPoisonedOtherSeconds += 1;
-        }
-    }
-    while (libAffx_lunaraPoisonedHeroSeconds >= libAffx_lunaraPoisonerHeroSeconds) {
-        libAffx_lunaraPoisonedHeroSeconds -= libAffx_lunaraPoisonerHeroSeconds;
-        libGame_gf_ModifyTokenCount(1, libAffx_LunaraQuestToken(1), hero);
-    }
-    while (libAffx_lunaraPoisonedOtherSeconds >= libAffx_lunaraPoisonerOtherSeconds) {
-        libAffx_lunaraPoisonedOtherSeconds -= libAffx_lunaraPoisonerOtherSeconds;
-        libGame_gf_ModifyTokenCount(1, libAffx_LunaraQuestToken(1), hero);
-    }
 }
 
 bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
@@ -125,12 +105,12 @@ bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
         return true;
     }
 
-    // Give back banked stacks as Lunara levels up
-    level = MinI(UnitLevel(hero), 10);
+    // Give back carried-over stacks as Lunara levels up
     for (quest = 1; quest <= libAffx_lunaraQuests; quest += 1) {
         if (!libAffx_LunaraHasQuest(quest)) {
             continue;
         }
+        level = MinI(UnitLevel(hero), libAffx_LunaraCarryLevels(quest));
         wanted = libAffx_lunaraBanked[quest] * level / 10;
         if (wanted > libAffx_lunaraRestored[quest]) {
             libGame_gf_ModifyTokenCount(wanted - libAffx_lunaraRestored[quest], libAffx_LunaraQuestToken(quest), hero);
@@ -138,9 +118,6 @@ bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
         }
     }
 
-    if (libAffx_LunaraHasQuest(1)) {
-        libAffx_LunaraCountPoison(hero);
-    }
     // Splintered Huntress reward: Noxious Blossom empowers 4 Basic Attacks instead of 3
     if (!libAffx_lunaraHuntressRewarded && libAffx_LunaraStacks(2) >= libAffx_lunaraHuntressReward) {
         libAffx_lunaraHuntressRewarded = true;
