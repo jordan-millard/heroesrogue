@@ -4,7 +4,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- Golden Lunara (Dryad). Quest stacks carry over between games: see HeroTriggers/Lunara.galaxy -->
 
-  <!-- Poisoner: Basic Attacks on enemy Heroes grant stacks; stacks add Nature's Toxin damage. Script: duration -->
+  <!-- Poisoner: every 5 seconds an enemy Hero spends poisoned grants a stack; stacks add Nature's Toxin damage.
+       Script: stacks and duration -->
   <CBehaviorTokenCounter id="DryadPoisonerTokenCounter" parent="StormQuestToken">
     <Face value="DryadPoisonerTokenCounter" />
     <Max value="100000" />
@@ -13,20 +14,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <SourceEffect value="DryadNaturesToxinDamage" />
     <ApplicationRule value="Add" />
     <TokenId value="DryadPoisonerTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
-  <CEffectModifyTokenCount id="DryadPoisonerAddToken" parent="BaseEffectModifyTokenCount">
-    <Chance value="0" />
-    <ValidatorArray value="TargetIsHero" />
-    <EffectCategory index="Quest" value="1" />
-    <TokenId value="DryadPoisonerTokenCounter" />
-  </CEffectModifyTokenCount>
+  <!-- Poisoner: Basic Attacks splash their damage and Nature's Toxin onto nearby enemies -->
+  <CEffectEnumArea id="DryadPoisonerSplashSearch">
+    <ValidatorArray value="DryadHasPoisoner" />
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <ExcludeArray Value="Target" />
+    <AreaArray Effect="DryadPoisonerSplashSet">
+      <Radius value="2" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="DryadPoisonerSplashSet">
+    <EffectArray value="DryadHeroWeaponDamage" />
+    <EffectArray value="DryadNaturesToxinDebuffSet" />
+  </CEffectSet>
   <CEffectSet id="DryadHeroWeaponImpactSet">
-    <EffectArray value="DryadPoisonerAddToken" />
+    <EffectArray value="DryadPoisonerSplashSearch" />
   </CEffectSet>
   <CEffectSet id="DryadHeroWeaponImpactSetSplinteredSpearMastery">
-    <EffectArray value="DryadPoisonerAddToken" />
+    <EffectArray value="DryadPoisonerSplashSearch" />
   </CEffectSet>
   <!-- Poisoner: Basic Attacks and abilities deal 80% less damage (Nature's Toxin is unaffected) -->
   <CValidatorUnitCompareBehaviorCount id="DryadHasPoisoner">

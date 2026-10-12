@@ -10,9 +10,8 @@ include "AffixTriggers"
 const int libAffx_lunaraQuests = 3;
 const int libAffx_lunaraPoisoner = 1;
 const int libAffx_lunaraPoisonerCarryLevels = 8;        // 10% per level, so 80% of the stacks carry over
-const int libAffx_lunaraPoisonerStacksPerMaxSecond = 30; // stacks per extra second of maximum poison duration
+const int libAffx_lunaraPoisonerSecondsPerStack = 5;  // seconds an enemy Hero spends poisoned per stack
 const int libAffx_lunaraPoisonerStacksPerApplySecond = 100; // stacks per extra second added by each application
-const fixed libAffx_lunaraToxinMaxDuration = 9.0;
 const fixed libAffx_lunaraToxinPerApplication = 3.0;
 const int libAffx_lunaraHuntressReward = 30;
 const int libAffx_lunaraPollinatorReward = 40;
@@ -64,20 +63,20 @@ void libAffx_LunaraSaveBank() {
     }
 }
 
-// Poisoner: every 30 stacks raise Nature's Toxin's 9 second maximum by 1 second, and every 100 stacks
-// add 1 second to what each application adds (3 seconds base)
+// Poisoner: Nature's Toxin has no maximum duration, and every 100 stacks add 1 second to what each
+// application adds (3 seconds base)
 bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     unit target = EventUnit();
     string key = "LunaraToxinExpires_" + IntToString(UnitGetTag(target));
     fixed now = GameGetMissionTime();
     fixed previous = MaxF(0.0, DataTableGetFixed(true, key) - now);
     int stacks = libAffx_LunaraStacks(libAffx_lunaraPoisoner);
-    fixed maximum = libAffx_lunaraToxinMaxDuration + IntToFixed(stacks / libAffx_lunaraPoisonerStacksPerMaxSecond);
     fixed perApplication = libAffx_lunaraToxinPerApplication + IntToFixed(stacks / libAffx_lunaraPoisonerStacksPerApplySecond);
     fixed current;
     fixed wanted;
     if (testConds) {
-        if (stacks <= 0 || UnitBehaviorEffectPlayer(target, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
+        if (!libAffx_LunaraHasQuest(libAffx_lunaraPoisoner) ||
+            UnitBehaviorEffectPlayer(target, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
             return false;
         }
     }
@@ -88,12 +87,41 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     if (EventUnitBehaviorChange() == c_unitBehaviorChangeCreate) {
         previous = 0.0;
     }
-    wanted = MaxF(current, MinF(previous + perApplication, maximum));
+    wanted = MaxF(current, previous + perApplication);
     if (wanted > current) {
         UnitBehaviorSetDurationRemaining(target, "DryadNaturesToxin", wanted);
     }
     DataTableSetFixed(true, key, now + wanted);
     return true;
+}
+
+// Poisoner: every 5 seconds an enemy Hero spends poisoned by Lunara grants a stack
+void libAffx_LunaraPoisonerTick(unit hero) {
+    unitgroup heroes;
+    unit target;
+    string key;
+    int seconds;
+    int i;
+    if (!libAffx_LunaraHasQuest(libAffx_lunaraPoisoner)) {
+        return;
+    }
+    // Only enemies carry Lunara's poison, so any Heroic unit will do here
+    heroes = UnitGroup(null, c_playerAny, RegionEntireMap(), UnitFilter((1 << c_targetFilterHeroic), 0,
+        (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32))), 0);
+    for (i = 1; i <= UnitGroupCount(heroes, c_unitCountAll); i += 1) {
+        target = UnitGroupUnit(heroes, i);
+        if (!UnitHasBehavior2(target, "DryadNaturesToxin") ||
+            UnitBehaviorEffectPlayer(target, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
+            continue;
+        }
+        key = "LunaraPoisonedSeconds_" + IntToString(UnitGetTag(target));
+        seconds = DataTableGetInt(true, key) + 1;
+        if (seconds >= libAffx_lunaraPoisonerSecondsPerStack) {
+            seconds = 0;
+            libGame_gf_ModifyTokenCount(1, libAffx_LunaraQuestToken(libAffx_lunaraPoisoner), hero);
+        }
+        DataTableSetInt(true, key, seconds);
+    }
 }
 
 bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
@@ -117,6 +145,8 @@ bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
             libAffx_lunaraRestored[quest] = wanted;
         }
     }
+
+    libAffx_LunaraPoisonerTick(hero);
 
     // Splintered Huntress reward: Noxious Blossom empowers 4 Basic Attacks instead of 3
     if (!libAffx_lunaraHuntressRewarded && libAffx_LunaraStacks(2) >= libAffx_lunaraHuntressReward) {
