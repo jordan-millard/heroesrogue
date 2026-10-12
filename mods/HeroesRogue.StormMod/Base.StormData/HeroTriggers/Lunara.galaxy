@@ -11,7 +11,6 @@ const int libAffx_lunaraQuests = 3;
 const int libAffx_lunaraPoisoner = 1;
 const int libAffx_lunaraPoisonerCarryLevels = 8;        // 10% per level, so 80% of the stacks carry over
 const int libAffx_lunaraPoisonerSecondsPerStack = 5;  // seconds an enemy Hero spends poisoned per stack
-const int libAffx_lunaraPoisonerStacksPerApplySecond = 100; // stacks per extra second added by each application
 const fixed libAffx_lunaraToxinPerApplication = 3.0;
 const int libAffx_lunaraHuntressReward = 30;
 const int libAffx_lunaraPollinatorReward = 40;
@@ -63,15 +62,12 @@ void libAffx_LunaraSaveBank() {
     }
 }
 
-// Poisoner: Nature's Toxin has no maximum duration, and every 100 stacks add 1 second to what each
-// application adds (3 seconds base)
+// Poisoner: Nature's Toxin has no maximum duration; each application adds 3 seconds
 bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     unit target = EventUnit();
     string key = "LunaraToxinExpires_" + IntToString(UnitGetTag(target));
     fixed now = GameGetMissionTime();
     fixed previous = MaxF(0.0, DataTableGetFixed(true, key) - now);
-    int stacks = libAffx_LunaraStacks(libAffx_lunaraPoisoner);
-    fixed perApplication = libAffx_lunaraToxinPerApplication + IntToFixed(stacks / libAffx_lunaraPoisonerStacksPerApplySecond);
     fixed current;
     fixed wanted;
     if (testConds) {
@@ -87,7 +83,7 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     if (EventUnitBehaviorChange() == c_unitBehaviorChangeCreate) {
         previous = 0.0;
     }
-    wanted = MaxF(current, previous + perApplication);
+    wanted = MaxF(current, previous + libAffx_lunaraToxinPerApplication);
     if (wanted > current) {
         UnitBehaviorSetDurationRemaining(target, "DryadNaturesToxin", wanted);
     }
