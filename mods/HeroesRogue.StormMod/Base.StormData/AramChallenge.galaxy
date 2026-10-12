@@ -1,16 +1,86 @@
 // ============================================================
-// ARAM challenge: a 1v1 on an ARAM map between rounds
+// ARAM challenge: after winning rounds 4 and 8 (with Extra maps on), the player picks one of 3 ARAM
+// maps and plays 1 vs 2 ranged assassins. The challenge doesn't count as a round and has no boons or
+// curses. Winning gives an Uncommon or better boon next game; dying once or losing gives a curse.
 // ============================================================
 
-trigger libAffx_aramTalentsTrigger;
-bool libAffx_aramTalentsSeenPause;
+const int libAffx_aramRound1 = 4;
+const int libAffx_aramRound2 = 8;
 
-// ARAM maps turn talent picking off after HeroesRogue turns it on, so keep it on while the game runs.
-// Talents stay off until the first pause (the starter boon selection) has ended or the gates are open, like on other maps.
-// Runs on real time because game time is frozen while paused.
-bool libAffx_AramTalents_Func (bool testConds, bool runActions) {
+bool libAffx_aramActive;
+int libAffx_aramTicks;
+trigger libAffx_aramTickTrigger;
+trigger libAffx_aramHeroDiedTrigger;
+
+bool libAffx_AramIsActive() {
+    return libAffx_aramActive;
+}
+
+// Map init, once the save bank is loaded
+void libAffx_AramChallengeMapInit() {
+    libAffx_aramActive = libAffx_MapChoiceIsAramMap(libAffx_currentMap);
+}
+
+// Offered instead of the regular map choice after the challenge rounds
+bool libAffx_AramShouldOffer() {
+    string hero = libCore_gf_GetHeroFromIndex(libAffx_playersHeroIndex[libAffx_player]);
+    if (!libAffx_MapChoiceExtraMapsEnabled()) {
+        return false;
+    }
+    if (hero == "Cho" || hero == "Gall") {
+        return false; // the partner needs an allied slot, and ARAM challenge maps have none
+    }
+    return libAffx_currentRun == libAffx_aramRound1 || libAffx_currentRun == libAffx_aramRound2;
+}
+void libAffx_AramChoiceRun() {
+    libAffx_mapChoiceAram = true;
+    libAffx_MapChoiceRun();
+    libAffx_mapChoiceAram = false;
+}
+
+// Handles the end of an ARAM challenge. Returns false when this wasn't one.
+bool libAffx_AramGameOver(int winningTeam) {
+    if (!libAffx_aramActive) {
+        return false;
+    }
+    if (winningTeam == libAffx_teamOrderIndex) {
+        libAffx_BankSaveValueString("AramReward", "Boon");
+        libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeWon"));
+    } else {
+        libAffx_BankSaveValueString("AramReward", "Curse");
+        libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeLost"));
+    }
+    // Boons and curses missed in the previous round carry on past the challenge
+    libAffx_boonsNextGame = libAffx_boonsQueued;
+    libAffx_cursesNextGame = libAffx_cursesQueued;
+    libAffx_MapChoiceRun();
+    libAffx_SaveBank();
+    return true;
+}
+
+// Next regular game: hand out the challenge result
+void libAffx_AramQueueRewardBoon() {
+    if (libAffx_BankLoadValueString("AramReward") != "Boon") {
+        return;
+    }
+    libAffx_BankSaveValueString("AramReward", "");
+    libAffx_DisplayChatMessage(StringExternal("Message/AramRewardBoon"));
+    libAffx_QueueBoon(libAffx_rarityUncommon, 1, false, false);
+}
+void libAffx_AramQueueRewardCurse() {
+    if (libAffx_BankLoadValueString("AramReward") != "Curse") {
+        return;
+    }
+    libAffx_BankSaveValueString("AramReward", "");
+    libAffx_DisplayChatMessage(StringExternal("Message/AramRewardCurse"));
+    libAffx_QueueCurse(1, false);
+}
+
+// Explains the rules once the match starts, and keeps talents on: ARAM maps turn talent picking off
+// after HeroesRogue turns it on. Runs on real time because game time is frozen while paused.
+bool libAffx_AramTick_Func (bool testConds, bool runActions) {
     if (testConds) {
-        if (!libAffx_MapChoiceIsAramMap(libAffx_GetMapID(libCore_gv_mAPMapStringID)) || libGame_gv_gameOver) {
+        if (!libAffx_aramActive || libGame_gv_gameOver) {
             return false;
         }
     }
@@ -18,15 +88,38 @@ bool libAffx_AramTalents_Func (bool testConds, bool runActions) {
         return true;
     }
 
-    if (libAffx_gamePaused) {
-        libAffx_aramTalentsSeenPause = true;
-    } else if (libAffx_aramTalentsSeenPause || libAffx_GateIsOpen()) {
+    libAffx_aramTicks += 1;
+    if (libAffx_aramTicks == 6) {
+        libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeRules"));
+    }
+    if (!libAffx_gamePaused) {
         SetTalentsEnabled(true);
     }
     return true;
 }
 
+// Dying once loses the challenge
+bool libAffx_AramHeroDied_Func (bool testConds, bool runActions) {
+    unit core = libGame_gv_teams[libAffx_teamOrderIndex].lv_core;
+    if (testConds) {
+        if (!libAffx_aramActive || libGame_gv_gameOver || EventUnit() != libGame_gv_players[libAffx_player].lv_heroUnit) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+
+    libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeDied"));
+    UnitBehaviorRemove(core, "CoreInvulnerability", c_unitBehaviorCountAll);
+    libNtve_gf_MakeUnitInvulnerable(core, false);
+    UnitKill(core);
+    return true;
+}
+
 void libAffx_AramChallengeTriggers_Init() {
-    libAffx_aramTalentsTrigger = TriggerCreate("libAffx_AramTalents_Func");
-    TriggerAddEventTimePeriodic(libAffx_aramTalentsTrigger, 0.5, c_timeReal);
+    libAffx_aramTickTrigger = TriggerCreate("libAffx_AramTick_Func");
+    TriggerAddEventTimePeriodic(libAffx_aramTickTrigger, 0.5, c_timeReal);
+    libAffx_aramHeroDiedTrigger = TriggerCreate("libAffx_AramHeroDied_Func");
+    TriggerAddEventUnitDied(libAffx_aramHeroDiedTrigger, null);
 }

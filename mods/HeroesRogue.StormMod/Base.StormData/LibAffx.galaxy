@@ -3368,33 +3368,35 @@ void libAffx_SaveBank() {
     unit heroUnit;
     int groupCount;
     BankLoad("PlayerSettings", libAffx_player);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Takedowns", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Takedowns") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_takedowns));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Kills", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Kills") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_kills));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Assists", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Assists") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_assists));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "RegenGlobes", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "RegenGlobes") + libGame_gv_scoreValues[libAffx_player].lv_regenGlobes);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "SpellDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "SpellDamage") + libGame_gv_scoreValues[libAffx_player].lv_spellDamage);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "PhysicalDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "PhysicalDamage") + libGame_gv_scoreValues[libAffx_player].lv_physicalDamage);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "HeroDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "HeroDamage") + FixedToInt(PlayerScoreValueGetAsFixed(libAffx_player, "HeroDamage")));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "SiegeDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "SiegeDamage") + FixedToInt(PlayerScoreValueGetAsFixed(libAffx_player, "SiegeDamage")));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "MinionKills", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "MinionKills") + libGame_gv_scoreValues[libAffx_player].lv_minionKills);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Experience", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Experience") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_individualXPEarned));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Healing", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Healing") + FixedToInt(PlayerScoreValueGetAsFixed(libAffx_player, "Healing")));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Deaths", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Deaths") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_deaths));
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "DamageTaken", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "DamageTaken") + libGame_gv_scoreValues[libAffx_player].lv_damageTaken);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "MercCaptures", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "MercCaptures") + libGame_gv_scoreValues[libAffx_player].lv_creepCampsCaptured);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesWon", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesWon") + libAffx_objectivesWonThisGame);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesLost", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesLost") + libAffx_objectivesLostThisGame);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsUsed", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsUsed") + libAffx_rerollsUsed);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsCurseUsed", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsCurseUsed") + libAffx_rerollsCurseUsed);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "BansUsed", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "BansUsed") + libAffx_bansUsed);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSkipped", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSkipped") + libAffx_cursesSkipped);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSwapped", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSwapped") + libAffx_cursesSwapped);
-    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "GameTime", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "GameTime") + FixedToInt(TimerGetElapsed(libGame_gv_gameTimer)));
-    for (i = 1; i <= libAffx_maxHeroes; i += 1) {
-        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterOrder_" + libCore_gf_GetHeroFromIndex(i), BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterOrder_" + libCore_gf_GetHeroFromIndex(i)) + libAffx_heroCounter[libAffx_teamOrderIndex][i]);
-    }
-    for (i = 1; i <= libAffx_maxHeroes; i += 1) {
-        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterChaos_" + libCore_gf_GetHeroFromIndex(i), BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterChaos_" + libCore_gf_GetHeroFromIndex(i)) + libAffx_heroCounter[libAffx_teamChaosIndex][i]);
+    if (!libAffx_AramIsActive()) { // the ARAM challenge doesn't count toward run stats
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Takedowns", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Takedowns") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_takedowns));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Kills", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Kills") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_kills));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Assists", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Assists") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_assists));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "RegenGlobes", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "RegenGlobes") + libGame_gv_scoreValues[libAffx_player].lv_regenGlobes);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "SpellDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "SpellDamage") + libGame_gv_scoreValues[libAffx_player].lv_spellDamage);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "PhysicalDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "PhysicalDamage") + libGame_gv_scoreValues[libAffx_player].lv_physicalDamage);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "HeroDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "HeroDamage") + FixedToInt(PlayerScoreValueGetAsFixed(libAffx_player, "HeroDamage")));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "SiegeDamage", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "SiegeDamage") + FixedToInt(PlayerScoreValueGetAsFixed(libAffx_player, "SiegeDamage")));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "MinionKills", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "MinionKills") + libGame_gv_scoreValues[libAffx_player].lv_minionKills);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Experience", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Experience") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_individualXPEarned));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Healing", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Healing") + FixedToInt(PlayerScoreValueGetAsFixed(libAffx_player, "Healing")));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "Deaths", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "Deaths") + FixedToInt(libGame_gv_scoreValues[libAffx_player].lv_deaths));
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "DamageTaken", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "DamageTaken") + libGame_gv_scoreValues[libAffx_player].lv_damageTaken);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "MercCaptures", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "MercCaptures") + libGame_gv_scoreValues[libAffx_player].lv_creepCampsCaptured);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesWon", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesWon") + libAffx_objectivesWonThisGame);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesLost", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "ObjectivesLost") + libAffx_objectivesLostThisGame);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsUsed", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsUsed") + libAffx_rerollsUsed);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsCurseUsed", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "RerollsCurseUsed") + libAffx_rerollsCurseUsed);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "BansUsed", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "BansUsed") + libAffx_bansUsed);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSkipped", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSkipped") + libAffx_cursesSkipped);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSwapped", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "CursesSwapped") + libAffx_cursesSwapped);
+        BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "GameTime", BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "GameTime") + FixedToInt(TimerGetElapsed(libGame_gv_gameTimer)));
+        for (i = 1; i <= libAffx_maxHeroes; i += 1) {
+            BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterOrder_" + libCore_gf_GetHeroFromIndex(i), BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterOrder_" + libCore_gf_GetHeroFromIndex(i)) + libAffx_heroCounter[libAffx_teamOrderIndex][i]);
+        }
+        for (i = 1; i <= libAffx_maxHeroes; i += 1) {
+            BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterChaos_" + libCore_gf_GetHeroFromIndex(i), BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionStats, "HeroCounterChaos_" + libCore_gf_GetHeroFromIndex(i)) + libAffx_heroCounter[libAffx_teamChaosIndex][i]);
+        }
     }
     BankValueSetFromString(BankLastCreated(), libAffx_BankSection, "Map", libAffx_nextMap);
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSection, "CurrentRun", libAffx_currentRun);
@@ -3585,11 +3587,18 @@ void libAffx_AddSaveBankFixed(int affix, string key, fixed value) {
 bool libAffx_GameOverCallbackTrigger_Func (bool testConds, bool runActions) {
     int winningTeam = libGame_winningTeam;
 
+    if (libAffx_AramGameOver(winningTeam)) {
+        return true; // the ARAM challenge doesn't count toward achievements
+    }
     libAffx_EvaluateAllAchievements();
 
     if (winningTeam == libAffx_teamOrderIndex) {
         // The player picks the next map (and AI rosters) on the map choice screen
-        libAffx_MapChoiceRun();
+        if (libAffx_AramShouldOffer()) {
+            libAffx_AramChoiceRun();
+        } else {
+            libAffx_MapChoiceRun();
+        }
         if (libAffx_currentRun == libAffx_winningRound) {
             libAffx_SetDialogControlText(libAffx_dialogGameover.label, StringExternal("Label/Name/Victory"));
             libAffx_SetDialogControlEnabled(libAffx_dialogGameover.continueButton, true);
@@ -4455,9 +4464,13 @@ bool libAffx_TestCommandTrigger_Func (bool testConds, bool runActions) {
         } else if ((nextmapValue - 1) % nextmapSlots == 3) {
             nextmapMap = libAffx_map4;
         }
-        GameSetNextMap(libAffx_MapChoiceGetMapPath(nextmapMap));
         libAffx_nextMap = libAffx_GetMapString(nextmapMap);
         libAffx_SaveBank();
+        if (libAffx_MapChoiceIsRotationMap(nextmapMap)) {
+            libAffx_BankSaveValueString("RotationMap", libAffx_GetMapString(nextmapMap));
+            Wait(3.0, c_timeReal); // give the rotation helper time to swap the map in
+        }
+        GameSetNextMap(libAffx_MapChoiceGetMapPath(nextmapMap));
         Wait(1, c_timeGame);
         KickFromGame(PlayerGroupAll());
     } else if (chatMessage == "rerolls" || chatMessage == "rr") {
@@ -4699,6 +4712,14 @@ bool libAffx_BoonsCursesLevelUp_Func (bool testConds, bool runActions) {
             return false;
         }
     }
+    if (libAffx_AramIsActive()) {
+        // ARAM challenge: no boons or curses during the match
+        if (player == libAffx_enemy && level == 1) {
+            libAffx_Wait(libAffx_gameStartDelay, c_timeGame);
+            libAffx_ApplyDifficulty();
+        }
+        return true;
+    }
     if (player == libAffx_player) {
         if (level == 1) {
             libAffx_Wait(libAffx_gameStartDelay, c_timeGame);
@@ -4718,6 +4739,7 @@ bool libAffx_BoonsCursesLevelUp_Func (bool testConds, bool runActions) {
                     libAffx_QueueBoon(libAffx_rarityRare, 1, false, false);
                 }
             }
+            libAffx_AramQueueRewardBoon();
             if (libAffx_boonsQueued > 0) {
                 libAffx_DisplayChatMessage(StringExternal("Message/BoonNextGame" + IntToString(MinI(libAffx_boonsQueued, 3))));
                 libAffx_QueueBoon(libAffx_rarityCommon, libAffx_boonsQueued, false, false);
@@ -4736,6 +4758,7 @@ bool libAffx_BoonsCursesLevelUp_Func (bool testConds, bool runActions) {
             }
             libAffx_ApplyDifficulty();
             libAffx_QueueCurse(1, false);
+            libAffx_AramQueueRewardCurse();
             if (libAffx_cursesQueued > 0) {
                 libAffx_DisplayChatMessage(StringExternal("Message/CurseNextGame" + IntToString(MinI(libAffx_cursesQueued, 3))));
                 libAffx_QueueCurse(libAffx_cursesQueued, false);
@@ -4783,7 +4806,10 @@ bool libAffx_MapInitTrigger_Func (bool testConds, bool runActions) {
     TriggerExecute(libAffx_MapInitLoadBankTrigger, false, false);
     libAffx_LoadSettingsBank();
 
-    libAffx_currentRun += 1;
+    libAffx_AramChallengeMapInit();
+    if (!libAffx_AramIsActive()) {
+        libAffx_currentRun += 1; // the ARAM challenge doesn't count as a round
+    }
     libPBU2_timerExpired = libAffx_HeroSelectedTrigger;
 
     libAffx_ShowTalent("DoNothing", false);

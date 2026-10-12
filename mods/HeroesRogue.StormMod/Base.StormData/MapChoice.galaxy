@@ -23,6 +23,7 @@ int[libAffx_mapChoiceOptions + 1][24] libAffx_mapChoiceRoleCounts; // index: tea
 int[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceButtons;
 int libAffx_mapChoiceDialog = c_invalidDialogId;
 int libAffx_mapChoiceSelected;
+bool libAffx_mapChoiceAram; // offering the ARAM challenge instead of the next round
 bool libAffx_mapChoiceTriggerRegistered;
 
 // Maps that can occupy the rotating slot
@@ -93,6 +94,14 @@ string libAffx_MapChoiceGetMapImage(int map) {
         return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_shrines.dds";
     } else if (map == libAffx_mapCrypts) {
         return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_tombofthespiderqueen.dds";
+    } else if (map == libAffx_mapIndustrialDistrict) {
+        return "Assets/Textures/heroesrogue_mapchoice_industrialdistrict.tga";
+    } else if (map == libAffx_mapBraxisOutpost) {
+        return "Assets/Textures/heroesrogue_mapchoice_braxisoutpost.png";
+    } else if (map == libAffx_mapSilverCity) {
+        return "Assets/Textures/heroesrogue_mapchoice_silvercity.png";
+    } else if (map == libAffx_mapLostCavern) {
+        return "Assets/Textures/heroesrogue_mapchoice_lostcavern.png";
     }
     return "";
 }
@@ -131,7 +140,11 @@ int libAffx_MapChoicePickHero(int option, int player, bool useRoles, bool checkA
     bool allowMelee = false;
     bool allowHealer = false;
     bool allowSupport = false;
+    int aiPlayer = player;
 
+    if (PlayerType(aiPlayer) != c_playerTypeComputer) {
+        aiPlayer = libAffx_enemy;
+    }
     if (libAffx_mapChoiceRoleCounts[option][team * 8 + c_expandedRoleHealer] == 0) {
         allowHealer = true;
     } else if (libAffx_mapChoiceRoleCounts[option][team * 8 + c_expandedRoleTank] == 0) {
@@ -143,6 +156,14 @@ int libAffx_MapChoicePickHero(int option, int player, bool useRoles, bool checkA
         allowBruiser = true;
         allowSupport = true;
     }
+    if (libAffx_mapChoiceAram) {
+        allowTank = false;
+        allowBruiser = false;
+        allowRanged = true;
+        allowMelee = false;
+        allowHealer = false;
+        allowSupport = false;
+    }
 
     for (heroIndex = 1; heroIndex <= MinI(libCore_gv_dataHeroesNumberOfHeroes, libAffx_mapChoiceMaxHeroIndex); heroIndex += 1) {
         heroName = libCore_gf_GetHeroFromIndex(heroIndex);
@@ -150,8 +171,8 @@ int libAffx_MapChoicePickHero(int option, int player, bool useRoles, bool checkA
         if (GameIsHeroDisabled(heroName)) { continue; }
         if (libAffx_mapChoiceUsed[option][heroIndex]) { continue; }
         if (heroName == "Cho" || heroName == "Gall") { continue; }
-        if (!libCore_gf_MetagameDoesPlayerHaveAccessToHero(player, heroIndex)) { continue; }
-        if (checkAI && PlayerType(player) == c_playerTypeComputer && !libAIAI_gf_HeroAIAIDifficultyLevelShouldUseHero(player, heroIndex)) { continue; }
+        if (!libCore_gf_MetagameDoesPlayerHaveAccessToHero(aiPlayer, heroIndex)) { continue; }
+        if (checkAI && !libAIAI_gf_HeroAIAIDifficultyLevelShouldUseHero(aiPlayer, heroIndex)) { continue; }
         if (useRoles) {
             role = CatalogFieldValueGetAsInt(c_gameCatalogHero, heroName, "ExpandedRole", c_playerAny);
             if (role == c_expandedRoleTank && !allowTank) { continue; }
@@ -200,10 +221,14 @@ void libAffx_MapChoiceRollOption(int option, int map) {
 
     for (player = 1; player <= 10; player += 1) {
         if (player == libAffx_player || libAffx_mapChoiceHeroes[option][player] != 0) { continue; }
-        if (PlayerStatus(player) == c_playerStatusUnused) { continue; }
+        if (libAffx_mapChoiceAram && (player < libAffx_aramFirstEnemy || player > libAffx_aramLastEnemy)) { continue; }
         heroIndex = libAffx_MapChoicePickHero(option, player, true, true);
-        if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, false, true); }
-        if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, false, false); }
+        if (libAffx_mapChoiceAram) {
+            if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, true, false); }
+        } else {
+            if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, false, true); }
+            if (heroIndex == 0) { heroIndex = libAffx_MapChoicePickHero(option, player, false, false); }
+        }
         if (heroIndex != 0) {
             libAffx_MapChoiceMarkHero(option, player, heroIndex);
         }
@@ -220,14 +245,21 @@ void libAffx_MapChoiceRollMaps(bool includeCurrentMap) {
         currentMap = 0;
     }
 
-    if (libAffx_map1 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map1; }
-    if (libAffx_map2 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map2; }
-    if (libAffx_map3 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map3; }
-    for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
-        if (libAffx_MapChoiceRotationMap(i) == currentMap) { continue; }
-        if (libAffx_MapChoiceRotationMap(i) != libAffx_map4 && !libAffx_MapChoiceExtraMapsEnabled()) { continue; }
-        poolCount += 1;
-        pool[poolCount] = libAffx_MapChoiceRotationMap(i);
+    if (libAffx_mapChoiceAram) {
+        for (i = 1; i <= libAffx_aramMapCount; i += 1) {
+            poolCount += 1;
+            pool[poolCount] = libAffx_MapChoiceAramMap(i);
+        }
+    } else {
+        if (libAffx_map1 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map1; }
+        if (libAffx_map2 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map2; }
+        if (libAffx_map3 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map3; }
+        for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
+            if (libAffx_MapChoiceRotationMap(i) == currentMap) { continue; }
+            if (libAffx_MapChoiceRotationMap(i) != libAffx_map4 && !libAffx_MapChoiceExtraMapsEnabled()) { continue; }
+            poolCount += 1;
+            pool[poolCount] = libAffx_MapChoiceRotationMap(i);
+        }
     }
 
     for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
@@ -272,8 +304,15 @@ void libAffx_MapChoiceCreateDialog() {
     libAffx_mapChoiceDialog = DialogCreate(500, 500, c_anchorCenter, 0, 0, true);
     DialogSetFullscreen(libAffx_mapChoiceDialog, true);
     DialogSetImageVisible(libAffx_mapChoiceDialog, false);
-    libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Title"), "Affix_Gameover",
-        1600, 120, c_anchorTop, 0, 20, ColorWithAlpha(0, 0, 0, 0), false);
+    if (libAffx_mapChoiceAram) {
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/AramTitle"), "Affix_Gameover",
+            1600, 120, c_anchorTop, 0, 20, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/AramRules"), "Affix_Dialog",
+            1600, 60, c_anchorTop, 0, 130, ColorWithAlpha(0, 0, 0, 0), false);
+    } else {
+        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Title"), "Affix_Gameover",
+            1600, 120, c_anchorTop, 0, 20, ColorWithAlpha(0, 0, 0, 0), false);
+    }
     for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
         x = (option * 2 - libAffx_mapChoiceOptions - 1) * libAffx_mapChoiceColumnOffsetX / 2;
         frame = DialogControlCreateFromTemplate(libAffx_mapChoiceDialog, c_triggerControlTypeImage, "StandardTemplates/StandardContextMenuFrame");
@@ -281,11 +320,15 @@ void libAffx_MapChoiceCreateDialog() {
         libAffx_SetDialogControlPosition(frame, c_anchorCenter, x, 40);
         libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Map/" + libAffx_GetMapString(libAffx_mapChoiceMaps[option])), "Affix_Dialog",
             580, 60, c_anchorCenter, x, -350, ColorWithAlpha(0, 0, 0, 0), false);
-        libAffx_CreateDialogControlImage(libAffx_mapChoiceDialog, libAffx_MapChoiceGetMapImage(libAffx_mapChoiceMaps[option]),
-            libAffx_mapChoiceMapImageWidth, libAffx_mapChoiceMapImageHeight, c_anchorCenter, x, -150, StringToText(""));
-        libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Allies"), "Affix_Dialog",
-            400, 50, c_anchorCenter, x, 45, ColorWithAlpha(0, 0, 0, 0), false);
-        libAffx_MapChoiceCreatePortraitRow(option, 1, 5, x, 110);
+        if (libAffx_MapChoiceGetMapImage(libAffx_mapChoiceMaps[option]) != "") {
+            libAffx_CreateDialogControlImage(libAffx_mapChoiceDialog, libAffx_MapChoiceGetMapImage(libAffx_mapChoiceMaps[option]),
+                libAffx_mapChoiceMapImageWidth, libAffx_mapChoiceMapImageHeight, c_anchorCenter, x, -150, StringToText(""));
+        }
+        if (!libAffx_mapChoiceAram) {
+            libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Allies"), "Affix_Dialog",
+                400, 50, c_anchorCenter, x, 45, ColorWithAlpha(0, 0, 0, 0), false);
+            libAffx_MapChoiceCreatePortraitRow(option, 1, 5, x, 110);
+        }
         libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Enemies"), "Affix_Dialog",
             400, 50, c_anchorCenter, x, 190, ColorWithAlpha(0, 0, 0, 0), false);
         libAffx_MapChoiceCreatePortraitRow(option, 6, 10, x, 255);
