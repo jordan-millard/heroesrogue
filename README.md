@@ -34,6 +34,8 @@ Welcome to Heroes Rogue! This is a singleplayer rogue-like mod for Heroes of the
 
 **Map Choice:** At the start of a run (after picking your Hero) and after every win, you choose the next battleground from 3 options. Each option shows the AI allies and enemies you will play with and against on that map. The map pool is Cursed Hollow, Garden of Terror, Blackheart's Bay, and Sky Temple, plus Haunted Mines, Infernal Shrines, and Tomb of the Spider Queen with Extra Maps installed.
 
+**ARAM Challenge:** With Extra Maps on, winning round 4 or round 8 leads to an ARAM challenge instead of the next round. Pick one of 3 ARAM maps (Industrial District, Braxis Outpost, Silver City, Lost Cavern), each showing the 2 ranged assassins you will face alone. Destroy their Core to earn an Uncommon or better boon at the start of the next game. If you die once or lose, you get a curse instead. The challenge does not count as a game: the round does not advance, there are no boons or curses during the match, and it does not affect run stats, achievements, or missed boons and curses. It is skipped when playing Cho'Gall.
+
 The following Heroes have special interactions with boons and curses:<br>
 - **Lost Vikings, Rexxar, Samuro, and Nova:** Boons and curses apply to all controlled units/clones.<br>
 - **Abathur:** Boons and curses apply to Symbiote (NOT the host) and Ultimate Evolution.<br>
