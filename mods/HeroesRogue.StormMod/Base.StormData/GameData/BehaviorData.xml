@@ -224,6 +224,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ArmorModification AllArmorBonus="30" />
   </CBehaviorBuff>
 
+  <CBehaviorBuff id="AffixBroodMother" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0.15" />
+    </Modification>
+  </CBehaviorBuff>
+
   <CBehaviorBuff id="AffixAramTankHealth" parent="CarryBehaviorParent">
     <Modification>
       <VitalMaxFractionArray index="Life" value="0.2" />
