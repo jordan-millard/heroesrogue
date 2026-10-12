@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog>
+    <CTerrain id="Zion">
+        <FixedSkyboxModel value=""/>
+        <NonFixedSkyboxModel value=""/>
+        <FogColor value="255,67,95,46"/>
+        <FogDensity value="1.000000"/>
+        <FogFalloff value="0.500000"/>
+        <FogStartingHeight value="1.000000"/>
+        <DoubleLambert value="0"/>
+        <EnvironmentMap value="Assets\Textures\reflection_blue.dds"/>
+        <FogNearPlane value="0.000000"/>
+        <FogDistanceFalloff value="500.000000"/>
+        <HeightMapEnabled value="1"/>
+    </CTerrain>
+    <CTerrain id="Zion2">
+        <DoubleLambert value="0"/>
+        <HeightMapEnabled value="1"/>
+        <BlendTextures index="3" value="StormZion2"/>
+    </CTerrain>
+    <CTerrain id="Zion3">
+        <BlendTextures index="4" value="StormZion11"/>
+        <BlendTextures index="5" value="StormZion2"/>
+        <BlendTextures index="6" value="StormZion14"/>
+        <BlendTextures index="7" value="StormZion7"/>
+        <DoubleLambert value="0"/>
+        <HeightMapEnabled value="1"/>
+    </CTerrain>
+</Catalog>

@@ -13,7 +13,7 @@ const int libAffx_teamOrderIndex = libGame_gv_teamOrderIndex_C;
 const int libAffx_teamChaosIndex = libGame_gv_teamChaosIndex_C;
 
 const int libAffx_maxHeroes = 91;
-const int libAffx_maxMaps = 14; // highest map ID (ARAM maps are 11-14)
+const int libAffx_maxMaps = 19; // highest map ID (ARAM maps are 11-14)
 const int libAffx_maxTalents = 20;
 const int libAffx_maxCatalogModifications = 20;
 const int libAffx_maxBehaviors = 10;
@@ -73,6 +73,11 @@ const int libAffx_mapIndustrialDistrict = 11;
 const int libAffx_mapBraxisOutpost  =   12;
 const int libAffx_mapSilverCity     =   13;
 const int libAffx_mapLostCavern     =   14;
+const int libAffx_mapBattlefieldofEternity = 15;
+const int libAffx_mapHanamura       =   16;
+const int libAffx_mapAlteracPass    =   17;
+const int libAffx_mapBraxisHoldout  =   18;
+const int libAffx_mapWarheadJunction = 19;
 
 const int libAffx_map1 = libAffx_mapCursedHollow;
 const int libAffx_map2 = libAffx_mapGardenofTerror;
@@ -81,7 +86,7 @@ const int libAffx_map4 = libAffx_mapSkyTemple;
 // Rotating slot: the map4 path can hold any map from the rotation pool (MapChoice.galaxy).
 // An external helper swaps the chosen map into this path before it loads.
 const string libAffx_rotationSlotPath = "heroes/singleplayermaps/(10)trymemode.stormmap";
-const int libAffx_rotationMapCount = 7;
+const int libAffx_rotationMapCount = 12;
 // ARAM maps also use the rotating slot, but are not in the regular map choice pool
 const int libAffx_aramMapCount = 4;
 // ARAM challenge enemies (the challenge maps only have these computer slots)

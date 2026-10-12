@@ -20,6 +20,12 @@ void libVLSK_InitLibraries () {
     libUIUI_InitVariables();
 }
 
+// Hostile Takeover curse: the enemy captures faster, and your progress drains on a point your Heroes left
+bool libVLSK_HostileTakeover_Func(bool testConds, bool runActions) {
+    libVLSK_hostileTakeover = true;
+    return true;
+}
+
 bool libVLSK_PauseTrigger_Func(bool testConds, bool runActions) {
 
     if (!runActions) {
@@ -335,6 +341,9 @@ void libVLSK_gf_AdvanceCapturePointContestProgress (int lp_capturePointIndex, in
     // Variable Initialization
     lv_enemyTeam = libGame_gf_EnemyTeam(lp_contestingTeam);
     lv_newProgress = (libVLSK_gv_capturePoints[lp_capturePointIndex].lv_contestTimes[lp_contestingTeam] + libVLSK_gv_capturePointCheckPeriod_C);
+    if (libVLSK_hostileTakeover && lp_contestingTeam == libGame_gv_teamChaosIndex_C) {
+        lv_newProgress += libVLSK_gv_capturePointCheckPeriod_C * 0.5;
+    }
 
     // Implementation
     if ((libVLSK_gv_capturePoints[lp_capturePointIndex].lv_contestTimes[lp_contestingTeam] == 0.0) && (libVLSK_gv_capturePoints[lp_capturePointIndex].lv_contestTimes[lv_enemyTeam] == 0.0)) {
@@ -357,6 +366,7 @@ void libVLSK_gf_AdvanceCapturePointVictoryProgress (int lp_capturePointIndex) {
     // Variable Declarations
     int lv_owningTeam;
     unitgroup lv_enemyHeroesOnPoint;
+    unitgroup lv_ownHeroesOnPoint;
 
     // Automatic Variable Declarations
     // Variable Initialization
@@ -364,6 +374,14 @@ void libVLSK_gf_AdvanceCapturePointVictoryProgress (int lp_capturePointIndex) {
     lv_enemyHeroesOnPoint = UnitGroupAlliance(libGame_gf_ComputerPlayerInTeam(libVLSK_gv_capturePoints[lp_capturePointIndex].lv_owningTeam), c_unitAllianceEnemy, libVLSK_gv_capturePoints[lp_capturePointIndex].lv_region, libVLSK_gv_capturePointContestFilter_C, 0);
 
     // Implementation
+    if (libVLSK_hostileTakeover && lv_owningTeam == libGame_gv_teamOrderIndex_C) {
+        lv_ownHeroesOnPoint = UnitGroupAlliance(libCore_gv_cOMPUTER_TeamOrder, c_unitAllianceAlly, libVLSK_gv_capturePoints[lp_capturePointIndex].lv_region, libVLSK_gv_capturePointContestFilter_C, 0);
+        if (UnitGroupCount(lv_ownHeroesOnPoint, c_unitCountAlive) == 0) {
+            libVLSK_gv_capturePoints[lp_capturePointIndex].lv_victoryTimes[lv_owningTeam] = MaxF(0.0, libVLSK_gv_capturePoints[lp_capturePointIndex].lv_victoryTimes[lv_owningTeam] - libVLSK_gv_capturePointCheckPeriod_C);
+            libVLSK_gf_ClampVictoryProgressto99(lp_capturePointIndex);
+            return;
+        }
+    }
     libVLSK_gv_capturePoints[lp_capturePointIndex].lv_victoryTimes[lv_owningTeam] += libVLSK_gv_capturePointCheckPeriod_C;
     if ((libVLSK_gv_capturePoints[lp_capturePointIndex].lv_victoryTimes[lv_owningTeam] >= libVLSK_gv_capturePointVictoryTimeGoal_C)) {
         if ((UnitGroupCount(lv_enemyHeroesOnPoint, c_unitCountAlive) > 0)) {

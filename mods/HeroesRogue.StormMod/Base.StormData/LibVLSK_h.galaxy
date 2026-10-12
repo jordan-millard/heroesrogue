@@ -236,6 +236,7 @@ trigger libVLSK_gt_PlayDeathJitter;
 trigger libVLSK_gt_PlaySlideout;
 
 bool libVLSK_paused = false;
+bool libVLSK_hostileTakeover = false; // Hostile Takeover curse
 
 // Library Initialization
 void libVLSK_InitVariables ();

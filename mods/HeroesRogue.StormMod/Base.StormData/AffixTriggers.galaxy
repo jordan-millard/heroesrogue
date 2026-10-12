@@ -3061,6 +3061,93 @@ bool libAffx_DoomedAffixAdded (bool testConds, bool runActions) {
     return true;
 }
 // ============================================================
+// Hostile Takeover
+// ============================================================
+bool libAffx_HostileTakeoverAffixAdded (bool testConds, bool runActions) {
+    if (libAffx_currentMap == libAffx_mapVolskaya) {
+        TriggerExecute(TriggerCreate("libVLSK_HostileTakeover_Func"), true, false);
+    }
+    return true;
+}
+// ============================================================
+// Wounded Immortal
+// ============================================================
+bool libAffx_WoundedImmortalUnitCreated (bool testConds, bool runActions) {
+    unit immortal = EventUnitCreatedUnit();
+    if (testConds) {
+        if (libAffx_currentMap != libAffx_mapBattlefieldofEternity || UnitGetType(immortal) != "BossDuelBossHeaven") {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    Wait(0.0625, c_timeGame); // after the map scales the Immortal's Health
+    UnitSetPropertyFixed(immortal, c_unitPropLifePercent, 80.0);
+    return true;
+}
+// ============================================================
+// Drek'thar's Command
+// ============================================================
+bool libAffx_DrektharsCommandAffixAdded (bool testConds, bool runActions) {
+    unit core = libGame_gv_teams[libAffx_teamChaosIndex].lv_core;
+    if (libAffx_currentMap == libAffx_mapAlteracPass && UnitCount("TownTownHallL2", libAffx_teamChaos, RegionEntireMap(), libCore_gv_filtersStructure, 0) > 0) {
+        libAffx_AddUnitBehavior(core, "AffixDrektharsCommand", core, 1);
+    }
+    return true;
+}
+bool libAffx_DrektharsCommandUnitDied (bool testConds, bool runActions) {
+    unit fort = EventUnit();
+    unit core = libGame_gv_teams[libAffx_teamChaosIndex].lv_core;
+    if (testConds) {
+        if (libAffx_currentMap != libAffx_mapAlteracPass || UnitGetType(fort) != "TownTownHallL2" || UnitGetOwner(fort) != libAffx_teamChaos) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    if (UnitCount("TownTownHallL2", libAffx_teamChaos, RegionEntireMap(), libCore_gv_filtersStructure, 0) == 0) {
+        UnitBehaviorRemove(core, "AffixDrektharsCommand", c_unitBehaviorCountAll);
+    }
+    return true;
+}
+// ============================================================
+// Brood Mother
+// ============================================================
+bool libAffx_BroodMotherAffixAdded (bool testConds, bool runActions) {
+    if (libAffx_currentMap == libAffx_mapBraxisHoldout) {
+        TriggerExecute(TriggerCreate("libAffx_BroodMother_Func"), true, false); // MapCursesBraxisHoldout.galaxy
+    }
+    return true;
+}
+// ============================================================
+// Shimada Honor
+// ============================================================
+bool libAffx_ShimadaHonorAffixAdded (bool testConds, bool runActions) {
+    // The payload belongs to the enemy computer player while the enemy escorts it, and its speed with
+    // 3 or more escorts comes from this behavior. A contested payload doesn't move.
+    if (libAffx_currentMap == libAffx_mapHanamura) {
+        CatalogFieldValueModify(c_gameCatalogBehavior, "Payload_AllyMonitor_3", "Modification.MoveSpeedMaximum", libAffx_teamChaos, "1.3", c_upgradeOperationMultiply);
+        CatalogFieldValueModify(c_gameCatalogBehavior, "Payload_AllyMonitor_3", "Modification.MoveSpeedMinimum", libAffx_teamChaos, "1.3", c_upgradeOperationMultiply);
+    }
+    return true;
+}
+// ============================================================
+// Mutually Assured Destruction
+// ============================================================
+bool libAffx_MutuallyAssuredDestructionAffixAdded (bool testConds, bool runActions) {
+    int player;
+    if (libAffx_currentMap != libAffx_mapWarheadJunction) {
+        return true;
+    }
+    for (player = libAffx_enemy; player <= libCore_gv_bALMaxPlayers; player += 1) {
+        CatalogFieldValueModify(c_gameCatalogEffect, "NukeImpactSearchArea", "AreaArray[0].Radius", player, "1.25", c_upgradeOperationMultiply);
+        CatalogFieldValueModify(c_gameCatalogEffect, "NukeBurningSearchArea", "AreaArray[0].Radius", player, "1.25", c_upgradeOperationMultiply);
+    }
+    return true;
+}
+// ============================================================
 // Loot Box
 // ============================================================
 bool libAffx_LootBoxOneTime (bool testConds, bool runActions) {

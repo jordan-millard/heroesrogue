@@ -35,6 +35,11 @@ int libAffx_MapChoiceRotationMap(int index) {
     if (index == 5) { return libAffx_mapTowersofDoom; }
     if (index == 6) { return libAffx_mapDragonShire; }
     if (index == 7) { return libAffx_mapVolskaya; }
+    if (index == 8) { return libAffx_mapBattlefieldofEternity; }
+    if (index == 9) { return libAffx_mapHanamura; }
+    if (index == 10) { return libAffx_mapAlteracPass; }
+    if (index == 11) { return libAffx_mapBraxisHoldout; }
+    if (index == 12) { return libAffx_mapWarheadJunction; }
     return 0;
 }
 // Extra maps need the map rotation helper (tools/map-rotation) running, so they are opt-in
@@ -111,6 +116,16 @@ string libAffx_MapChoiceGetMapImage(int map) {
         return "Assets/Textures/heroesrogue_mapchoice_dragonshire.png";
     } else if (map == libAffx_mapVolskaya) {
         return "Assets/Textures/heroesrogue_mapchoice_volskaya.dds";
+    } else if (map == libAffx_mapBattlefieldofEternity) {
+        return "Assets/Textures/heroesrogue_mapchoice_battlefieldofeternity.png";
+    } else if (map == libAffx_mapHanamura) {
+        return "Assets/Textures/heroesrogue_mapchoice_hanamura.png";
+    } else if (map == libAffx_mapAlteracPass) {
+        return "Assets/Textures/heroesrogue_mapchoice_alteracpass.png";
+    } else if (map == libAffx_mapBraxisHoldout) {
+        return "Assets/Textures/heroesrogue_mapchoice_braxisholdout.png";
+    } else if (map == libAffx_mapWarheadJunction) {
+        return "Assets/Textures/heroesrogue_mapchoice_warheadjunction.png";
     }
     return "";
 }
