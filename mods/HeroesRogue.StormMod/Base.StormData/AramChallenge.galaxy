@@ -1,7 +1,8 @@
 // ============================================================
-// ARAM challenge: after winning rounds 4 and 8 (with Extra maps on), the player picks one of 3 ARAM
-// maps and plays 1 vs 2 ranged assassins. The challenge doesn't count as a round and has no boons or
-// curses. Winning gives an Uncommon or better boon next game; dying once or losing gives a curse.
+// ARAM challenges: after winning round 4 and round 8 (with Extra maps on, each can be turned off in the
+// options), the player picks one of 3 ARAM maps and plays alone against 3 AI: ranged assassins after
+// round 4, tanks with +20% Health after round 8. A challenge doesn't count as a round and has no boons
+// or curses. Winning gives an Uncommon or better boon next game; dying once or losing gives a curse.
 // ============================================================
 
 const int libAffx_aramRound1 = 4;
@@ -14,6 +15,26 @@ trigger libAffx_aramHeroDiedTrigger;
 
 bool libAffx_AramIsActive() {
     return libAffx_aramActive;
+}
+
+// 1 after round 4, 2 after round 8. The round doesn't advance during a challenge, so this also holds in the match.
+int libAffx_AramChallengeIndex() {
+    if (libAffx_currentRun == libAffx_aramRound2) {
+        return 2;
+    }
+    return 1;
+}
+
+// The challenge options only matter with Extra maps on
+void libAffx_AramUpdateOptions() {
+    bool enabled = libAffx_MapChoiceExtraMapsEnabled();
+    int i;
+    for (i = 1; i <= libAffx_dialogOptions.optionIndex; i += 1) {
+        if (libAffx_dialogOptions.option[i].checkbox == libAffx_dialogControlOptionsAram1 || libAffx_dialogOptions.option[i].checkbox == libAffx_dialogControlOptionsAram2) {
+            libAffx_SetDialogControlEnabled(libAffx_dialogOptions.option[i].checkbox, enabled);
+            libAffx_SetDialogControlEnabled(libAffx_dialogOptions.option[i].label, enabled);
+        }
+    }
 }
 
 // Map init, once the save bank is loaded
@@ -30,7 +51,13 @@ bool libAffx_AramShouldOffer() {
     if (hero == "Cho" || hero == "Gall") {
         return false; // the partner needs an allied slot, and ARAM challenge maps have none
     }
-    return libAffx_currentRun == libAffx_aramRound1 || libAffx_currentRun == libAffx_aramRound2;
+    if (libAffx_currentRun == libAffx_aramRound1) {
+        return libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsAram1, libAffx_player);
+    }
+    if (libAffx_currentRun == libAffx_aramRound2) {
+        return libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsAram2, libAffx_player);
+    }
+    return false;
 }
 void libAffx_AramChoiceRun() {
     libAffx_mapChoiceAram = true;
@@ -78,6 +105,21 @@ void libAffx_AramQueueRewardCurse() {
 
 // Explains the rules once the match starts, and keeps talents on: ARAM maps turn talent picking off
 // after HeroesRogue turns it on. Runs on real time because game time is frozen while paused.
+void libAffx_AramApplyTankHealth() {
+    int player;
+    unit hero;
+    fixed lifePercent;
+    for (player = libAffx_aramFirstEnemy; player <= libAffx_aramLastEnemy; player += 1) {
+        hero = libGame_gv_players[player].lv_heroUnit;
+        if (hero == null || !UnitIsAlive(hero) || UnitHasBehavior2(hero, "AffixAramTankHealth")) {
+            continue;
+        }
+        lifePercent = UnitGetPropertyFixed(hero, c_unitPropLifePercent, c_unitPropCurrent);
+        UnitBehaviorAdd(hero, "AffixAramTankHealth", hero, 1);
+        UnitSetPropertyFixed(hero, c_unitPropLifePercent, lifePercent); // keep a full hero at full Health
+    }
+}
+
 bool libAffx_AramTick_Func (bool testConds, bool runActions) {
     if (testConds) {
         if (!libAffx_aramActive || libGame_gv_gameOver) {
@@ -90,10 +132,13 @@ bool libAffx_AramTick_Func (bool testConds, bool runActions) {
 
     libAffx_aramTicks += 1;
     if (libAffx_aramTicks == 6) {
-        libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeRules"));
+        libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeRules" + IntToString(libAffx_AramChallengeIndex())));
     }
     if (!libAffx_gamePaused) {
         SetTalentsEnabled(true);
+    }
+    if (libAffx_AramChallengeIndex() == 2) {
+        libAffx_AramApplyTankHealth();
     }
     return true;
 }

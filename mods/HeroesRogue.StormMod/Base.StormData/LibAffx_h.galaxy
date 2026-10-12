@@ -91,7 +91,7 @@ const int libAffx_rotationMapCount = 12;
 const int libAffx_aramMapCount = 4;
 // ARAM challenge enemies (the challenge maps only have these computer slots)
 const int libAffx_aramFirstEnemy = 6;
-const int libAffx_aramLastEnemy = 7;
+const int libAffx_aramLastEnemy = 8;
 const int libAffx_startingMap = libAffx_map1;
 
 // ============================================================
@@ -776,6 +776,8 @@ int libAffx_dialogControlOptionsSpeedUpDeath;
 int libAffx_dialogControlOptionsSpeedUpGates;
 int libAffx_dialogControlOptionsDisplayPicksBans;
 int libAffx_dialogControlOptionsExtraMaps;
+int libAffx_dialogControlOptionsAram1;
+int libAffx_dialogControlOptionsAram2;
 int libAffx_dialogControlOptionsAchievementsButton;
 int libAffx_dialogControlOptionsRestartButton;
 int libAffx_dialogControlOptionsReturnButton;
@@ -1104,6 +1106,8 @@ bool libAffx_MapChoiceIsAramMap(int map);
 void libAffx_AramChallengeTriggers_Init();
 void libAffx_AramChallengeMapInit();
 bool libAffx_AramIsActive();
+int libAffx_AramChallengeIndex();
+void libAffx_AramUpdateOptions();
 bool libAffx_AramShouldOffer();
 void libAffx_AramChoiceRun();
 bool libAffx_AramGameOver(int winningTeam);

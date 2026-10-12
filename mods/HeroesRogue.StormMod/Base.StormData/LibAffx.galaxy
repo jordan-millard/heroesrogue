@@ -1587,6 +1587,10 @@ void libAffx_CreateOptionsDialog() {
     libAffx_dialogControlOptionsSpeedUpGates = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsSpeedup"));
     libAffx_dialogControlOptionsDisplayPicksBans = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsPicksBans"));
     libAffx_dialogControlOptionsExtraMaps = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsExtraMaps"));
+    libAffx_dialogControlOptionsAram1 = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsAram1"));
+    libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsAram1, true);
+    libAffx_dialogControlOptionsAram2 = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsAram2"));
+    libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsAram2, true);
     libAffx_dialogControlOptionsAchievementsButton = libAffx_CreateOptionDialogButton(StringExternal("Button/Name/OptionsAchievements"));
     libAffx_dialogControlOptionsRestartButton = libAffx_CreateOptionDialogButton(StringExternal("Button/Name/OptionsRestart"));
     libAffx_dialogControlOptionsReturnButton = libAffx_CreateOptionDialogButton(StringExternal("Button/Name/OptionsReturn"));
@@ -2201,7 +2205,8 @@ bool libAffx_OptionsClickedTrigger_Func (bool testConds, bool runActions) {
     if (testConds) {
         if (eventDialog != libAffx_dialogControlOptionsButton && eventDialog != libAffx_dialogControlOptionsSpeedUpGates
         && eventDialog != libAffx_dialogControlOptionsSpeedUpDeath && eventDialog != libAffx_dialogControlOptionsDisplayPicksBans
-        && eventDialog != libAffx_dialogControlOptionsExtraMaps) {
+        && eventDialog != libAffx_dialogControlOptionsExtraMaps && eventDialog != libAffx_dialogControlOptionsAram1
+        && eventDialog != libAffx_dialogControlOptionsAram2) {
             return false;
         }
     }
@@ -2226,6 +2231,9 @@ bool libAffx_OptionsClickedTrigger_Func (bool testConds, bool runActions) {
     } else if (eventDialog == libAffx_dialogControlOptionsDisplayPicksBans && !libAffx_IsAchievementsDialogVisible()) {
         libAffx_SaveSettingsBank();
     } else if (eventDialog == libAffx_dialogControlOptionsExtraMaps && !libAffx_IsAchievementsDialogVisible()) {
+        libAffx_SaveSettingsBank();
+        libAffx_AramUpdateOptions();
+    } else if ((eventDialog == libAffx_dialogControlOptionsAram1 || eventDialog == libAffx_dialogControlOptionsAram2) && !libAffx_IsAchievementsDialogVisible()) {
         libAffx_SaveSettingsBank();
     }
     return true;
@@ -3329,6 +3337,8 @@ void libAffx_SaveSettingsBank() {
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "SpeedUpDeath", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsSpeedUpDeath, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "DisplayPicksBans", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsDisplayPicksBans, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "ExtraMaps", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsExtraMaps, libAffx_player)));
+    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge1", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsAram1, libAffx_player)));
+    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge2", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsAram2, libAffx_player)));
     BankSave(BankLastCreated());
 }
 void libAffx_LoadSettingsBank() {
@@ -3365,6 +3375,13 @@ void libAffx_LoadSettingsBank() {
             libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsExtraMaps, false);
         }
     }
+    if (BankKeyExists(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge1")) {
+        libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsAram1, BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge1") == 1);
+    }
+    if (BankKeyExists(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge2")) {
+        libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsAram2, BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge2") == 1);
+    }
+    libAffx_AramUpdateOptions();
     libPBU2_SetDifficulty(libAffx_difficulty);
     libAffx_DisplayDebugMessage("Loaded player settings!");
 }
@@ -5772,6 +5789,8 @@ void libAffx_InitVariables () {
     libAffx_dialogControlOptionsSpeedUpGates = c_invalidDialogControlId;
     libAffx_dialogControlOptionsDisplayPicksBans = c_invalidDialogControlId;
     libAffx_dialogControlOptionsExtraMaps = c_invalidDialogControlId;
+    libAffx_dialogControlOptionsAram1 = c_invalidDialogControlId;
+    libAffx_dialogControlOptionsAram2 = c_invalidDialogControlId;
     libAffx_dialogControlOptionsAchievementsButton = c_invalidDialogControlId;
     libAffx_dialogControlOptionsRestartButton = c_invalidDialogControlId;
     libAffx_dialogControlOptionsReturnButton = c_invalidDialogControlId;
