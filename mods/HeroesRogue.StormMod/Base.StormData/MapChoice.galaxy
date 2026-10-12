@@ -31,6 +31,9 @@ int libAffx_MapChoiceRotationMap(int index) {
     if (index == 2) { return libAffx_mapHauntedMines; }
     if (index == 3) { return libAffx_mapShrines; }
     if (index == 4) { return libAffx_mapCrypts; }
+    if (index == 5) { return libAffx_mapTowersofDoom; }
+    if (index == 6) { return libAffx_mapDragonShire; }
+    if (index == 7) { return libAffx_mapVolskaya; }
     return 0;
 }
 // Extra maps need the map rotation helper (tools/map-rotation) running, so they are opt-in
@@ -73,6 +76,12 @@ string libAffx_MapChoiceGetMapImage(int map) {
         return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_shrines.dds";
     } else if (map == libAffx_mapCrypts) {
         return "Assets/Textures/ui_ingame_mapmechanic_loadscreen_tombofthespiderqueen.dds";
+    } else if (map == libAffx_mapTowersofDoom) {
+        return "Assets/Textures/heroesrogue_mapchoice_towersofdoom.png";
+    } else if (map == libAffx_mapDragonShire) {
+        return "Assets/Textures/heroesrogue_mapchoice_dragonshire.png";
+    } else if (map == libAffx_mapVolskaya) {
+        return "Assets/Textures/heroesrogue_mapchoice_volskaya.dds";
     }
     return "";
 }
