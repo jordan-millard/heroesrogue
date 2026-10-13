@@ -23,8 +23,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
 
-  <!-- Golden Sonya, Spin to Win: no Seismic Slam; Unstoppable while Whirlwinding. Whirlwind spends all Fury and its
-       area scales with the Fury spent; hits store bonus damage for the next Whirlwind: see HeroTriggers/Sonya.galaxy -->
+  <!-- Golden Sonya, Spin to Win: no Seismic Slam; Unstoppable for the first 1.5 seconds of Whirlwind. Whirlwind spends
+       all Fury and its duration scales with the Fury spent, its area grows while Channeled, and hits store bonus damage
+       for the next Whirlwind: see HeroTriggers/Sonya.galaxy -->
   <CBehaviorBuff id="SonyaSpinToWinMarker" parent="CarryBehaviorParent">
     <Modification>
       <AbilLinkDisableArray value="BarbarianSeismicSlam" />
@@ -45,7 +46,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <AtMinEvents index="0" EventId="" />
   </CBehaviorTokenCounter>
   <CBehaviorBuff id="SonyaSpinToWinUnstoppable" parent="StormUnstoppableParent">
-    <Duration value="0" />
+    <Duration value="1.5" />
     <RemoveValidatorArray value="HasBarbarianWhirlwind" />
   </CBehaviorBuff>
   <CEffectApplyBehavior id="SonyaSpinToWinApplyUnstoppable">
@@ -57,10 +58,31 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Source" />
     <BehaviorLink value="SonyaSpinToWinUnstoppable" />
   </CEffectRemoveBehavior>
+  <!-- Damage radius indicator while Spin to Win Whirlwinds; the script scales it to the radius -->
+  <CBehaviorBuff id="SonyaSpinToWinSpinning">
+    <InfoFlags index="Hidden" value="1" />
+    <RemoveValidatorArray value="HasBarbarianWhirlwind" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="SonyaSpinToWinApplySpinning">
+    <ValidatorArray value="SonyaHasSpinToWin" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="SonyaSpinToWinSpinning" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="SonyaSpinToWinRemoveSpinning">
+    <WhichUnit Value="Source" />
+    <BehaviorLink value="SonyaSpinToWinSpinning" />
+  </CEffectRemoveBehavior>
+  <CActorSplat id="SonyaSpinToWinRadiusSplat" parent="StormRangeSplat">
+    <On Terms="Behavior.SonyaSpinToWinSpinning.On" Send="Create" />
+    <On Terms="Behavior.SonyaSpinToWinSpinning.Off" Send="Destroy" />
+    <HostSiteOps Ops="SOpAttachOrigin" />
+    <Scale value="2.5" />
+  </CActorSplat>
   <CEffectSet id="BarbarianWhirlwindInitialSet">
     <EffectArray value="SonyaSpinToWinApplyUnstoppable" />
+    <EffectArray value="SonyaSpinToWinApplySpinning" />
   </CEffectSet>
-  <!-- Spends all Fury before the Whirlwind starts; the area was already set from the Fury held -->
+  <!-- Spends all Fury before the Whirlwind starts; the duration was already set from the Fury held -->
   <CEffectModifyUnit id="SonyaSpinToWinSpendFury">
     <ValidatorArray value="SonyaHasSpinToWin" />
     <ImpactUnit Value="Caster" />
@@ -77,6 +99,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectCreatePersistent>
   <CEffectSet id="BarbarianWhirlwindFinalSet">
     <EffectArray value="SonyaSpinToWinRemoveUnstoppable" />
+    <EffectArray value="SonyaSpinToWinRemoveSpinning" />
   </CEffectSet>
   <!-- Spin to Win quest: Hero takedowns grant stacks that add Whirlwind damage and carry over -->
   <CBehaviorTokenCounter id="SonyaSpinToWinQuestTokenCounter" parent="StormQuestToken">
@@ -91,17 +114,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CAccumulatorToken>
   <CEffectDamage id="BarbarianWhirlwindDamage">
     <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
-    <MultiplicativeModifierArray index="SonyaSpinToWinFury" Modifier="0" />
     <MultiplicativeModifierArray index="SonyaSpinToWinQuest" Accumulator="SonyaSpinToWinQuestAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="BarbarianWhirlwindHeroDamage">
     <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
-    <MultiplicativeModifierArray index="SonyaSpinToWinFury" Modifier="0" />
     <MultiplicativeModifierArray index="SonyaSpinToWinQuest" Accumulator="SonyaSpinToWinQuestAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="BarbarianWhirlwindRuthlessTalentDamage">
     <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
-    <MultiplicativeModifierArray index="SonyaSpinToWinFury" Modifier="0" />
     <MultiplicativeModifierArray index="SonyaSpinToWinQuest" Accumulator="SonyaSpinToWinQuestAccumulator" />
   </CEffectDamage>
 

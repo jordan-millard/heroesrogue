@@ -2,20 +2,24 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Sonya, Spin to Win. Whirlwind hits store bonus damage for the next Whirlwind (1% per non-Hero hit,
-// 10% per Hero hit). Whirlwind costs no Fury but spends all of it (SonyaData.xml), and its radius and damage scale
-// with the Fury spent: 50% at 0 Fury, normal at 40, double at 80, and on up from there.
-// Unstoppable and no Seismic Slam are in SonyaData.xml.
+// 10% per Hero hit). Whirlwind costs no Fury but spends all of it (SonyaData.xml), and its duration scales with the
+// Fury spent: 50% at 0 Fury, normal at 40, double at 80, and on up from there. Its radius grows the longer it is
+// Channeled. Unstoppable for the first 1.5 seconds and no Seismic Slam are in SonyaData.xml.
 // ============================================================
 
 const fixed libAffx_sonyaWhirlwindRadius = 2.5;
 const int libAffx_sonyaSpinHeroHit = 10;
 const int libAffx_sonyaSpinOtherHit = 1;
-const fixed libAffx_sonyaSpinNormalFury = 40.0; // Fury for the normal radius
+const fixed libAffx_sonyaSpinNormalFury = 40.0; // Fury for the normal duration
+const fixed libAffx_sonyaWhirlwindDuration = 3.0;
+const fixed libAffx_sonyaEndlessSpinDuration = 2.0; // per Endless Spin
+const fixed libAffx_sonyaSpinRadiusPerSecond = 0.2; // radius growth per second Channeled
 
 bool libAffx_sonyaSpinStarted;
 int libAffx_sonyaSpinStored; // % bonus from hits since the last Whirlwind ended, for the next Whirlwind
 bool libAffx_sonyaSpinActive; // Whirlwinding
-fixed libAffx_sonyaSpinFuryScale; // radius and damage multiplier last written
+fixed libAffx_sonyaSpinStartTime;
+fixed libAffx_sonyaSpinRadius; // radius last written
 
 unit libAffx_SonyaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -81,6 +85,7 @@ bool libAffx_SonyaSpinBegin_Func (bool testConds, bool runActions) {
         return true;
     }
     libAffx_sonyaSpinActive = true;
+    libAffx_sonyaSpinStartTime = GameGetMissionTime();
     libAffx_SonyaSpinShow(libAffx_sonyaSpinStored);
     return true;
 }
@@ -102,28 +107,37 @@ bool libAffx_SonyaSpinEnd_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Whirlwind's radius and damage follow the Fury held, and stay fixed while Whirlwinding
-bool libAffx_SonyaSpinRadius_Func (bool testConds, bool runActions) {
+// Before a Whirlwind its duration follows the Fury held; during one its radius grows with the time Channeled
+bool libAffx_SonyaSpinTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_SonyaHero();
-    fixed scale;
+    fixed radius = libAffx_sonyaWhirlwindRadius;
     fixed fury;
-    string damage;
-    if (hero == null || !UnitIsAlive(hero) || !libAffx_SonyaHasSpinToWin() || libAffx_sonyaSpinActive) {
+    fixed scale;
+    fixed duration;
+    if (hero == null || !UnitIsAlive(hero) || !libAffx_SonyaHasSpinToWin()) {
         return true;
     }
-    fury = UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent);
-    if (fury <= libAffx_sonyaSpinNormalFury) {
-        scale = 0.5 + 0.5 * fury / libAffx_sonyaSpinNormalFury;
+    if (libAffx_sonyaSpinActive) {
+        radius = libAffx_sonyaWhirlwindRadius * (1.0 + libAffx_sonyaSpinRadiusPerSecond * (GameGetMissionTime() - libAffx_sonyaSpinStartTime));
     } else {
-        scale = fury / libAffx_sonyaSpinNormalFury;
+        fury = UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent);
+        if (fury <= libAffx_sonyaSpinNormalFury) {
+            scale = 0.5 + 0.5 * fury / libAffx_sonyaSpinNormalFury;
+        } else {
+            scale = fury / libAffx_sonyaSpinNormalFury;
+        }
+        duration = libAffx_sonyaWhirlwindDuration * scale +
+            libAffx_sonyaEndlessSpinDuration * IntToFixed(libAffx_affixes[libAffx_GetAffixId("SonyaEndlessSpin")].count);
+        if (AbsF(StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "BarbarianWhirlwindChannel", "Duration", libAffx_player)) - duration) > 0.01) {
+            CatalogFieldValueSet(c_gameCatalogBehavior, "BarbarianWhirlwindChannel", "Duration", libAffx_player, FixedToString(duration, 2));
+        }
     }
-    if (AbsF(scale - libAffx_sonyaSpinFuryScale) > 0.005) {
-        libAffx_sonyaSpinFuryScale = scale;
-        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindSearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(libAffx_sonyaWhirlwindRadius * scale, 2));
-        damage = FixedToString(scale - 1.0, 3);
-        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindDamage", "MultiplicativeModifierArray[SonyaSpinToWinFury].Modifier", libAffx_player, damage);
-        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindHeroDamage", "MultiplicativeModifierArray[SonyaSpinToWinFury].Modifier", libAffx_player, damage);
-        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindRuthlessTalentDamage", "MultiplicativeModifierArray[SonyaSpinToWinFury].Modifier", libAffx_player, damage);
+    if (AbsF(radius - libAffx_sonyaSpinRadius) > 0.01) {
+        libAffx_sonyaSpinRadius = radius;
+        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindSearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(radius, 2));
+    }
+    if (libAffx_sonyaSpinActive) {
+        ActorSend(ActorFromScope(ActorScopeFromUnit(hero), "SonyaSpinToWinRadiusSplat"), "SetScale " + FixedToString(radius, 2));
     }
     return true;
 }
@@ -149,6 +163,9 @@ bool libAffx_SonyaSpinToWinStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_SonyaSpinOtherHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "BarbarianWhirlwindDamage");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_SonyaSpinBegin_Func"), null, "BarbarianWhirlwindChannel", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_SonyaSpinEnd_Func"), null, "BarbarianWhirlwindChannel", c_unitBehaviorChangeDestroy);
-    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_SonyaSpinRadius_Func"), 0.0625, c_timeGame);
+    // The duration is set by the tick, so the Channel and its persistent no longer end on their own
+    CatalogFieldValueSet(c_gameCatalogBehavior, "BarbarianWhirlwindChannel", "PeriodCount", libAffx_player, "10000");
+    CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindCreatePersistent", "PeriodCount", libAffx_player, "10000");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_SonyaSpinTick_Func"), 0.0625, c_timeGame);
     return true;
 }
