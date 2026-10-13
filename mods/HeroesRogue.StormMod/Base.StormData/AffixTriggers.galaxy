@@ -2005,6 +2005,50 @@ bool libAffx_PassiveAdvantage (bool testConds, bool runActions) {
 // ============================================================
 // Convenient Portals
 // ============================================================
+// Maps without hand-placed portals: where the top (or bottom) lane crosses the middle of the map.
+// Returns null on maps with fewer than 2 lanes.
+point libAffx_ConvenientPortalLanePoint (bool top) {
+    fixed middle = PointGetX(RegionGetCenter(RegionPlayableMap()));
+    point best;
+    point crossing;
+    point a;
+    point b;
+    fixed nearest;
+    fixed f;
+    int lane;
+    int i;
+    if (libGame_gv_laneCount < 2) {
+        return null;
+    }
+    for (lane = 1; lane <= libGame_gv_laneCount; lane += 1) {
+        // The waypoint nearest the middle, refined to the exact crossing of a segment that spans it
+        crossing = null;
+        nearest = 10000.0;
+        for (i = 1; i <= libGame_gv_laneData[lane].lv_waypointCount; i += 1) {
+            a = libGame_gv_laneData[lane].lv_waypoints[i];
+            if (AbsF(PointGetX(a) - middle) < nearest) {
+                nearest = AbsF(PointGetX(a) - middle);
+                crossing = a;
+            }
+        }
+        for (i = 1; i < libGame_gv_laneData[lane].lv_waypointCount; i += 1) {
+            a = libGame_gv_laneData[lane].lv_waypoints[i];
+            b = libGame_gv_laneData[lane].lv_waypoints[i + 1];
+            if ((PointGetX(a) - middle) * (PointGetX(b) - middle) < 0.0) {
+                f = (middle - PointGetX(a)) / (PointGetX(b) - PointGetX(a));
+                crossing = Point(middle, PointGetY(a) + f * (PointGetY(b) - PointGetY(a)));
+                break;
+            }
+        }
+        if (crossing == null) {
+            continue;
+        }
+        if (best == null || (top && PointGetY(crossing) > PointGetY(best)) || (!top && PointGetY(crossing) < PointGetY(best))) {
+            best = crossing;
+        }
+    }
+    return best;
+}
 bool libAffx_ConvenientPortals (bool testConds, bool runActions) {
     point topPortal;
     point bottomPortal;
@@ -2043,6 +2087,12 @@ bool libAffx_ConvenientPortals (bool testConds, bool runActions) {
     } else if (libAffx_currentMap == libAffx_mapSkyTemple) {
         topPortal = Point(123.99, 163.20);
         bottomPortal = Point(123.98, 48.5);
+    } else {
+        topPortal = libAffx_ConvenientPortalLanePoint(true);
+        bottomPortal = libAffx_ConvenientPortalLanePoint(false);
+    }
+    if (topPortal == null || bottomPortal == null || topPortal == bottomPortal) {
+        return true; // single-lane maps (ARAM) have nowhere to connect
     }
 
     UnitCreate(1, "MedivhPortalCreation", c_unitCreateIgnorePlacement, libAffx_teamOrder, topPortal, 0, null);
