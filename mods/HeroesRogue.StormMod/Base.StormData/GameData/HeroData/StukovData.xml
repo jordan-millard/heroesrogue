@@ -294,6 +294,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       </Radius>
     </AreaArray>
   </CEffectEnumArea>
+  <!-- +1% Lurking Arm damage per stack, no maximum -->
+  <CAccumulatorToken id="StukovLurkingHungerDamageAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="StukovLurkingHungerTokenCounter" />
+    <Scale value="0.01" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="StukovLurkingArmDamage">
+    <MultiplicativeModifierArray index="LurkingHunger" Accumulator="StukovLurkingHungerDamageAccumulator" />
+  </CEffectDamage>
   <CButton id="StukovLurkingHungerTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_stukov_lurkingarm.dds" />
   </CButton>

@@ -15,8 +15,9 @@ bool libAffx_StukovInfestationScaling (bool testConds, bool runActions) {
 }
 
 // ============================================================
-// Golden Stukov, Lurking Hunger. Hero kills by Lurking Arm carry over for the whole run:
-// each one adds 1% Lurking Arm radius (up to 100%, in StukovData.xml) and 1% cooldown reduction (up to 50%).
+// Golden Stukov, Lurking Hunger. Every 30 times Lurking Arm damages enemy Heroes grants 1 stack, and Hero kills by
+// Lurking Arm grant 5. Stacks carry over for the whole run: each one adds 1% Lurking Arm damage (no maximum) and
+// radius (up to 100%), both in StukovData.xml, and 1% cooldown reduction (up to 50%).
 // Growing Infestation can be Channeled for 6 seconds instead of 3.
 // ============================================================
 
@@ -24,11 +25,14 @@ const fixed libAffx_stukovLurkingArmCooldown = 10.0;
 const fixed libAffx_stukovGrowingInfestationDuration = 6.0;
 const int libAffx_stukovLurkingRadiusMax = 100;
 const int libAffx_stukovLurkingCooldownMax = 50;
+const int libAffx_stukovLurkingHitsPerStack = 30;
+const int libAffx_stukovLurkingKillStacks = 5;
 
 bool libAffx_stukovLurkingStarted;
-int libAffx_stukovLurkingBanked;   // kills from previous games
-bool libAffx_stukovLurkingRestored; // banked kills given back this game
-int libAffx_stukovLurkingApplied = -1; // kills the cooldown was last written for
+int libAffx_stukovLurkingBanked;   // stacks from previous games
+bool libAffx_stukovLurkingRestored; // banked stacks given back this game
+int libAffx_stukovLurkingApplied = -1; // stacks the cooldown was last written for
+int libAffx_stukovLurkingHits; // Hero hits toward the next stack
 
 unit libAffx_StukovHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -37,7 +41,7 @@ bool libAffx_StukovHasLurkingHunger() {
     unit hero = libAffx_StukovHero();
     return hero != null && UnitHasBehavior2(hero, "StukovLurkingHungerMarker");
 }
-int libAffx_StukovLurkingKills() {
+int libAffx_StukovLurkingStacks() {
     if (!libAffx_StukovHasLurkingHunger()) {
         return 0;
     }
@@ -46,35 +50,56 @@ int libAffx_StukovLurkingKills() {
 
 // Saved with the run
 void libAffx_StukovSaveBank() {
-    int kills;
+    int stacks;
     if (!libAffx_stukovLurkingStarted || !libAffx_StukovHasLurkingHunger()) {
         return;
     }
-    kills = libAffx_StukovLurkingKills();
+    stacks = libAffx_StukovLurkingStacks();
     if (!libAffx_stukovLurkingRestored) {
-        kills += libAffx_stukovLurkingBanked;
+        stacks += libAffx_stukovLurkingBanked;
     }
-    libAffx_BankSaveValueInt("Stukov_LurkingHungerKills", kills);
+    libAffx_BankSaveValueInt("Stukov_LurkingHungerKills", stacks);
 }
 
 fixed libAffx_StukovLurkingSize() {
-    return 1.0 + IntToFixed(MinI(libAffx_StukovLurkingKills(), libAffx_stukovLurkingRadiusMax)) / 100.0;
+    return 1.0 + IntToFixed(MinI(libAffx_StukovLurkingStacks(), libAffx_stukovLurkingRadiusMax)) / 100.0;
 }
 
-// Hero kills by Lurking Arm
-bool libAffx_StukovLurkingKill_Func (bool testConds, bool runActions) {
-    unit target = EventUnit();
+bool libAffx_StukovLurkingHeroTarget(unit target) {
+    return EventUnitDamageSourcePlayer() == libAffx_player && libAffx_StukovHasLurkingHunger() &&
+        !UnitTestState(target, c_unitStateHallucination) &&
+        UnitFilterMatch(target, libAffx_player, UnitFilter((1 << c_targetFilterHeroic), 0, 0, 0));
+}
+
+// Lurking Arm damaging enemy Heroes
+bool libAffx_StukovLurkingHit_Func (bool testConds, bool runActions) {
     if (testConds) {
-        if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_StukovHasLurkingHunger() ||
-            UnitTestState(target, c_unitStateHallucination) ||
-            !UnitFilterMatch(target, libAffx_player, UnitFilter((1 << c_targetFilterHeroic), 0, 0, 0))) {
+        if (!libAffx_StukovLurkingHeroTarget(EventUnit())) {
             return false;
         }
     }
     if (!runActions) {
         return true;
     }
-    libGame_gf_ModifyTokenCount(1, "StukovLurkingHungerTokenCounter", libAffx_StukovHero());
+    libAffx_stukovLurkingHits += 1;
+    if (libAffx_stukovLurkingHits >= libAffx_stukovLurkingHitsPerStack) {
+        libAffx_stukovLurkingHits = 0;
+        libGame_gf_ModifyTokenCount(1, "StukovLurkingHungerTokenCounter", libAffx_StukovHero());
+    }
+    return true;
+}
+
+// Hero kills by Lurking Arm
+bool libAffx_StukovLurkingKill_Func (bool testConds, bool runActions) {
+    if (testConds) {
+        if (!libAffx_StukovLurkingHeroTarget(EventUnit())) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    libGame_gf_ModifyTokenCount(libAffx_stukovLurkingKillStacks, "StukovLurkingHungerTokenCounter", libAffx_StukovHero());
     return true;
 }
 
@@ -96,14 +121,14 @@ bool libAffx_StukovLurkingArmSpawned_Func (bool testConds, bool runActions) {
 
 bool libAffx_StukovLurkingTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_StukovHero();
-    int kills;
+    int stacks;
     fixed duration;
     fixed current;
     if (hero == null || !UnitIsAlive(hero) || libAffx_gamePaused || !libAffx_StukovHasLurkingHunger()) {
         return true;
     }
 
-    // Give back the kills from previous games
+    // Give back the stacks from previous games
     if (!libAffx_stukovLurkingRestored) {
         libAffx_stukovLurkingRestored = true;
         if (libAffx_stukovLurkingBanked > 0) {
@@ -111,11 +136,11 @@ bool libAffx_StukovLurkingTick_Func (bool testConds, bool runActions) {
         }
     }
 
-    kills = libAffx_StukovLurkingKills();
-    if (kills != libAffx_stukovLurkingApplied) {
-        libAffx_stukovLurkingApplied = kills;
+    stacks = libAffx_StukovLurkingStacks();
+    if (stacks != libAffx_stukovLurkingApplied) {
+        libAffx_stukovLurkingApplied = stacks;
         CatalogFieldValueSet(c_gameCatalogAbil, "StukovLurkingArm", "Cost[0].Cooldown.TimeUse", libAffx_player,
-            FixedToString(libAffx_stukovLurkingArmCooldown * (1.0 - IntToFixed(MinI(kills, libAffx_stukovLurkingCooldownMax)) / 100.0), 2));
+            FixedToString(libAffx_stukovLurkingArmCooldown * (1.0 - IntToFixed(MinI(stacks, libAffx_stukovLurkingCooldownMax)) / 100.0), 2));
         CatalogFieldValueSet(c_gameCatalogActor, "StukovLurkingArmCursorSplat", "Scale", libAffx_player, FixedToString(libAffx_StukovLurkingSize(), 2));
     }
 
@@ -138,6 +163,7 @@ bool libAffx_StukovLurkingQuestStart (bool testConds, bool runActions) {
     libAffx_stukovLurkingStarted = true;
     libAffx_stukovLurkingBanked = libAffx_BankLoadValueInt("Stukov_LurkingHungerKills");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_StukovLurkingTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_StukovLurkingHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "StukovLurkingArmDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_StukovLurkingKill_Func"), null, c_unitDamageTypeAny, c_unitDamageFatal, "StukovLurkingArmDamage");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StukovLurkingArmSpawned_Func"), null, "StukovLurkingArmUnitTimedLife", c_unitBehaviorChangeCreate);
     return true;
