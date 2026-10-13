@@ -54,9 +54,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="DryadPoisonerSplashSearch" />
   </CEffectSet>
   <!-- Poisoner: Basic Attacks deal 90% less damage -->
+  <!-- Marks a Poisoner Lunara. The quest token counter can not be used: its count is its stacks, so it reads 0
+       before the first stack -->
+  <CBehaviorBuff id="DryadPoisonerMarker" parent="CarryBehaviorParent" />
   <CValidatorUnitCompareBehaviorCount id="DryadHasPoisoner">
     <WhichUnit Value="Caster" />
-    <Behavior value="DryadPoisonerTokenCounter" />
+    <Behavior value="DryadPoisonerMarker" />
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>

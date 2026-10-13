@@ -35,7 +35,13 @@ unit libAffx_LunaraHero() {
 }
 bool libAffx_LunaraHasQuest(int quest) {
     unit hero = libAffx_LunaraHero();
-    return hero != null && UnitHasBehavior2(hero, libAffx_LunaraQuestToken(quest));
+    if (hero == null) {
+        return false;
+    }
+    if (quest == libAffx_lunaraPoisoner && UnitHasBehavior2(hero, "DryadPoisonerMarker")) {
+        return true;
+    }
+    return UnitHasBehavior2(hero, libAffx_LunaraQuestToken(quest));
 }
 int libAffx_LunaraStacks(int quest) {
     if (!libAffx_LunaraHasQuest(quest)) {
