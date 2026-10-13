@@ -23,9 +23,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
 
-  <!-- Golden Sonya, Spin to Win: Unstoppable while Whirlwinding. Whirlwind hits store bonus damage for the next
-       Whirlwind and its area grows with missing Health: see HeroTriggers/Sonya.galaxy -->
-  <CBehaviorBuff id="SonyaSpinToWinMarker" parent="CarryBehaviorParent" />
+  <!-- Golden Sonya, Spin to Win: no Seismic Slam; Unstoppable while Whirlwinding. Whirlwind spends all Fury and its
+       area scales with the Fury spent; hits store bonus damage for the next Whirlwind: see HeroTriggers/Sonya.galaxy -->
+  <CBehaviorBuff id="SonyaSpinToWinMarker" parent="CarryBehaviorParent">
+    <Modification>
+      <AbilLinkDisableArray value="BarbarianSeismicSlam" />
+    </Modification>
+  </CBehaviorBuff>
   <CValidatorUnitCompareBehaviorCount id="SonyaHasSpinToWin">
     <WhichUnit Value="Caster" />
     <Behavior value="SonyaSpinToWinMarker" />
@@ -56,6 +60,21 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="BarbarianWhirlwindInitialSet">
     <EffectArray value="SonyaSpinToWinApplyUnstoppable" />
   </CEffectSet>
+  <!-- Spends all Fury before the Whirlwind starts; the area was already set from the Fury held -->
+  <CEffectModifyUnit id="SonyaSpinToWinSpendFury">
+    <ValidatorArray value="SonyaHasSpinToWin" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Energy">
+      <Change value="-100000" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CEffectSet id="SonyaSpinToWinWhirlwindInitialSet">
+    <EffectArray value="SonyaSpinToWinSpendFury" />
+    <EffectArray value="BarbarianWhirlwindInitialSet" />
+  </CEffectSet>
+  <CEffectCreatePersistent id="BarbarianWhirlwindCreatePersistent">
+    <InitialEffect value="SonyaSpinToWinWhirlwindInitialSet" />
+  </CEffectCreatePersistent>
   <CEffectSet id="BarbarianWhirlwindFinalSet">
     <EffectArray value="SonyaSpinToWinRemoveUnstoppable" />
   </CEffectSet>
