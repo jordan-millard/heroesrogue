@@ -992,6 +992,7 @@ void libAffx_AddPlayerBehavior(int player, string behavior, int stacks, bool app
 void libAffx_RemovePlayerBehavior (int player, string behavior, int stacks, bool applyToAllUnits);
 void libAffx_ModifyPlayerTokenCount (int player, int tokens, string quest);
 void libAffx_LunaraSaveBank(); // HeroTriggers/Lunara.galaxy
+void libAffx_StukovSaveBank(); // HeroTriggers/Stukov.galaxy
 void libAffx_AddUnitTokenCount(unit unitToAdd, string tokenBehavior, fixed value);
 bool libAffx_PlayerHasBehavior (int player, string behavior);
 int libAffx_PlayerBehaviorCount (int player, string behavior);

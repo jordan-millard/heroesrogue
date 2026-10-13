@@ -238,4 +238,63 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <On Terms="Behavior.StukovHealingPathogenDamageBehavior.On" Send="Create" />
   </CActorModel>
 
+  <!-- Golden Stukov, Lurking Hunger: Lurking Arm hits on enemy Heroes stack Spell Power; Hero kills by Lurking Arm
+       grow it for the rest of the run. Kills, cooldown and channel duration: see HeroTriggers/Stukov.galaxy -->
+  <CBehaviorTokenCounter id="StukovLurkingHungerTokenCounter" parent="StormQuestToken">
+    <Face value="StukovLurkingHungerTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <!-- Marks a Lurking Hunger Stukov. The quest token counter reads 0 before the first kill -->
+  <CBehaviorBuff id="StukovLurkingHungerMarker" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="StukovHasLurkingHunger">
+    <WhichUnit Value="Caster" />
+    <Behavior value="StukovLurkingHungerMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="StukovLurkingHungerSpellPower">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stukov_lurkingarm.dds" />
+    <InfoFlags index="Hidden" value="0" />
+    <BuffFlags index="RefreshStack" value="1" />
+    <MaxStackCount value="1000" />
+    <Duration value="4" />
+    <DisplayDuration index="Self" value="1" />
+    <Modification>
+      <DamageDealtFraction index="Ability" value="0.05" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StukovLurkingHungerApplySpellPower">
+    <ValidatorArray value="StukovHasLurkingHunger" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="StukovLurkingHungerSpellPower" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="StukovLurkingArmImpactSet">
+    <EffectArray value="StukovLurkingHungerApplySpellPower" />
+  </CEffectSet>
+  <!-- +1% Lurking Arm radius per kill, up to +100% -->
+  <CAccumulatorToken id="StukovLurkingHungerRadiusAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="StukovLurkingHungerTokenCounter" />
+    <Scale value="0.025" />
+    <MaxAccumulation value="2.5" />
+  </CAccumulatorToken>
+  <CEffectEnumArea id="StukovLurkingArmSearch">
+    <AreaArray index="0">
+      <Radius>
+        <AccumulatorArray value="StukovLurkingHungerRadiusAccumulator" />
+      </Radius>
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectEnumArea id="StukovLurkingArmCursorSearch">
+    <AreaArray index="0">
+      <Radius>
+        <AccumulatorArray value="StukovLurkingHungerRadiusAccumulator" />
+      </Radius>
+    </AreaArray>
+  </CEffectEnumArea>
+  <CButton id="StukovLurkingHungerTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stukov_lurkingarm.dds" />
+  </CButton>
 </Catalog>
