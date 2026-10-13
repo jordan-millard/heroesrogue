@@ -2,6 +2,21 @@
 <Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
+  <!-- Fury's Movement Speed multiplies instead of using the unified bonus, so it stacks with other Movement Speed -->
+  <CBehaviorBuff id="BarbarianFuryTraitMoveSpeedBuff">
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+      <MoveSpeedMultiplier value="1.1" />
+    </Modification>
+  </CBehaviorBuff>
+  <CTalent id="BarbarianNoEscape">
+    <AbilityModificationArray index="0">
+      <Modifications index="0">
+        <Field value="Modification.MoveSpeedMultiplier" />
+      </Modifications>
+    </AbilityModificationArray>
+  </CTalent>
+
   <CBehaviorBuff id="SonyaSonyasFuryCarry" parent="CarryBehaviorParent">
     <Modification>
       <VitalMaxArray index="Energy" value="25" />
@@ -17,9 +32,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
+  <!-- Shows the bonus damage of the next Whirlwind; it drops when a Whirlwind starts, so no quest sounds -->
   <CBehaviorTokenCounter id="SonyaSpinToWinTokenCounter" parent="StormQuestToken">
     <Face value="SonyaSpinToWinTokenCounter" />
     <Max value="100000" />
+    <IncreaseEvents index="0" EventId="" />
+    <DecreaseEvents index="0" EventId="" />
+    <AtMinEvents index="0" EventId="" />
   </CBehaviorTokenCounter>
   <CBehaviorBuff id="SonyaSpinToWinUnstoppable" parent="StormUnstoppableParent">
     <Duration value="0" />

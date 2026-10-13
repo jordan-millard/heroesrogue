@@ -11,7 +11,8 @@ const int libAffx_sonyaSpinHeroHit = 10;
 const int libAffx_sonyaSpinOtherHit = 1;
 
 bool libAffx_sonyaSpinStarted;
-int libAffx_sonyaSpinStored; // % bonus stored for the next Whirlwind
+int libAffx_sonyaSpinStored; // % bonus from hits since the last Whirlwind ended, for the next Whirlwind
+bool libAffx_sonyaSpinActive; // Whirlwinding
 fixed libAffx_sonyaSpinRadius;
 
 unit libAffx_SonyaHero() {
@@ -29,9 +30,20 @@ void libAffx_SonyaSpinSetBonus(int percent) {
     CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindRuthlessTalentDamage", "MultiplicativeModifierArray[SonyaSpinToWin].Modifier", libAffx_player, value);
 }
 
+// The tracker shows the next Whirlwind's bonus
+void libAffx_SonyaSpinShow(int percent) {
+    unit hero = libAffx_SonyaHero();
+    int change = percent - FixedToInt(UnitGetTokenCount(hero, "SonyaSpinToWinTokenCounter"));
+    if (change != 0) {
+        libGame_gf_ModifyTokenCount(change, "SonyaSpinToWinTokenCounter", hero);
+    }
+}
+
 void libAffx_SonyaSpinStore(int percent) {
     libAffx_sonyaSpinStored += percent;
-    libGame_gf_ModifyTokenCount(percent, "SonyaSpinToWinTokenCounter", libAffx_SonyaHero());
+    if (libAffx_sonyaSpinActive) {
+        libAffx_SonyaSpinShow(libAffx_sonyaSpinStored);
+    }
 }
 
 bool libAffx_SonyaSpinHitCheck() {
@@ -56,7 +68,22 @@ bool libAffx_SonyaSpinOtherHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// When a Whirlwind ends, the damage it stored goes to the next one
+// When a Whirlwind starts, the tracker switches from its bonus to the one being built for the next Whirlwind
+bool libAffx_SonyaSpinBegin_Func (bool testConds, bool runActions) {
+    if (testConds) {
+        if (EventUnit() != libAffx_SonyaHero() || !libAffx_SonyaHasSpinToWin()) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    libAffx_sonyaSpinActive = true;
+    libAffx_SonyaSpinShow(libAffx_sonyaSpinStored);
+    return true;
+}
+
+// When a Whirlwind ends, the damage it stored goes to the next one; the tracker keeps showing it
 bool libAffx_SonyaSpinEnd_Func (bool testConds, bool runActions) {
     if (testConds) {
         if (EventUnit() != libAffx_SonyaHero() || !libAffx_SonyaHasSpinToWin()) {
@@ -66,10 +93,9 @@ bool libAffx_SonyaSpinEnd_Func (bool testConds, bool runActions) {
     if (!runActions) {
         return true;
     }
+    libAffx_sonyaSpinActive = false;
     libAffx_SonyaSpinSetBonus(libAffx_sonyaSpinStored);
-    if (libAffx_sonyaSpinStored > 0) {
-        libGame_gf_ModifyTokenCount(-libAffx_sonyaSpinStored, "SonyaSpinToWinTokenCounter", libAffx_SonyaHero());
-    }
+    libAffx_SonyaSpinShow(libAffx_sonyaSpinStored);
     libAffx_sonyaSpinStored = 0;
     return true;
 }
@@ -108,6 +134,7 @@ bool libAffx_SonyaSpinToWinStart (bool testConds, bool runActions) {
     libAffx_sonyaSpinStarted = true;
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_SonyaSpinHeroHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "BarbarianWhirlwindHeroDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_SonyaSpinOtherHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "BarbarianWhirlwindDamage");
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_SonyaSpinBegin_Func"), null, "BarbarianWhirlwindChannel", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_SonyaSpinEnd_Func"), null, "BarbarianWhirlwindChannel", c_unitBehaviorChangeDestroy);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_SonyaSpinRadius_Func"), 0.125, c_timeGame);
     return true;
