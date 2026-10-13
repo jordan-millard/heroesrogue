@@ -4,8 +4,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- Golden Lunara (Dryad). Quest stacks carry over between games: see HeroTriggers/Lunara.galaxy -->
 
-  <!-- Poisoner: every 5 seconds an enemy Hero spends poisoned grants a stack; stacks add Nature's Toxin damage.
-       Script: stacks and duration -->
+  <!-- Poisoner: Crippling Spores bursts the poison stored on enemies instead of extending it; Hero kills by the burst
+       grant stacks, and stacks add Nature's Toxin damage. Script: burst, duration and stacks -->
   <CBehaviorTokenCounter id="DryadPoisonerTokenCounter" parent="StormQuestToken">
     <Face value="DryadPoisonerTokenCounter" />
     <Max value="100000" />
@@ -14,9 +14,26 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <SourceEffect value="DryadNaturesToxinDamage" />
     <ApplicationRule value="Add" />
     <TokenId value="DryadPoisonerTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.03" />
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
+  <CAccumulatorToken id="DryadPoisonerBurstAccumulator" parent="DryadPoisonerAccumulator">
+    <SourceEffect value="DryadPoisonerSporesDamage" />
+  </CAccumulatorToken>
+  <CEffectSwitch id="DryadPoisonerSporesSwitch">
+    <CaseArray Validator="DryadHasPoisoner" Effect="DryadPoisonerSporesBurst" />
+    <CaseDefault value="DryadNaturesToxinDebuffSet" />
+  </CEffectSwitch>
+  <CEffectSet id="DryadCripplingSporesImpactSet">
+    <EffectArray index="1" value="DryadPoisonerSporesSwitch" />
+  </CEffectSet>
+  <!-- Script hook: deals the stored poison through DryadPoisonerSporesDamage and removes the poison -->
+  <CEffectModifyUnit id="DryadPoisonerSporesBurst" />
+  <CEffectDamage id="DryadPoisonerSporesDamage" parent="StormSpell">
+    <Amount value="0" />
+    <MultiplicativeModifierArray index="UnfairAdvantageModifier" Validator="DryadHasUnfairAdvantageandEnemyHeroisSlowedCombine" Modifier="0.6" Crit="1" />
+    <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerBurstAccumulator" />
+  </CEffectDamage>
   <!-- Poisoner: Basic Attacks splash their damage and Nature's Toxin onto nearby enemies -->
   <CEffectEnumArea id="DryadPoisonerSplashSearch">
     <ValidatorArray value="DryadHasPoisoner" />
@@ -36,25 +53,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="DryadHeroWeaponImpactSetSplinteredSpearMastery">
     <EffectArray value="DryadPoisonerSplashSearch" />
   </CEffectSet>
-  <!-- Poisoner: Basic Attacks and abilities deal 80% less damage (Nature's Toxin is unaffected) -->
+  <!-- Poisoner: Basic Attacks deal 90% less damage -->
   <CValidatorUnitCompareBehaviorCount id="DryadHasPoisoner">
     <WhichUnit Value="Caster" />
     <Behavior value="DryadPoisonerTokenCounter" />
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
-  <CEffectDamage id="DryadLeapingStrikeDamage">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
-  </CEffectDamage>
-  <CEffectDamage id="DryadThornwoodVineDamage">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
-  </CEffectDamage>
-  <CEffectDamage id="DryadDeadlyBlossomDamage">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
-  </CEffectDamage>
-  <CEffectDamage id="DryadPercentMaxHealthDamageInvigoratingSpores">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
-  </CEffectDamage>
   <CEffectDamage id="DryadNaturesToxinDamage">
     <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerAccumulator" />
   </CEffectDamage>
@@ -87,13 +92,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
   <CEffectDamage id="DryadHeroWeaponDamage">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.9" />
     <Amount>
       <AccumulatorArray value="DryadHuntressAccumulator" />
     </Amount>
   </CEffectDamage>
   <CEffectDamage id="DryadHeroWeaponDamageSplinteredSpearMastery">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
+    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.9" />
     <Amount>
       <AccumulatorArray value="DryadHuntressAccumulator" />
     </Amount>
@@ -121,15 +126,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
   </CAccumulatorToken>
   <CEffectDamage id="DryadNoxiousBlossomDamage">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
     <MultiplicativeModifierArray index="Pollinator" Accumulator="DryadPollinatorAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="DryadNoxiousBlossomChokingPollenMasteryDamage">
-    <MultiplicativeModifierArray index="PoisonerPenalty" Validator="DryadHasPoisoner" Modifier="-0.8" />
     <MultiplicativeModifierArray index="Pollinator" Accumulator="DryadPollinatorAccumulator" />
   </CEffectDamage>
 
-  <!-- Pollinator reward: Noxious Blossom explodes a second time 1 second later -->
+  <!-- Pollinator reward: Noxious Blossom explodes a second time 1 second later. Reruns the whole delayed
+       blossom so the second explosion has its visuals -->
   <CBehaviorBuff id="DryadPollinatorSecondBloom" parent="CarryBehaviorParent" />
   <CValidatorUnitCompareBehaviorCount id="DryadHasPollinatorSecondBloom">
     <WhichUnit Value="Caster" />
@@ -139,13 +143,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CValidatorUnitCompareBehaviorCount>
   <CEffectCreatePersistent id="DryadPollinatorSecondBloomPersistent">
     <ValidatorArray value="DryadHasPollinatorSecondBloom" />
-    <InitialDelay value="1.5" />
-    <ExpireDelay value="0.25" />
+    <InitialDelay value="1" />
     <PeriodCount value="1" />
-    <PeriodicEffectArray value="DryadNoxiousBlossomSearch" />
+    <PeriodicEffectArray value="DryadNoxiousBlossomCreatePersistent" />
     <PeriodicPeriodArray value="0" />
-    <RevealRadius value="1.6" />
-    <RevealFlags index="Unfog" value="1" />
   </CEffectCreatePersistent>
   <CEffectSet id="DryadNoxiousBlossomCastSet">
     <EffectArray value="DryadPollinatorSecondBloomPersistent" />
