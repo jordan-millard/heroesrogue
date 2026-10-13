@@ -89,6 +89,17 @@ bool libAffx_SonyaSpinRadius_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// Quest: enemy Hero takedowns grant a stack (Whirlwind damage in SonyaData.xml; carried over by QuestRetain)
+bool libAffx_SonyaSpinTakedown (bool testConds, bool runActions) {
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_SonyaHasSpinToWin()) {
+            return false;
+        }
+    }
+    libGame_gf_ModifyTokenCount(1, "SonyaSpinToWinQuestTokenCounter", libAffx_SonyaHero());
+    return true;
+}
+
 // AffixAdded for Spin to Win
 bool libAffx_SonyaSpinToWinStart (bool testConds, bool runActions) {
     if (libAffx_sonyaSpinStarted) {

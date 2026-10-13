@@ -10094,8 +10094,17 @@
             <String String="1 0 SonyaSpinToWinTokenCounter">
                 <Field Id="Behavior" Index="1" />
             </String>
+            <String String="1 0 SonyaSpinToWinQuestTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SonyaSpinToWinQuestTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
             <String String="AffixAdded libAffx_SonyaSpinToWinStart">
                 <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SonyaSpinTakedown">
+                <Field Id="Trigger" Index="1" />
             </String>
         </Instances>
         <Instances Id="SonyaSeismicBrute">

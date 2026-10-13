@@ -40,14 +40,28 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="BarbarianWhirlwindFinalSet">
     <EffectArray value="SonyaSpinToWinRemoveUnstoppable" />
   </CEffectSet>
+  <!-- Spin to Win quest: Hero takedowns grant stacks that add Whirlwind damage and carry over -->
+  <CBehaviorTokenCounter id="SonyaSpinToWinQuestTokenCounter" parent="StormQuestToken">
+    <Face value="SonyaSpinToWinQuestTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="SonyaSpinToWinQuestAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="SonyaSpinToWinQuestTokenCounter" />
+    <Scale value="0.01" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
   <CEffectDamage id="BarbarianWhirlwindDamage">
     <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
+    <MultiplicativeModifierArray index="SonyaSpinToWinQuest" Accumulator="SonyaSpinToWinQuestAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="BarbarianWhirlwindHeroDamage">
     <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
+    <MultiplicativeModifierArray index="SonyaSpinToWinQuest" Accumulator="SonyaSpinToWinQuestAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="BarbarianWhirlwindRuthlessTalentDamage">
     <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
+    <MultiplicativeModifierArray index="SonyaSpinToWinQuest" Accumulator="SonyaSpinToWinQuestAccumulator" />
   </CEffectDamage>
 
   <!-- Golden Sonya, Seismic Brute: Seismic Slam hitting enemy Heroes grants stacks; stacks add Seismic Slam damage -->
@@ -135,6 +149,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <CButton id="SonyaSpinToWinTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_sonya_whirlwind.dds" />
+  </CButton>
+  <CButton id="SonyaSpinToWinQuestTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sonya_fury.dds" />
   </CButton>
   <CButton id="SonyaSeismicBruteTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_sonya_seismicslam.dds" />
