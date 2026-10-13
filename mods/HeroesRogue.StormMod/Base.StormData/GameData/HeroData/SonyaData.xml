@@ -54,6 +54,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <Behavior value="SonyaSpinToWinUnstoppable" />
   </CEffectApplyBehavior>
+  <!-- Unstoppable Spin: any Sonya is Unstoppable for her whole Whirlwind (the boon removes the 1.5 second limit) -->
+  <CEffectApplyBehavior id="SonyaUnstoppableSpinApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="SonyaSpinToWinUnstoppable" />
+  </CEffectApplyBehavior>
   <CEffectRemoveBehavior id="SonyaSpinToWinRemoveUnstoppable">
     <WhichUnit Value="Source" />
     <BehaviorLink value="SonyaSpinToWinUnstoppable" />
@@ -80,6 +86,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CActorSplat>
   <CEffectSet id="BarbarianWhirlwindInitialSet">
     <EffectArray value="SonyaSpinToWinApplyUnstoppable" />
+    <EffectArray value="SonyaUnstoppableSpinApply" />
     <EffectArray value="SonyaSpinToWinApplySpinning" />
   </CEffectSet>
   <!-- Spends all Fury before the Whirlwind starts; the duration was already set from the Fury held -->
