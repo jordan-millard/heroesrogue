@@ -1,11 +1,146 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
-  
+
   <CBehaviorBuff id="SonyaSonyasFuryCarry" parent="CarryBehaviorParent">
     <Modification>
       <VitalMaxArray index="Energy" value="25" />
     </Modification>
   </CBehaviorBuff>
+
+  <!-- Golden Sonya, Spin to Win: Unstoppable while Whirlwinding. Whirlwind hits store bonus damage for the next
+       Whirlwind and its area grows with missing Health: see HeroTriggers/Sonya.galaxy -->
+  <CBehaviorBuff id="SonyaSpinToWinMarker" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="SonyaHasSpinToWin">
+    <WhichUnit Value="Caster" />
+    <Behavior value="SonyaSpinToWinMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorTokenCounter id="SonyaSpinToWinTokenCounter" parent="StormQuestToken">
+    <Face value="SonyaSpinToWinTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorBuff id="SonyaSpinToWinUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="0" />
+    <RemoveValidatorArray value="HasBarbarianWhirlwind" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="SonyaSpinToWinApplyUnstoppable">
+    <ValidatorArray value="SonyaHasSpinToWin" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="SonyaSpinToWinUnstoppable" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="SonyaSpinToWinRemoveUnstoppable">
+    <WhichUnit Value="Source" />
+    <BehaviorLink value="SonyaSpinToWinUnstoppable" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="BarbarianWhirlwindInitialSet">
+    <EffectArray value="SonyaSpinToWinApplyUnstoppable" />
+  </CEffectSet>
+  <CEffectSet id="BarbarianWhirlwindFinalSet">
+    <EffectArray value="SonyaSpinToWinRemoveUnstoppable" />
+  </CEffectSet>
+  <CEffectDamage id="BarbarianWhirlwindDamage">
+    <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="BarbarianWhirlwindHeroDamage">
+    <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="BarbarianWhirlwindRuthlessTalentDamage">
+    <MultiplicativeModifierArray index="SonyaSpinToWin" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- Golden Sonya, Seismic Brute: Seismic Slam hitting enemy Heroes grants stacks; stacks add Seismic Slam damage -->
+  <CBehaviorTokenCounter id="SonyaSeismicBruteTokenCounter" parent="StormQuestToken">
+    <Face value="SonyaSeismicBruteTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectModifyTokenCount id="SonyaSeismicBruteAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectCategory index="Quest" value="1" />
+    <TokenId value="SonyaSeismicBruteTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="BarbarianSeismicSlamSet">
+    <EffectArray value="SonyaSeismicBruteAddToken" />
+  </CEffectSet>
+  <CAccumulatorToken id="SonyaSeismicBruteAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="SonyaSeismicBruteTokenCounter" />
+    <Scale value="0.01" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="BarbarianSeismicSlamDamage">
+    <MultiplicativeModifierArray index="SonyaSeismicBrute" Accumulator="SonyaSeismicBruteAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="BarbarianSeismicSlamSecondaryDamage">
+    <MultiplicativeModifierArray index="SonyaSeismicBrute" Accumulator="SonyaSeismicBruteAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="BarbarianSeismicSlamShatteredGroundSecondaryDamage">
+    <MultiplicativeModifierArray index="SonyaSeismicBrute" Accumulator="SonyaSeismicBruteAccumulator" />
+  </CEffectDamage>
+
+  <!-- Golden Sonya, Ancient Hunter: Ancient Spear hitting enemy Heroes grants stacks; stacks add Ancient Spear damage -->
+  <CBehaviorTokenCounter id="SonyaAncientHunterTokenCounter" parent="StormQuestToken">
+    <Face value="SonyaAncientHunterTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectModifyTokenCount id="SonyaAncientHunterAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectCategory index="Quest" value="1" />
+    <TokenId value="SonyaAncientHunterTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="BarbarianAncientSpearImpactSet">
+    <EffectArray value="SonyaAncientHunterAddToken" />
+  </CEffectSet>
+  <CAccumulatorToken id="SonyaAncientHunterAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="SonyaAncientHunterTokenCounter" />
+    <Scale value="0.03" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="BarbarianAncientSpearDamage">
+    <MultiplicativeModifierArray index="SonyaAncientHunter" Accumulator="SonyaAncientHunterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="BarbarianAncientSpearMasteryPoisonDamage">
+    <MultiplicativeModifierArray index="SonyaAncientHunter" Accumulator="SonyaAncientHunterAccumulator" />
+  </CEffectDamage>
+
+  <!-- Crippling Whirl: Whirlwind hits slow by 5% per stack, up to 50%, for 5 seconds -->
+  <CBehaviorBuff id="SonyaCripplingWhirlSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_sonya_whirlwind.dds" />
+    <BuffFlags index="RefreshStack" value="1" />
+    <MaxStackCount value="10" />
+    <Duration value="5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.05" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="SonyaCripplingWhirlApplySlow">
+    <Chance value="0" />
+    <Behavior value="SonyaCripplingWhirlSlow" />
+  </CEffectApplyBehavior>
+  <!-- Eternal Battle: each Whirlwind hit extends Whirlwind -->
+  <CEffectModifyBehaviorBuffDuration id="SonyaEternalBattleExtend">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="BarbarianWhirlwindChannel" />
+    <Value value="0.1" />
+  </CEffectModifyBehaviorBuffDuration>
+  <CEffectSet id="BarbarianWhirlwindDamageSet">
+    <EffectArray value="SonyaCripplingWhirlApplySlow" />
+    <EffectArray value="SonyaEternalBattleExtend" />
+  </CEffectSet>
+
+  <CButton id="SonyaSpinToWinTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sonya_whirlwind.dds" />
+  </CButton>
+  <CButton id="SonyaSeismicBruteTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sonya_seismicslam.dds" />
+  </CButton>
+  <CButton id="SonyaAncientHunterTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sonya_ancientspear.dds" />
+  </CButton>
 
 </Catalog>

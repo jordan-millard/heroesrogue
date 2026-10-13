@@ -1,0 +1,103 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Sonya, Spin to Win. Whirlwind hits store bonus damage for the next Whirlwind (1% per non-Hero hit,
+// 10% per Hero hit), and Whirlwind's radius grows by up to 100% with Sonya's missing Health.
+// Unstoppable during Whirlwind is in SonyaData.xml.
+// ============================================================
+
+const fixed libAffx_sonyaWhirlwindRadius = 2.5;
+const int libAffx_sonyaSpinHeroHit = 10;
+const int libAffx_sonyaSpinOtherHit = 1;
+
+bool libAffx_sonyaSpinStarted;
+int libAffx_sonyaSpinStored; // % bonus stored for the next Whirlwind
+fixed libAffx_sonyaSpinRadius;
+
+unit libAffx_SonyaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_SonyaHasSpinToWin() {
+    unit hero = libAffx_SonyaHero();
+    return hero != null && UnitHasBehavior2(hero, "SonyaSpinToWinMarker");
+}
+
+void libAffx_SonyaSpinSetBonus(int percent) {
+    string value = FixedToString(IntToFixed(percent) / 100.0, 2);
+    CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindDamage", "MultiplicativeModifierArray[SonyaSpinToWin].Modifier", libAffx_player, value);
+    CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindHeroDamage", "MultiplicativeModifierArray[SonyaSpinToWin].Modifier", libAffx_player, value);
+    CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindRuthlessTalentDamage", "MultiplicativeModifierArray[SonyaSpinToWin].Modifier", libAffx_player, value);
+}
+
+void libAffx_SonyaSpinStore(int percent) {
+    libAffx_sonyaSpinStored += percent;
+    libGame_gf_ModifyTokenCount(percent, "SonyaSpinToWinTokenCounter", libAffx_SonyaHero());
+}
+
+bool libAffx_SonyaSpinHitCheck() {
+    return EventUnitDamageSourcePlayer() == libAffx_player && libAffx_SonyaHasSpinToWin();
+}
+bool libAffx_SonyaSpinHeroHit_Func (bool testConds, bool runActions) {
+    if (testConds && !libAffx_SonyaSpinHitCheck()) {
+        return false;
+    }
+    if (runActions) {
+        libAffx_SonyaSpinStore(libAffx_sonyaSpinHeroHit);
+    }
+    return true;
+}
+bool libAffx_SonyaSpinOtherHit_Func (bool testConds, bool runActions) {
+    if (testConds && !libAffx_SonyaSpinHitCheck()) {
+        return false;
+    }
+    if (runActions) {
+        libAffx_SonyaSpinStore(libAffx_sonyaSpinOtherHit);
+    }
+    return true;
+}
+
+// When a Whirlwind ends, the damage it stored goes to the next one
+bool libAffx_SonyaSpinEnd_Func (bool testConds, bool runActions) {
+    if (testConds) {
+        if (EventUnit() != libAffx_SonyaHero() || !libAffx_SonyaHasSpinToWin()) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    libAffx_SonyaSpinSetBonus(libAffx_sonyaSpinStored);
+    if (libAffx_sonyaSpinStored > 0) {
+        libGame_gf_ModifyTokenCount(-libAffx_sonyaSpinStored, "SonyaSpinToWinTokenCounter", libAffx_SonyaHero());
+    }
+    libAffx_sonyaSpinStored = 0;
+    return true;
+}
+
+// Whirlwind's radius: 2.5 at full Health, up to 5 at no Health
+bool libAffx_SonyaSpinRadius_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_SonyaHero();
+    fixed radius;
+    if (hero == null || !UnitIsAlive(hero) || !libAffx_SonyaHasSpinToWin()) {
+        return true;
+    }
+    radius = libAffx_sonyaWhirlwindRadius * (2.0 - UnitGetPropertyFixed(hero, c_unitPropLifePercent, c_unitPropCurrent) / 100.0);
+    if (AbsF(radius - libAffx_sonyaSpinRadius) > 0.01) {
+        libAffx_sonyaSpinRadius = radius;
+        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindSearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(radius, 2));
+    }
+    return true;
+}
+
+// AffixAdded for Spin to Win
+bool libAffx_SonyaSpinToWinStart (bool testConds, bool runActions) {
+    if (libAffx_sonyaSpinStarted) {
+        return true;
+    }
+    libAffx_sonyaSpinStarted = true;
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_SonyaSpinHeroHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "BarbarianWhirlwindHeroDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_SonyaSpinOtherHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "BarbarianWhirlwindDamage");
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_SonyaSpinEnd_Func"), null, "BarbarianWhirlwindChannel", c_unitBehaviorChangeDestroy);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_SonyaSpinRadius_Func"), 0.125, c_timeGame);
+    return true;
+}

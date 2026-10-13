@@ -689,6 +689,35 @@ Affix/Tooltip/Append/StukovInfestedHarvest=
 Affix/Name/StukovHungryArm=Hungry Arm
 Affix/Tooltip/StukovHungryArm=<c val="#TooltipGreen">+15%</c> <c val="747A84">(+15% per stack)</c> Lurking Arm Damage
 Affix/Tooltip/Append/StukovHungryArm=<n/><n/>Current Total: <c val="#TooltipGreen">+<d ref="Effect,StukovLurkingArmDamage,MultiplicativeModifierArray[StukovHungryArm].Modifier*100" player="1" precision="0"/>%</c> Damage
+Affix/Name/SonyaSpinToWin=Spin to Win
+Affix/Tooltip/SonyaSpinToWin=Gain <c val="#TooltipNumbers">Hurricane</c>, <c val="#TooltipNumbers">Life Funnel</c>, and <c val="#TooltipNumbers">Ruthless</c>.<n/><n/>Sonya is Unstoppable while Whirlwinding.<n/><n/>Each Whirlwind hit increases the damage of the next Whirlwind by <c val="#TooltipNumbers">1%</c>, or <c val="#TooltipNumbers">10%</c> against enemy Heroes.<n/><n/>Whirlwind's area increases by up to <c val="#TooltipNumbers">100%</c> based on Sonya's missing Health.
+Affix/Tooltip/Append/SonyaSpinToWin=
+Button/Name/SonyaSpinToWinTokenCounter=Spin to Win
+Button/Tooltip/SonyaSpinToWinTokenCounter=<c val="#TooltipQuest">Bonus damage stored for the next Whirlwind: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SonyaSpinToWinTokenCounter$" precision="0"/>%</c></c>
+Affix/Name/SonyaSeismicBrute=Seismic Brute
+Affix/Tooltip/SonyaSeismicBrute=Gain <c val="#TooltipNumbers">Furious Blow</c>, <c val="#TooltipNumbers">Shattered Ground</c>, and <c val="#TooltipNumbers">Shot of Fury</c>.<n/><n/><c val="#TooltipGreen">-5</c> Seismic Slam Fury cost<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Hitting enemy Heroes with Seismic Slam grants <c val="#TooltipNumbers">1</c> stack and increases Seismic Slam damage by <c val="#TooltipNumbers">1%</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
+Affix/Tooltip/Append/SonyaSeismicBrute=
+Button/Name/SonyaSeismicBruteTokenCounter=Seismic Brute
+Button/Tooltip/SonyaSeismicBruteTokenCounter=<c val="#TooltipQuest">Bonus Seismic Slam damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SonyaSeismicBruteTokenCounter$" precision="0"/>%</c></c>
+Affix/Name/SonyaAncientHunter=Ancient Hunter
+Affix/Tooltip/SonyaAncientHunter=Gain <c val="#TooltipNumbers">Poisoned Spear</c>, <c val="#TooltipNumbers">Mystical Spear</c>, and <c val="#TooltipNumbers">Composite Spear</c>.<n/><n/><c val="#TooltipGreen">-3s</c> Ancient Spear Cooldown<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Hitting enemy Heroes with Ancient Spear grants <c val="#TooltipNumbers">1</c> stack and increases Ancient Spear damage, including Poisoned Spear, by <c val="#TooltipNumbers">3%</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
+Affix/Tooltip/Append/SonyaAncientHunter=
+Button/Name/SonyaAncientHunterTokenCounter=Ancient Hunter
+Button/Tooltip/SonyaAncientHunterTokenCounter=<c val="#TooltipQuest">Bonus Ancient Spear damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SonyaAncientHunterTokenCounter$*3" precision="0"/>%</c></c>
+Affix/Name/SonyaCripplingWhirl=Crippling Whirl
+Affix/Tooltip/SonyaCripplingWhirl=Whirlwind hits Slow enemies by <c val="#TooltipNumbers">5%</c> for <c val="#TooltipNumbers">5</c> seconds, stacking up to <c val="#TooltipNumbers">50%</c>.
+Affix/Tooltip/Append/SonyaCripplingWhirl=
+Behavior/Name/SonyaCripplingWhirlSlow=Crippling Whirl
+Behavior/Tooltip/SonyaCripplingWhirlSlow=Slowed by <c val="#TooltipNumbers">5%</c> per stack.
+Affix/Name/SonyaEndlessSpin=Endless Spin
+Affix/Tooltip/SonyaEndlessSpin=<c val="#TooltipGreen">+2s</c> <c val="747A84">(+2s per stack)</c> Whirlwind Duration
+Affix/Tooltip/Append/SonyaEndlessSpin=
+Affix/Name/SonyaEternalBattle=Eternal Battle
+Affix/Tooltip/SonyaEternalBattle=Each time Whirlwind hits an enemy, its duration increases by <c val="#TooltipNumbers">0.1</c> seconds.
+Affix/Tooltip/Append/SonyaEternalBattle=
+Affix/Name/SonyaEarthshatter=Earthshatter
+Affix/Tooltip/SonyaEarthshatter=<c val="#TooltipGreen">+2s</c> Leap Stun Duration<n/><n/><c val="#TooltipGreen">+1</c> Leap Charge
+Affix/Tooltip/Append/SonyaEarthshatter=
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

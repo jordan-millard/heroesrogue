@@ -10069,6 +10069,188 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
+        <Instances Id="SonyaSpinToWin">
+            <String String="Assets/Textures/storm_ui_icon_sonya_whirlwind.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="BarbarianHurricane">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="BarbarianLifeFunnel">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="BarbarianRuthless">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 SonyaSpinToWinMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SonyaSpinToWinTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_SonyaSpinToWinStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="SonyaSeismicBrute">
+            <String String="Assets/Textures/storm_ui_icon_sonya_seismicslam.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="BarbarianFuriousBlow">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="BarbarianShatteredGround">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="BarbarianShotOfFury">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 SonyaSeismicBruteTokenCounter">
+                <Field Id="Behavior" />
+            </String>
+            <String String="SonyaSeismicBruteTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Add Abil,BarbarianSeismicSlam,Cost.Vital[Energy] -5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SonyaSeismicBruteAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SonyaAncientHunter">
+            <String String="Assets/Textures/storm_ui_icon_sonya_ancientspear.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="BarbarianPoisonedSpear">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="BarbarianMysticalSpear">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="BarbarianCompositeSpear">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 SonyaAncientHunterTokenCounter">
+                <Field Id="Behavior" />
+            </String>
+            <String String="SonyaAncientHunterTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Add Abil,BarbarianAncientSpear,Cost.Cooldown.TimeUse -3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SonyaAncientHunterAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SonyaCripplingWhirl">
+            <String String="Assets/Textures/storm_ui_icon_sonya_whirlwind.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 1 Set Effect,SonyaCripplingWhirlApplySlow,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SonyaEndlessSpin">
+            <Int Int="2">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sonya_whirlwind.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Behavior,BarbarianWhirlwindChannel,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 3 Add Behavior,BarbarianWhirlwindChannel,PeriodCount 4">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 3 Add Effect,BarbarianWhirlwindCreatePersistent,PeriodCount 4">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="SonyaEternalBattle">
+            <String String="Assets/Textures/storm_ui_icon_sonya_whirlwind.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 1 Set Effect,SonyaEternalBattleExtend,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Behavior,BarbarianWhirlwindChannel,PeriodCount 10000">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,BarbarianWhirlwindCreatePersistent,PeriodCount 10000">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="SonyaEarthshatter">
+            <String String="Assets/Textures/storm_ui_icon_sonya_leap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="BarbarianHeroicAbilityLeap">
+                <Field Id="TalentsRequired" />
+            </String>
+            <String String="1 1 Add Behavior,BarbarianLeapStun,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,BarbarianLeap,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,BarbarianLeap,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,BarbarianLeap,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,BarbarianLeap,Cost.Charge.TimeUse 60">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,BarbarianLeap,Cost.Cooldown.TimeUse 1">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+        </Instances>
         <Instances Id="SonyaSonyasFury">
             <Int Int="0">
                 <Field Id="Max" />
