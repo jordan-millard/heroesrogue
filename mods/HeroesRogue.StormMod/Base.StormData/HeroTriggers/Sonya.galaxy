@@ -2,8 +2,8 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Sonya, Spin to Win. Whirlwind hits store bonus damage for the next Whirlwind (1% per non-Hero hit,
-// 10% per Hero hit). Whirlwind costs no Fury but spends all of it (SonyaData.xml), and its radius scales with the
-// Fury spent: 50% at 0 Fury, normal at 40, double at 80, and on up from there.
+// 10% per Hero hit). Whirlwind costs no Fury but spends all of it (SonyaData.xml), and its radius and damage scale
+// with the Fury spent: 50% at 0 Fury, normal at 40, double at 80, and on up from there.
 // Unstoppable and no Seismic Slam are in SonyaData.xml.
 // ============================================================
 
@@ -15,7 +15,7 @@ const fixed libAffx_sonyaSpinNormalFury = 40.0; // Fury for the normal radius
 bool libAffx_sonyaSpinStarted;
 int libAffx_sonyaSpinStored; // % bonus from hits since the last Whirlwind ended, for the next Whirlwind
 bool libAffx_sonyaSpinActive; // Whirlwinding
-fixed libAffx_sonyaSpinRadius;
+fixed libAffx_sonyaSpinFuryScale; // radius and damage multiplier last written
 
 unit libAffx_SonyaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -102,23 +102,28 @@ bool libAffx_SonyaSpinEnd_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Whirlwind's radius follows the Fury held, and stays fixed while Whirlwinding
+// Whirlwind's radius and damage follow the Fury held, and stay fixed while Whirlwinding
 bool libAffx_SonyaSpinRadius_Func (bool testConds, bool runActions) {
     unit hero = libAffx_SonyaHero();
-    fixed radius;
+    fixed scale;
     fixed fury;
+    string damage;
     if (hero == null || !UnitIsAlive(hero) || !libAffx_SonyaHasSpinToWin() || libAffx_sonyaSpinActive) {
         return true;
     }
     fury = UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent);
     if (fury <= libAffx_sonyaSpinNormalFury) {
-        radius = libAffx_sonyaWhirlwindRadius * (0.5 + 0.5 * fury / libAffx_sonyaSpinNormalFury);
+        scale = 0.5 + 0.5 * fury / libAffx_sonyaSpinNormalFury;
     } else {
-        radius = libAffx_sonyaWhirlwindRadius * (fury / libAffx_sonyaSpinNormalFury);
+        scale = fury / libAffx_sonyaSpinNormalFury;
     }
-    if (AbsF(radius - libAffx_sonyaSpinRadius) > 0.01) {
-        libAffx_sonyaSpinRadius = radius;
-        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindSearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(radius, 2));
+    if (AbsF(scale - libAffx_sonyaSpinFuryScale) > 0.005) {
+        libAffx_sonyaSpinFuryScale = scale;
+        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindSearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(libAffx_sonyaWhirlwindRadius * scale, 2));
+        damage = FixedToString(scale - 1.0, 3);
+        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindDamage", "MultiplicativeModifierArray[SonyaSpinToWinFury].Modifier", libAffx_player, damage);
+        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindHeroDamage", "MultiplicativeModifierArray[SonyaSpinToWinFury].Modifier", libAffx_player, damage);
+        CatalogFieldValueSet(c_gameCatalogEffect, "BarbarianWhirlwindRuthlessTalentDamage", "MultiplicativeModifierArray[SonyaSpinToWinFury].Modifier", libAffx_player, damage);
     }
     return true;
 }
