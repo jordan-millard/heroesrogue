@@ -2,14 +2,14 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Lunara. Her quest stacks carry over between games and come back 10% per Hero level:
-// Poisoner keeps 80% of its stacks (levels 1-8), the other quests keep all of them (levels 1-10).
+// Poisoner keeps 85% of its stacks (levels 1-9), the other quests keep all of them (levels 1-10).
 // Stacks earned this game are added on top.
 // Quests: 1 Poisoner, 2 Splintered Huntress, 3 Pollinator.
 // ============================================================
 
 const int libAffx_lunaraQuests = 3;
 const int libAffx_lunaraPoisoner = 1;
-const int libAffx_lunaraPoisonerCarryLevels = 8;        // 10% per level, so 80% of the stacks carry over
+const int libAffx_lunaraPoisonerCarryPercent = 85;      // share of the stacks that carries over, 10% per level
 const int libAffx_lunaraPoisonerSecondsPerStack = 5;  // seconds an enemy Hero spends poisoned per stack
 const fixed libAffx_lunaraToxinPerApplication = 3.0;
 const int libAffx_lunaraHuntressReward = 30;
@@ -25,12 +25,12 @@ string libAffx_LunaraQuestToken(int quest) {
     if (quest == 2) { return "DryadHuntressTokenCounter"; }
     return "DryadPollinatorTokenCounter";
 }
-// Levels that each give back 10% of the banked stacks
-int libAffx_LunaraCarryLevels(int quest) {
+// Percent of the banked stacks that carries over; each level gives back 10% until it is reached
+int libAffx_LunaraCarryPercent(int quest) {
     if (quest == libAffx_lunaraPoisoner) {
-        return libAffx_lunaraPoisonerCarryLevels;
+        return libAffx_lunaraPoisonerCarryPercent;
     }
-    return 10;
+    return 100;
 }
 unit libAffx_LunaraHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -60,7 +60,7 @@ void libAffx_LunaraSaveBank() {
     }
     for (quest = 1; quest <= libAffx_lunaraQuests; quest += 1) {
         if (libAffx_LunaraHasQuest(quest)) {
-            carried = libAffx_lunaraBanked[quest] * libAffx_LunaraCarryLevels(quest) / 10;
+            carried = libAffx_lunaraBanked[quest] * libAffx_LunaraCarryPercent(quest) / 100;
             libAffx_BankSaveValueInt("Lunara_" + libAffx_LunaraQuestToken(quest),
                 carried + MaxI(0, libAffx_LunaraStacks(quest) - libAffx_lunaraRestored[quest]));
         }
@@ -162,8 +162,8 @@ bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
         if (!libAffx_LunaraHasQuest(quest)) {
             continue;
         }
-        level = MinI(UnitLevel(hero), libAffx_LunaraCarryLevels(quest));
-        wanted = libAffx_lunaraBanked[quest] * level / 10;
+        level = UnitLevel(hero);
+        wanted = libAffx_lunaraBanked[quest] * MinI(level * 10, libAffx_LunaraCarryPercent(quest)) / 100;
         if (wanted > libAffx_lunaraRestored[quest]) {
             libGame_gf_ModifyTokenCount(wanted - libAffx_lunaraRestored[quest], libAffx_LunaraQuestToken(quest), hero);
             libAffx_lunaraRestored[quest] = wanted;
