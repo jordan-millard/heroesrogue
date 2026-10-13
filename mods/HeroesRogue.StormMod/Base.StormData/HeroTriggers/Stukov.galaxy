@@ -16,12 +16,12 @@ bool libAffx_StukovInfestationScaling (bool testConds, bool runActions) {
 
 // ============================================================
 // Golden Stukov, Lurking Hunger. Hero kills by Lurking Arm carry over for the whole run:
-// each one adds 1% Lurking Arm radius (up to 100%, in StukovData.xml), 1% cooldown reduction (up to 50%)
-// and 1% Growing Infestation channel duration (no maximum).
+// each one adds 1% Lurking Arm radius (up to 100%, in StukovData.xml) and 1% cooldown reduction (up to 50%).
+// Growing Infestation can be Channeled for 6 seconds instead of 3.
 // ============================================================
 
 const fixed libAffx_stukovLurkingArmCooldown = 10.0;
-const fixed libAffx_stukovGrowingInfestationDuration = 3.0;
+const fixed libAffx_stukovGrowingInfestationDuration = 6.0;
 const int libAffx_stukovLurkingRadiusMax = 100;
 const int libAffx_stukovLurkingCooldownMax = 50;
 
@@ -121,7 +121,7 @@ bool libAffx_StukovLurkingTick_Func (bool testConds, bool runActions) {
 
     // Growing Infestation's channel limit; 0 means no limit (Lurking Deep), which is left alone
     if (PlayerHasTalent(libAffx_player, "StukovGrowingInfestation")) {
-        duration = libAffx_stukovGrowingInfestationDuration * (1.0 + IntToFixed(kills) / 100.0);
+        duration = libAffx_stukovGrowingInfestationDuration;
         current = StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "StukovLurkingArmCasterBehavior", "Duration", libAffx_player));
         if (current > 0.0 && AbsF(current - duration) > 0.01) {
             CatalogFieldValueSet(c_gameCatalogBehavior, "StukovLurkingArmCasterBehavior", "Duration", libAffx_player, FixedToString(duration, 2));
