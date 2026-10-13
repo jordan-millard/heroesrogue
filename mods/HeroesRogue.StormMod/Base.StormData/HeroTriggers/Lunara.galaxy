@@ -46,6 +46,11 @@ int libAffx_LunaraStacks(int quest) {
     return FixedToInt(UnitGetTokenCount(libAffx_LunaraHero(), libAffx_LunaraQuestToken(quest)));
 }
 
+// Poison expiry tracked per enemy unit (Poisoner)
+string libAffx_LunaraToxinKey(unit target) {
+    return "LunaraToxinExpires_" + IntToString(UnitGetTag(target));
+}
+
 // Carried-over stacks plus this game's progress; saved with the run
 void libAffx_LunaraSaveBank() {
     int quest;
@@ -65,7 +70,7 @@ void libAffx_LunaraSaveBank() {
 // Poisoner: Nature's Toxin has no maximum duration; each application adds 3 seconds
 bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     unit target = EventUnit();
-    string key = "LunaraToxinExpires_" + IntToString(UnitGetTag(target));
+    string key = libAffx_LunaraToxinKey(target);
     fixed now = GameGetMissionTime();
     fixed previous = MaxF(0.0, DataTableGetFixed(true, key) - now);
     fixed current;
@@ -108,6 +113,8 @@ void libAffx_LunaraPoisonerTick(unit hero) {
         target = UnitGroupUnit(heroes, i);
         if (!UnitHasBehavior2(target, "DryadNaturesToxin") ||
             UnitBehaviorEffectPlayer(target, "DryadNaturesToxin", c_effectPlayerCaster, 0) != libAffx_player) {
+            // Living and not poisoned: forget the tracked poison so a respawned Hero is not counted as poisoned
+            DataTableSetFixed(true, libAffx_LunaraToxinKey(target), 0.0);
             continue;
         }
         key = "LunaraPoisonedSeconds_" + IntToString(UnitGetTag(target));
@@ -118,6 +125,27 @@ void libAffx_LunaraPoisonerTick(unit hero) {
         }
         DataTableSetInt(true, key, seconds);
     }
+}
+
+// Poisoner: takedowns of Heroes that were poisoned by Lunara grant a stack. The poison is gone by the time
+// the takedown fires, so this checks the tracked poison expiry instead
+bool libAffx_LunaraTakedown_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_LunaraHero();
+    unit dead = libGame_gf_HeroParticipatedInTakedownKilledHero();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player ||
+            !libAffx_LunaraHasQuest(libAffx_lunaraPoisoner) ||
+            UnitTestState(dead, c_unitStateHallucination) ||
+            DataTableGetFixed(true, libAffx_LunaraToxinKey(dead)) <= GameGetMissionTime()) {
+            return false;
+        }
+    }
+    if (!runActions) {
+        return true;
+    }
+    DataTableSetFixed(true, libAffx_LunaraToxinKey(dead), 0.0);
+    libGame_gf_ModifyTokenCount(1, libAffx_LunaraQuestToken(libAffx_lunaraPoisoner), hero);
+    return true;
 }
 
 bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
@@ -172,5 +200,6 @@ bool libAffx_LunaraQuestStart (bool testConds, bool runActions) {
     t = TriggerCreate("libAffx_LunaraToxinApplied_Func");
     TriggerAddEventUnitBehaviorChange(t, null, "DryadNaturesToxin", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(t, null, "DryadNaturesToxin", c_unitBehaviorChangeRefresh);
+    libGame_gf_HeroParticipatedInTakedown(TriggerCreate("libAffx_LunaraTakedown_Func"));
     return true;
 }
