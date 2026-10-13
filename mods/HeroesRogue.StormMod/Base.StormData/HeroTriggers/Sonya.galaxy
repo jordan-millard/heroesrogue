@@ -13,7 +13,7 @@ const int libAffx_sonyaSpinOtherHit = 1;
 const fixed libAffx_sonyaSpinNormalFury = 40.0; // Fury for the normal duration
 const fixed libAffx_sonyaWhirlwindDuration = 3.0;
 const fixed libAffx_sonyaEndlessSpinDuration = 2.0; // per Endless Spin
-const fixed libAffx_sonyaSpinRadiusPerSecond = 0.35; // radius growth per second Channeled
+const fixed libAffx_sonyaSpinRadiusPerSecond = 0.35; // radius growth per second Channeled, doubled by Widening Gyre
 
 bool libAffx_sonyaSpinStarted;
 int libAffx_sonyaSpinStored; // % bonus from hits since the last Whirlwind ended, for the next Whirlwind
@@ -118,7 +118,11 @@ bool libAffx_SonyaSpinTick_Func (bool testConds, bool runActions) {
         return true;
     }
     if (libAffx_sonyaSpinActive) {
-        radius = libAffx_sonyaWhirlwindRadius * (1.0 + libAffx_sonyaSpinRadiusPerSecond * (GameGetMissionTime() - libAffx_sonyaSpinStartTime));
+        radius = libAffx_sonyaSpinRadiusPerSecond * (GameGetMissionTime() - libAffx_sonyaSpinStartTime);
+        if (libAffx_affixes[libAffx_GetAffixId("SonyaWideningGyre")].count > 0) {
+            radius *= 2.0;
+        }
+        radius = libAffx_sonyaWhirlwindRadius * (1.0 + radius);
     } else {
         fury = UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent);
         if (fury <= libAffx_sonyaSpinNormalFury) {

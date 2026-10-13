@@ -10141,9 +10141,9 @@
             <String String="SonyaSeismicBruteTokenCounter 0.5">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="SonyaSpinToWin">
+            <User Type="Affix" Instance="SonyaSpinToWin">
                 <Field Id="AffixesExcluded" />
-            </String>
+            </User>
             <String String="1 1 Add Abil,BarbarianSeismicSlam,Cost.Vital[Energy] -5">
                 <Field Id="CatalogModification" />
             </String>
@@ -10256,6 +10256,20 @@
             <String String="1 1 Set Effect,SonyaUnstoppableSpinApply,Chance 1">
                 <Field Id="CatalogModification" Index="1" />
             </String>
+        </Instances>
+        <Instances Id="SonyaWideningGyre">
+            <String String="Assets/Textures/storm_ui_icon_sonya_whirlwind.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Barbarian">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SonyaSpinToWin">
+                <Field Id="AffixesRequired" />
+            </User>
         </Instances>
         <Instances Id="SonyaEarthshatter">
             <String String="Assets/Textures/storm_ui_icon_sonya_leap.dds">
