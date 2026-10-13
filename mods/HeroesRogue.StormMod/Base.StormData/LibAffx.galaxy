@@ -3622,6 +3622,17 @@ void libAffx_AddSaveBankFixed(int affix, string key, fixed value) {
 }
 
 
+// Winning before any Objective finished still gives the curse swap the first Objective win would have
+void libAffx_ObjectiveWinWithoutObjectives() {
+    if (libAffx_objectivesWonThisGame > 0 || libAffx_objectivesLostThisGame > 0) {
+        return;
+    }
+    if (libAffx_objectivesWonThisGame < libAffx_maxAffixesFromObjectives) {
+        libAffx_objectivesWonCounter += 1;
+        libAffx_DisplayChatMessage(StringExternal("Message/CurseToBoon"));
+    }
+}
+
 bool libAffx_GameOverCallbackTrigger_Func (bool testConds, bool runActions) {
     int winningTeam = libGame_winningTeam;
 
@@ -3643,6 +3654,7 @@ bool libAffx_GameOverCallbackTrigger_Func (bool testConds, bool runActions) {
             libAffx_SetDialogControlVisible(libAffx_dialogGameover.continueButton, true);
             libAffx_ShowGameoverDialog(true);
         }
+        libAffx_ObjectiveWinWithoutObjectives();
         libAffx_SaveBank();
     } else {
         libAffx_ResetBank();
