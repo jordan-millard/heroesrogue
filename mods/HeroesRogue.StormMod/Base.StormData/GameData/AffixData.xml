@@ -9700,6 +9700,37 @@
                 <Field Id="CatalogModification" Index="2" />
             </String>
         </Instances>
+        <Instances Id="StukovInfestedHarvest">
+            <String String="Assets/Textures/storm_ui_icon_stukov_lurkingarm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stukov">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 1 Set Effect,StukovLurkingArmDamage,MultiplicativeModifierArray[1].Modifier 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="StukovHungryArm">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_stukov_lurkingarm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stukov">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 2 Set Effect,StukovLurkingArmDamage,MultiplicativeModifierArray[StukovHungryArm].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
         <Instances Id="StukovLurkingDeep">
             <String String="Assets/Textures/storm_ui_icon_stukov_lurkingarm.dds">
                 <Field Id="Icon" />

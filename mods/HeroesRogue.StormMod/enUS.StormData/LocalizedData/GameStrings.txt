@@ -683,6 +683,12 @@ Button/Name/StukovLurkingHungerTokenCounter=Lurking Hunger
 Button/Tooltip/StukovLurkingHungerTokenCounter=<c val="#TooltipQuest">Bonus Lurking Arm damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StukovLurkingHungerTokenCounter$" precision="0"/>%</c></c>
 Behavior/Name/StukovLurkingHungerSpellPower=Lurking Hunger
 Behavior/Tooltip/StukovLurkingHungerSpellPower=Each stack increases Spell Power by <c val="#TooltipNumbers">10%</c>.
+Affix/Name/StukovInfestedHarvest=Infested Harvest
+Affix/Tooltip/StukovInfestedHarvest=Lurking Arm deals <c val="#TooltipGreen">100%</c> more damage to non-Heroes instead of <c val="#TooltipNumbers">50%</c> less.
+Affix/Tooltip/Append/StukovInfestedHarvest=
+Affix/Name/StukovHungryArm=Hungry Arm
+Affix/Tooltip/StukovHungryArm=<c val="#TooltipGreen">+15%</c> <c val="747A84">(+15% per stack)</c> Lurking Arm Damage
+Affix/Tooltip/Append/StukovHungryArm=<n/><n/>Current Total: <c val="#TooltipGreen">+<d ref="Effect,StukovLurkingArmDamage,MultiplicativeModifierArray[StukovHungryArm].Modifier*100" player="1" precision="0"/>%</c> Damage
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=
