@@ -17,6 +17,7 @@ bool libAffx_lunaraStarted;
 int[libAffx_lunaraQuests + 1] libAffx_lunaraBanked;   // stacks from previous games
 int[libAffx_lunaraQuests + 1] libAffx_lunaraRestored; // banked stacks given back so far this game
 bool libAffx_lunaraHuntressRewarded;
+fixed libAffx_lunaraToxinDuration; // Poisoner duration per application last written to the catalog
 
 string libAffx_LunaraQuestToken(int quest) {
     if (quest == 1) { return "DryadPoisonerTokenCounter"; }
@@ -69,14 +70,19 @@ void libAffx_LunaraSaveBank() {
     }
 }
 
+// Poisoner: seconds of Nature's Toxin each Basic Attack or Ability adds
+fixed libAffx_LunaraPoisonerSecondsPerHit() {
+    return libAffx_lunaraToxinPerApplication +
+        IntToFixed(libAffx_LunaraStacks(libAffx_lunaraPoisoner) / libAffx_lunaraPoisonerStacksPerApplySecond);
+}
+
 // Poisoner: Nature's Toxin has no maximum duration; each application adds 4 seconds, plus 1 second per 50 stacks
 bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     unit target = EventUnit();
     string key = libAffx_LunaraToxinKey(target);
     fixed now = GameGetMissionTime();
     fixed previous = MaxF(0.0, DataTableGetFixed(true, key) - now);
-    fixed perApplication = libAffx_lunaraToxinPerApplication +
-        IntToFixed(libAffx_LunaraStacks(libAffx_lunaraPoisoner) / libAffx_lunaraPoisonerStacksPerApplySecond);
+    fixed perApplication = libAffx_LunaraPoisonerSecondsPerHit();
     fixed current;
     fixed wanted;
     if (testConds) {
@@ -148,6 +154,13 @@ bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
             libGame_gf_ModifyTokenCount(wanted - libAffx_lunaraRestored[quest], libAffx_LunaraQuestToken(quest), hero);
             libAffx_lunaraRestored[quest] = wanted;
         }
+    }
+
+    // Poisoner: the toxin's own duration is what each application adds, so the first hit gets it too
+    // (setting the remaining duration when the poison is created gets overwritten by the 3 second default)
+    if (libAffx_LunaraHasQuest(libAffx_lunaraPoisoner) && libAffx_lunaraToxinDuration != libAffx_LunaraPoisonerSecondsPerHit()) {
+        libAffx_lunaraToxinDuration = libAffx_LunaraPoisonerSecondsPerHit();
+        CatalogFieldValueSet(c_gameCatalogBehavior, "DryadNaturesToxin", "Duration", libAffx_player, FixedToString(libAffx_lunaraToxinDuration, 2));
     }
 
     // Splintered Huntress reward: Noxious Blossom empowers 4 Basic Attacks instead of 3
