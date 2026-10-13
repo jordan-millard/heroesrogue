@@ -8,7 +8,7 @@ include "AffixTriggers"
 
 const int libAffx_lunaraQuests = 3;
 const int libAffx_lunaraPoisoner = 1;
-const int libAffx_lunaraPoisonerStacksPerApplySecond = 100; // stacks per extra second added by each application
+const int libAffx_lunaraPoisonerStacksPerApplySecond = 50; // stacks per extra second added by each application
 const fixed libAffx_lunaraToxinPerApplication = 3.0;
 const int libAffx_lunaraHuntressReward = 30;
 const int libAffx_lunaraPollinatorReward = 40;
@@ -63,7 +63,7 @@ void libAffx_LunaraSaveBank() {
     }
 }
 
-// Poisoner: Nature's Toxin has no maximum duration; each application adds 3 seconds, plus 1 second per 100 stacks
+// Poisoner: Nature's Toxin has no maximum duration; each application adds 3 seconds, plus 1 second per 50 stacks
 bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     unit target = EventUnit();
     string key = libAffx_LunaraToxinKey(target);
