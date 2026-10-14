@@ -1,0 +1,104 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Falstad, Wildhammer's Wrath.
+// Shockwave: a BOOMerang explosion that hits 2 or more enemy Heroes adds 5 flat explosion damage for each Hero after
+// the first. Gathering Thunder: an enemy Hero who dies within 2 seconds of a Hammerang hit adds 3% hammer damage.
+// Stacks carry over between games through QuestRetain; the damage itself is in FalstadData.xml.
+// ============================================================
+
+const fixed libAffx_falstadKillWindow = 2.0;
+const fixed libAffx_falstadExplosionWindow = 0.0625; // all hits of one explosion land in the same game loop
+const int libAffx_falstadShockwaveDamagePerHero = 5;
+
+bool libAffx_falstadStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_falstadHammerHitTime; // per enemy player, last hit by any part of Hammerang
+int libAffx_falstadExplosionHeroes; // Heroes hit by the explosion being counted
+
+unit libAffx_FalstadHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_FalstadHasStarter() {
+    unit hero = libAffx_FalstadHero();
+    return hero != null && UnitHasBehavior2(hero, "FalstadWildhammerMarker");
+}
+
+// The enemy Hero player hit by this damage, or 0
+int libAffx_FalstadHitHeroPlayer() {
+    unit victim = EventUnit();
+    int victimPlayer = UnitGetOwner(victim);
+    if (EventUnitDamageSourcePlayer() != libAffx_player) {
+        return 0;
+    }
+    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        return 0;
+    }
+    if (victimPlayer < 1 || victimPlayer > libCore_gv_bALMaxPlayers) {
+        return 0;
+    }
+    return victimPlayer;
+}
+
+bool libAffx_FalstadHammerHit_Func (bool testConds, bool runActions) {
+    int victimPlayer = libAffx_FalstadHitHeroPlayer();
+    if (victimPlayer == 0 || !libAffx_FalstadHasStarter()) {
+        return false;
+    }
+    libAffx_falstadHammerHitTime[victimPlayer] = GameGetMissionTime();
+    return true;
+}
+
+// The first Hero hit by an explosion waits for the rest of that explosion's hits, then grants the Shockwave stacks
+bool libAffx_FalstadExplosionHit_Func (bool testConds, bool runActions) {
+    int heroes;
+    if (libAffx_FalstadHitHeroPlayer() == 0 || !libAffx_FalstadHasStarter()) {
+        return false;
+    }
+    libAffx_falstadExplosionHeroes += 1;
+    if (libAffx_falstadExplosionHeroes > 1) {
+        return true;
+    }
+    Wait(libAffx_falstadExplosionWindow, c_timeGame);
+    heroes = libAffx_falstadExplosionHeroes;
+    libAffx_falstadExplosionHeroes = 0;
+    if (heroes >= 2 && libAffx_FalstadHero() != null) {
+        libGame_gf_ModifyTokenCount((heroes - 1) * libAffx_falstadShockwaveDamagePerHero, "FalstadShockwaveTokenCounter", libAffx_FalstadHero());
+    }
+    return true;
+}
+
+// HeroTakedown for Gathering Thunder
+bool libAffx_FalstadTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    fixed hitTime;
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_FalstadHasStarter()) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    hitTime = libAffx_falstadHammerHitTime[killedPlayer];
+    if (hitTime <= 0.0 || GameGetMissionTime() - hitTime > libAffx_falstadKillWindow) {
+        return true;
+    }
+    libAffx_falstadHammerHitTime[killedPlayer] = 0.0;
+    libGame_gf_ModifyTokenCount(1, "FalstadGatheringThunderTokenCounter", libAffx_FalstadHero());
+    return true;
+}
+
+// AffixAdded for Wildhammer's Wrath
+bool libAffx_FalstadStart (bool testConds, bool runActions) {
+    trigger hammerHit;
+    if (libAffx_falstadStarted) {
+        return true;
+    }
+    libAffx_falstadStarted = true;
+    hammerHit = TriggerCreate("libAffx_FalstadHammerHit_Func");
+    TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangDamage");
+    TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangReturnDamage");
+    TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_FalstadExplosionHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
+    return true;
+}

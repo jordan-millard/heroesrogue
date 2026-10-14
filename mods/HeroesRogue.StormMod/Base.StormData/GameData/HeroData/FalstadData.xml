@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Falstad, Wildhammer's Wrath: Hammerang charges and mana cost are set in AffixData.xml.
+       Both quests are counted in HeroTriggers/Falstad.galaxy; their damage is applied here. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="FalstadWildhammerMarker" parent="CarryBehaviorParent" />
+
+  <!-- Shockwave quest: each token is 1 flat BOOMerang explosion damage -->
+  <CBehaviorTokenCounter id="FalstadShockwaveTokenCounter" parent="StormQuestToken">
+    <Face value="FalstadShockwaveTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="FalstadShockwaveAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="FalstadShockwaveTokenCounter" />
+    <Scale value="1" />
+  </CAccumulatorToken>
+
+  <!-- Gathering Thunder quest: +3% hammer damage per kill, up to +150% (Unbound Storm raises MaxAccumulation) -->
+  <CBehaviorTokenCounter id="FalstadGatheringThunderTokenCounter" parent="StormQuestToken">
+    <Face value="FalstadGatheringThunderTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="FalstadGatheringThunderAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="1.5" />
+    <ApplicationRule value="Add" />
+    <TokenId value="FalstadGatheringThunderTokenCounter" />
+    <Scale value="0.03" />
+  </CAccumulatorToken>
+
+  <CEffectDamage id="HammerangDamage">
+    <MultiplicativeModifierArray index="FalstadGatheringThunder" Accumulator="FalstadGatheringThunderAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="HammerangReturnDamage">
+    <MultiplicativeModifierArray index="FalstadGatheringThunder" Accumulator="FalstadGatheringThunderAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FalstadHammerangBOOMerangDamage">
+    <MultiplicativeModifierArray index="FalstadGatheringThunder" Accumulator="FalstadGatheringThunderAccumulator" />
+    <FlatModifierArray index="FalstadShockwave" Accumulator="FalstadShockwaveAccumulator" />
+  </CEffectDamage>
+
+  <CButton id="FalstadShockwaveTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_falstad_boomerang.dds" />
+  </CButton>
+  <CButton id="FalstadGatheringThunderTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_falstad_hammerang.dds" />
+  </CButton>
+</Catalog>

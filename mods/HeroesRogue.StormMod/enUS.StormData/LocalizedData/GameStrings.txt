@@ -792,6 +792,20 @@ Affix/Name/AnubarakShedExoskeleton=Shed Exoskeleton
 Affix/Tooltip/AnubarakShedExoskeleton=Gain <c val="#TooltipNumbers">Shed Exoskeleton</c>: Harden Carapace grants <c val="#TooltipNumbers">30%</c> Movement Speed for <c val="#TooltipNumbers">3</c> seconds.
 Affix/Name/AnubarakRetaliation=Retaliation
 Affix/Tooltip/AnubarakRetaliation=When Harden Carapace ends or breaks, it explodes, dealing <c val="#TooltipNumbers">50%</c> of the damage it absorbed to nearby enemies.
+Affix/Name/FalstadWildhammersWrath=Wildhammer's Wrath
+Affix/Tooltip/FalstadWildhammersWrath=Gain <c val="#TooltipNumbers">Epic Mount</c>. <c val="#TooltipNumbers">Gathering Storm</c> can no longer be selected.<n/><n/>Hammerang gains <c val="#TooltipNumbers">2</c> charges and costs <c val="#TooltipNumbers">20</c> less Mana.<n/><n/><c val="#TooltipQuest">Quest:</c> Each BOOMerang explosion that hits <c val="#TooltipNumbers">2</c> or more enemy Heroes permanently increases its damage by <c val="#TooltipNumbers">5</c> for each Hero hit after the first. <c val="#TooltipNumbers">80%</c> of the bonus is kept between games.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero who dies within <c val="#TooltipNumbers">2</c> seconds of being hit by Hammerang increases Hammerang's damage by <c val="#TooltipNumbers">3%</c> (up to <c val="#TooltipNumbers">150%</c>). Kept between games.
+Button/Name/FalstadShockwaveTokenCounter=Shockwave
+Button/Tooltip/FalstadShockwaveTokenCounter=<c val="#TooltipQuest">Bonus BOOMerang explosion damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:FalstadShockwaveTokenCounter$" precision="0"/></c></c>
+Button/Name/FalstadGatheringThunderTokenCounter=Gathering Thunder
+Button/Tooltip/FalstadGatheringThunderTokenCounter=<c val="#TooltipQuest">Bonus Hammerang damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:FalstadGatheringThunderTokenCounter$*3" precision="0"/>%</c></c><n/>Up to <c val="#TooltipNumbers">150%</c> unless you have Unbound Storm.
+Affix/Name/FalstadFeatherweightHammer=Featherweight Hammer
+Affix/Tooltip/FalstadFeatherweightHammer=Hammerang costs <c val="#TooltipNumbers">20</c> less Mana.
+Affix/Name/FalstadBigHammer=Big Hammer
+Affix/Tooltip/FalstadBigHammer=Increases the area of Hammerang and its BOOMerang explosion by <c val="#TooltipNumbers">30%</c>.
+Affix/Name/FalstadUnboundStorm=Unbound Storm
+Affix/Tooltip/FalstadUnboundStorm=Removes the <c val="#TooltipNumbers">150%</c> limit on Wildhammer's Wrath's Hammerang damage quest.
+Affix/Name/FalstadTwinHammers=Twin Hammers
+Affix/Tooltip/FalstadTwinHammers=Hammerang gains <c val="#TooltipNumbers">1</c> additional charge.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

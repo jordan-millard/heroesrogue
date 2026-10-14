@@ -11146,5 +11146,153 @@
                 <Field Id="Trigger" Index="2" />
             </String>
         </Instances>
+        <Instances Id="FalstadWildhammersWrath">
+            <String String="Assets/Textures/storm_ui_icon_falstad_hammerang.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Falstad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="FalstadMasteryFlightEpicMount">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="FalstadHammerangGatheringStorm">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 FalstadWildhammerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 FalstadShockwaveTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 FalstadGatheringThunderTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="FalstadShockwaveTokenCounter 0.8">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="FalstadGatheringThunderTokenCounter 1.0">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,FalstadHammerang,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,FalstadHammerang,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,FalstadHammerang,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,FalstadHammerang,Cost.Charge.TimeUse 10">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,FalstadHammerang,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,FalstadHammerang,Cost.Vital[Energy] -20">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,FalstadHammerangBOOMerangModifyCooldown,Cost[0].ChargeTimeUse -2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,FalstadFlowRiderModifyCooldowns,Cost[0].ChargeTimeUse -0.25">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_FalstadStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_FalstadTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="FalstadFeatherweightHammer">
+            <String String="Assets/Textures/storm_ui_icon_falstad_hammerang_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Falstad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FalstadWildhammersWrath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,FalstadHammerang,Cost.Vital[Energy] -20">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="FalstadBigHammer">
+            <String String="Assets/Textures/storm_ui_icon_falstad_boomerang.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Falstad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FalstadWildhammersWrath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Multiply Effect,HammerangMissileScan,AreaArray[0].RectangleWidth 1.3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Effect,HammerangMissileScan,AreaArray[0].RectangleHeight 1.3">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Multiply Effect,HammerangMissileScanInitial,AreaArray[0].Radius 1.3">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Multiply Effect,HammerangMissileReturnScan,AreaArray[0].Radius 1.3">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Multiply Effect,HammerangMissileReturnScanInitial,AreaArray[0].Radius 1.3">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Multiply Effect,FalstadHammerangBOOMerangExplosionSearch,AreaArray[0].Radius 1.3">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+        </Instances>
+        <Instances Id="FalstadUnboundStorm">
+            <String String="Assets/Textures/storm_ui_icon_falstad_lightningrod.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Falstad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FalstadWildhammersWrath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Accumulator,FalstadGatheringThunderAccumulator,MaxAccumulation 100000">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="FalstadTwinHammers">
+            <String String="Assets/Textures/storm_ui_icon_falstad_hammerang.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Falstad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FalstadWildhammersWrath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,FalstadHammerang,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,FalstadHammerang,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
     </CUser>
 </Catalog>
