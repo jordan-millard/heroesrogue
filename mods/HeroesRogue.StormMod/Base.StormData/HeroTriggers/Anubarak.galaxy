@@ -36,9 +36,9 @@ fixed libAffx_anubCarapaceAbsorbed;
 unit libAffx_AnubHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
 }
-bool libAffx_AnubHas(string marker) {
+bool libAffx_AnubHas(string markerBehavior) {
     unit hero = libAffx_AnubHero();
-    return hero != null && UnitHasBehavior2(hero, marker);
+    return hero != null && UnitHasBehavior2(hero, markerBehavior);
 }
 int libAffx_AnubTokens(string token) {
     unit hero = libAffx_AnubHero();

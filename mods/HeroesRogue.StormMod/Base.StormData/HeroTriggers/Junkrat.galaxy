@@ -30,9 +30,9 @@ fixed libAffx_junkratFragAmountApplied = -1.0;
 unit libAffx_JunkratHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
 }
-bool libAffx_JunkratHas(string marker) {
+bool libAffx_JunkratHas(string markerBehavior) {
     unit hero = libAffx_JunkratHero();
-    return hero != null && UnitHasBehavior2(hero, marker);
+    return hero != null && UnitHasBehavior2(hero, markerBehavior);
 }
 int libAffx_JunkratTokens(string token) {
     unit hero = libAffx_JunkratHero();
