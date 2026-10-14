@@ -116,6 +116,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="FalstadStormbreakerDamage" />
   </CEffectSet>
 
+  <!-- BOOMerang radius indicator: a range circle on the hammer while it flies out and back. The marker behavior is
+       re-applied by the missiles' scan sets and only enabled for the starter; Big Hammer sets the splat's Scale. -->
+  <CBehaviorBuff id="FalstadWildhammerIndicator" />
+  <CEffectApplyBehavior id="FalstadWildhammerApplyIndicator">
+    <Chance value="0" />
+    <Behavior value="FalstadWildhammerIndicator" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HammerangScanSet">
+    <EffectArray value="FalstadWildhammerApplyIndicator" />
+  </CEffectSet>
+  <CEffectSet id="HammerangReturnScanSet">
+    <EffectArray value="FalstadWildhammerApplyIndicator" />
+  </CEffectSet>
+  <CActorSplat id="FalstadWildhammerExplosionSplat" parent="StormRangeSplat">
+    <Scale value="2.500000" />
+    <On Terms="Behavior.FalstadWildhammerIndicator.On" Send="Create" />
+    <On Terms="Behavior.FalstadWildhammerIndicator.Off" Send="AnimBracketStop BSD" />
+  </CActorSplat>
+
   <CButton id="FalstadShockwaveTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_falstad_boomerang.dds" />
   </CButton>
