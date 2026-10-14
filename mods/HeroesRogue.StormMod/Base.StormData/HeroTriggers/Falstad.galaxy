@@ -2,21 +2,16 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Falstad, Wildhammer's Wrath.
-// Shockwave: a BOOMerang explosion that hits 2 or more enemy Heroes adds 5 flat explosion damage for each Hero after
-// the first. Gathering Thunder: an enemy Hero who dies within 2 seconds of a Hammerang hit adds 3% hammer damage.
+// Shockwave: each enemy Hero hit by any part of Hammerang adds 5 flat BOOMerang explosion damage.
+// Gathering Thunder: an enemy Hero who dies within 2 seconds of a Hammerang hit adds 3% hammer damage.
 // Stacks carry over between games through QuestRetain; the damage itself is in FalstadData.xml.
 // ============================================================
 
 const fixed libAffx_falstadKillWindow = 2.0;
-const fixed libAffx_falstadExplosionWindow = 0.0625; // all hits of one explosion land in the same game loop
-const int libAffx_falstadShockwaveDamagePerHero = 5;
-const fixed libAffx_falstadDingSpacing = 0.15;
-const int libAffx_falstadSkippedTier = 1; // level 1, all disabled by the starter
-const int libAffx_falstadSkippedColumn = 1; // Gathering Storm
+const int libAffx_falstadShockwaveDamagePerHit = 5;
 
 bool libAffx_falstadStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_falstadHammerHitTime; // per enemy player, last hit by any part of Hammerang
-int libAffx_falstadExplosionHeroes; // Heroes hit by the explosion being counted
 
 unit libAffx_FalstadHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -42,38 +37,15 @@ int libAffx_FalstadHitHeroPlayer() {
     return victimPlayer;
 }
 
+// Any Hammerang hit on a Hero: Shockwave stacks (with a quest ding) and the Gathering Thunder kill window
 bool libAffx_FalstadHammerHit_Func (bool testConds, bool runActions) {
     int victimPlayer = libAffx_FalstadHitHeroPlayer();
     if (victimPlayer == 0 || !libAffx_FalstadHasStarter()) {
         return false;
     }
     libAffx_falstadHammerHitTime[victimPlayer] = GameGetMissionTime();
-    return true;
-}
-
-// The first Hero hit by an explosion waits for the rest of that explosion's hits, then grants the Shockwave stacks
-bool libAffx_FalstadExplosionHit_Func (bool testConds, bool runActions) {
-    int heroes;
-    int ding;
-    if (libAffx_FalstadHitHeroPlayer() == 0 || !libAffx_FalstadHasStarter()) {
-        return false;
-    }
-    libAffx_falstadExplosionHeroes += 1;
-    if (libAffx_falstadExplosionHeroes > 1) {
-        return true;
-    }
-    Wait(libAffx_falstadExplosionWindow, c_timeGame);
-    heroes = libAffx_falstadExplosionHeroes;
-    libAffx_falstadExplosionHeroes = 0;
-    if (heroes < 2 || libAffx_FalstadHero() == null) {
-        return true;
-    }
-    libGame_gf_ModifyTokenCount((heroes - 1) * libAffx_falstadShockwaveDamagePerHero, "FalstadShockwaveTokenCounter", libAffx_FalstadHero());
-    // one quest ding per 5 damage gained
-    for (ding = 1; ding <= heroes - 1; ding += 1) {
-        SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
-        Wait(libAffx_falstadDingSpacing, c_timeGame);
-    }
+    libGame_gf_ModifyTokenCount(libAffx_falstadShockwaveDamagePerHit, "FalstadShockwaveTokenCounter", libAffx_FalstadHero());
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
     return true;
 }
 
@@ -98,18 +70,6 @@ bool libAffx_FalstadTakedown (bool testConds, bool runActions) {
     return true;
 }
 
-// Every level 1 talent is disabled, but talent picking always offers the lowest unpicked tier, which would block all
-// later tiers. Mark the tier as picked (showing Gathering Storm, which the quests replace) without granting the talent.
-bool libAffx_FalstadTick_Func (bool testConds, bool runActions) {
-    if (!libAffx_FalstadHasStarter() || libGame_gv_talents_TalentChoices[libAffx_player][libAffx_falstadSkippedTier].lv_selection != 0) {
-        return true;
-    }
-    libGame_gv_talents_TalentChoices[libAffx_player][libAffx_falstadSkippedTier].lv_selection = libAffx_falstadSkippedColumn;
-    TalentTreeSetSelectedHeroTalent(libAffx_player, libAffx_falstadSkippedTier, libAffx_falstadSkippedColumn);
-    libGame_gf_TalentsUpdateChoicePanelForPlayer(libAffx_player);
-    return true;
-}
-
 // AffixAdded for Wildhammer's Wrath
 bool libAffx_FalstadStart (bool testConds, bool runActions) {
     trigger hammerHit;
@@ -121,7 +81,5 @@ bool libAffx_FalstadStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangDamage");
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangReturnDamage");
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
-    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_FalstadExplosionHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
-    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_FalstadTick_Func"), 0.5, c_timeGame);
     return true;
 }

@@ -55,6 +55,26 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="FalstadWildhammerThrowLockout" />
   </CEffectSet>
 
+  <!-- Wildhammer's Grip: level 1 talent shown only with the starter (TalentsShow), replacing the disabled Gathering Storm -->
+  <CHero id="Falstad">
+    <TalentTreeArray Talent="FalstadWildhammersGrip" Tier="1" Column="4" />
+  </CHero>
+  <CTalent id="FalstadWildhammersGrip">
+    <Face value="FalstadWildhammersGripTalent" />
+    <Abil value="FalstadHammerang" />
+    <AbilityModificationArray>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Entry value="FalstadHammerang" />
+        <Field value="Cost[0].Vital[Energy]" />
+        <Value value="-20.000000" />
+      </Modifications>
+    </AbilityModificationArray>
+  </CTalent>
+  <CButton id="FalstadWildhammersGripTalent" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_falstad_hammerang.dds" />
+  </CButton>
+
   <CButton id="FalstadShockwaveTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_falstad_boomerang.dds" />
   </CButton>
