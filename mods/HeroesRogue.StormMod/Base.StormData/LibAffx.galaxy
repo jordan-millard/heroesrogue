@@ -3243,9 +3243,22 @@ void libAffx_ApplyTriggers(int affix, int amount) {
 }
 void libAffx_ApplyQuest(int affix) {
     int i;
+    int other;
+    int i2;
+    string token;
     for (i = 1; i <= libAffx_maxQuests; i += 1) {
-        if (libAffx_affixes[affix].questRetain[i].tokenBehavior != "" && libAffx_affixes[affix].questRetain[i].tokenBehavior != null && libAffx_affixes[affix].questRetain[i].tokenCount > 0) {
-            libAffx_ModifyPlayerTokenCount(libAffx_player, RoundI(libAffx_affixes[affix].questRetain[i].tokenCount), libAffx_affixes[affix].questRetain[i].tokenBehavior);
+        token = libAffx_affixes[affix].questRetain[i].tokenBehavior;
+        if (token != "" && token != null && libAffx_affixes[affix].questRetain[i].tokenCount > 0) {
+            libAffx_ModifyPlayerTokenCount(libAffx_player, RoundI(libAffx_affixes[affix].questRetain[i].tokenCount), token);
+            // Several affixes can retain the same token (e.g. a boon that raises a starter's retention); all of them
+            // load the same saved count, so it must only be added once
+            for (other = 1; other <= libAffx_registeredAffixes; other += 1) {
+                for (i2 = 1; i2 <= libAffx_maxQuests; i2 += 1) {
+                    if (libAffx_affixes[other].questRetain[i2].tokenBehavior == token) {
+                        libAffx_affixes[other].questRetain[i2].tokenCount = 0;
+                    }
+                }
+            }
         }
     }
 }
