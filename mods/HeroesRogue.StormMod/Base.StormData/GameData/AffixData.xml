@@ -11314,5 +11314,22 @@
                 <Field Id="QuestRetain" />
             </String>
         </Instances>
+        <Instances Id="FalstadStormbreaker">
+            <String String="Assets/Textures/storm_ui_icon_falstad_boomerang.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Falstad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FalstadWildhammersWrath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,FalstadStormbreakerDamage,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
     </CUser>
 </Catalog>

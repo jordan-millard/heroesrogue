@@ -106,6 +106,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="FalstadWildhammersBulwarkApplyShield" />
   </CEffectSet>
 
+  <!-- Stormbreaker (Epic): BOOMerang explosions also deal 10% of the enemy Hero's maximum Health -->
+  <CEffectDamage id="FalstadStormbreakerDamage" parent="StormSpell">
+    <ValidatorArray value="TargetIsHero" />
+    <Chance value="0" />
+    <VitalFractionMax index="Life" value="0.1" />
+  </CEffectDamage>
+  <CEffectSet id="FalstadHammerangBOOMerangImpactSet">
+    <EffectArray value="FalstadStormbreakerDamage" />
+  </CEffectSet>
+
   <CButton id="FalstadShockwaveTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_falstad_boomerang.dds" />
   </CButton>

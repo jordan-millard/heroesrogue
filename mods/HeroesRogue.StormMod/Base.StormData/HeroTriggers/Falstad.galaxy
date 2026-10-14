@@ -2,13 +2,13 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Falstad, Wildhammer's Wrath.
-// Shockwave: each enemy Hero hit by any part of Hammerang adds 5 flat BOOMerang explosion damage.
+// Shockwave: each enemy Hero hit by any part of Hammerang adds 3 flat BOOMerang explosion damage.
 // Gathering Thunder: an enemy Hero who dies within 2 seconds of a Hammerang hit adds 3% hammer damage.
 // Stacks carry over between games through QuestRetain; the damage itself is in FalstadData.xml.
 // ============================================================
 
 const fixed libAffx_falstadKillWindow = 2.0;
-const int libAffx_falstadShockwaveDamagePerHit = 5;
+const int libAffx_falstadShockwaveDamagePerHit = 3;
 
 bool libAffx_falstadStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_falstadHammerHitTime; // per enemy player, last hit by any part of Hammerang
