@@ -56,7 +56,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
 
   <!-- Wildhammer's Bulwark: level 1 talent shown only with the starter (TalentsShow), replacing the disabled Gathering
-       Storm. -20 Hammerang Mana, and every Hammerang hit on a Hero adds a 1% max Health shield stack (up to 20) that
+       Storm. -20 Hammerang Mana, and every Hammerang hit on a Hero adds a 2% max Health shield stack (up to 10) that
        doesn't expire, the same way Static Shield stacks. -->
   <CHero id="Falstad">
     <TalentTreeArray Talent="FalstadWildhammersBulwark" Tier="1" Column="4" />
@@ -85,9 +85,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CBehaviorBuff id="FalstadWildhammersBulwarkShield" parent="StormShield">
     <InfoIcon value="Assets\Textures\storm_ui_icon_falstad_hammerang_a.dds" />
-    <MaxStackCount value="20" />
+    <MaxStackCount value="10" />
     <DamageResponse>
-      <ModifyLimitVitalMaxFractionArray index="Life" value="0.01" />
+      <ModifyLimitVitalMaxFractionArray index="Life" value="0.02" />
     </DamageResponse>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="FalstadWildhammersBulwarkApplyShield">
