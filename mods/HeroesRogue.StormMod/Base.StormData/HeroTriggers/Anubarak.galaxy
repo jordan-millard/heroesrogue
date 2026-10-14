@@ -1,0 +1,274 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Anub'arak. Scarab Lord's Brood Mother quest gives a stack for every 25 Beetle attacks on Heroes (half kept
+// between games); Crypt Lord's Tomb Keeper gives one when an enemy Hero dies within 3 seconds of being hit by Impale
+// or Burrow Charge; Traitor King's Unbreakable gives one for each takedown while Harden Carapace is up. Damage per
+// stack is in AnubarakData.xml; Beetle Health and lifetime, cooldowns, armor stacks and the Rare boons' explosions
+// are handled here.
+// ============================================================
+
+const int libAffx_anubBeetleHitsPerStack = 25;
+const fixed libAffx_anubBeetleLifetimeFactor = 1.5;
+const int libAffx_anubRoyalGuardMax = 5; // stacks of 2 Armor
+const fixed libAffx_anubExplodingCarapaceFactor = 0.4;
+const fixed libAffx_anubKillWindow = 3.0;
+const int libAffx_anubTombKeeperCooldownMax = 30;
+const fixed libAffx_anubImpaleCooldown = 12.0;
+const fixed libAffx_anubBurrowChargeCooldown = 14.0;
+const fixed libAffx_anubHardenCarapaceCooldown = 7.0;
+const fixed libAffx_anubAftershockFactor = 0.5;
+const int libAffx_anubUnbreakableSpellArmorMax = 25;
+const fixed libAffx_anubRetaliationFactor = 0.5;
+
+bool libAffx_anubStarted;
+int libAffx_anubBeetleHits; // Beetle Hero hits toward the next Brood Mother stack
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_anubStunHitTime; // per enemy player, last Impale or Burrow Charge hit
+int libAffx_anubTombKeeperApplied = -1;
+fixed libAffx_anubBeetleDamageApplied = -1.0;
+fixed libAffx_anubBurrowDamageApplied = -1.0;
+fixed libAffx_anubBurrowRadiusApplied = -1.0;
+bool libAffx_anubCarapaceUp;
+fixed libAffx_anubCarapaceStart;
+fixed libAffx_anubCarapaceLimit;
+fixed libAffx_anubCarapaceAbsorbed;
+
+unit libAffx_AnubHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_AnubHas(string marker) {
+    unit hero = libAffx_AnubHero();
+    return hero != null && UnitHasBehavior2(hero, marker);
+}
+int libAffx_AnubTokens(string token) {
+    unit hero = libAffx_AnubHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, token));
+}
+void libAffx_AnubSetStacks(unit target, string behavior, int stacks) {
+    int current = UnitBehaviorCount(target, behavior);
+    if (stacks > current) {
+        UnitBehaviorAdd(target, behavior, target, stacks - current);
+    } else if (stacks < current) {
+        UnitBehaviorRemove(target, behavior, current - stacks);
+    }
+}
+void libAffx_AnubSetCatalog(int catalog, string entry, string field, fixed value) {
+    CatalogFieldValueSet(catalog, entry, field, libAffx_player, FixedToString(value, 4));
+}
+fixed libAffx_AnubCatalogGet(int catalog, string entry, string field) {
+    return StringToFixed(CatalogFieldValueGet(catalog, entry, field, libAffx_player));
+}
+
+// The enemy Hero player hit by this damage, or 0
+int libAffx_AnubHitHeroPlayer() {
+    unit victim = EventUnit();
+    int victimPlayer = UnitGetOwner(victim);
+    if (EventUnitDamageSourcePlayer() != libAffx_player) {
+        return 0;
+    }
+    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        return 0;
+    }
+    if (victimPlayer < 1 || victimPlayer > libCore_gv_bALMaxPlayers) {
+        return 0;
+    }
+    return victimPlayer;
+}
+
+// ============================================================
+// Scarab Lord
+// ============================================================
+// New Beetles live 50% longer and gain Brood Mother's Health
+bool libAffx_AnubBeetleSpawned_Func (bool testConds, bool runActions) {
+    unit beetle = EventUnit();
+    fixed lifeMax;
+    if (UnitGetOwner(beetle) != libAffx_player || !libAffx_AnubHas("AnubarakScarabLordMarker")) {
+        return false;
+    }
+    lifeMax = UnitGetPropertyFixed(beetle, c_unitPropLifeMax, c_unitPropCurrent) * (1.0 + IntToFixed(libAffx_AnubTokens("AnubarakBroodMotherTokenCounter")) / 100.0);
+    UnitSetPropertyFixed(beetle, c_unitPropLifeMax, lifeMax);
+    UnitSetPropertyFixed(beetle, c_unitPropLife, lifeMax);
+    UnitSetPropertyFixed(beetle, c_unitPropLifeRegen, UnitGetPropertyFixed(beetle, c_unitPropLifeRegen, c_unitPropCurrent) / libAffx_anubBeetleLifetimeFactor);
+    return true;
+}
+bool libAffx_AnubBeetleHit_Func (bool testConds, bool runActions) {
+    if (libAffx_AnubHitHeroPlayer() == 0 || !libAffx_AnubHas("AnubarakScarabLordMarker")) {
+        return false;
+    }
+    libAffx_anubBeetleHits += 1;
+    if (libAffx_anubBeetleHits >= libAffx_anubBeetleHitsPerStack) {
+        libAffx_anubBeetleHits = 0;
+        libGame_gf_ModifyTokenCount(1, "AnubarakBroodMotherTokenCounter", libAffx_AnubHero());
+    }
+    return true;
+}
+void libAffx_AnubScarabLordTick(unit hero) {
+    fixed beetleDamage = libAffx_AnubCatalogGet(c_gameCatalogEffect, "AnubarakBeetleSpitBeetleDamage", "Amount");
+    int beetles;
+    if (AbsF(beetleDamage - libAffx_anubBeetleDamageApplied) > 0.01) {
+        libAffx_anubBeetleDamageApplied = beetleDamage;
+        libAffx_AnubSetCatalog(c_gameCatalogEffect, "AnubarakExplodingCarapaceDamage", "Amount", beetleDamage * libAffx_anubExplodingCarapaceFactor);
+    }
+    if (UnitHasBehavior2(hero, "AnubarakRoyalGuardMarker")) {
+        beetles = UnitGroupCount(UnitGroup("AnubarakBeetleSpitBeetle", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0), c_unitCountAlive);
+        libAffx_AnubSetStacks(hero, "AnubarakRoyalGuardArmor", MinI(beetles, libAffx_anubRoyalGuardMax));
+    }
+}
+
+// ============================================================
+// Crypt Lord
+// ============================================================
+bool libAffx_AnubStunHit_Func (bool testConds, bool runActions) {
+    int victimPlayer = libAffx_AnubHitHeroPlayer();
+    if (victimPlayer == 0 || !libAffx_AnubHas("AnubarakCryptLordMarker")) {
+        return false;
+    }
+    libAffx_anubStunHitTime[victimPlayer] = GameGetMissionTime();
+    return true;
+}
+// HeroTakedown for Crypt Lord
+bool libAffx_AnubCryptLordTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    fixed hitTime;
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_AnubHas("AnubarakCryptLordMarker")) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    hitTime = libAffx_anubStunHitTime[killedPlayer];
+    if (hitTime <= 0.0 || GameGetMissionTime() - hitTime > libAffx_anubKillWindow) {
+        return true;
+    }
+    libAffx_anubStunHitTime[killedPlayer] = 0.0;
+    libGame_gf_ModifyTokenCount(1, "AnubarakTombKeeperTokenCounter", libAffx_AnubHero());
+    return true;
+}
+// Tomb Keeper's cooldown reduction; Aftershock follows Burrow Charge's damage and radius
+void libAffx_AnubCryptLordTick() {
+    int stacks = MinI(libAffx_AnubTokens("AnubarakTombKeeperTokenCounter"), libAffx_anubTombKeeperCooldownMax);
+    fixed scale;
+    fixed burrowDamage = libAffx_AnubCatalogGet(c_gameCatalogEffect, "AnubarakBurrowChargeDamage", "Amount");
+    fixed burrowRadius = libAffx_AnubCatalogGet(c_gameCatalogEffect, "AnubarakBurrowChargeImpactSearch", "AreaArray[0].Radius");
+    if (stacks != libAffx_anubTombKeeperApplied) {
+        libAffx_anubTombKeeperApplied = stacks;
+        scale = 1.0 - IntToFixed(stacks) / 100.0;
+        libAffx_AnubSetCatalog(c_gameCatalogAbil, "AnubarakImpale", "Cost.Cooldown.TimeUse", libAffx_anubImpaleCooldown * scale);
+        libAffx_AnubSetCatalog(c_gameCatalogAbil, "AnubarakBurrowCharge", "Cost.Charge.TimeUse", libAffx_anubBurrowChargeCooldown * scale);
+        libAffx_AnubSetCatalog(c_gameCatalogAbil, "AnubarakHardenCarapace", "Cost.Cooldown.TimeUse", libAffx_anubHardenCarapaceCooldown * scale);
+    }
+    if (AbsF(burrowDamage - libAffx_anubBurrowDamageApplied) > 0.01) {
+        libAffx_anubBurrowDamageApplied = burrowDamage;
+        libAffx_AnubSetCatalog(c_gameCatalogEffect, "AnubarakAftershockDamage", "Amount", burrowDamage * libAffx_anubAftershockFactor);
+    }
+    if (AbsF(burrowRadius - libAffx_anubBurrowRadiusApplied) > 0.01) {
+        libAffx_anubBurrowRadiusApplied = burrowRadius;
+        libAffx_AnubSetCatalog(c_gameCatalogEffect, "AnubarakAftershockSearch", "AreaArray[0].Radius", burrowRadius);
+    }
+}
+
+// ============================================================
+// Traitor King
+// ============================================================
+// HeroTakedown for Traitor King
+bool libAffx_AnubTraitorKingTakedown (bool testConds, bool runActions) {
+    unit hero = libAffx_AnubHero();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_AnubHas("AnubarakTraitorKingMarker")) {
+            return false;
+        }
+    }
+    if (!UnitHasBehavior2(hero, "AnubarakHardenCarapace")) {
+        return true;
+    }
+    libGame_gf_ModifyTokenCount(1, "AnubarakUnbreakableTokenCounter", hero);
+    return true;
+}
+// Thorned Shell: enemies who Basic Attack Anub'arak while Harden Carapace is up take damage
+bool libAffx_AnubThornedShell_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AnubHero();
+    unit attacker = EventUnitDamageSourceUnit();
+    if (EventUnit() != hero || attacker == null || !UnitHasBehavior2(hero, "AnubarakHardenCarapace") || !UnitHasBehavior2(hero, "AnubarakThornedShellMarker")) {
+        return false;
+    }
+    if (UnitGetOwner(attacker) != libAffx_player && UnitIsAlive(attacker)) {
+        UnitCreateEffectUnit(hero, "AnubarakThornedShellDamage", attacker);
+    }
+    return true;
+}
+// Retaliation: while Harden Carapace is up, track how much it has absorbed; when it ends, explode for half of that.
+// The Shield's size is what remains when it is first seen; a Shield that ends early was broken, so it absorbed all of it.
+void libAffx_AnubRetaliationTick(unit hero) {
+    fixed remaining;
+    fixed duration;
+    if (UnitHasBehavior2(hero, "AnubarakHardenCarapace")) {
+        remaining = UnitBehaviorDamageModifyRemaining(hero, "AnubarakHardenCarapace");
+        if (!libAffx_anubCarapaceUp) {
+            libAffx_anubCarapaceUp = true;
+            libAffx_anubCarapaceStart = GameGetMissionTime();
+            libAffx_anubCarapaceLimit = remaining;
+            libAffx_anubCarapaceAbsorbed = 0.0;
+        }
+        libAffx_anubCarapaceAbsorbed = MaxF(libAffx_anubCarapaceAbsorbed, libAffx_anubCarapaceLimit - remaining);
+        return;
+    }
+    if (!libAffx_anubCarapaceUp) {
+        return;
+    }
+    libAffx_anubCarapaceUp = false;
+    duration = libAffx_AnubCatalogGet(c_gameCatalogBehavior, "AnubarakHardenCarapace", "Duration");
+    if (GameGetMissionTime() - libAffx_anubCarapaceStart < duration - 0.125) {
+        libAffx_anubCarapaceAbsorbed = libAffx_anubCarapaceLimit;
+    }
+    if (libAffx_anubCarapaceAbsorbed < 1.0 || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AnubarakRetaliationMarker")) {
+        return;
+    }
+    libAffx_AnubSetCatalog(c_gameCatalogEffect, "AnubarakRetaliationDamage", "Amount", libAffx_anubCarapaceAbsorbed * libAffx_anubRetaliationFactor);
+    UnitCreateEffectUnit(hero, "AnubarakRetaliationSearch", hero);
+}
+void libAffx_AnubTraitorKingTick(unit hero) {
+    int stacks = libAffx_AnubTokens("AnubarakUnbreakableTokenCounter");
+    libAffx_AnubSetStacks(hero, "AnubarakUnbreakableHealth", stacks);
+    libAffx_AnubSetStacks(hero, "AnubarakUnbreakableSpellArmor", MinI(stacks, libAffx_anubUnbreakableSpellArmorMax));
+    libAffx_AnubRetaliationTick(hero);
+}
+
+bool libAffx_AnubTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AnubHero();
+    if (hero == null || !UnitIsAlive(hero)) {
+        libAffx_anubCarapaceUp = false;
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "AnubarakScarabLordMarker")) {
+        libAffx_AnubScarabLordTick(hero);
+    }
+    if (UnitHasBehavior2(hero, "AnubarakCryptLordMarker")) {
+        libAffx_AnubCryptLordTick();
+    }
+    if (UnitHasBehavior2(hero, "AnubarakTraitorKingMarker")) {
+        libAffx_AnubTraitorKingTick(hero);
+    }
+    return true;
+}
+
+// AffixAdded for each starter
+bool libAffx_AnubStart (bool testConds, bool runActions) {
+    trigger stunHit;
+    if (libAffx_anubStarted) {
+        return true;
+    }
+    libAffx_anubStarted = true;
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_AnubBeetleSpawned_Func"), null, "AnubarakScarabLordBeetle", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AnubBeetleHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "AnubarakBeetleSpitBeetleDamage");
+    stunHit = TriggerCreate("libAffx_AnubStunHit_Func");
+    TriggerAddEventUnitDamaged(stunHit, null, c_unitDamageTypeAny, c_unitDamageEither, "AnubarakImpaleDamage");
+    TriggerAddEventUnitDamaged(stunHit, null, c_unitDamageTypeAny, c_unitDamageEither, "AnubarakBurrowChargeDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AnubThornedShell_Func"), null, c_unitDamageTypeBasic, c_unitDamageEither, null);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AnubTick_Func"), 0.0625, c_timeGame);
+    return true;
+}

@@ -10604,6 +10604,336 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
+        <Instances Id="AnubarakScarabLord">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_ScarabHost.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AnubarakCombatStyleLegionOfBeetles">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AnubarakMasteryLeechingScarabs">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="AnubarakScarabHostBeetleJuiced">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 AnubarakScarabLordMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AnubarakBroodMotherTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="AnubarakBroodMotherTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakScarabHostCreatePersistent,PeriodCount 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakHardenCarapaceScarabHostCreatePersistent,PeriodCount 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Behavior,AnubarakBeetleJuicedStack,MaxStackCount 3">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Validator,AnubarakBeetleJuicedGTE4Stacks,Value 3">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_AnubStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakCryptLord">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_Impale.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AnubarakMasteryUnderkingBurrowCharge">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AnubarakDebilitation">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="AnubarakMasteryEpicenterBurrowCharge">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 AnubarakCryptLordMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AnubarakTombKeeperTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="AnubarakTombKeeperTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Add Behavior,AnubarakImpaleStun,Duration 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,AnubarakBurrowChargeMiniStun,Duration 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakBurrowCharge,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakBurrowCharge,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakBurrowCharge,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakBurrowCharge,Cost.Charge.TimeUse 14">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakBurrowCharge,Cost.Cooldown.TimeUse 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakBurrowChargeEpicenterModifyCooldown,Cost[0].ChargeTimeUse -1">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakCryptLordApplyExposed,Chance 1">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_AnubStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AnubCryptLordTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakTraitorKing">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_HardenCarapace_Var1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AnubarakNerubianArmor">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AnubarakCombatStyleChitinousPlating">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="AnubarakMasteryUrticatingSpines">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 AnubarakTraitorKingMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AnubarakUnbreakableTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="AnubarakUnbreakableTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakHardenCarapace,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakHardenCarapace,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakHardenCarapace,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakHardenCarapace,Cost.Charge.TimeUse 7">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,AnubarakHardenCarapace,Cost.Cooldown.TimeUse 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakHardenCarapaceChitinousPlatingModifyCooldown,Cost[0].ChargeTimeUse -1">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Behavior,AnubarakHardenCarapace,DamageResponse.ModifyLimit 102">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakTraitorKingHeal,Chance 1">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_AnubStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AnubTraitorKingTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakExplodingCarapace">
+            <String String="Assets/Textures/storm_ui_icon_anubarak_scarabhost.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakScarabLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AnubarakExplodingCarapaceSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakSwarmInstinct">
+            <String String="Assets/Textures/storm_ui_icon_anubarak_scarabhost.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakScarabLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AnubarakSwarmInstinctApplyMark,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakBeetleSpitBeetleDamage,MultiplicativeModifierArray[AnubarakSwarmInstinct].Modifier 0.25">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakRoyalGuard">
+            <String String="Assets/Textures/storm_ui_icon_anubarak_scarabhost.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakScarabLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AnubarakRoyalGuardMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakBedOfBarbs">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_Impale.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakCryptLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AnubarakMasteryBedOfBarbs">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 1 Set Effect,AnubarakImpaleBedOfBarbsCreatePersistent,PeriodCount 42">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakAftershock">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_BurrowCharge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakCryptLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AnubarakAftershockPersistent,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakSkewer">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_Impale.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakCryptLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AnubarakImpaleSearch,AreaArray[0].RectangleWidth 2.25">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,AnubarakImpaleCreatePersistent,PeriodCount 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Effect,AnubarakImpaleModelPersistent,PeriodCount 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakThornedShell">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_HardenCarapace_Var1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakTraitorKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AnubarakThornedShellMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakShedExoskeleton">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_HardenCarapace_Var1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakTraitorKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AnubarakMasteryShedExoskeletonHardenCarapace">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AnubarakRetaliation">
+            <String String="Assets/Textures/storm_ui_icon_Anubarak_HardenCarapace_Var1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Anubarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AnubarakTraitorKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AnubarakRetaliationMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
         <Instances Id="SonyaEarthshatter">
             <String String="Assets/Textures/storm_ui_icon_sonya_leap.dds">
                 <Field Id="Icon" />

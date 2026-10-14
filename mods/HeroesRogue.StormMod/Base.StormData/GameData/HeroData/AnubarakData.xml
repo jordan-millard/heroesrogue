@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Anub'arak, Scarab Lord: 2 Beetles per spawn, every 3rd Basic Attack spawns one (Beetle, Juiced!),
+       Beetles last 50% longer. Brood Mother quest, Beetle lifetime and Health are in HeroTriggers/Anubarak.galaxy -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="AnubarakScarabLordMarker" parent="CarryBehaviorParent" />
+  <!-- Every Beetle gets this when it spawns, so the script can find it and Exploding Carapace can go off when it dies -->
+  <CBehaviorBuff id="AnubarakScarabLordBeetle">
+    <InfoFlags index="Hidden" value="1" />
+    <FinalEffect value="AnubarakExplodingCarapaceSet" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AnubarakScarabLordApplyBeetle">
+    <Behavior value="AnubarakScarabLordBeetle" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="AnubarakBeetleSpawnSet">
+    <EffectArray value="AnubarakScarabLordApplyBeetle" />
+  </CEffectSet>
+
+  <!-- Brood Mother quest: +2% Beetle damage per stack (Health is set in the script) -->
+  <CBehaviorTokenCounter id="AnubarakBroodMotherTokenCounter" parent="StormQuestToken">
+    <Face value="AnubarakBroodMotherTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AnubarakBroodMotherAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="AnubarakBroodMotherTokenCounter" />
+    <Scale value="0.02" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+
+  <!-- Swarm Instinct (Rare): Beetles deal 25% more damage to enemies Anub'arak recently hit with Basic Attacks -->
+  <CBehaviorBuff id="AnubarakSwarmInstinctMark">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="2" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AnubarakSwarmInstinctApplyMark">
+    <Chance value="0" />
+    <Behavior value="AnubarakSwarmInstinctMark" />
+  </CEffectApplyBehavior>
+  <CValidatorUnitCompareBehaviorCount id="AnubarakTargetHasSwarmInstinctMark">
+    <WhichUnit Value="Target" />
+    <Compare value="GT" />
+    <Behavior value="AnubarakSwarmInstinctMark" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectDamage id="AnubarakBeetleSpitBeetleDamage">
+    <MultiplicativeModifierArray index="AnubarakBroodMother" Accumulator="AnubarakBroodMotherAccumulator" />
+    <MultiplicativeModifierArray index="AnubarakSwarmInstinct" Validator="AnubarakTargetHasSwarmInstinctMark" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- Exploding Carapace (Rare): Beetles explode when they die for 40% of their attack damage (amount set in the script) -->
+  <CEffectSet id="AnubarakExplodingCarapaceSet">
+    <Chance value="0" />
+    <EffectArray value="AnubarakExplodingCarapaceSearch" />
+  </CEffectSet>
+  <CEffectEnumArea id="AnubarakExplodingCarapaceSearch">
+    <ImpactLocation Value="TargetUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="AnubarakExplodingCarapaceDamage">
+      <Radius value="2" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CEffectDamage id="AnubarakExplodingCarapaceDamage" parent="StormSpell">
+    <Amount value="8" />
+    <SourceButtonFace value="AnubarakScarabHostTrait" />
+  </CEffectDamage>
+  <CActorModel id="AnubarakExplodingCarapaceExplosion" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.AnubarakExplodingCarapaceSearch.Start" Send="Create" />
+    <Model value="AnubarakBurrowChargeImpact" />
+  </CActorModel>
+
+  <!-- Royal Guard (Rare): 2 Armor per living Beetle, up to 10 (stacks set in the script) -->
+  <CBehaviorBuff id="AnubarakRoyalGuardMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AnubarakRoyalGuardArmor" parent="StormArmor">
+    <MaxStackCount value="5" />
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Anubarak_ScarabHost.dds" />
+    <ArmorModification>
+      <AllArmorBonus value="2" />
+    </ArmorModification>
+  </CBehaviorBuff>
+
+  <!-- ============================================================ -->
+  <!-- Golden Anub'arak, Crypt Lord: longer stuns, 2 Burrow Charges, stunned enemies take 15% more damage.
+       Tomb Keeper quest and its cooldown reduction are in HeroTriggers/Anubarak.galaxy -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="AnubarakCryptLordMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AnubarakCryptLordExposed">
+    <Alignment value="Negative" />
+    <Duration value="2" />
+    <DisplayDuration index="Self" value="1" />
+    <DisplayDuration index="Ally" value="1" />
+    <DisplayDuration index="Enemy" value="1" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Anubarak_Impale.dds" />
+    <DamageResponse>
+      <Chance value="1" />
+      <ModifyFraction value="1.15" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AnubarakCryptLordApplyExposed">
+    <Chance value="0" />
+    <Behavior value="AnubarakCryptLordExposed" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="AnubarakImpaleImpactSet">
+    <EffectArray value="AnubarakCryptLordApplyExposed" />
+  </CEffectSet>
+  <CEffectSet id="AnubarakBurrowChargeTargetSet">
+    <EffectArray value="AnubarakCryptLordApplyExposed" />
+  </CEffectSet>
+
+  <!-- Tomb Keeper quest: +3% Impale and Burrow Charge damage per stack -->
+  <CBehaviorTokenCounter id="AnubarakTombKeeperTokenCounter" parent="StormQuestToken">
+    <Face value="AnubarakTombKeeperTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AnubarakTombKeeperAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="AnubarakTombKeeperTokenCounter" />
+    <Scale value="0.03" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AnubarakImpaleDamage">
+    <MultiplicativeModifierArray index="AnubarakTombKeeper" Accumulator="AnubarakTombKeeperAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="AnubarakBurrowChargeDamage">
+    <MultiplicativeModifierArray index="AnubarakTombKeeper" Accumulator="AnubarakTombKeeperAccumulator" />
+  </CEffectDamage>
+
+  <!-- Aftershock (Rare): 1 second after Burrow Charge surfaces, a second quake hits the area for 50% damage
+       (amount and radius follow Burrow Charge's in the script) -->
+  <CEffectCreatePersistent id="AnubarakAftershockPersistent">
+    <Chance value="0" />
+    <WhichLocation Value="CasterPoint" />
+    <PeriodCount value="1" />
+    <PeriodicEffectArray value="AnubarakAftershockSearch" />
+    <PeriodicPeriodArray value="1" />
+  </CEffectCreatePersistent>
+  <CEffectEnumArea id="AnubarakAftershockSearch">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="AnubarakAftershockDamage">
+      <Radius value="1.75" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CEffectDamage id="AnubarakAftershockDamage" parent="StormSpell">
+    <Amount value="45" />
+    <SourceButtonFace value="AnubarakBurrowCharge" />
+  </CEffectDamage>
+  <CActorModel id="AnubarakAftershockQuake" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.AnubarakAftershockSearch.Start" Send="Create" />
+    <Model value="AnubarakBurrowChargeBurrowSearch" />
+  </CActorModel>
+  <CEffectSet id="AnubarakBurrowChargeFinalSet">
+    <EffectArray value="AnubarakAftershockPersistent" />
+  </CEffectSet>
+
+  <!-- ============================================================ -->
+  <!-- Golden Anub'arak, Traitor King: 2 Harden Carapace charges, a larger Shield, and Basic Attacks heal while it's up.
+       Unbreakable quest, Thorned Shell and Retaliation are in HeroTriggers/Anubarak.galaxy -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="AnubarakTraitorKingMarker" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="AnubarakCasterHasHardenCarapace">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="AnubarakHardenCarapace" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectModifyUnit id="AnubarakTraitorKingHeal">
+    <Chance value="0" />
+    <ValidatorArray value="AnubarakCasterHasHardenCarapace" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.05" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CEffectSet id="AnubarakWeaponPostImpactSet">
+    <EffectArray value="AnubarakTraitorKingHeal" />
+    <EffectArray value="AnubarakSwarmInstinctApplyMark" />
+  </CEffectSet>
+
+  <!-- Unbreakable quest: +2% maximum Health and +1 Spell Armor per stack (stacks set in the script) -->
+  <CBehaviorTokenCounter id="AnubarakUnbreakableTokenCounter" parent="StormQuestToken">
+    <Face value="AnubarakUnbreakableTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorBuff id="AnubarakUnbreakableHealth">
+    <InfoFlags index="Hidden" value="1" />
+    <BehaviorFlags index="Permanent" value="1" />
+    <MaxStackCount value="100000" />
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0.02" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="AnubarakUnbreakableSpellArmor" parent="StormArmor">
+    <InfoFlags index="Hidden" value="1" />
+    <BehaviorFlags index="Permanent" value="1" />
+    <MaxStackCount value="25" />
+    <ArmorModification>
+      <ArmorSet index="Hero">
+        <ArmorMitigationTable index="Ability" value="1" />
+      </ArmorSet>
+      <ArmorSet index="Merc">
+        <ArmorMitigationTable index="Ability" value="1" />
+      </ArmorSet>
+      <ArmorSet index="Monster">
+        <ArmorMitigationTable index="Ability" value="1" />
+      </ArmorSet>
+      <ArmorSet index="Summon">
+        <ArmorMitigationTable index="Ability" value="1" />
+      </ArmorSet>
+      <ArmorSet index="Structure">
+        <ArmorMitigationTable index="Ability" value="1" />
+      </ArmorSet>
+      <ArmorSet index="Minion">
+        <ArmorMitigationTable index="Ability" value="1" />
+      </ArmorSet>
+    </ArmorModification>
+  </CBehaviorBuff>
+
+  <!-- Thorned Shell (Rare): enemies who Basic Attack Anub'arak while Harden Carapace is up take damage -->
+  <CBehaviorBuff id="AnubarakThornedShellMarker" parent="CarryBehaviorParent" />
+  <CEffectDamage id="AnubarakThornedShellDamage" parent="StormSpell">
+    <Amount value="30" />
+    <SourceButtonFace value="AnubarakHardenCarapace" />
+  </CEffectDamage>
+  <CActorModel id="AnubarakUrticatingSpinesImpact">
+    <On Terms="Effect.AnubarakThornedShellDamage.Start; At Target" Send="Create" />
+  </CActorModel>
+
+  <!-- Retaliation (Rare): Harden Carapace explodes when it ends for 50% of the damage it absorbed (amount set in the script) -->
+  <CBehaviorBuff id="AnubarakRetaliationMarker" parent="CarryBehaviorParent" />
+  <CEffectEnumArea id="AnubarakRetaliationSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="AnubarakRetaliationDamage">
+      <Radius value="3.5" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CEffectDamage id="AnubarakRetaliationDamage" parent="StormSpell">
+    <Amount value="0" />
+    <SourceButtonFace value="AnubarakHardenCarapace" />
+  </CEffectDamage>
+  <CActorModel id="AnubarakUrticatingSpinesLaunch">
+    <On Terms="Effect.AnubarakRetaliationSearch.Start; At Source" Send="Create" />
+  </CActorModel>
+
+  <CButton id="AnubarakBroodMotherTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Anubarak_ScarabHost.dds" />
+  </CButton>
+  <CButton id="AnubarakTombKeeperTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Anubarak_Impale.dds" />
+  </CButton>
+  <CButton id="AnubarakUnbreakableTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Anubarak_HardenCarapace_Var1.dds" />
+  </CButton>
+
+</Catalog>

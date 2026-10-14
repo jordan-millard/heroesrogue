@@ -758,6 +758,40 @@ Affix/Name/JunkratEncore=Encore
 Affix/Tooltip/JunkratEncore=Total Mayhem drops twice as many grenades, and also goes off where RIP-Tire detonates.
 Affix/Name/JunkratFuseBurner=Fuse Burner
 Affix/Tooltip/JunkratFuseBurner=Hitting an enemy Hero with Frag Launcher reduces Heroic cooldowns by <c val="#TooltipNumbers">1.5</c> seconds.
+Affix/Name/AnubarakScarabLord=Scarab Lord
+Affix/Tooltip/AnubarakScarabLord=Gain <c val="#TooltipNumbers">Legion of Beetles</c>, <c val="#TooltipNumbers">Leeching Scarabs</c>, and <c val="#TooltipNumbers">Beetle, Juiced!</c>.<n/><n/>Scarab Host spawns <c val="#TooltipNumbers">2</c> Beetles instead of <c val="#TooltipNumbers">1</c>, and Beetles last <c val="#TooltipNumbers">50%</c> longer. <c val="#TooltipNumbers">Beetle, Juiced!</c> spawns a Beetle every <c val="#TooltipNumbers">3rd</c> Basic Attack.<n/><n/><c val="#TooltipQuest">Quest:</c> Every <c val="#TooltipNumbers">25</c> Beetle attacks on enemy Heroes increase Beetle damage by <c val="#TooltipNumbers">2%</c> and Health by <c val="#TooltipNumbers">1%</c>. Half of the bonus is kept between games.
+Button/Name/AnubarakBroodMotherTokenCounter=Brood Mother
+Button/Tooltip/AnubarakBroodMotherTokenCounter=<c val="#TooltipQuest">Bonus Beetle damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AnubarakBroodMotherTokenCounter$*2" precision="0"/>%</c></c>
+Affix/Name/AnubarakCryptLord=Crypt Lord
+Affix/Tooltip/AnubarakCryptLord=Gain <c val="#TooltipNumbers">Underking</c>, <c val="#TooltipNumbers">Debilitation</c>, and <c val="#TooltipNumbers">Epicenter</c>.<n/><n/>Impale and Burrow Charge Stun for <c val="#TooltipNumbers">0.5</c> seconds longer. Burrow Charge has <c val="#TooltipNumbers">2</c> charges. Enemies hit by Impale or Burrow Charge take <c val="#TooltipNumbers">15%</c> more damage from all sources for <c val="#TooltipNumbers">2</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero who dies within <c val="#TooltipNumbers">3</c> seconds of being hit by Impale or Burrow Charge increases their damage by <c val="#TooltipNumbers">3%</c> and reduces Basic Ability cooldowns by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">30%</c>). Kept between games.
+Button/Name/AnubarakTombKeeperTokenCounter=Tomb Keeper
+Button/Tooltip/AnubarakTombKeeperTokenCounter=<c val="#TooltipQuest">Bonus Impale and Burrow Charge damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AnubarakTombKeeperTokenCounter$*3" precision="0"/>%</c></c>
+Behavior/Name/AnubarakCryptLordExposed=Entombed
+Behavior/Tooltip/AnubarakCryptLordExposed=Taking 15% more damage.
+Affix/Name/AnubarakTraitorKing=Traitor King
+Affix/Tooltip/AnubarakTraitorKing=Gain <c val="#TooltipNumbers">Nerubian Armor</c>, <c val="#TooltipNumbers">Chitinous Plating</c>, and <c val="#TooltipNumbers">Urticating Spines</c>.<n/><n/>Harden Carapace has <c val="#TooltipNumbers">2</c> charges and its Shield is <c val="#TooltipNumbers">30%</c> larger. While Harden Carapace is active, Anub'arak's Basic Attacks heal him for <c val="#TooltipNumbers">5%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Each takedown while Harden Carapace is active increases maximum Health by <c val="#TooltipNumbers">2%</c> and Spell Armor by <c val="#TooltipNumbers">1</c> (up to <c val="#TooltipNumbers">25</c>). Kept between games.
+Button/Name/AnubarakUnbreakableTokenCounter=Unbreakable
+Button/Tooltip/AnubarakUnbreakableTokenCounter=<c val="#TooltipQuest">Bonus maximum Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AnubarakUnbreakableTokenCounter$*2" precision="0"/>%</c></c>
+Behavior/Name/AnubarakRoyalGuardArmor=Royal Guard
+Behavior/Tooltip/AnubarakRoyalGuardArmor=2 Armor for each living Beetle.
+Affix/Name/AnubarakExplodingCarapace=Exploding Carapace
+Affix/Tooltip/AnubarakExplodingCarapace=Beetles explode when they die, dealing <c val="#TooltipNumbers">40%</c> of their attack damage to nearby enemies.
+Affix/Name/AnubarakSwarmInstinct=Swarm Instinct
+Affix/Tooltip/AnubarakSwarmInstinct=Beetles deal <c val="#TooltipNumbers">25%</c> more damage to enemies Anub'arak has hit with a Basic Attack in the last <c val="#TooltipNumbers">2</c> seconds.
+Affix/Name/AnubarakRoyalGuard=Royal Guard
+Affix/Tooltip/AnubarakRoyalGuard=Anub'arak gains <c val="#TooltipNumbers">2</c> Armor for each living Beetle, up to <c val="#TooltipNumbers">10</c>.
+Affix/Name/AnubarakBedOfBarbs=Bed of Barbs
+Affix/Tooltip/AnubarakBedOfBarbs=Gain <c val="#TooltipNumbers">Bed of Barbs</c>. Its spikes last <c val="#TooltipNumbers">50%</c> longer.
+Affix/Name/AnubarakAftershock=Aftershock
+Affix/Tooltip/AnubarakAftershock=<c val="#TooltipNumbers">1</c> second after Burrow Charge surfaces, a second quake hits the same area for <c val="#TooltipNumbers">50%</c> damage.
+Affix/Name/AnubarakSkewer=Skewer
+Affix/Tooltip/AnubarakSkewer=Impale is <c val="#TooltipNumbers">50%</c> wider and travels about <c val="#TooltipNumbers">30%</c> further.
+Affix/Name/AnubarakThornedShell=Thorned Shell
+Affix/Tooltip/AnubarakThornedShell=While Harden Carapace is active, enemies who Basic Attack Anub'arak take <c val="#TooltipNumbers">30</c> damage.
+Affix/Name/AnubarakShedExoskeleton=Shed Exoskeleton
+Affix/Tooltip/AnubarakShedExoskeleton=Gain <c val="#TooltipNumbers">Shed Exoskeleton</c>: Harden Carapace grants <c val="#TooltipNumbers">30%</c> Movement Speed for <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/AnubarakRetaliation=Retaliation
+Affix/Tooltip/AnubarakRetaliation=When Harden Carapace ends or breaks, it explodes, dealing <c val="#TooltipNumbers">50%</c> of the damage it absorbed to nearby enemies.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=
