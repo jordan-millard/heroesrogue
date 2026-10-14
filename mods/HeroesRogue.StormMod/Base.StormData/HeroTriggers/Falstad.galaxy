@@ -10,6 +10,8 @@ include "AffixTriggers"
 const fixed libAffx_falstadKillWindow = 2.0;
 const fixed libAffx_falstadExplosionWindow = 0.0625; // all hits of one explosion land in the same game loop
 const int libAffx_falstadShockwaveDamagePerHero = 5;
+const int libAffx_falstadSkippedTier = 1; // level 1, all disabled by the starter
+const int libAffx_falstadSkippedColumn = 1; // Gathering Storm
 
 bool libAffx_falstadStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_falstadHammerHitTime; // per enemy player, last hit by any part of Hammerang
@@ -88,6 +90,18 @@ bool libAffx_FalstadTakedown (bool testConds, bool runActions) {
     return true;
 }
 
+// Every level 1 talent is disabled, but talent picking always offers the lowest unpicked tier, which would block all
+// later tiers. Mark the tier as picked (showing Gathering Storm, which the quests replace) without granting the talent.
+bool libAffx_FalstadTick_Func (bool testConds, bool runActions) {
+    if (!libAffx_FalstadHasStarter() || libGame_gv_talents_TalentChoices[libAffx_player][libAffx_falstadSkippedTier].lv_selection != 0) {
+        return true;
+    }
+    libGame_gv_talents_TalentChoices[libAffx_player][libAffx_falstadSkippedTier].lv_selection = libAffx_falstadSkippedColumn;
+    TalentTreeSetSelectedHeroTalent(libAffx_player, libAffx_falstadSkippedTier, libAffx_falstadSkippedColumn);
+    libGame_gf_TalentsUpdateChoicePanelForPlayer(libAffx_player);
+    return true;
+}
+
 // AffixAdded for Wildhammer's Wrath
 bool libAffx_FalstadStart (bool testConds, bool runActions) {
     trigger hammerHit;
@@ -100,5 +114,6 @@ bool libAffx_FalstadStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangReturnDamage");
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_FalstadExplosionHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_FalstadTick_Func"), 0.5, c_timeGame);
     return true;
 }
