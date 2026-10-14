@@ -11195,7 +11195,7 @@
             <String String="1 1 Set Abil,FalstadHammerang,Cost.Charge.TimeUse 10">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Abil,FalstadHammerang,Cost.Cooldown.TimeUse 0.5">
+            <String String="1 1 Set Abil,FalstadHammerang,Cost.Cooldown.TimeUse 1">
                 <Field Id="CatalogModification" Index="4" />
             </String>
             <String String="1 1 Add Abil,FalstadHammerang,Cost.Vital[Energy] -20">
@@ -11206,6 +11206,9 @@
             </String>
             <String String="1 1 Set Effect,FalstadFlowRiderModifyCooldowns,Cost[0].ChargeTimeUse -0.25">
                 <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,FalstadWildhammerThrowLockout,Chance 1">
+                <Field Id="CatalogModification" Index="8" />
             </String>
             <String String="AffixAdded libAffx_FalstadStart">
                 <Field Id="Trigger" />

@@ -10,6 +10,7 @@ include "AffixTriggers"
 const fixed libAffx_falstadKillWindow = 2.0;
 const fixed libAffx_falstadExplosionWindow = 0.0625; // all hits of one explosion land in the same game loop
 const int libAffx_falstadShockwaveDamagePerHero = 5;
+const fixed libAffx_falstadDingSpacing = 0.15;
 const int libAffx_falstadSkippedTier = 1; // level 1, all disabled by the starter
 const int libAffx_falstadSkippedColumn = 1; // Gathering Storm
 
@@ -53,6 +54,7 @@ bool libAffx_FalstadHammerHit_Func (bool testConds, bool runActions) {
 // The first Hero hit by an explosion waits for the rest of that explosion's hits, then grants the Shockwave stacks
 bool libAffx_FalstadExplosionHit_Func (bool testConds, bool runActions) {
     int heroes;
+    int ding;
     if (libAffx_FalstadHitHeroPlayer() == 0 || !libAffx_FalstadHasStarter()) {
         return false;
     }
@@ -63,8 +65,14 @@ bool libAffx_FalstadExplosionHit_Func (bool testConds, bool runActions) {
     Wait(libAffx_falstadExplosionWindow, c_timeGame);
     heroes = libAffx_falstadExplosionHeroes;
     libAffx_falstadExplosionHeroes = 0;
-    if (heroes >= 2 && libAffx_FalstadHero() != null) {
-        libGame_gf_ModifyTokenCount((heroes - 1) * libAffx_falstadShockwaveDamagePerHero, "FalstadShockwaveTokenCounter", libAffx_FalstadHero());
+    if (heroes < 2 || libAffx_FalstadHero() == null) {
+        return true;
+    }
+    libGame_gf_ModifyTokenCount((heroes - 1) * libAffx_falstadShockwaveDamagePerHero, "FalstadShockwaveTokenCounter", libAffx_FalstadHero());
+    // one quest ding per 5 damage gained
+    for (ding = 1; ding <= heroes - 1; ding += 1) {
+        SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+        Wait(libAffx_falstadDingSpacing, c_timeGame);
     }
     return true;
 }

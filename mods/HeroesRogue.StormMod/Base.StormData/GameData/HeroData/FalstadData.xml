@@ -45,6 +45,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <FlatModifierArray index="FalstadShockwave" Accumulator="FalstadShockwaveAccumulator" />
   </CEffectDamage>
 
+  <!-- Detonating BOOMerang locks Hammerang for 1 second so a double press doesn't throw the next charge -->
+  <CEffectModifyUnit id="FalstadWildhammerThrowLockout">
+    <Chance value="0" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="FalstadHammerang,Execute" CooldownOperation="Set" CooldownTimeUse="1" />
+  </CEffectModifyUnit>
+  <CEffectSet id="FalstadHammerangBOOMerangActiveSet">
+    <EffectArray value="FalstadWildhammerThrowLockout" />
+  </CEffectSet>
+
   <CButton id="FalstadShockwaveTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_falstad_boomerang.dds" />
   </CButton>
