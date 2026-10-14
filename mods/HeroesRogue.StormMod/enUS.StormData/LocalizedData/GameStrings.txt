@@ -793,7 +793,7 @@ Affix/Tooltip/AnubarakShedExoskeleton=Gain <c val="#TooltipNumbers">Shed Exoskel
 Affix/Name/AnubarakRetaliation=Retaliation
 Affix/Tooltip/AnubarakRetaliation=When Harden Carapace ends or breaks, it explodes, dealing <c val="#TooltipNumbers">50%</c> of the damage it absorbed to nearby enemies.
 Affix/Name/FalstadWildhammersWrath=Wildhammer's Wrath
-Affix/Tooltip/FalstadWildhammersWrath=Gain <c val="#TooltipNumbers">Epic Mount</c>. <c val="#TooltipNumbers">Gathering Storm</c> is replaced by <c val="#TooltipNumbers">Wildhammer's Grip</c>, which reduces Hammerang's Mana cost by <c val="#TooltipNumbers">20</c>.<n/><n/>Hammerang gains <c val="#TooltipNumbers">2</c> charges, with <c val="#TooltipNumbers">1</c> second between throws and after a BOOMerang explosion.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Hammerang, its return, or its BOOMerang explosion permanently increases the explosion's damage by <c val="#TooltipNumbers">5</c>. <c val="#TooltipNumbers">50%</c> of the bonus is kept between games.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero who dies within <c val="#TooltipNumbers">2</c> seconds of being hit by Hammerang increases Hammerang's damage by <c val="#TooltipNumbers">3%</c> (up to <c val="#TooltipNumbers">150%</c>). Kept between games.
+Affix/Tooltip/FalstadWildhammersWrath=Gain <c val="#TooltipNumbers">Epic Mount</c>. <c val="#TooltipNumbers">Gathering Storm</c> is replaced by <c val="#TooltipNumbers">Wildhammer's Bulwark</c>, which reduces Hammerang's Mana cost by <c val="#TooltipNumbers">20</c> and grants a lasting Shield of up to <c val="#TooltipNumbers">20%</c> of your maximum Health from Hammerang hits.<n/><n/>Hammerang gains <c val="#TooltipNumbers">2</c> charges, with <c val="#TooltipNumbers">1</c> second between throws and after a BOOMerang explosion.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Hammerang, its return, or its BOOMerang explosion permanently increases the explosion's damage by <c val="#TooltipNumbers">5</c>. <c val="#TooltipNumbers">50%</c> of the bonus is kept between games.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero who dies within <c val="#TooltipNumbers">2</c> seconds of being hit by Hammerang increases Hammerang's damage by <c val="#TooltipNumbers">3%</c> (up to <c val="#TooltipNumbers">150%</c>). Kept between games.
 Button/Name/FalstadShockwaveTokenCounter=Shockwave
 Button/Tooltip/FalstadShockwaveTokenCounter=<c val="#TooltipQuest">Bonus BOOMerang explosion damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:FalstadShockwaveTokenCounter$" precision="0"/></c></c>
 Button/Name/FalstadGatheringThunderTokenCounter=Gathering Thunder
@@ -806,9 +806,11 @@ Affix/Name/FalstadUnboundStorm=Unbound Storm
 Affix/Tooltip/FalstadUnboundStorm=Removes the <c val="#TooltipNumbers">150%</c> limit on Wildhammer's Wrath's Hammerang damage quest.
 Affix/Name/FalstadTwinHammers=Twin Hammers
 Affix/Tooltip/FalstadTwinHammers=Hammerang gains <c val="#TooltipNumbers">1</c> additional charge.
-Button/Name/FalstadWildhammersGripTalent=Wildhammer's Grip
-Button/SimpleDisplayText/FalstadWildhammersGripTalent=Reduces Hammerang Mana cost
-Button/Tooltip/FalstadWildhammersGripTalent=Reduce Hammerang's Mana cost by <c val="#TooltipNumbers">20</c>.
+Button/Name/FalstadWildhammersBulwarkTalent=Wildhammer's Bulwark
+Button/SimpleDisplayText/FalstadWildhammersBulwarkTalent=Hammerang hits grant a lasting Shield
+Button/Tooltip/FalstadWildhammersBulwarkTalent=Reduce Hammerang's Mana cost by <c val="#TooltipNumbers">20</c>.<n/><n/>Each time Hammerang, its return, or its BOOMerang explosion hits an enemy Hero, gain a Shield for <c val="#TooltipNumbers">1%</c> of your maximum Health, stacking up to <c val="#TooltipNumbers">20%</c>. The Shield does not expire.
+Behavior/Name/FalstadWildhammersBulwarkShield=Wildhammer's Bulwark
+Behavior/Tooltip/FalstadWildhammersBulwarkShield=Shielded by Hammerang hits.
 Affix/Name/FalstadEchoingThunder=Echoing Thunder
 Affix/Tooltip/FalstadEchoingThunder=Wildhammer's Wrath keeps <c val="#TooltipNumbers">80%</c> of its bonus BOOMerang explosion damage between games instead of <c val="#TooltipNumbers">50%</c>.
 Affix/Name/TyrandeTheMark=Accurate Mark

@@ -55,12 +55,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="FalstadWildhammerThrowLockout" />
   </CEffectSet>
 
-  <!-- Wildhammer's Grip: level 1 talent shown only with the starter (TalentsShow), replacing the disabled Gathering Storm -->
+  <!-- Wildhammer's Bulwark: level 1 talent shown only with the starter (TalentsShow), replacing the disabled Gathering
+       Storm. -20 Hammerang Mana, and every Hammerang hit on a Hero adds a 1% max Health shield stack (up to 20) that
+       doesn't expire, the same way Static Shield stacks. -->
   <CHero id="Falstad">
-    <TalentTreeArray Talent="FalstadWildhammersGrip" Tier="1" Column="4" />
+    <TalentTreeArray Talent="FalstadWildhammersBulwark" Tier="1" Column="4" />
   </CHero>
-  <CTalent id="FalstadWildhammersGrip">
-    <Face value="FalstadWildhammersGripTalent" />
+  <CTalent id="FalstadWildhammersBulwark">
+    <Face value="FalstadWildhammersBulwarkTalent" />
     <Abil value="FalstadHammerang" />
     <AbilityModificationArray>
       <Modifications>
@@ -69,11 +71,40 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
         <Field value="Cost[0].Vital[Energy]" />
         <Value value="-20.000000" />
       </Modifications>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Effect" />
+        <Entry value="FalstadWildhammersBulwarkApplyShield" />
+        <Field value="Chance" />
+        <Value value="1.000000" />
+      </Modifications>
     </AbilityModificationArray>
   </CTalent>
-  <CButton id="FalstadWildhammersGripTalent" parent="StormButtonParent">
-    <Icon value="Assets\Textures\storm_ui_icon_falstad_hammerang.dds" />
+  <CButton id="FalstadWildhammersBulwarkTalent" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_falstad_hammerang_a.dds" />
   </CButton>
+  <CBehaviorBuff id="FalstadWildhammersBulwarkShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_falstad_hammerang_a.dds" />
+    <MaxStackCount value="20" />
+    <DamageResponse>
+      <ModifyLimitVitalMaxFractionArray index="Life" value="0.01" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="FalstadWildhammersBulwarkApplyShield">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="FalstadWildhammersBulwarkShield" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HammerangDamageSet">
+    <EffectArray value="FalstadWildhammersBulwarkApplyShield" />
+  </CEffectSet>
+  <CEffectSet id="HammerangReturnDamageSet">
+    <EffectArray value="FalstadWildhammersBulwarkApplyShield" />
+  </CEffectSet>
+  <CEffectSet id="FalstadHammerangBOOMerangImpactSet">
+    <EffectArray value="FalstadWildhammersBulwarkApplyShield" />
+  </CEffectSet>
 
   <CButton id="FalstadShockwaveTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_falstad_boomerang.dds" />
