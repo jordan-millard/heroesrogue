@@ -116,13 +116,23 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="FalstadStormbreakerDamage" />
   </CEffectSet>
 
-  <!-- BOOMerang radius indicator: a range circle on the hammer while it flies out and back. The marker behavior is
-       re-applied by the missiles' scan sets and only enabled for the starter; Big Hammer sets the splat's Scale. -->
-  <CBehaviorBuff id="FalstadWildhammerIndicator" />
+  <!-- BOOMerang radius indicator: a range circle on the hammer while BOOMerang can still be detonated. The marker is
+       re-applied by the missiles' scan sets only while Falstad has the BOOMerang controller, expires shortly after
+       that, and is removed as soon as BOOMerang detonates. Only enabled for the starter; Big Hammer sets the Scale. -->
+  <CBehaviorBuff id="FalstadWildhammerIndicator">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
   <CEffectApplyBehavior id="FalstadWildhammerApplyIndicator">
     <Chance value="0" />
+    <ValidatorArray value="HasFalstadHammerangBOOMerangController" />
     <Behavior value="FalstadWildhammerIndicator" />
   </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="FalstadWildhammerRemoveIndicator">
+    <BehaviorLink value="FalstadWildhammerIndicator" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="FalstadHammerangBOOMerangActiveSet">
+    <EffectArray value="FalstadWildhammerRemoveIndicator" />
+  </CEffectSet>
   <CEffectSet id="HammerangScanSet">
     <EffectArray value="FalstadWildhammerApplyIndicator" />
   </CEffectSet>
