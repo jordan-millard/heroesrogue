@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Junkrat, Trap King: instant traps, 3 at once, trapped enemies take more damage from Junkrat,
+       Concussion Mine roots on landing. Mean Traps quest and the takedown check are in HeroTriggers/Junkrat.galaxy -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="JunkratTrapKingMarker" parent="CarryBehaviorParent">
+    <DamageResponse>
+      <Chance value="1" />
+      <Location value="Attacker" />
+      <ModifyFraction value="1.25" />
+      <ValidatorArray value="JunkratTargetHasTrapKingExposed" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="JunkratTargetHasTrapKingExposed">
+    <WhichUnit Value="Target" />
+    <Compare value="GT" />
+    <Behavior value="JunkratTrapKingExposed" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="JunkratTrapKingExposed">
+    <Alignment value="Negative" />
+    <Duration value="3" />
+    <DisplayDuration index="Self" value="1" />
+    <DisplayDuration index="Ally" value="1" />
+    <DisplayDuration index="Enemy" value="1" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_junkrat_steel_trap.dds" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="JunkratTrapKingApplyExposed">
+    <Chance value="0" />
+    <Behavior value="JunkratTrapKingExposed" />
+  </CEffectApplyBehavior>
+  <!-- Concussion Mine roots enemies when they land -->
+  <CBehaviorBuff id="JunkratTrapKingMineRoot" parent="StormRoot">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="JunkratTrapKingApplyMineRoot" parent="StormRootApply">
+    <Chance value="0" />
+    <ValidatorArray value="JunkratTargetIsEnemyOrNotJunkrat" />
+    <Behavior value="JunkratTrapKingMineRoot" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="JunkratConcussionMineLaunchTarget">
+    <FinalEffect value="JunkratTrapKingApplyMineRoot" />
+  </CBehaviorBuff>
+
+  <!-- Mean Traps quest: +3% trap and mine damage per stack (radius is set in HeroTriggers/Junkrat.galaxy) -->
+  <CBehaviorTokenCounter id="JunkratMeanTrapsTokenCounter" parent="StormQuestToken">
+    <Face value="JunkratMeanTrapsTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="JunkratMeanTrapsAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="JunkratMeanTrapsTokenCounter" />
+    <Scale value="0.03" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+
+  <!-- Bear Trap (Rare): longer root and Armor reduction -->
+  <CBehaviorBuff id="JunkratBearTrapArmor" parent="StormArmor">
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-15" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="JunkratBearTrapApplyArmor">
+    <Chance value="0" />
+    <Behavior value="JunkratBearTrapArmor" />
+  </CEffectApplyBehavior>
+
+  <!-- Tripwire (Rare): a triggered Steel Trap detonates Concussion Mines within 4 range -->
+  <CEffectEnumTrackedUnits id="JunkratTripwireDetonate">
+    <Chance value="0" />
+    <BehaviorLink value="JunkratConcussionMineUnitTracker" />
+    <Effect value="JunkratTripwireExplodeSet" />
+  </CEffectEnumTrackedUnits>
+  <CEffectSet id="JunkratTripwireExplodeSet">
+    <ValidatorArray value="JunkratTripwireMineInRange" />
+    <EffectArray value="JunkratConcussionMineDetonateMineExplodeSet" />
+  </CEffectSet>
+  <CValidatorLocationCompareRange id="JunkratTripwireMineInRange">
+    <WhichLocation Effect="JunkratSteelTrapImpactSet" />
+    <Compare value="LE" />
+    <Range value="4" />
+    <Value Value="TargetUnit" />
+  </CValidatorLocationCompareRange>
+
+  <!-- Spring Loaded (Rare): a triggered trap re-arms once after 2 seconds, dealing 50% damage the second time -->
+  <CBehaviorBuff id="JunkratSpringLoadedMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JunkratSpringLoadedSprung" />
+  <CBehaviorBuff id="JunkratSpringLoadedRearming">
+    <Duration value="2" />
+    <ExpireEffect value="JunkratSteelTrapApplyScanBehavior" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="JunkratCasterHasSpringLoaded">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="JunkratSpringLoadedMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="JunkratSourceNotSprung">
+    <WhichUnit Value="Source" />
+    <Behavior value="JunkratSpringLoadedSprung" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="JunkratSourceIsSprung">
+    <WhichUnit Value="Source" />
+    <Compare value="GT" />
+    <Behavior value="JunkratSpringLoadedSprung" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="JunkratSpringLoadedCanRearm">
+    <Type value="And" />
+    <CombineArray value="JunkratCasterHasSpringLoaded" />
+    <CombineArray value="JunkratSourceNotSprung" />
+  </CValidatorCombine>
+  <CEffectApplyBehavior id="JunkratSpringLoadedApplySprung">
+    <WhichUnit Value="Source" />
+    <Behavior value="JunkratSpringLoadedSprung" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="JunkratSpringLoadedRemoveScan">
+    <WhichUnit Value="Source" />
+    <BehaviorLink value="JunkratSteelTrapScan" />
+  </CEffectRemoveBehavior>
+  <CEffectApplyBehavior id="JunkratSpringLoadedApplyRearming">
+    <WhichUnit Value="Source" />
+    <Behavior value="JunkratSpringLoadedRearming" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="JunkratSpringLoadedRearmSet">
+    <EffectArray value="JunkratSpringLoadedApplySprung" />
+    <EffectArray value="JunkratSpringLoadedRemoveScan" />
+    <EffectArray value="JunkratSpringLoadedApplyRearming" />
+  </CEffectSet>
+  <!-- The trap is kept instead of killed when it can re-arm -->
+  <CEffectSwitch id="JunkratSteelTrapKillOldTrapImpactSwitch">
+    <CaseArray Validator="JunkratSpringLoadedCanRearm" Effect="JunkratSpringLoadedRearmSet" />
+  </CEffectSwitch>
+
+  <CEffectSet id="JunkratSteelTrapImpactSet">
+    <EffectArray value="JunkratTrapKingApplyExposed" />
+    <EffectArray value="JunkratBearTrapApplyArmor" />
+    <EffectArray value="JunkratTripwireDetonate" />
+  </CEffectSet>
+  <CEffectDamage id="JunkratSteelTrapDamage">
+    <MultiplicativeModifierArray index="JunkratMeanTraps" Accumulator="JunkratMeanTrapsAccumulator" />
+    <MultiplicativeModifierArray index="JunkratSpringLoaded" Validator="JunkratSourceIsSprung" Modifier="-0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="JunkratConcussionMineDamage">
+    <MultiplicativeModifierArray index="JunkratMeanTraps" Accumulator="JunkratMeanTrapsAccumulator" />
+  </CEffectDamage>
+
+  <!-- ============================================================ -->
+  <!-- Golden Junkrat, Nade Spam: every 3rd grenade explodes in a 40% larger area. +1 charge and faster recharge
+       are catalog modifications in AffixData.xml. Demolition Expert quest is in HeroTriggers/Junkrat.galaxy -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="JunkratNadeSpamMarker" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="JunkratCasterHasNadeSpam">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="JunkratNadeSpamMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="JunkratNadeSpamCounter">
+    <MaxStackCount value="3" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="JunkratNadeSpamBigBoom" />
+  <CValidatorUnitCompareBehaviorCount id="JunkratCasterHas3NadeSpamCounter">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="3" />
+    <Behavior value="JunkratNadeSpamCounter" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="JunkratSourceHasNadeSpamBigBoom">
+    <WhichUnit Value="Source" />
+    <Compare value="GT" />
+    <Behavior value="JunkratNadeSpamBigBoom" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="JunkratSourceNoNadeSpamBigBoom">
+    <WhichUnit Value="Source" />
+    <Behavior value="JunkratNadeSpamBigBoom" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="JunkratNadeSpamApplyCounter">
+    <ValidatorArray value="JunkratCasterHasNadeSpam" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="JunkratNadeSpamCounter" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="JunkratNadeSpamApplyBigBoom">
+    <WhichUnit Value="Source" />
+    <Behavior value="JunkratNadeSpamBigBoom" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="JunkratNadeSpamRemoveCounter">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="JunkratNadeSpamCounter" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="JunkratNadeSpamBigBoomSet">
+    <ValidatorArray value="JunkratCasterHas3NadeSpamCounter" />
+    <EffectArray value="JunkratNadeSpamApplyBigBoom" />
+    <EffectArray value="JunkratNadeSpamRemoveCounter" />
+  </CEffectSet>
+  <CEffectSet id="JunkratFragLauncherArcDummyLaunchEffect">
+    <EffectArray value="JunkratNadeSpamApplyCounter" />
+    <EffectArray value="JunkratNadeSpamBigBoomSet" />
+  </CEffectSet>
+  <!-- A marked grenade uses the larger search instead of the normal one -->
+  <CEffectEnumArea id="JunkratFragLauncherExplosionSearch">
+    <ValidatorArray value="JunkratSourceNoNadeSpamBigBoom" />
+  </CEffectEnumArea>
+  <CEffectEnumArea id="JunkratNadeSpamBigBoomSearch">
+    <ValidatorArray value="JunkratSourceHasNadeSpamBigBoom" />
+    <ImpactLocation Value="SourceUnitOrPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="JunkratFragLauncherExplosionImpactSet">
+      <Radius value="2.8" />
+    </AreaArray>
+    <RevealerParams Duration="0.75" ShapeExpansion="1.5">
+      <RevealFlags index="Unfog" value="1" />
+    </RevealerParams>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CActorModel id="JunkratFragLauncherCannonballExplosion">
+    <On Terms="Effect.JunkratNadeSpamBigBoomSearch.Start; At Effect" Send="Create" />
+  </CActorModel>
+  <CActorSound id="JunkratFragLauncherExplosionSound">
+    <On Terms="Effect.JunkratNadeSpamBigBoomSearch.Start; At Effect" Send="Create" />
+  </CActorSound>
+
+  <!-- Demolition Expert quest: +1% Frag Launcher damage per stack -->
+  <CBehaviorTokenCounter id="JunkratDemolitionTokenCounter" parent="StormQuestToken">
+    <Face value="JunkratDemolitionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="JunkratDemolitionAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="JunkratDemolitionTokenCounter" />
+    <Scale value="0.01" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+
+  <!-- Bouncy Bouncy (Rare): the cut talent's damage bonus after a terrain bounce, set to 40% by the boon -->
+  <CEffectDamage id="JunkratFragLauncherExplosionDamage">
+    <MultiplicativeModifierArray index="JunkratDemolition" Accumulator="JunkratDemolitionAccumulator" />
+    <MultiplicativeModifierArray index="JunkratBouncyBouncy" Validator="JunkratFragLauncherBouncyBouncySourceHasDamageBuff" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- Sticky Nades (Rare): a grenade that hits a Hero explodes on them again 1 second later for 30% damage -->
+  <CBehaviorBuff id="JunkratStickyNadeBomb">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="1" />
+    <ExpireEffect value="JunkratStickyNadeSearch" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="JunkratStickyNadeApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="JunkratStickyNadeBomb" />
+  </CEffectApplyBehavior>
+  <CEffectEnumArea id="JunkratStickyNadeSearch">
+    <ImpactLocation Value="TargetUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="JunkratStickyNadeDamage">
+      <Radius value="2" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CEffectDamage id="JunkratStickyNadeDamage" parent="StormSpell">
+    <Amount value="37" />
+    <AttributeFactor index="Structure" value="-0.5" />
+    <SourceButtonFace value="JunkratFragLauncher" />
+  </CEffectDamage>
+  <CActorModel id="JunkratStickyNadeExplosion" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.JunkratStickyNadeSearch.Start" Send="Create" />
+    <Model value="JunkratTotalMayhemGrenadeExplosion" />
+  </CActorModel>
+
+  <!-- Fuse Burner (Rare, Rocket Rodeo): Frag Launcher Hero hits shorten Heroic cooldowns by 1.5 seconds -->
+  <CEffectModifyUnit id="JunkratFuseBurnerRIPTire">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="JunkratRIPTire,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="JunkratFuseBurnerRocketRide">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="JunkratRocketRide,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <CEffectSet id="JunkratFuseBurnerSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectArray value="JunkratFuseBurnerRIPTire" />
+    <EffectArray value="JunkratFuseBurnerRocketRide" />
+  </CEffectSet>
+
+  <CEffectSet id="JunkratFragLauncherExplosionImpactSet">
+    <EffectArray value="JunkratStickyNadeApply" />
+    <EffectArray value="JunkratFuseBurnerSet" />
+  </CEffectSet>
+
+  <!-- Cluster Bomb (Rare): the last grenade of a full volley splits into 3 smaller explosions for 35% damage -->
+  <CEffectSet id="JunkratClusterBombSet">
+    <Chance value="0" />
+    <ValidatorArray value="JunkratFragLauncherSourceHasExtraWoundTimersMissileMarker" />
+    <EffectArray value="JunkratClusterBombPersistent" />
+  </CEffectSet>
+  <CEffectCreatePersistent id="JunkratClusterBombPersistent">
+    <WhichLocation Value="SourcePoint" />
+    <PeriodCount value="3" />
+    <PeriodicEffectArray value="JunkratClusterBombSearch" />
+    <PeriodicOffsetArray X="1.75" />
+    <PeriodicOffsetArray X="-0.875" Y="1.5" />
+    <PeriodicOffsetArray X="-0.875" Y="-1.5" />
+    <PeriodicPeriodArray value="0.25" />
+  </CEffectCreatePersistent>
+  <CEffectEnumArea id="JunkratClusterBombSearch">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="JunkratClusterBombDamage">
+      <Radius value="1.25" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CEffectDamage id="JunkratClusterBombDamage" parent="StormSpell">
+    <Amount value="43" />
+    <AttributeFactor index="Structure" value="-0.5" />
+    <SourceButtonFace value="JunkratFragLauncher" />
+  </CEffectDamage>
+  <CActorModel id="JunkratClusterBombExplosion" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.JunkratClusterBombSearch.Start" Send="Create" />
+    <Model value="JunkratTotalMayhemGrenadeExplosion" />
+  </CActorModel>
+
+  <CEffectSet id="JunkratFragLauncherImpactSet">
+    <EffectArray value="JunkratNadeSpamBigBoomSearch" />
+    <EffectArray value="JunkratClusterBombSet" />
+  </CEffectSet>
+  <CEffectSet id="JunkratFragLauncherTimedLifeExpireSet">
+    <EffectArray value="JunkratNadeSpamBigBoomSearch" />
+    <EffectArray value="JunkratClusterBombSet" />
+  </CEffectSet>
+
+  <!-- ============================================================ -->
+  <!-- Golden Junkrat, Rocket Rodeo: both Heroics at level 10 (HeroTriggers/Junkrat.galaxy adds Rocket Ride and
+       Puckish Scamp), so RIP-Tire only shows through Puckish Scamp's swap. Showstopper quest is in the script too -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="JunkratRocketRodeoMarker" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="JunkratRocketRodeoNotActive">
+    <WhichUnit Value="Caster" />
+    <Behavior value="JunkratRocketRodeoMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="JunkratHasRIPTireTalentWithoutRocketRodeo">
+    <Type value="And" />
+    <CombineArray value="JunkratHasRIPTireTalent" />
+    <CombineArray value="JunkratRocketRodeoNotActive" />
+  </CValidatorCombine>
+  <CValidatorCombine id="JunkratHasRIPTireTalentOrHasRIPTirePuckishScampAbilityChangeDummyBehavior">
+    <CombineArray index="0" value="JunkratHasRIPTireTalentWithoutRocketRodeo" />
+  </CValidatorCombine>
+
+  <!-- Showstopper quest: +4% Heroic damage per stack (cooldowns are set in HeroTriggers/Junkrat.galaxy) -->
+  <CBehaviorTokenCounter id="JunkratShowstopperTokenCounter" parent="StormQuestToken">
+    <Face value="JunkratShowstopperTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="JunkratShowstopperAccumulator" parent="BaseAccumulator">
+    <ApplicationRule value="Add" />
+    <TokenId value="JunkratShowstopperTokenCounter" />
+    <Scale value="0.04" />
+    <MaxAccumulation value="100000" />
+  </CAccumulatorToken>
+  <CEffectDamage id="JunkratRIPTireDamage">
+    <MultiplicativeModifierArray index="JunkratShowstopper" Accumulator="JunkratShowstopperAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="JunkratRIPTireDamageNear">
+    <MultiplicativeModifierArray index="JunkratShowstopper" Accumulator="JunkratShowstopperAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="JunkratRocketRideExplosionDamage">
+    <MultiplicativeModifierArray index="JunkratShowstopper" Accumulator="JunkratShowstopperAccumulator" />
+  </CEffectDamage>
+
+  <!-- Encore (Rare): Total Mayhem also goes off where RIP-Tire detonates -->
+  <CEffectSet id="JunkratEncoreTireMayhem">
+    <Chance value="0" />
+    <EffectArray value="JunkratTotalMayhemInitialSet" />
+  </CEffectSet>
+  <CEffectSet id="JunkratRIPTireDetonationSet">
+    <EffectArray value="JunkratEncoreTireMayhem" />
+  </CEffectSet>
+
+  <CButton id="JunkratMeanTrapsTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_junkrat_steel_trap.dds" />
+  </CButton>
+  <CButton id="JunkratDemolitionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_junkrat_frag_launcher.dds" />
+  </CButton>
+  <CButton id="JunkratShowstopperTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_junkrat_rocket_ride.dds" />
+  </CButton>
+
+</Catalog>

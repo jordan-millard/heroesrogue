@@ -10271,6 +10271,339 @@
                 <Field Id="AffixesRequired" />
             </User>
         </Instances>
+        <Instances Id="JunkratTrapKing">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_steel_trap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JunkratSteelTrapChatteringTeeth">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="JunkratSteelTrapStickyWicket">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="JunkratSteelTrapGottaTrapEmAll">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 JunkratTrapKingMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 JunkratMeanTrapsTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="JunkratMeanTrapsTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Set Behavior,JunkratSteelTrapArming,Duration 0.0625">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,JunkratSteelTrapUnitTracker,MaxTrackedUnits 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,JunkratTrapKingApplyExposed,Chance 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,JunkratTrapKingApplyMineRoot,Chance 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_JunkratStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_JunkratTrapTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratNadeSpam">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_frag_launcher.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JunkratFragLauncherTasteForExplosions">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="JunkratFragLauncherExtraWoundTimers">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="JunkratFragLauncherEndlessNades">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 JunkratNadeSpamMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 JunkratDemolitionTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="JunkratDemolitionTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Add Abil,JunkratFragLauncher,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,JunkratFragLauncher,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Abil,JunkratFragLauncher,Cost.Charge.TimeUse -2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Add Unit,HeroJunkrat,EnergyMax 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Add Unit,HeroJunkrat,EnergyStart 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Behavior,JunkratFragLauncherExtraWoundTimersStackingBehavior,MaxStackCount 5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Validator,JunkratFragLauncherHas4StacksOfExtraWoundTimersStackingBehavior,Value 5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Validator,JunkratFragLauncherHas3StacksOfExtraWoundTimersStackingBehavior,Value 4">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_JunkratStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratRocketRodeo">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_rocket_ride.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JunkratRIPTireExtraOomph">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="JunkratTotalMayhemDirtyTricksterTalent">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="JunkratRocketRidePuckishScamp">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 JunkratRocketRodeoMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 JunkratShowstopperTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="JunkratShowstopperTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Add Unit,JunkratRIPTire,LifeMax 530">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Unit,JunkratRIPTire,LifeStart 530">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Unit,JunkratRIPTire,Speed 1.95">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,JunkratTotalMayhemCreateUnitPersistent,PeriodCount 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Behavior,JunkratRocketRidePostRideBehavior,Duration 0.0625">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 String Effect,JunkratRocketRideHearthstone,Effect JunkratRocketRideDummySetVisibility">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_JunkratStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_JunkratRodeoTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+            <String String="HeroGainTalent libAffx_JunkratRodeoTalent">
+                <Field Id="Trigger" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratBearTrap">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_steel_trap_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratTrapKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,JunkratSteelTrapRoot,Duration 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,JunkratBearTrapApplyArmor,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratTripwire">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_trap_mine.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratTrapKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,JunkratTripwireDetonate,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratSpringLoaded">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_steel_trap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratTrapKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JunkratSpringLoadedMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratBouncyBouncy">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_frag_launcher_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratNadeSpam">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,JunkratFragLauncherBouncyBouncyApplyDamageBuffBehavior,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,JunkratFragLauncherExplosionDamage,MultiplicativeModifierArray[JunkratBouncyBouncy].Modifier 0.4">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratStickyNades">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_frag_launcher_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratNadeSpam">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,JunkratStickyNadeApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratClusterBomb">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_frag_launcher_c.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratNadeSpam">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,JunkratClusterBombSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratTirePressure">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_rip_tire_jump.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratRocketRodeo">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Abil,JunkratRIPTireJump,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,JunkratRIPTireJump,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,JunkratRIPTireJump,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,JunkratRIPTireJump,Cost.Charge.TimeUse 2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Add Behavior,JunkratRIPTireTimedLife,Duration 3">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratEncore">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_bomb_pack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratRocketRodeo">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,JunkratTotalMayhemCreateUnitPersistent,PeriodCount 12">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,JunkratEncoreTireMayhem,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JunkratFuseBurner">
+            <String String="Assets/Textures/storm_ui_icon_junkrat_mayhem.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Junkrat">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JunkratRocketRodeo">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,JunkratFuseBurnerSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
         <Instances Id="SonyaEarthshatter">
             <String String="Assets/Textures/storm_ui_icon_sonya_leap.dds">
                 <Field Id="Icon" />

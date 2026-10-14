@@ -1,0 +1,204 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Junkrat. Trap King and Rocket Rodeo give a quest stack when an enemy Hero dies within 3 seconds of being
+// hit by their abilities; Nade Spam gives one for every 10 Frag Launcher hits on Heroes. Stacks carry over between
+// games through QuestRetain. Damage per stack is in JunkratData.xml; trap radius and Heroic cooldowns are set here.
+// Rocket Rodeo also gets the other Heroic and Puckish Scamp when it picks one at level 10.
+// ============================================================
+
+const fixed libAffx_junkratKillWindow = 3.0;
+const int libAffx_junkratNadeHitsPerStack = 10;
+const fixed libAffx_junkratTrapWidth = 1.25; // JunkratSteelTrapSearchAreaImpact
+const fixed libAffx_junkratTrapHeight = 1.1;
+const int libAffx_junkratMeanTrapsRadiusMax = 50;
+const fixed libAffx_junkratHeroicCooldown = 75.0;
+const fixed libAffx_junkratPuckishScampCooldown = 20.0;
+const fixed libAffx_junkratRocketRodeoCooldownFactor = 0.75;
+const int libAffx_junkratShowstopperCooldownMax = 40;
+const fixed libAffx_junkratStickyNadeFactor = 0.3;
+const fixed libAffx_junkratClusterBombFactor = 0.35;
+
+bool libAffx_junkratStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_junkratTrapHitTime; // per enemy player, last Steel Trap or Concussion Mine hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_junkratHeroicHitTime; // per enemy player, last RIP-Tire or Rocket Ride hit
+int libAffx_junkratNadeHits; // Frag Launcher Hero hits toward the next stack
+int libAffx_junkratMeanTrapsApplied = -1;
+fixed libAffx_junkratCooldownApplied = -1.0;
+fixed libAffx_junkratFragAmountApplied = -1.0;
+
+unit libAffx_JunkratHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_JunkratHas(string marker) {
+    unit hero = libAffx_JunkratHero();
+    return hero != null && UnitHasBehavior2(hero, marker);
+}
+int libAffx_JunkratTokens(string token) {
+    unit hero = libAffx_JunkratHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, token));
+}
+
+// The enemy Hero player hit by this damage, or 0
+int libAffx_JunkratHitHeroPlayer() {
+    unit victim = EventUnit();
+    int victimPlayer = UnitGetOwner(victim);
+    if (EventUnitDamageSourcePlayer() != libAffx_player) {
+        return 0;
+    }
+    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        return 0;
+    }
+    if (victimPlayer < 1 || victimPlayer > libCore_gv_bALMaxPlayers) {
+        return 0;
+    }
+    return victimPlayer;
+}
+bool libAffx_JunkratTrapHit_Func (bool testConds, bool runActions) {
+    int victimPlayer = libAffx_JunkratHitHeroPlayer();
+    if (victimPlayer == 0 || !libAffx_JunkratHas("JunkratTrapKingMarker")) {
+        return false;
+    }
+    libAffx_junkratTrapHitTime[victimPlayer] = GameGetMissionTime();
+    return true;
+}
+bool libAffx_JunkratHeroicHit_Func (bool testConds, bool runActions) {
+    int victimPlayer = libAffx_JunkratHitHeroPlayer();
+    if (victimPlayer == 0 || !libAffx_JunkratHas("JunkratRocketRodeoMarker")) {
+        return false;
+    }
+    libAffx_junkratHeroicHitTime[victimPlayer] = GameGetMissionTime();
+    return true;
+}
+bool libAffx_JunkratNadeHit_Func (bool testConds, bool runActions) {
+    if (libAffx_JunkratHitHeroPlayer() == 0 || !libAffx_JunkratHas("JunkratNadeSpamMarker")) {
+        return false;
+    }
+    libAffx_junkratNadeHits += 1;
+    if (libAffx_junkratNadeHits >= libAffx_junkratNadeHitsPerStack) {
+        libAffx_junkratNadeHits = 0;
+        libGame_gf_ModifyTokenCount(1, "JunkratDemolitionTokenCounter", libAffx_JunkratHero());
+    }
+    return true;
+}
+
+bool libAffx_JunkratRecentlyHit(fixed hitTime) {
+    return hitTime > 0.0 && GameGetMissionTime() - hitTime <= libAffx_junkratKillWindow;
+}
+// HeroTakedown for Trap King
+bool libAffx_JunkratTrapTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_JunkratHas("JunkratTrapKingMarker")) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers || !libAffx_JunkratRecentlyHit(libAffx_junkratTrapHitTime[killedPlayer])) {
+        return true;
+    }
+    libAffx_junkratTrapHitTime[killedPlayer] = 0.0;
+    libGame_gf_ModifyTokenCount(1, "JunkratMeanTrapsTokenCounter", libAffx_JunkratHero());
+    return true;
+}
+// HeroTakedown for Rocket Rodeo
+bool libAffx_JunkratRodeoTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_JunkratHas("JunkratRocketRodeoMarker")) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers || !libAffx_JunkratRecentlyHit(libAffx_junkratHeroicHitTime[killedPlayer])) {
+        return true;
+    }
+    libAffx_junkratHeroicHitTime[killedPlayer] = 0.0;
+    libGame_gf_ModifyTokenCount(1, "JunkratShowstopperTokenCounter", libAffx_JunkratHero());
+    return true;
+}
+
+// HeroGainTalent for Rocket Rodeo: picking either Heroic at level 10 gives the other through Puckish Scamp
+bool libAffx_JunkratRodeoTalent (bool testConds, bool runActions) {
+    string talent = libGame_gf_HeroGainTalentGainedTalent();
+    if (testConds) {
+        if (libGame_gf_HeroGainTalentPlayer() != libAffx_player || !libAffx_JunkratHas("JunkratRocketRodeoMarker")) {
+            return false;
+        }
+    }
+    if (talent == "JunkratRIPTire") {
+        libAffx_AddTalent(libAffx_player, "JunkratRocketRide");
+        libAffx_AddTalent(libAffx_player, "JunkratRocketRidePuckishScamp");
+    } else if (talent == "JunkratRocketRide" && !PlayerHasTalent(libAffx_player, "JunkratRIPTire")) {
+        libAffx_AddTalent(libAffx_player, "JunkratRocketRidePuckishScamp");
+    }
+    return true;
+}
+
+void libAffx_JunkratSetCatalog(int catalog, string entry, string field, fixed value) {
+    CatalogFieldValueSet(catalog, entry, field, libAffx_player, FixedToString(value, 4));
+}
+
+// Trap radius from Mean Traps, Heroic cooldowns from Rocket Rodeo and Showstopper, and the extra explosions'
+// damage following Frag Launcher's
+bool libAffx_JunkratTick_Func (bool testConds, bool runActions) {
+    int stacks;
+    fixed scale;
+    fixed cooldown;
+    fixed fragAmount;
+    if (libAffx_JunkratHero() == null) {
+        return true;
+    }
+    if (libAffx_JunkratHas("JunkratTrapKingMarker")) {
+        stacks = MinI(libAffx_JunkratTokens("JunkratMeanTrapsTokenCounter"), libAffx_junkratMeanTrapsRadiusMax);
+        if (stacks != libAffx_junkratMeanTrapsApplied) {
+            libAffx_junkratMeanTrapsApplied = stacks;
+            scale = 1.0 + IntToFixed(stacks) / 100.0;
+            libAffx_JunkratSetCatalog(c_gameCatalogEffect, "JunkratSteelTrapSearchAreaImpact", "AreaArray[0].RectangleWidth", libAffx_junkratTrapWidth * scale);
+            libAffx_JunkratSetCatalog(c_gameCatalogEffect, "JunkratSteelTrapSearchAreaImpact", "AreaArray[0].RectangleHeight", libAffx_junkratTrapHeight * scale);
+        }
+    }
+    if (libAffx_JunkratHas("JunkratRocketRodeoMarker")) {
+        stacks = MinI(libAffx_JunkratTokens("JunkratShowstopperTokenCounter"), libAffx_junkratShowstopperCooldownMax);
+        cooldown = libAffx_junkratHeroicCooldown;
+        if (PlayerHasTalent(libAffx_player, "JunkratRocketRidePuckishScamp")) {
+            cooldown -= libAffx_junkratPuckishScampCooldown;
+        }
+        cooldown = cooldown * libAffx_junkratRocketRodeoCooldownFactor * (1.0 - IntToFixed(stacks) / 100.0);
+        if (AbsF(cooldown - libAffx_junkratCooldownApplied) > 0.01) {
+            libAffx_junkratCooldownApplied = cooldown;
+            libAffx_JunkratSetCatalog(c_gameCatalogAbil, "JunkratRIPTire", "Cost.Cooldown.TimeUse", cooldown);
+            libAffx_JunkratSetCatalog(c_gameCatalogAbil, "JunkratRocketRide", "Cost.Cooldown.TimeUse", cooldown);
+        }
+    }
+    if (libAffx_JunkratHas("JunkratNadeSpamMarker")) {
+        fragAmount = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "JunkratFragLauncherExplosionDamage", "Amount", libAffx_player));
+        if (AbsF(fragAmount - libAffx_junkratFragAmountApplied) > 0.01) {
+            libAffx_junkratFragAmountApplied = fragAmount;
+            libAffx_JunkratSetCatalog(c_gameCatalogEffect, "JunkratStickyNadeDamage", "Amount", fragAmount * libAffx_junkratStickyNadeFactor);
+            libAffx_JunkratSetCatalog(c_gameCatalogEffect, "JunkratClusterBombDamage", "Amount", fragAmount * libAffx_junkratClusterBombFactor);
+        }
+    }
+    return true;
+}
+
+// AffixAdded for each starter
+bool libAffx_JunkratStart (bool testConds, bool runActions) {
+    trigger trapHit;
+    trigger heroicHit;
+    if (libAffx_junkratStarted) {
+        return true;
+    }
+    libAffx_junkratStarted = true;
+    trapHit = TriggerCreate("libAffx_JunkratTrapHit_Func");
+    TriggerAddEventUnitDamaged(trapHit, null, c_unitDamageTypeAny, c_unitDamageEither, "JunkratSteelTrapDamage");
+    TriggerAddEventUnitDamaged(trapHit, null, c_unitDamageTypeAny, c_unitDamageEither, "JunkratConcussionMineDamage");
+    heroicHit = TriggerCreate("libAffx_JunkratHeroicHit_Func");
+    TriggerAddEventUnitDamaged(heroicHit, null, c_unitDamageTypeAny, c_unitDamageEither, "JunkratRIPTireDamage");
+    TriggerAddEventUnitDamaged(heroicHit, null, c_unitDamageTypeAny, c_unitDamageEither, "JunkratRIPTireDamageNear");
+    TriggerAddEventUnitDamaged(heroicHit, null, c_unitDamageTypeAny, c_unitDamageEither, "JunkratRocketRideExplosionDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_JunkratNadeHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "JunkratFragLauncherExplosionDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_JunkratTick_Func"), 0.5, c_timeGame);
+    return true;
+}
