@@ -21,7 +21,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Scale value="1" />
   </CAccumulatorToken>
 
-  <!-- Gathering Thunder quest: +3% hammer damage per kill, up to +150% (Unbound Storm raises MaxAccumulation) -->
+  <!-- Gathering Thunder quest: +5% hammer damage per kill, up to +150% (Unbound Storm raises MaxAccumulation) -->
   <CBehaviorTokenCounter id="FalstadGatheringThunderTokenCounter" parent="StormQuestToken">
     <Face value="FalstadGatheringThunderTokenCounter" />
     <Max value="100000" />
@@ -31,7 +31,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="1.5" />
     <ApplicationRule value="Add" />
     <TokenId value="FalstadGatheringThunderTokenCounter" />
-    <Scale value="0.03" />
+    <Scale value="0.05" />
   </CAccumulatorToken>
 
   <CEffectDamage id="HammerangDamage">
