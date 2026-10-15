@@ -8,7 +8,7 @@ include "AffixTriggers"
 // seconds that only lasts 30 seconds. Resilient Nests gives each triggered nest a 30% chance to be replaced.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
-// Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 5 seconds of that Stun, adds 1%
+// Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 6 seconds of that Stun, adds 1%
 // Slapathur Stun duration, 30 maximum Health, 2 flat nest damage (AbathurData.xml) and 3% Locust Health.
 // Stacks carry over between games through QuestRetain; nest damage is in AbathurData.xml.
 // ============================================================
@@ -19,7 +19,7 @@ const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
 const fixed libAffx_abathurDropIntervalOvergrowth = 0.135; // about 22 nests over the 3 second Overgrowth Frenzy
 const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
 const fixed libAffx_abathurAttackLockout = 3.0; // no nests this long after a Slapathur Stun on a Hero, outside Frenzy
-const fixed libAffx_abathurTakedownWindow = 5.0;
+const fixed libAffx_abathurTakedownWindow = 6.0; // matches Slapathur's 6 second internal cooldown visual
 const int libAffx_abathurSlapLifePerStack = 30; // matches AbathurSlapathurQuestLife
 const fixed libAffx_abathurSlapStunPerStack = 0.01;
 const int libAffx_abathurHeroHitStacks = 2;
