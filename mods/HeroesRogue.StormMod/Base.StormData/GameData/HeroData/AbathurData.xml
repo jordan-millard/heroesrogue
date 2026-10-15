@@ -177,8 +177,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="AbathurMinefieldFrenzy" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
   </CButton>
-  <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 30% Movement Speed. Overgrowth: 120 second cooldown; Frenzy
-       drops about 33 nests (script), then normal drops stop for 30 seconds after it ends. -->
+  <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 30% Movement Speed. Overgrowth: 120 second cooldown and 1 second
+       shorter; Frenzy drops about 25 nests (script), then normal drops stop for 30 seconds after it ends. -->
   <CTalent id="AbathurProlongedFrenzy">
     <Face value="AbathurProlongedFrenzy" />
     <Abil value="AbathurMinefieldFrenzy" />
@@ -213,6 +213,20 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="AbathurOvergrowth" />
     <Abil value="AbathurMinefieldFrenzy" />
     <AbilityModificationArray>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Behavior" />
+        <Entry value="AbathurMinefieldFrenzyUnstoppable" />
+        <Field value="Duration" />
+        <Value value="-1.000000" />
+      </Modifications>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Behavior" />
+        <Entry value="AbathurMinefieldFrenzyBuff" />
+        <Field value="Duration" />
+        <Value value="-1.000000" />
+      </Modifications>
       <Modifications>
         <Type value="FlatModification" />
         <Catalog value="Abil" />

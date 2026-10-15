@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
-// 4 seconds of his Basic Attack hitting anything. Activating Frenzy removes all of his nests; during Frenzy they drop
+// 2 seconds of his Basic Attack hitting anything. Activating Frenzy removes all of his nests; during Frenzy they drop
 // every 0.5 seconds regardless (0.12 with Overgrowth, which then stops normal drops for 30 seconds after Frenzy ends).
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
@@ -15,10 +15,10 @@ include "AffixTriggers"
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
-const fixed libAffx_abathurDropIntervalOvergrowth = 0.12; // about 33 nests over the 4 second Frenzy
+const fixed libAffx_abathurDropIntervalOvergrowth = 0.12; // about 25 nests over the 3 second Overgrowth Frenzy
 const fixed libAffx_abathurOvergrowthLockout = 30.0; // no normal drops this long after an Overgrowth Frenzy
 const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
-const fixed libAffx_abathurAttackLockout = 4.0; // no nests this long after a Basic Attack hit, outside Frenzy
+const fixed libAffx_abathurAttackLockout = 2.0; // no nests this long after a Basic Attack hit, outside Frenzy
 const fixed libAffx_abathurTakedownWindow = 4.0;
 const int libAffx_abathurSlapLifePerStack = 30; // matches AbathurSlapathurQuestLife
 const fixed libAffx_abathurSlapStunPerStack = 0.01;
