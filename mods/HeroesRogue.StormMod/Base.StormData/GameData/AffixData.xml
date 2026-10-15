@@ -4560,6 +4560,15 @@
             <String String="ButcherFreshMeatTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
+            <String String="1 1 Set Validator,ButcherTargetHasLessThan200StacksFreshMeat,Value 1000000">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Validator,ButcherCasterHasLessThan200StacksFreshMeat,Value 1000000">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ButcherFreshMeatQuestCompleteSetTokenCount,Chance 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
         </Instances>
         <Instances Id="OverwhelmingPower">
             <String String="Assets/Textures/affix_icon_all_stats_self.dds">
