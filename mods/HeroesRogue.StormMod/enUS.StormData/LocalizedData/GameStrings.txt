@@ -824,7 +824,7 @@ Button/Tooltip/AbathurMinefieldTokenCounter=<c val="#TooltipQuest">Bonus Toxic N
 Button/Name/AbathurMinefieldTakedownTokenCounter=Slapathur
 Button/Tooltip/AbathurMinefieldTakedownTokenCounter=<c val="#TooltipQuest">Bonus Slapathur Stun duration: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$" precision="0"/>%</c><n/>Bonus maximum Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*30" precision="0"/></c><n/>Bonus Toxic Nest damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*2" precision="0"/></c><n/>Bonus Locust Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*3" precision="0"/>%</c></c>
 Button/Name/AbathurMinefieldFrenzy=Frenzy
-Button/Tooltip/AbathurMinefieldFrenzy=Remove all of your Toxic Nests. Abathur becomes Unstoppable for <c val="#TooltipNumbers">4</c> seconds, dropping a Toxic Nest every <c val="#TooltipNumbers">0.5</c> seconds.
+Button/Tooltip/AbathurMinefieldFrenzy=Abathur becomes Unstoppable for <c val="#TooltipNumbers">4</c> seconds, dropping a Toxic Nest every <c val="#TooltipNumbers">0.5</c> seconds.
 Button/SimpleDisplayText/AbathurMinefieldFrenzy=Become Unstoppable and drop Toxic Nests rapidly
 Button/Name/AbathurChitinousBulwark=Chitinous Bulwark
 Button/SimpleDisplayText/AbathurChitinousBulwark=Toxic Nest hits on Heroes grant a lasting Shield
@@ -837,7 +837,7 @@ Button/SimpleDisplayText/AbathurProlongedFrenzy=Frenzy lasts longer and grants M
 Button/Tooltip/AbathurProlongedFrenzy=Frenzy lasts <c val="#TooltipNumbers">2</c> seconds longer and grants <c val="#TooltipNumbers">30%</c> Movement Speed.
 Button/Name/AbathurOvergrowth=Overgrowth
 Button/SimpleDisplayText/AbathurOvergrowth=Frenzy drops far more short-lived Toxic Nests
-Button/Tooltip/AbathurOvergrowth=Frenzy lasts <c val="#TooltipNumbers">1</c> second less but drops about <c val="#TooltipNumbers">22</c> Toxic Nests, which only last <c val="#TooltipNumbers">30</c> seconds. Its cooldown is increased to <c val="#TooltipNumbers">120</c> seconds.
+Button/Tooltip/AbathurOvergrowth=Activating Frenzy removes all of your Toxic Nests. Frenzy lasts <c val="#TooltipNumbers">1</c> second less but drops about <c val="#TooltipNumbers">22</c> Toxic Nests, which only last <c val="#TooltipNumbers">30</c> seconds. Its cooldown is increased to <c val="#TooltipNumbers">120</c> seconds.
 Affix/Name/AbathurRapidGestation=Rapid Gestation
 Affix/Tooltip/AbathurRapidGestation=Minefield drops a Toxic Nest every <c val="#TooltipNumbers">2</c> seconds instead of <c val="#TooltipNumbers">3</c>.
 Affix/Name/AbathurLocustStrain=Locust Strain
@@ -850,8 +850,8 @@ Affix/Name/AbathurBrutalSlap=Brutal Slap
 Affix/Tooltip/AbathurBrutalSlap=When Slapathur Stuns an enemy Hero, it also deals <c val="#TooltipNumbers">10%</c> of their maximum Health as damage.
 Affix/Name/AbathurParasiticSlap=Parasitic Slap
 Affix/Tooltip/AbathurParasiticSlap=When Slapathur Stuns an enemy Hero, a Toxic Nest is placed beneath them that arms after <c val="#TooltipNumbers">2</c> seconds.
-Affix/Name/AbathurEndlessHive=Endless Hive
-Affix/Tooltip/AbathurEndlessHive=Frenzy no longer removes your Toxic Nests.
+Affix/Name/AbathurResilientNests=Resilient Nests
+Affix/Tooltip/AbathurResilientNests=Each time one of your Toxic Nests is triggered, it has a <c val="#TooltipNumbers">30%</c> chance to be replaced by a new Toxic Nest in the same spot.
 Affix/Name/AbathurVolatileSpores=Volatile Spores
 Affix/Tooltip/AbathurVolatileSpores=Increases the radius of Toxic Nest by <c val="#TooltipNumbers">50%</c>.
 Affix/Name/TyrandeTheMark=Accurate Mark

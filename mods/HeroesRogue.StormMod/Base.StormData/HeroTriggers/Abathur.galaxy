@@ -4,8 +4,8 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 3 seconds of Slapathur stunning an enemy Hero. Activating Frenzy removes all of his nests; during Frenzy they drop
-// every 0.5 seconds regardless (0.135 with Overgrowth, whose Frenzy nests only last 30 seconds). Endless Hive keeps the
-// old nests.
+// every 0.5 seconds regardless. Overgrowth removes all of his nests when Frenzy starts, then drops one every 0.135
+// seconds that only lasts 30 seconds. Resilient Nests gives each triggered nest a 30% chance to be replaced.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 5 seconds of that Stun, adds 1%
@@ -25,6 +25,8 @@ const fixed libAffx_abathurSlapStunPerStack = 0.01;
 const int libAffx_abathurHeroHitStacks = 2;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
 const fixed libAffx_abathurSlapNestArming = 2.0; // Parasitic Slap
+const int libAffx_abathurRearmChance = 30; // Resilient Nests, percent
+const fixed libAffx_abathurRearmDelay = 0.5;
 
 bool libAffx_abathurStarted;
 bool libAffx_abathurFrenzyActive;
@@ -179,7 +181,27 @@ bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
 }
 
 
-// Frenzy: removes every Toxic Nest Abathur has placed
+// Resilient Nests: a triggered nest has a 30% chance to be replaced by a new one in the same spot, once the explosion
+// is over
+bool libAffx_AbathurNestTriggered_Func (bool testConds, bool runActions) {
+    unit nest = EventPlayerEffectUsedUnit(c_effectUnitSource);
+    unit hero = libAffx_AbathurHero();
+    point at;
+    if (nest == null || UnitGetOwner(nest) != libAffx_player || hero == null) {
+        return false;
+    }
+    if (!UnitHasBehavior2(hero, "AbathurResilientNestsMarker") || RandomInt(1, 100) > libAffx_abathurRearmChance) {
+        return false;
+    }
+    at = UnitGetPosition(nest);
+    Wait(libAffx_abathurRearmDelay, c_timeGame);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", at);
+    }
+    return true;
+}
+
+// Overgrowth: removes every Toxic Nest Abathur has placed
 void libAffx_AbathurRemoveNests() {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
     int i = UnitGroupCount(nests, c_unitCountAll);
@@ -215,9 +237,9 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
             interval = libAffx_abathurDropIntervalOvergrowth;
         }
         if (!libAffx_abathurFrenzyActive) {
-            // Frenzy just started: clear the field, and the first new nest drops right away
+            // Frenzy just started: Overgrowth clears the field, and the first new nest drops right away
             libAffx_abathurFrenzyActive = true;
-            if (!UnitHasBehavior2(hero, "AbathurEndlessHiveMarker")) {
+            if (PlayerHasTalent(libAffx_player, "AbathurOvergrowth")) {
                 libAffx_AbathurRemoveNests();
             }
             libAffx_abathurSinceLastNest = interval;
@@ -282,6 +304,7 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
     slapKill = TriggerCreate("libAffx_AbathurSlapKill_Func");
     TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
     TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurLocustSpawned_Func"), null, null, null);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_AbathurNestTriggered_Func"), c_playerAny, "ToxicNestTriggerSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
 }

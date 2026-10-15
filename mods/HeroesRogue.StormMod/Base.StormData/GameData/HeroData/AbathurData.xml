@@ -17,8 +17,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="AbathurRapidGestationMarker" parent="CarryBehaviorParent" />
   <!-- Parasitic Slap (Epic): Slapathur's Stun on a Hero drops a nest under them (script) -->
   <CBehaviorBuff id="AbathurParasiticSlapMarker" parent="CarryBehaviorParent" />
-  <!-- Endless Hive (Legendary): Frenzy no longer removes Abathur's nests (script) -->
-  <CBehaviorBuff id="AbathurEndlessHiveMarker" parent="CarryBehaviorParent" />
+  <!-- Resilient Nests (Legendary): triggered nests have a 30% chance to be replaced (script) -->
+  <CBehaviorBuff id="AbathurResilientNestsMarker" parent="CarryBehaviorParent" />
 
   <!-- 15% Movement Speed for 1.5 seconds after each dropped nest (re-applied by the script on every drop). A
        multiplier, so it stacks with other Movement Speed bonuses instead of only the highest counting -->
@@ -117,7 +117,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- Frenzy: Minefield's Heroic, available from level 1 (the starter grants AbathurMinefieldFrenzyUnlocked). It replaces
        Ultimate Evolution and Evolve Monstrosity, which the starter disables. 3 seconds of Unstoppable; the script drops a
-       nest every 0.5 seconds meanwhile. 4 seconds, 90 second cooldown; activating it removes all of Abathur's nests.
+       nest every 0.5 seconds meanwhile. 4 seconds, 90 second cooldown.
        The level 10 talents Prolonged Frenzy and Overgrowth upgrade it. -->
   <CBehaviorBuff id="AbathurMinefieldFrenzyUnlocked">
     <BehaviorFlags index="Permanent" value="1" />
@@ -180,7 +180,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
   </CButton>
   <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 30% Movement Speed. Overgrowth: 120 second cooldown and 1 second
-       shorter; Frenzy drops about 22 nests (script) that only last 30 seconds. -->
+       shorter; activating Frenzy removes all of Abathur's nests, and it drops about 22 nests (script) that only last
+       30 seconds. -->
   <CBehaviorBuff id="AbathurOvergrowthNestLifetime">
     <Duration value="30" />
     <DisplayDuration index="Self" value="1" />
