@@ -4735,6 +4735,26 @@
                 <Field Id="CatalogModification" Index="5" />
             </String>
         </Instances>
+        <Instances Id="AbathurBurrowedHunter">
+            <String String="Assets/Textures/storm_ui_icon_abathur_symbiote.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AbathurMinefield">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AbathurPermanentCloak">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AbathurPermanentCloakDisableController">
+                <Field Id="Behavior" Index="1" />
+            </String>
+        </Instances>
         <Instances Id="AbathurVolatileSpores">
             <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
                 <Field Id="Icon" />

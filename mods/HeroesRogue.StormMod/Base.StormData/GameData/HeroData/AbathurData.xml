@@ -226,6 +226,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Filter index="Self" value="1" />
   </CActorSound>
 
+  <!-- Burrowed Hunter (Rare): permanent Stealth, the same as Tyrande's Shadowstalker and the base stealth Heroes. Attacks and
+       abilities with a decloak prep effect reveal Abathur briefly; nests come from the script, so dropping them doesn't. -->
+  <CBehaviorBuff id="AbathurPermanentCloakDisableController" parent="StormPersistentCloakController" />
+  <CBehaviorBuff id="AbathurPermanentCloak" parent="StormPersistentCloak">
+    <Period value="0.0625" />
+    <EnableEffect value="HoldFireApplyInitialBehavior" />
+    <DisableEffect value="ApplyGenericDecloakCaster" />
+  </CBehaviorBuff>
+
   <CButton id="AbathurMinefieldTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
