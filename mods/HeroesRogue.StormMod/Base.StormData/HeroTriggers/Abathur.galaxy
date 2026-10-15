@@ -2,8 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Abathur, Minefield.
-// Toxic Nests are no longer cast: one drops under Abathur every 3 seconds while he moves (2 with Rapid Gestation),
-// and every 0.5 seconds during Frenzy whether he moves or not. Restless Brood drops them while standing still too.
+// Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy).
 // Hit quest: each enemy Hero hit by a nest explosion adds 10% nest damage, any other enemy adds 1%.
 // Takedown quest: an enemy Hero who dies within 1 second of nest damage adds 5 flat nest damage.
 // Stacks carry over between games through QuestRetain; the damage itself is in AbathurData.xml.
@@ -18,7 +17,6 @@ const int libAffx_abathurOtherHitStacks = 1;
 
 bool libAffx_abathurStarted;
 fixed libAffx_abathurLastNest;
-point libAffx_abathurLastPosition;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurNestDamageTime; // per enemy player, last damage from a nest
 
 unit libAffx_AbathurHero() {
@@ -84,36 +82,23 @@ bool libAffx_AbathurTakedown (bool testConds, bool runActions) {
     return true;
 }
 
-// Drops nests while Abathur moves, or constantly during Frenzy
+// Drops a nest under Abathur on the timer
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
-    point position;
-    bool moved = false;
-    bool frenzy;
     fixed interval = libAffx_abathurDropInterval;
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
-        libAffx_abathurLastPosition = null;
         return false;
     }
-    position = UnitGetPosition(hero);
-    if (libAffx_abathurLastPosition != null) {
-        moved = DistanceBetweenPoints(position, libAffx_abathurLastPosition) > 0.1;
-    }
-    libAffx_abathurLastPosition = position;
-    frenzy = UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff");
-    if (frenzy) {
+    if (UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff")) {
         interval = libAffx_abathurDropIntervalFrenzy;
     } else if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
         interval = libAffx_abathurDropIntervalRapid;
-    }
-    if (!moved && !frenzy && !UnitHasBehavior2(hero, "AbathurRestlessBroodMarker")) {
-        return false;
     }
     if (GameGetMissionTime() - libAffx_abathurLastNest < interval - 0.01) {
         return false;
     }
     libAffx_abathurLastNest = GameGetMissionTime();
-    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
+    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", UnitGetPosition(hero));
     UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
 }

@@ -3,8 +3,8 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Abathur, Minefield: Toxic Nests are no longer cast. HeroTriggers/Abathur.galaxy drops one under Abathur while he
-       moves (every 3 seconds, 2 with Rapid Gestation, 0.5 during Frenzy). Nest lifetime, Health and arming time are
+  <!-- Abathur, Minefield: Toxic Nests are no longer cast. HeroTriggers/Abathur.galaxy drops one under Abathur on a timer
+       (every 3 seconds, 2 with Rapid Gestation, 0.5 during Frenzy). Nest lifetime, Health and arming time are
        set in AffixData.xml. Both quests are counted in the script; their damage is applied here. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="AbathurMinefieldMarker" parent="CarryBehaviorParent">
@@ -15,8 +15,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- Rapid Gestation (Rare): nests drop every 2 seconds instead of 3 -->
   <CBehaviorBuff id="AbathurRapidGestationMarker" parent="CarryBehaviorParent" />
-  <!-- Restless Brood (Epic): nests drop on the normal timer even while Abathur stands still -->
-  <CBehaviorBuff id="AbathurRestlessBroodMarker" parent="CarryBehaviorParent" />
 
   <!-- 15% Movement Speed for 1.5 seconds after each dropped nest (re-applied by the script on every drop) -->
   <CBehaviorBuff id="AbathurMinefieldDropSpeed">
