@@ -2,29 +2,36 @@ include "AffixTriggers"
 
 // ============================================================
 // Abathur, Minefield.
-// Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy,
-// 0.12 with Clean Slate, about 25 nests, which also removes every nest when Frenzy starts).
+// Toxic Nests are no longer cast. They drop under Abathur only once he has stood still for 1 second (every 3 seconds,
+// 2 with Rapid Gestation) or during Frenzy (every 0.5 seconds, 0.12 with Clean Slate, which also removes every nest
+// when Frenzy starts). Nesting Instinct makes every rate 40% faster. While he moves outside Frenzy, Locust Strain
+// recharges twice as fast instead.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
-// Slapathur quest: an enemy Hero takedown within 3 seconds of Abathur's Basic Attack hitting them adds 20 flat nest
-// damage and 50 maximum Health.
-// Stacks carry over between games through QuestRetain; the damage itself is in AbathurData.xml.
+// Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 4 seconds of that Stun, adds 1%
+// Slapathur Stun duration and 30 maximum Health.
+// Stacks carry over between games through QuestRetain; nest damage is in AbathurData.xml.
 // ============================================================
 
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
 const fixed libAffx_abathurDropIntervalCleanSlate = 0.12; // about 25 nests over the 3 second Frenzy
-const fixed libAffx_abathurNestingInstinctFactor = 0.5; // 50% faster while standing still
-const fixed libAffx_abathurTakedownWindow = 3.0;
-const int libAffx_abathurSlapLifePerStack = 50; // matches AbathurSlapathurQuestLife
+const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
+const fixed libAffx_abathurStillTimeToDrop = 1.0;
+const fixed libAffx_abathurTakedownWindow = 4.0;
+const int libAffx_abathurSlapLifePerStack = 30; // matches AbathurSlapathurQuestLife
+const fixed libAffx_abathurSlapStunPerStack = 0.01;
 const int libAffx_abathurHeroHitStacks = 2;
+const fixed libAffx_abathurDropTickPeriod = 0.0625;
 
 bool libAffx_abathurStarted;
-const fixed libAffx_abathurDropTickPeriod = 0.0625;
 bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
+fixed libAffx_abathurStillTime; // how long Abathur has stood still
 point libAffx_abathurLastPosition;
-fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapTime; // per enemy player, last hit by Abathur's Basic Attack
+string libAffx_abathurLocustCooldownLink;
+fixed libAffx_abathurStunBonusApplied; // seconds the Slapathur quest currently adds to AbathurSlapathurStun
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapStunTime; // per enemy player, last Slapathur Stun
 
 unit libAffx_AbathurHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -32,6 +39,13 @@ unit libAffx_AbathurHero() {
 bool libAffx_AbathurHasStarter() {
     unit hero = libAffx_AbathurHero();
     return hero != null && UnitHasBehavior2(hero, "AbathurMinefieldMarker");
+}
+bool libAffx_AbathurIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
 }
 
 // Nest explosion on an enemy Hero: hit quest stacks and a shield stack
@@ -51,27 +65,35 @@ bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Abathur's Basic Attack on an enemy Hero opens the Slapathur quest window
-bool libAffx_AbathurSlap_Func (bool testConds, bool runActions) {
+// Slapathur Stun applied to an enemy Hero: opens the Slapathur quest window
+bool libAffx_AbathurSlapStun_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
-    int victimPlayer = UnitGetOwner(victim);
-    if (EventUnitDamageSourcePlayer() != libAffx_player) {
+    unit caster = UnitBehaviorEffectUnit(victim, "AbathurSlapathurStun", c_effectUnitCaster, 0);
+    if (caster == null || UnitGetOwner(caster) != libAffx_player || !libAffx_AbathurIsEnemyHero(victim)) {
         return false;
     }
-    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+    libAffx_abathurSlapStunTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+// A Basic Attack that kills an enemy Hero who isn't on Slapathur's internal cooldown was the stunning hit (the Stun
+// itself never lands on a dead target)
+bool libAffx_AbathurSlapKill_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AbathurIsEnemyHero(victim)) {
         return false;
     }
-    if (victimPlayer < 1 || victimPlayer > libCore_gv_bALMaxPlayers) {
+    if (UnitHasBehavior2(victim, "SlapathurInternalCooldown")) {
         return false;
     }
-    libAffx_abathurSlapTime[victimPlayer] = GameGetMissionTime();
+    libAffx_abathurSlapStunTime[UnitGetOwner(victim)] = GameGetMissionTime();
     return true;
 }
 
 // HeroTakedown for the Slapathur quest
 bool libAffx_AbathurTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
-    fixed hitTime;
+    fixed stunTime;
     if (testConds) {
         if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_AbathurHasStarter()) {
             return false;
@@ -80,25 +102,34 @@ bool libAffx_AbathurTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
-    hitTime = libAffx_abathurSlapTime[killedPlayer];
-    if (hitTime <= 0.0 || GameGetMissionTime() - hitTime > libAffx_abathurTakedownWindow) {
+    stunTime = libAffx_abathurSlapStunTime[killedPlayer];
+    if (stunTime <= 0.0 || GameGetMissionTime() - stunTime > libAffx_abathurTakedownWindow) {
         return true;
     }
-    libAffx_abathurSlapTime[killedPlayer] = 0.0;
+    libAffx_abathurSlapStunTime[killedPlayer] = 0.0;
     libGame_gf_ModifyTokenCount(1, "AbathurMinefieldTakedownTokenCounter", libAffx_AbathurHero());
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
     return true;
 }
 
-// Keeps one AbathurSlapathurQuestLife stack (+50 maximum Health) per Slapathur quest stack
-void libAffx_AbathurSyncSlapLife(unit hero) {
+// Keeps the Slapathur quest rewards equal to its stack count (covers stacks loaded from the bank): one
+// AbathurSlapathurQuestLife stack (+30 maximum Health) per stack, and 1% Slapathur Stun duration per stack on top of
+// whatever the Stun duration is otherwise (Crushing Slap adds to it)
+void libAffx_AbathurSyncSlapRewards(unit hero) {
     int tokens = FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter"));
     int stacks = UnitBehaviorCount(hero, "AbathurSlapathurQuestLife");
+    fixed stun = CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "AbathurSlapathurStun", "Duration", libAffx_player);
+    fixed baseStun = stun - libAffx_abathurStunBonusApplied;
+    fixed stunBonus = baseStun * libAffx_abathurSlapStunPerStack * IntToFixed(tokens);
     if (tokens > stacks) {
         UnitBehaviorAdd(hero, "AbathurSlapathurQuestLife", hero, tokens - stacks);
         UnitSetPropertyFixed(hero, c_unitPropLife, UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent) + IntToFixed((tokens - stacks) * libAffx_abathurSlapLifePerStack));
     } else if (tokens < stacks) {
         UnitBehaviorRemove(hero, "AbathurSlapathurQuestLife", stacks - tokens);
+    }
+    if (stunBonus - libAffx_abathurStunBonusApplied > 0.001 || libAffx_abathurStunBonusApplied - stunBonus > 0.001) {
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AbathurSlapathurStun", "Duration", libAffx_player, baseStun + stunBonus);
+        libAffx_abathurStunBonusApplied = stunBonus;
     }
 }
 
@@ -115,7 +146,7 @@ void libAffx_AbathurRemoveNests() {
     }
 }
 
-// Drops a nest under Abathur on the timer (Nesting Instinct: 50% faster while he stands still)
+// Drops nests while Abathur stands still or during Frenzy, and speeds up Locust Strain while he moves
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
     point position;
@@ -125,9 +156,10 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
         libAffx_abathurLastPosition = null;
         libAffx_abathurFrenzyActive = false;
+        libAffx_abathurStillTime = 0.0;
         return false;
     }
-    libAffx_AbathurSyncSlapLife(hero);
+    libAffx_AbathurSyncSlapRewards(hero);
     position = UnitGetPosition(hero);
     if (libAffx_abathurLastPosition != null) {
         moved = DistanceBetweenPoints(position, libAffx_abathurLastPosition) > 0.02;
@@ -135,6 +167,11 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     libAffx_abathurLastPosition = position;
     if (libAffx_gamePaused || UnitHasBehaviorWithCategoryFlag(hero, c_behaviorCategoryTimeStop)) {
         return false;
+    }
+    if (moved) {
+        libAffx_abathurStillTime = 0.0;
+    } else {
+        libAffx_abathurStillTime += libAffx_abathurDropTickPeriod;
     }
     frenzy = UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff");
     if (frenzy) {
@@ -155,16 +192,26 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
         if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
             interval = libAffx_abathurDropIntervalRapid;
         }
-        if (!moved && PlayerHasTalent(libAffx_player, "AbathurNestingInstinct")) {
-            interval = interval * libAffx_abathurNestingInstinctFactor;
+        if (moved && libAffx_abathurLocustCooldownLink != "") {
+            // Locust Strain recharges twice as fast while moving
+            UnitModifyCooldown(hero, libAffx_abathurLocustCooldownLink, -libAffx_abathurDropTickPeriod, c_cooldownOperationAdd);
         }
     }
+    if (PlayerHasTalent(libAffx_player, "AbathurNestingInstinct")) {
+        interval = interval * libAffx_abathurNestingInstinctFactor;
+    }
     libAffx_abathurSinceLastNest += libAffx_abathurDropTickPeriod;
+    if (libAffx_abathurSinceLastNest > interval) {
+        libAffx_abathurSinceLastNest = interval; // a full timer waits for the next chance to drop
+    }
+    if (!frenzy && libAffx_abathurStillTime < libAffx_abathurStillTimeToDrop) {
+        return false;
+    }
     if (libAffx_abathurSinceLastNest < interval - 0.01) {
         return false;
     }
     libAffx_abathurSinceLastNest -= interval;
-    if (libAffx_abathurSinceLastNest < 0.0 || libAffx_abathurSinceLastNest > interval) {
+    if (libAffx_abathurSinceLastNest < 0.0) {
         libAffx_abathurSinceLastNest = 0.0;
     }
     UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
@@ -190,16 +237,20 @@ bool libAffx_AbathurTalentGained (bool testConds, bool runActions) {
 // AffixAdded for Minefield
 bool libAffx_AbathurStart (bool testConds, bool runActions) {
     trigger nestHit;
-    trigger slap;
+    trigger slapStun;
+    trigger slapKill;
     if (libAffx_abathurStarted) {
         return true;
     }
     libAffx_abathurStarted = true;
     libAffx_abathurSinceLastNest = libAffx_abathurDropInterval;
+    libAffx_abathurLocustCooldownLink = CatalogFieldValueGet(c_gameCatalogAbil, "AbathurSpawnLocusts", "Cost[0].Cooldown.Link", libAffx_player);
     nestHit = TriggerCreate("libAffx_AbathurNestHit_Func");
     TriggerAddEventUnitDamaged(nestHit, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
-    slap = TriggerCreate("libAffx_AbathurSlap_Func");
-    TriggerAddEventUnitDamaged(slap, null, c_unitDamageTypeAny, c_unitDamageEither, "AbathurWeaponDamage");
+    slapStun = TriggerCreate("libAffx_AbathurSlapStun_Func");
+    TriggerAddEventUnitBehaviorChange(slapStun, null, "AbathurSlapathurStun", c_unitBehaviorChangeCreate);
+    slapKill = TriggerCreate("libAffx_AbathurSlapKill_Func");
+    TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
 }
