@@ -4,8 +4,9 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 3 seconds of Slapathur stunning an enemy Hero. Activating Frenzy removes all of his nests; during Frenzy they drop
-// every 0.5 seconds regardless. Overgrowth removes each of his nests with a 50% chance when Frenzy starts, then drops one every 0.135
-// seconds that only lasts 30 seconds. Resilient Nests gives each triggered nest a 30% chance to be replaced.
+// every 0.5 seconds regardless. Activating Frenzy removes all of his nests and summons a Locust for every 3 of them
+// (Lingering Brood: each has a 35% chance to stay; Colossal Locust: one scaled Locust instead). Resilient Nests gives
+// each triggered nest a 30% chance to be replaced.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 6 seconds of that Stun, adds 1%
@@ -16,7 +17,6 @@ include "AffixTriggers"
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
-const fixed libAffx_abathurDropIntervalOvergrowth = 0.135; // about 22 nests over the 3 second Overgrowth Frenzy
 const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
 const fixed libAffx_abathurAttackLockout = 3.0; // no nests this long after a Slapathur Stun on a Hero, outside Frenzy
 const fixed libAffx_abathurTakedownWindow = 6.0; // matches Slapathur's 6 second internal cooldown visual
@@ -26,7 +26,9 @@ const int libAffx_abathurHeroHitStacks = 2;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
 const fixed libAffx_abathurSlapNestArming = 2.0; // Parasitic Slap
 const int libAffx_abathurRearmChance = 30; // Resilient Nests, percent
-const int libAffx_abathurOvergrowthRemoveChance = 50; // percent per nest
+const int libAffx_abathurMinesPerLocust = 3;
+const int libAffx_abathurLingeringKeepChance = 35; // percent per nest
+const fixed libAffx_abathurColossalDamagePerStack = 0.1; // matches AbathurColossalLocustPower
 const fixed libAffx_abathurRearmDelay = 0.5;
 const fixed libAffx_abathurFrenzyScatterMin = 0.75; // Frenzy nests land this far from Abathur, in a random direction
 const fixed libAffx_abathurFrenzyScatterMax = 2.5;
@@ -35,6 +37,7 @@ bool libAffx_abathurStarted;
 bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
 fixed libAffx_abathurAttackLockoutLeft; // counts down only while the game isn't paused
+int libAffx_abathurColossalPendingNests; // the next Locust becomes the Colossal Locust for this many nests
 fixed libAffx_abathurStunBonusApplied; // seconds the Slapathur quest currently adds to AbathurSlapathurStun
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapStunTime; // per enemy player, last Slapathur Stun
 
@@ -162,25 +165,41 @@ void libAffx_AbathurSyncSlapRewards(unit hero) {
     }
 }
 
-// Nests placed during an Overgrowth Frenzy only last 30 seconds; new Locusts gain 3% Health per Slapathur quest stack
+// New Locusts gain 3% Health per Slapathur quest stack; a Colossal Locust also counts as one Locust per 3 nests removed
 bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     unit locust = EventUnitCreatedUnit();
     string type = UnitGetType(locust);
     fixed lifeMax;
+    fixed factor;
+    fixed scale;
+    int stacks;
     unit hero = libAffx_AbathurHero();
     if (UnitGetOwner(locust) != libAffx_player || hero == null || !libAffx_AbathurHasStarter()) {
         return false;
-    }
-    if (type == "AbathurToxicNest") {
-        if (UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff") && PlayerHasTalent(libAffx_player, "AbathurOvergrowth")) {
-            UnitBehaviorAdd(locust, "AbathurOvergrowthNestLifetime", locust, 1);
-        }
-        return true;
     }
     if (type != "AbathurLocustNormal" && type != "AbathurLocustBombardStrain" && type != "AbathurLocustAssaultStrain") {
         return false;
     }
     lifeMax = UnitGetPropertyFixed(locust, c_unitPropLifeMax, c_unitPropCurrent) * (1.0 + UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter") * 0.03);
+    if (libAffx_abathurColossalPendingNests > 0) {
+        factor = IntToFixed(libAffx_abathurColossalPendingNests) / IntToFixed(libAffx_abathurMinesPerLocust);
+        libAffx_abathurColossalPendingNests = 0;
+        if (factor < 1.0) {
+            factor = 1.0;
+        }
+        lifeMax = lifeMax * factor;
+        // Locusts lose Health over time; scale that too so the Colossal Locust lives as long as a normal one
+        UnitSetPropertyFixed(locust, c_unitPropLifeRegen, UnitGetPropertyFixed(locust, c_unitPropLifeRegen, c_unitPropCurrent) * factor);
+        stacks = FixedToInt((factor - 1.0) / libAffx_abathurColossalDamagePerStack);
+        if (stacks > 0) {
+            UnitBehaviorAdd(locust, "AbathurColossalLocustPower", locust, stacks);
+        }
+        scale = 1.0 + (factor - 1.0) * 0.15;
+        if (scale > 2.5) {
+            scale = 2.5;
+        }
+        libNtve_gf_SendActorMessageToUnit(locust, "SetScale " + FixedToString(scale, 2));
+    }
     UnitSetPropertyFixed(locust, c_unitPropLifeMax, lifeMax);
     UnitSetPropertyFixed(locust, c_unitPropLife, lifeMax);
     return true;
@@ -207,16 +226,34 @@ bool libAffx_AbathurNestTriggered_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Overgrowth: each Toxic Nest Abathur has placed has a 50% chance to be removed
-void libAffx_AbathurRemoveNests() {
+// Frenzy: removes all of Abathur's Toxic Nests (Lingering Brood: each has a 35% chance to stay) and summons a Locust
+// for every 3 of them, kept ones included. With Colossal Locust it summons one Locust scaled by the nest count instead.
+void libAffx_AbathurFrenzyClearNests(unit hero) {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
-    int i = UnitGroupCount(nests, c_unitCountAll);
+    bool lingering = PlayerHasTalent(libAffx_player, "AbathurLingeringBrood");
+    int total = 0;
+    int i;
     unit nest;
-    for (; i > 0; i -= 1) {
+    for (i = UnitGroupCount(nests, c_unitCountAll); i > 0; i -= 1) {
         nest = UnitGroupUnitFromEnd(nests, i);
-        if (nest != null && RandomInt(1, 100) <= libAffx_abathurOvergrowthRemoveChance) {
-            UnitRemove(nest);
+        if (nest == null || !UnitIsAlive(nest)) {
+            continue;
         }
+        total += 1;
+        if (lingering && RandomInt(1, 100) <= libAffx_abathurLingeringKeepChance) {
+            continue;
+        }
+        UnitRemove(nest);
+    }
+    if (PlayerHasTalent(libAffx_player, "AbathurColossalLocust")) {
+        if (total > 0) {
+            libAffx_abathurColossalPendingNests = total;
+            UnitCreateEffectUnit(hero, "LocustSpawnLocustSwitch", hero);
+        }
+        return;
+    }
+    for (i = total / libAffx_abathurMinesPerLocust; i > 0; i -= 1) {
+        UnitCreateEffectUnit(hero, "LocustSpawnLocustSwitch", hero);
     }
 }
 
@@ -240,15 +277,10 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     frenzy = UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff");
     if (frenzy) {
         interval = libAffx_abathurDropIntervalFrenzy;
-        if (PlayerHasTalent(libAffx_player, "AbathurOvergrowth")) {
-            interval = libAffx_abathurDropIntervalOvergrowth;
-        }
         if (!libAffx_abathurFrenzyActive) {
-            // Frenzy just started: Overgrowth clears the field, and the first new nest drops right away
+            // Frenzy just started: turn the old nests into Locusts, and the first new nest drops right away
             libAffx_abathurFrenzyActive = true;
-            if (PlayerHasTalent(libAffx_player, "AbathurOvergrowth")) {
-                libAffx_AbathurRemoveNests();
-            }
+            libAffx_AbathurFrenzyClearNests(hero);
             libAffx_abathurSinceLastNest = interval;
         }
     } else {

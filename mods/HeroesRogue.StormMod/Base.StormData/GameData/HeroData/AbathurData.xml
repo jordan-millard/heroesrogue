@@ -132,9 +132,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectCreateUnit>
 
   <!-- Frenzy: Minefield's Heroic, available from level 1 (the starter grants AbathurMinefieldFrenzyUnlocked). It replaces
-       Ultimate Evolution and Evolve Monstrosity, which the starter disables. 3 seconds of Unstoppable; the script drops a
-       nest every 0.5 seconds meanwhile. 4 seconds, 90 second cooldown.
-       The level 10 talents Prolonged Frenzy and Overgrowth upgrade it. -->
+       Ultimate Evolution and Evolve Monstrosity, which the starter disables. 100 second cooldown. The script removes all
+       of Abathur's nests and summons a Locust per 3 of them, then he is Unstoppable for 4 seconds and drops a nest every
+       0.5 seconds. The level 10 talents Lingering Brood and Colossal Locust upgrade it. -->
   <CBehaviorBuff id="AbathurMinefieldFrenzyUnlocked">
     <BehaviorFlags index="Permanent" value="1" />
     <BehaviorFlags index="EnabledWhileDead" value="1" />
@@ -154,14 +154,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CAbilEffectInstant id="AbathurMinefieldFrenzy">
     <Effect value="AbathurMinefieldFrenzySet" />
     <Cost>
-      <Cooldown TimeUse="90" />
+      <Cooldown TimeUse="100" />
     </Cost>
     <CmdButtonArray index="Execute" DefaultButtonFace="AbathurMinefieldFrenzy" Requirements="AbathurMinefieldFrenzyUnlocked" />
   </CAbilEffectInstant>
   <CEffectSet id="AbathurMinefieldFrenzySet">
     <EffectArray value="AbathurMinefieldFrenzyApplyUnstoppable" />
     <EffectArray value="AbathurMinefieldFrenzyApplyBuff" />
-    <EffectArray value="AbathurMinefieldFrenzyApplySpeed" />
   </CEffectSet>
   <CBehaviorBuff id="AbathurMinefieldFrenzyUnstoppable" parent="StormUnstoppableParent">
     <Duration value="4" />
@@ -179,92 +178,34 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <Behavior value="AbathurMinefieldFrenzyBuff" />
   </CEffectApplyBehavior>
-  <!-- Prolonged Frenzy only: 30% Movement Speed for the (6 second) Frenzy -->
-  <CBehaviorBuff id="AbathurMinefieldFrenzySpeed">
-    <Alignment value="Positive" />
-    <Duration value="6" />
-    <Modification>
-      <UnifiedMoveSpeedFactor value="0.3" />
-    </Modification>
-  </CBehaviorBuff>
-  <CEffectApplyBehavior id="AbathurMinefieldFrenzyApplySpeed">
-    <Chance value="0" />
-    <WhichUnit Value="Caster" />
-    <Behavior value="AbathurMinefieldFrenzySpeed" />
-  </CEffectApplyBehavior>
   <CButton id="AbathurMinefieldFrenzy" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
   </CButton>
-  <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 30% Movement Speed. Overgrowth: 120 second cooldown and 1 second
-       shorter; activating Frenzy removes each of Abathur's nests
-       with a 50% chance, and it drops about 22 nests (script) that only last
-       30 seconds. -->
-  <CBehaviorBuff id="AbathurOvergrowthNestLifetime">
-    <Duration value="30" />
-    <DisplayDuration index="Self" value="1" />
-    <DisplayDuration index="Ally" value="1" />
-    <ExpireEffect value="ToxicNestSuicideSet" />
-  </CBehaviorBuff>
-  <CTalent id="AbathurProlongedFrenzy">
-    <Face value="AbathurProlongedFrenzy" />
+  <!-- Level 10 talents, both handled in HeroTriggers/Abathur.galaxy. Lingering Brood: each nest Frenzy would remove has a
+       35% chance to stay (it still counts toward Locusts). Colossal Locust: Frenzy summons one Locust scaled by the
+       number of nests instead of one Locust per 3 nests; AbathurColossalLocustPower stacks give it +10% damage each. -->
+  <CTalent id="AbathurLingeringBrood">
+    <Face value="AbathurLingeringBrood" />
     <Abil value="AbathurMinefieldFrenzy" />
-    <AbilityModificationArray>
-      <Modifications>
-        <Type value="FlatModification" />
-        <Catalog value="Behavior" />
-        <Entry value="AbathurMinefieldFrenzyUnstoppable" />
-        <Field value="Duration" />
-        <Value value="2.000000" />
-      </Modifications>
-      <Modifications>
-        <Type value="FlatModification" />
-        <Catalog value="Behavior" />
-        <Entry value="AbathurMinefieldFrenzyBuff" />
-        <Field value="Duration" />
-        <Value value="2.000000" />
-      </Modifications>
-      <Modifications>
-        <Type value="FlatModification" />
-        <Catalog value="Effect" />
-        <Entry value="AbathurMinefieldFrenzyApplySpeed" />
-        <Field value="Chance" />
-        <Value value="1.000000" />
-      </Modifications>
-    </AbilityModificationArray>
   </CTalent>
-  <CButton id="AbathurProlongedFrenzy" parent="StormButtonParent">
-    <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
-  </CButton>
-  <CTalent id="AbathurOvergrowth">
-    <Face value="AbathurOvergrowth" />
-    <Abil value="AbathurMinefieldFrenzy" />
-    <AbilityModificationArray>
-      <Modifications>
-        <Type value="FlatModification" />
-        <Catalog value="Behavior" />
-        <Entry value="AbathurMinefieldFrenzyUnstoppable" />
-        <Field value="Duration" />
-        <Value value="-1.000000" />
-      </Modifications>
-      <Modifications>
-        <Type value="FlatModification" />
-        <Catalog value="Behavior" />
-        <Entry value="AbathurMinefieldFrenzyBuff" />
-        <Field value="Duration" />
-        <Value value="-1.000000" />
-      </Modifications>
-      <Modifications>
-        <Type value="FlatModification" />
-        <Catalog value="Abil" />
-        <Entry value="AbathurMinefieldFrenzy" />
-        <Field value="Cost[0].Cooldown.TimeUse" />
-        <Value value="30.000000" />
-      </Modifications>
-    </AbilityModificationArray>
-  </CTalent>
-  <CButton id="AbathurOvergrowth" parent="StormButtonParent">
+  <CButton id="AbathurLingeringBrood" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
+  <CTalent id="AbathurColossalLocust">
+    <Face value="AbathurColossalLocust" />
+    <Abil value="AbathurMinefieldFrenzy" />
+  </CTalent>
+  <CButton id="AbathurColossalLocust" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_abathur_spawnlocust.dds" />
+  </CButton>
+  <CBehaviorBuff id="AbathurColossalLocustPower">
+    <Alignment value="Positive" />
+    <MaxStackCount value="1000" />
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0.1" />
+      <DamageDealtFraction index="Ability" value="0.1" />
+    </Modification>
+  </CBehaviorBuff>
   <!-- The locked Heroic placeholder (CardLayouts slot 0, requirement UltimateNotUnlocked) only hides for the base
        Ultimate1/2/3Unlocked behaviors or SuppressLockedHeroicButton, so the starter grants the latter. Nothing
        else uses it; make it survive death like the Ultimate behaviors. -->
@@ -279,7 +220,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </CardLayouts>
   </CUnit>
 
-  <!-- Talents shown only with the starter (TalentsShow): Prolonged Frenzy and Overgrowth replace both Heroics, and Chitinous Bulwark and
+  <!-- Talents shown only with the starter (TalentsShow): Lingering Brood and Colossal Locust replace both Heroics, and Chitinous Bulwark and
        Nesting Instinct fill the level 4 and level 13 tiers, which lose every other talent once the Symbiote talents are
        disabled. Both are handled in HeroTriggers/Abathur.galaxy. -->
   <CTalent id="AbathurChitinousBulwark">
@@ -296,8 +237,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CHero id="Abathur">
     <TalentTreeArray Talent="AbathurChitinousBulwark" Tier="2" Column="5" />
-    <TalentTreeArray Talent="AbathurProlongedFrenzy" Tier="4" Column="3" />
-    <TalentTreeArray Talent="AbathurOvergrowth" Tier="4" Column="4" />
+    <TalentTreeArray Talent="AbathurLingeringBrood" Tier="4" Column="3" />
+    <TalentTreeArray Talent="AbathurColossalLocust" Tier="4" Column="4" />
     <TalentTreeArray Talent="AbathurNestingInstinct" Tier="5" Column="4" />
     <!-- The ability bar is built from HeroAbilArray, so Frenzy needs an entry here as well as the command card button -->
     <HeroAbilArray Abil="AbathurMinefieldFrenzy" Button="AbathurMinefieldFrenzy">
