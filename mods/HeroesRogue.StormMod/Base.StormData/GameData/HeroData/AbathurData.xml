@@ -33,6 +33,43 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="AbathurMinefield" Accumulator="AbathurMinefieldPercentAccumulator" />
   </CEffectDamage>
 
+  <!-- 75 Spell Armor on every new Toxic Nest. The spawn effect becomes a set that still arms the nest; the armor is
+       only enabled for the starter. -->
+  <CBehaviorBuff id="AbathurMinefieldNestSpellArmor" parent="StormArmor">
+    <BehaviorFlags index="Permanent" value="1" />
+    <ArmorModification>
+      <ArmorSet index="Hero">
+        <ArmorMitigationTable index="Ability" value="75" />
+      </ArmorSet>
+      <ArmorSet index="Merc">
+        <ArmorMitigationTable index="Ability" value="75" />
+      </ArmorSet>
+      <ArmorSet index="Monster">
+        <ArmorMitigationTable index="Ability" value="75" />
+      </ArmorSet>
+      <ArmorSet index="Summon">
+        <ArmorMitigationTable index="Ability" value="75" />
+      </ArmorSet>
+      <ArmorSet index="Structure">
+        <ArmorMitigationTable index="Ability" value="75" />
+      </ArmorSet>
+      <ArmorSet index="Minion">
+        <ArmorMitigationTable index="Ability" value="75" />
+      </ArmorSet>
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AbathurMinefieldApplyNestSpellArmor">
+    <Chance value="0" />
+    <Behavior value="AbathurMinefieldNestSpellArmor" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="AbathurMinefieldNestSpawnSet">
+    <EffectArray value="AbathurToxicNestApplyArmingBehavior" />
+    <EffectArray value="AbathurMinefieldApplyNestSpellArmor" />
+  </CEffectSet>
+  <CEffectCreateUnit id="ToxicNestCreateUnit">
+    <SpawnEffect value="AbathurMinefieldNestSpawnSet" />
+  </CEffectCreateUnit>
+
   <CButton id="AbathurMinefieldTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
