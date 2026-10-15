@@ -11,11 +11,13 @@ include "AffixTriggers"
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
+const fixed libAffx_abathurScuttlingBroodFactor = 0.6; // 40% faster while moving
 const fixed libAffx_abathurTakedownWindow = 1.0;
 const int libAffx_abathurHeroHitStacks = 5;
 
 bool libAffx_abathurStarted;
 fixed libAffx_abathurLastNest;
+point libAffx_abathurLastPosition;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurNestDamageTime; // per enemy player, last damage from a nest
 
 unit libAffx_AbathurHero() {
@@ -36,7 +38,9 @@ bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libGame_gf_ModifyTokenCount(libAffx_abathurHeroHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
-    UnitBehaviorAdd(libAffx_AbathurHero(), "AbathurMinefieldShield", libAffx_AbathurHero(), 1);
+    if (PlayerHasTalent(libAffx_player, "AbathurChitinousBulwark")) {
+        UnitBehaviorAdd(libAffx_AbathurHero(), "AbathurMinefieldShield", libAffx_AbathurHero(), 1);
+    }
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
     return true;
 }
@@ -80,23 +84,36 @@ bool libAffx_AbathurTakedown (bool testConds, bool runActions) {
     return true;
 }
 
-// Drops a nest under Abathur on the timer
+// Drops a nest under Abathur on the timer (Scuttling Brood: 40% faster while he moves)
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
+    point position;
+    bool moved = false;
     fixed interval = libAffx_abathurDropInterval;
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
+        libAffx_abathurLastPosition = null;
         return false;
     }
+    position = UnitGetPosition(hero);
+    if (libAffx_abathurLastPosition != null) {
+        moved = DistanceBetweenPoints(position, libAffx_abathurLastPosition) > 0.1;
+    }
+    libAffx_abathurLastPosition = position;
     if (UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff")) {
         interval = libAffx_abathurDropIntervalFrenzy;
-    } else if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
-        interval = libAffx_abathurDropIntervalRapid;
+    } else {
+        if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
+            interval = libAffx_abathurDropIntervalRapid;
+        }
+        if (moved && PlayerHasTalent(libAffx_player, "AbathurScuttlingBrood")) {
+            interval = interval * libAffx_abathurScuttlingBroodFactor;
+        }
     }
     if (GameGetMissionTime() - libAffx_abathurLastNest < interval - 0.01) {
         return false;
     }
     libAffx_abathurLastNest = GameGetMissionTime();
-    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", UnitGetPosition(hero));
+    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
     UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
 }

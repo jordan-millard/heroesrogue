@@ -25,13 +25,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <UnifiedMoveSpeedFactor value="0.15" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Each enemy Hero hit by a nest explosion adds a 10% max Health shield stack (up to 5) that doesn't expire,
-       the same way Falstad's Wildhammer's Bulwark stacks -->
+  <!-- Chitinous Bulwark (level 4 talent): each enemy Hero hit by a nest explosion adds a 5% max Health shield stack
+       (up to 6) that doesn't expire, the same way Falstad's Wildhammer's Bulwark stacks -->
   <CBehaviorBuff id="AbathurMinefieldShield" parent="StormShield">
     <InfoIcon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
-    <MaxStackCount value="5" />
+    <MaxStackCount value="6" />
     <DamageResponse>
-      <ModifyLimitVitalMaxFractionArray index="Life" value="0.1" />
+      <ModifyLimitVitalMaxFractionArray index="Life" value="0.05" />
     </DamageResponse>
   </CBehaviorBuff>
 
@@ -168,12 +168,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </CardLayouts>
   </CUnit>
 
-  <!-- Talents shown only with the starter (TalentsShow): Frenzy replaces both Heroics, and Do Nothing fills the level 4
-       and level 13 tiers, which lose every other talent once the Symbiote talents are disabled. -->
+  <!-- Talents shown only with the starter (TalentsShow): Frenzy replaces both Heroics, and Chitinous Bulwark and
+       Scuttling Brood fill the level 4 and level 13 tiers, which lose every other talent once the Symbiote talents are
+       disabled. Both are handled in HeroTriggers/Abathur.galaxy. -->
+  <CTalent id="AbathurChitinousBulwark">
+    <Face value="AbathurChitinousBulwark" />
+  </CTalent>
+  <CButton id="AbathurChitinousBulwark" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
+  </CButton>
+  <CTalent id="AbathurScuttlingBrood">
+    <Face value="AbathurScuttlingBrood" />
+  </CTalent>
+  <CButton id="AbathurScuttlingBrood" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
+  </CButton>
   <CHero id="Abathur">
-    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="5" />
+    <TalentTreeArray Talent="AbathurChitinousBulwark" Tier="2" Column="5" />
     <TalentTreeArray Talent="AbathurMinefieldFrenzyTalent" Tier="4" Column="3" />
-    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="AbathurScuttlingBrood" Tier="5" Column="4" />
     <!-- The ability bar is built from HeroAbilArray, so Frenzy needs an entry here as well as the command card button -->
     <HeroAbilArray Abil="AbathurMinefieldFrenzy" Button="AbathurMinefieldFrenzy">
       <Flags index="AffectedByCooldownReduction" value="1" />
