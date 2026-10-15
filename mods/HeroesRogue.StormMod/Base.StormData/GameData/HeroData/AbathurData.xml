@@ -157,14 +157,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="AbathurMinefieldFrenzy" />
     <RankArray>
       <BehaviorArray value="AbathurMinefieldFrenzyUnlocked" />
+      <BehaviorArray value="SuppressLockedHeroicButton" />
     </RankArray>
     <Active value="1" />
     <Abil value="AbathurMinefieldFrenzy" />
   </CTalent>
+  <!-- The locked Heroic placeholder (CardLayouts slot 0, requirement UltimateNotUnlocked) only hides for the base
+       Ultimate1/2/3Unlocked behaviors or SuppressLockedHeroicButton, so the Frenzy talent grants the latter. Nothing
+       else uses it; make it survive death like the Ultimate behaviors. -->
+  <CBehaviorBuff id="SuppressLockedHeroicButton">
+    <BehaviorFlags index="Permanent" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+  </CBehaviorBuff>
   <CUnit id="HeroAbathur">
     <AbilArray Link="AbathurMinefieldFrenzy" />
     <CardLayouts index="0">
-      <LayoutButtons Face="AbathurMinefieldFrenzy" Type="AbilCmd" AbilCmd="AbathurMinefieldFrenzy,Execute" Slot="Heroic" />
+      <LayoutButtons index="30" Face="AbathurMinefieldFrenzy" Type="AbilCmd" AbilCmd="AbathurMinefieldFrenzy,Execute" Slot="Heroic" />
     </CardLayouts>
   </CUnit>
 
