@@ -4818,6 +4818,23 @@
                 <Field Id="Behavior" />
             </String>
         </Instances>
+        <Instances Id="AbathurEndlessHive">
+            <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AbathurMinefield">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AbathurEndlessHiveMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
         <Instances Id="AbathurVolatileSpores">
             <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
                 <Field Id="Icon" />

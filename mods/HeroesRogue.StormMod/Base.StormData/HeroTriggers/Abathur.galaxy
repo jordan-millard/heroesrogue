@@ -4,7 +4,8 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 3 seconds of Slapathur stunning an enemy Hero. Activating Frenzy removes all of his nests; during Frenzy they drop
-// every 0.5 seconds regardless (0.135 with Overgrowth, whose Frenzy nests only last 30 seconds).
+// every 0.5 seconds regardless (0.135 with Overgrowth, whose Frenzy nests only last 30 seconds). Endless Hive keeps the
+// old nests.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 5 seconds of that Stun, adds 1%
@@ -216,7 +217,9 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
         if (!libAffx_abathurFrenzyActive) {
             // Frenzy just started: clear the field, and the first new nest drops right away
             libAffx_abathurFrenzyActive = true;
-            libAffx_AbathurRemoveNests();
+            if (!UnitHasBehavior2(hero, "AbathurEndlessHiveMarker")) {
+                libAffx_AbathurRemoveNests();
+            }
             libAffx_abathurSinceLastNest = interval;
         }
     } else {
