@@ -824,7 +824,7 @@ Button/Tooltip/AbathurMinefieldTokenCounter=<c val="#TooltipQuest">Bonus Toxic N
 Button/Name/AbathurMinefieldTakedownTokenCounter=Slapathur
 Button/Tooltip/AbathurMinefieldTakedownTokenCounter=<c val="#TooltipQuest">Bonus Slapathur Stun duration: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$" precision="0"/>%</c><n/>Bonus maximum Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*30" precision="0"/></c><n/>Bonus Toxic Nest damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*2" precision="0"/></c><n/>Bonus Locust Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*3" precision="0"/>%</c></c>
 Button/Name/AbathurMinefieldFrenzy=Frenzy
-Button/Tooltip/AbathurMinefieldFrenzy=Remove the oldest <c val="#TooltipNumbers">50%</c> of your Toxic Nests. Abathur becomes Unstoppable for <c val="#TooltipNumbers">3</c> seconds, dropping a Toxic Nest every <c val="#TooltipNumbers">0.5</c> seconds.
+Button/Tooltip/AbathurMinefieldFrenzy=Remove all of your Toxic Nests. Abathur becomes Unstoppable for <c val="#TooltipNumbers">4</c> seconds, dropping a Toxic Nest every <c val="#TooltipNumbers">0.5</c> seconds.
 Button/SimpleDisplayText/AbathurMinefieldFrenzy=Become Unstoppable and drop Toxic Nests rapidly
 Button/Name/AbathurChitinousBulwark=Chitinous Bulwark
 Button/SimpleDisplayText/AbathurChitinousBulwark=Toxic Nest hits on Heroes grant a lasting Shield
@@ -835,9 +835,9 @@ Button/Tooltip/AbathurNestingInstinct=Minefield drops Toxic Nests <c val="#Toolt
 Button/Name/AbathurProlongedFrenzy=Prolonged Frenzy
 Button/SimpleDisplayText/AbathurProlongedFrenzy=Frenzy lasts longer and grants Movement Speed
 Button/Tooltip/AbathurProlongedFrenzy=Frenzy lasts <c val="#TooltipNumbers">2</c> seconds longer and grants <c val="#TooltipNumbers">30%</c> Movement Speed.
-Button/Name/AbathurCleanSlate=Clean Slate
-Button/SimpleDisplayText/AbathurCleanSlate=Frenzy clears more old Toxic Nests and drops a fresh field
-Button/Tooltip/AbathurCleanSlate=Frenzy removes the oldest <c val="#TooltipNumbers">90%</c> of your Toxic Nests instead, and drops about <c val="#TooltipNumbers">25</c> Toxic Nests.
+Button/Name/AbathurOvergrowth=Overgrowth
+Button/SimpleDisplayText/AbathurOvergrowth=Frenzy drops far more Toxic Nests, then pauses normal drops
+Button/Tooltip/AbathurOvergrowth=Frenzy drops about <c val="#TooltipNumbers">33</c> Toxic Nests, but its cooldown is increased to <c val="#TooltipNumbers">120</c> seconds and normal Toxic Nest drops stop for <c val="#TooltipNumbers">30</c> seconds after it ends.
 Affix/Name/AbathurRapidGestation=Rapid Gestation
 Affix/Tooltip/AbathurRapidGestation=Minefield drops a Toxic Nest every <c val="#TooltipNumbers">2</c> seconds instead of <c val="#TooltipNumbers">3</c>.
 Affix/Name/AbathurLocustStrain=Locust Strain
