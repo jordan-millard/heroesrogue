@@ -2,7 +2,8 @@ include "AffixTriggers"
 
 // ============================================================
 // Abathur, Minefield.
-// Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy).
+// Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy,
+// 3 times as fast again with Clean Slate, which also removes every nest when Frenzy starts).
 // Hit quest: each enemy Hero hit by a nest explosion adds 3% nest damage.
 // Slapathur quest: an enemy Hero takedown within 3 seconds of Abathur's Basic Attack hitting them adds 20 flat nest
 // damage and 50 maximum Health.
@@ -12,13 +13,15 @@ include "AffixTriggers"
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
+const fixed libAffx_abathurCleanSlateFactor = 3.0; // Frenzy drop rate multiplier
 const fixed libAffx_abathurScuttlingBroodFactor = 0.6; // 40% faster while moving
 const fixed libAffx_abathurTakedownWindow = 3.0;
 const int libAffx_abathurSlapLifePerStack = 50; // matches AbathurSlapathurQuestLife
 const int libAffx_abathurHeroHitStacks = 3;
 
 bool libAffx_abathurStarted;
-const fixed libAffx_abathurDropTickPeriod = 0.25;
+const fixed libAffx_abathurDropTickPeriod = 0.0625;
+bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
 point libAffx_abathurLastPosition;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapTime; // per enemy player, last hit by Abathur's Basic Attack
@@ -99,25 +102,56 @@ void libAffx_AbathurSyncSlapLife(unit hero) {
     }
 }
 
+// Clean Slate: removes every Toxic Nest Abathur has placed
+void libAffx_AbathurRemoveNests() {
+    unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+    int i = UnitGroupCount(nests, c_unitCountAll);
+    unit nest;
+    for (; i > 0; i -= 1) {
+        nest = UnitGroupUnitFromEnd(nests, i);
+        if (nest != null) {
+            UnitRemove(nest);
+        }
+    }
+}
+
 // Drops a nest under Abathur on the timer (Scuttling Brood: 40% faster while he moves)
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
     point position;
     bool moved = false;
+    bool frenzy;
     fixed interval = libAffx_abathurDropInterval;
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
         libAffx_abathurLastPosition = null;
+        libAffx_abathurFrenzyActive = false;
         return false;
     }
     libAffx_AbathurSyncSlapLife(hero);
     position = UnitGetPosition(hero);
     if (libAffx_abathurLastPosition != null) {
-        moved = DistanceBetweenPoints(position, libAffx_abathurLastPosition) > 0.1;
+        moved = DistanceBetweenPoints(position, libAffx_abathurLastPosition) > 0.02;
     }
     libAffx_abathurLastPosition = position;
-    if (UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff")) {
+    if (libAffx_gamePaused || UnitHasBehaviorWithCategoryFlag(hero, c_behaviorCategoryTimeStop)) {
+        return false;
+    }
+    frenzy = UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff");
+    if (frenzy) {
         interval = libAffx_abathurDropIntervalFrenzy;
+        if (PlayerHasTalent(libAffx_player, "AbathurCleanSlate")) {
+            interval = interval / libAffx_abathurCleanSlateFactor;
+        }
+        if (!libAffx_abathurFrenzyActive) {
+            // Frenzy just started: Clean Slate clears the field, and the first nest drops right away
+            libAffx_abathurFrenzyActive = true;
+            if (PlayerHasTalent(libAffx_player, "AbathurCleanSlate")) {
+                libAffx_AbathurRemoveNests();
+            }
+            libAffx_abathurSinceLastNest = interval;
+        }
     } else {
+        libAffx_abathurFrenzyActive = false;
         if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
             interval = libAffx_abathurDropIntervalRapid;
         }
@@ -125,14 +159,14 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
             interval = interval * libAffx_abathurScuttlingBroodFactor;
         }
     }
-    if (libAffx_gamePaused || UnitHasBehaviorWithCategoryFlag(hero, c_behaviorCategoryTimeStop)) {
-        return false;
-    }
     libAffx_abathurSinceLastNest += libAffx_abathurDropTickPeriod;
     if (libAffx_abathurSinceLastNest < interval - 0.01) {
         return false;
     }
-    libAffx_abathurSinceLastNest = 0.0;
+    libAffx_abathurSinceLastNest -= interval;
+    if (libAffx_abathurSinceLastNest < 0.0 || libAffx_abathurSinceLastNest > interval) {
+        libAffx_abathurSinceLastNest = 0.0;
+    }
     UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
     UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
