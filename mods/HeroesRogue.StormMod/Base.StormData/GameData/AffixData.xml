@@ -4666,6 +4666,23 @@
                 <Field Id="CatalogModification" Index="2" />
             </String>
         </Instances>
+        <Instances Id="AbathurMineTrail">
+            <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AbathurMinefield">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AffixAdded libAffx_AbathurTrailStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
         <Instances Id="OverwhelmingPower">
             <String String="Assets/Textures/affix_icon_all_stats_self.dds">
                 <Field Id="Icon" />
