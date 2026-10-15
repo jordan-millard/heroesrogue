@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 3 seconds of Slapathur stunning an enemy Hero. Activating Frenzy removes all of his nests; during Frenzy they drop
-// every 0.5 seconds regardless. Overgrowth removes all of his nests when Frenzy starts, then drops one every 0.135
+// every 0.5 seconds regardless. Overgrowth removes each of his nests with a 50% chance when Frenzy starts, then drops one every 0.135
 // seconds that only lasts 30 seconds. Resilient Nests gives each triggered nest a 30% chance to be replaced.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
@@ -26,6 +26,7 @@ const int libAffx_abathurHeroHitStacks = 2;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
 const fixed libAffx_abathurSlapNestArming = 2.0; // Parasitic Slap
 const int libAffx_abathurRearmChance = 30; // Resilient Nests, percent
+const int libAffx_abathurOvergrowthRemoveChance = 50; // percent per nest
 const fixed libAffx_abathurRearmDelay = 0.5;
 
 bool libAffx_abathurStarted;
@@ -201,14 +202,14 @@ bool libAffx_AbathurNestTriggered_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Overgrowth: removes every Toxic Nest Abathur has placed
+// Overgrowth: each Toxic Nest Abathur has placed has a 50% chance to be removed
 void libAffx_AbathurRemoveNests() {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
     int i = UnitGroupCount(nests, c_unitCountAll);
     unit nest;
     for (; i > 0; i -= 1) {
         nest = UnitGroupUnitFromEnd(nests, i);
-        if (nest != null) {
+        if (nest != null && RandomInt(1, 100) <= libAffx_abathurOvergrowthRemoveChance) {
             UnitRemove(nest);
         }
     }
