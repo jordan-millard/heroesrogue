@@ -21,7 +21,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- Hit quest: each token is 1% Toxic Nest damage (10 per enemy Hero hit, 1 per other enemy) -->
   <CBehaviorTokenCounter id="AbathurMinefieldTokenCounter" parent="StormQuestToken">
     <Face value="AbathurMinefieldTokenCounter" />
-    <Max value="1000000" />
+    <Max value="100000" />
   </CBehaviorTokenCounter>
   <CAccumulatorToken id="AbathurMinefieldPercentAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
@@ -37,7 +37,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorTokenCounter>
   <CAccumulatorToken id="AbathurMinefieldFlatAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="1000000" />
+    <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AbathurMinefieldTakedownTokenCounter" />
     <Scale value="5" />
