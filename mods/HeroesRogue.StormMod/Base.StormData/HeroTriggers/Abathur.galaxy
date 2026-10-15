@@ -96,6 +96,9 @@ bool libAffx_AbathurSlapStun_Func (bool testConds, bool runActions) {
     }
     libAffx_abathurSlapStunTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libAffx_abathurAttackLockoutLeft = libAffx_abathurAttackLockout;
+    if (UnitHasBehavior2(caster, "AbathurMendingCarapaceMarker")) {
+        UnitBehaviorAdd(caster, "AbathurMendingCarapaceRegen", caster, 1);
+    }
     if (UnitHasBehavior2(caster, "AbathurParasiticSlapMarker")) {
         libAffx_AbathurSlapNest(victim);
     }

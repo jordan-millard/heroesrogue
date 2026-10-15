@@ -17,6 +17,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="AbathurRapidGestationMarker" parent="CarryBehaviorParent" />
   <!-- Parasitic Slap (Epic): Slapathur's Stun on a Hero drops a nest under them (script) -->
   <CBehaviorBuff id="AbathurParasiticSlapMarker" parent="CarryBehaviorParent" />
+  <!-- Mending Carapace (Uncommon, up to 2): Slapathur's Stun on a Hero heals Abathur for 2% maximum Health per second per
+       copy for 5 seconds (the boon adds 0.02 to the heal per copy; the script applies the buff) -->
+  <CBehaviorBuff id="AbathurMendingCarapaceMarker" parent="CarryBehaviorParent" />
+  <CEffectModifyUnit id="AbathurMendingCarapaceHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="AbathurMendingCarapaceRegen">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
+    <Duration value="5" />
+    <Period value="1" />
+    <PeriodicEffect value="AbathurMendingCarapaceHeal" />
+  </CBehaviorBuff>
   <!-- Resilient Nests (Legendary): triggered nests have a 30% chance to be replaced (script) -->
   <CBehaviorBuff id="AbathurResilientNestsMarker" parent="CarryBehaviorParent" />
 
