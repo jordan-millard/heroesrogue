@@ -174,6 +174,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <TalentTreeArray Talent="DoNothing4" Tier="2" Column="5" />
     <TalentTreeArray Talent="AbathurMinefieldFrenzyTalent" Tier="4" Column="3" />
     <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <!-- The ability bar is built from HeroAbilArray, so Frenzy needs an entry here as well as the command card button -->
+    <HeroAbilArray Abil="AbathurMinefieldFrenzy" Button="AbathurMinefieldFrenzy">
+      <Flags index="AffectedByCooldownReduction" value="1" />
+      <Flags index="Heroic" value="1" />
+    </HeroAbilArray>
   </CHero>
 
   <!-- Locust Strain (Rare): +15% Locust damage; the range is added in AffixData.xml -->
