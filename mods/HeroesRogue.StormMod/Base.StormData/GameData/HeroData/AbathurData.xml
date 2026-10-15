@@ -47,8 +47,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <TokenId value="AbathurMinefieldTokenCounter" />
     <Scale value="0.01" />
   </CAccumulatorToken>
-  <!-- Slapathur quest: each token is 1 flat Toxic Nest damage, plus 30 maximum Health from AbathurSlapathurQuestLife
-       (one stack per token), 1% Slapathur Stun duration and 1% Locust Health, all applied by the script -->
+  <!-- Slapathur quest: each token is 2 flat Toxic Nest damage, plus 30 maximum Health from AbathurSlapathurQuestLife
+       (one stack per token), 1% Slapathur Stun duration and 3% Locust Health, all applied by the script -->
   <CBehaviorBuff id="AbathurSlapathurQuestLife" parent="CarryBehaviorParent">
     <MaxStackCount value="10000" />
     <Modification>
@@ -65,7 +65,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AbathurMinefieldTakedownTokenCounter" />
-    <Scale value="1" />
+    <Scale value="2" />
   </CAccumulatorToken>
 
   <CEffectDamage id="ToxicNestDamage">
