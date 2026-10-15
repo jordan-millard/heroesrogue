@@ -2,10 +2,9 @@ include "AffixTriggers"
 
 // ============================================================
 // Abathur, Minefield.
-// Toxic Nests are no longer cast. They drop under Abathur only once he has stood still for 1 second (every 3 seconds,
-// 2 with Rapid Gestation) or during Frenzy (every 0.5 seconds, 0.12 with Clean Slate, which also removes every nest
-// when Frenzy starts). Nesting Instinct makes every rate 40% faster. While he moves outside Frenzy, Locust Strain
-// recharges twice as fast instead.
+// Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
+// 4 seconds of his Basic Attack hitting anything. During Frenzy they drop every 0.5 seconds regardless (0.12 with Clean
+// Slate, which also removes every nest when Frenzy starts). Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 4 seconds of that Stun, adds 1%
 // Slapathur Stun duration, 30 maximum Health, 2 flat nest damage (AbathurData.xml) and 3% Locust Health.
@@ -17,7 +16,7 @@ const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
 const fixed libAffx_abathurDropIntervalCleanSlate = 0.12; // about 25 nests over the 3 second Frenzy
 const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
-const fixed libAffx_abathurStillTimeToDrop = 1.0;
+const fixed libAffx_abathurAttackLockout = 4.0; // no nests this long after a Basic Attack hit, outside Frenzy
 const fixed libAffx_abathurTakedownWindow = 4.0;
 const int libAffx_abathurSlapLifePerStack = 30; // matches AbathurSlapathurQuestLife
 const fixed libAffx_abathurSlapStunPerStack = 0.01;
@@ -27,9 +26,7 @@ const fixed libAffx_abathurDropTickPeriod = 0.0625;
 bool libAffx_abathurStarted;
 bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
-fixed libAffx_abathurStillTime; // how long Abathur has stood still
-point libAffx_abathurLastPosition;
-string libAffx_abathurLocustCooldownLink;
+fixed libAffx_abathurAttackLockoutLeft; // counts down only while the game isn't paused
 fixed libAffx_abathurStunBonusApplied; // seconds the Slapathur quest currently adds to AbathurSlapathurStun
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapStunTime; // per enemy player, last Slapathur Stun
 
@@ -151,6 +148,15 @@ bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// Any Basic Attack hit by Abathur starts the nest lockout
+bool libAffx_AbathurAttackHit_Func (bool testConds, bool runActions) {
+    if (EventUnitDamageSourcePlayer() != libAffx_player || EventUnitDamageSourceUnit() != libAffx_AbathurHero()) {
+        return false;
+    }
+    libAffx_abathurAttackLockoutLeft = libAffx_abathurAttackLockout;
+    return true;
+}
+
 // Clean Slate: removes every Toxic Nest Abathur has placed
 void libAffx_AbathurRemoveNests() {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
@@ -164,32 +170,21 @@ void libAffx_AbathurRemoveNests() {
     }
 }
 
-// Drops nests while Abathur stands still or during Frenzy, and speeds up Locust Strain while he moves
+// Drops nests on the timer, except shortly after a Basic Attack (Frenzy ignores that)
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
-    point position;
-    bool moved = false;
     bool frenzy;
     fixed interval = libAffx_abathurDropInterval;
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
-        libAffx_abathurLastPosition = null;
         libAffx_abathurFrenzyActive = false;
-        libAffx_abathurStillTime = 0.0;
         return false;
     }
     libAffx_AbathurSyncSlapRewards(hero);
-    position = UnitGetPosition(hero);
-    if (libAffx_abathurLastPosition != null) {
-        moved = DistanceBetweenPoints(position, libAffx_abathurLastPosition) > 0.02;
-    }
-    libAffx_abathurLastPosition = position;
     if (libAffx_gamePaused || UnitHasBehaviorWithCategoryFlag(hero, c_behaviorCategoryTimeStop)) {
         return false;
     }
-    if (moved) {
-        libAffx_abathurStillTime = 0.0;
-    } else {
-        libAffx_abathurStillTime += libAffx_abathurDropTickPeriod;
+    if (libAffx_abathurAttackLockoutLeft > 0.0) {
+        libAffx_abathurAttackLockoutLeft -= libAffx_abathurDropTickPeriod;
     }
     frenzy = UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff");
     if (frenzy) {
@@ -210,10 +205,6 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
         if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
             interval = libAffx_abathurDropIntervalRapid;
         }
-        if (moved && libAffx_abathurLocustCooldownLink != "") {
-            // Locust Strain recharges twice as fast while moving
-            UnitModifyCooldown(hero, libAffx_abathurLocustCooldownLink, -libAffx_abathurDropTickPeriod, c_cooldownOperationAdd);
-        }
     }
     if (PlayerHasTalent(libAffx_player, "AbathurNestingInstinct")) {
         interval = interval * libAffx_abathurNestingInstinctFactor;
@@ -222,7 +213,7 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (libAffx_abathurSinceLastNest > interval) {
         libAffx_abathurSinceLastNest = interval; // a full timer waits for the next chance to drop
     }
-    if (!frenzy && libAffx_abathurStillTime < libAffx_abathurStillTimeToDrop) {
+    if (!frenzy && libAffx_abathurAttackLockoutLeft > 0.0) {
         return false;
     }
     if (libAffx_abathurSinceLastNest < interval - 0.01) {
@@ -232,7 +223,7 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (libAffx_abathurSinceLastNest < 0.0) {
         libAffx_abathurSinceLastNest = 0.0;
     }
-    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
+    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", UnitGetPosition(hero));
     UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
 }
@@ -262,13 +253,13 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
     }
     libAffx_abathurStarted = true;
     libAffx_abathurSinceLastNest = libAffx_abathurDropInterval;
-    libAffx_abathurLocustCooldownLink = CatalogFieldValueGet(c_gameCatalogAbil, "AbathurSpawnLocusts", "Cost[0].Cooldown.Link", libAffx_player);
     nestHit = TriggerCreate("libAffx_AbathurNestHit_Func");
     TriggerAddEventUnitDamaged(nestHit, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
     slapStun = TriggerCreate("libAffx_AbathurSlapStun_Func");
     TriggerAddEventUnitBehaviorChange(slapStun, null, "AbathurSlapathurStun", c_unitBehaviorChangeCreate);
     slapKill = TriggerCreate("libAffx_AbathurSlapKill_Func");
     TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AbathurAttackHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "AbathurWeaponDamage");
     TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurLocustSpawned_Func"), null, null, null);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
