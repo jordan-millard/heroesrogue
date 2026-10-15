@@ -28,6 +28,8 @@ const fixed libAffx_abathurSlapNestArming = 2.0; // Parasitic Slap
 const int libAffx_abathurRearmChance = 30; // Resilient Nests, percent
 const int libAffx_abathurOvergrowthRemoveChance = 50; // percent per nest
 const fixed libAffx_abathurRearmDelay = 0.5;
+const fixed libAffx_abathurFrenzyScatterMin = 0.75; // Frenzy nests land this far from Abathur, in a random direction
+const fixed libAffx_abathurFrenzyScatterMax = 2.5;
 
 bool libAffx_abathurStarted;
 bool libAffx_abathurFrenzyActive;
@@ -219,6 +221,7 @@ void libAffx_AbathurRemoveNests() {
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
     bool frenzy;
+    point at;
     fixed interval = libAffx_abathurDropInterval;
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
         libAffx_abathurFrenzyActive = false;
@@ -268,7 +271,15 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (libAffx_abathurSinceLastNest < 0.0) {
         libAffx_abathurSinceLastNest = 0.0;
     }
-    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", UnitGetPosition(hero));
+    at = UnitGetPosition(hero);
+    if (frenzy) {
+        // Frenzy scatters its nests around Abathur instead of leaving a line behind him
+        at = PointWithOffsetPolar(at, RandomFixed(libAffx_abathurFrenzyScatterMin, libAffx_abathurFrenzyScatterMax), RandomFixed(0.0, 360.0));
+        if (!PointPathingPassable(at)) {
+            at = UnitGetPosition(hero);
+        }
+    }
+    UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", at);
     UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
 }
