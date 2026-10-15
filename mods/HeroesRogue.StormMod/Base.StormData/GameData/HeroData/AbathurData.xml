@@ -18,6 +18,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- Restless Brood (Epic): nests drop on the normal timer even while Abathur stands still -->
   <CBehaviorBuff id="AbathurRestlessBroodMarker" parent="CarryBehaviorParent" />
 
+  <!-- 15% Movement Speed for 1.5 seconds after each dropped nest (re-applied by the script on every drop) -->
+  <CBehaviorBuff id="AbathurMinefieldDropSpeed">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
+    <Duration value="1.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0.15" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Each enemy Hero hit by a nest explosion adds a 10% max Health shield stack (up to 5) that doesn't expire,
+       the same way Falstad's Wildhammer's Bulwark stacks -->
+  <CBehaviorBuff id="AbathurMinefieldShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
+    <MaxStackCount value="5" />
+    <DamageResponse>
+      <ModifyLimitVitalMaxFractionArray index="Life" value="0.1" />
+    </DamageResponse>
+  </CBehaviorBuff>
+
   <!-- Hit quest: each token is 1% Toxic Nest damage (10 per enemy Hero hit, 1 per other enemy) -->
   <CBehaviorTokenCounter id="AbathurMinefieldTokenCounter" parent="StormQuestToken">
     <Face value="AbathurMinefieldTokenCounter" />

@@ -37,6 +37,7 @@ bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
     }
     if (UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
         libGame_gf_ModifyTokenCount(libAffx_abathurHeroHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
+        UnitBehaviorAdd(libAffx_AbathurHero(), "AbathurMinefieldShield", libAffx_AbathurHero(), 1);
         SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
     } else {
         libGame_gf_ModifyTokenCount(libAffx_abathurOtherHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
@@ -113,6 +114,7 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     }
     libAffx_abathurLastNest = GameGetMissionTime();
     UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
+    UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
 }
 
