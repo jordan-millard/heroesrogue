@@ -22,6 +22,7 @@ const int libAffx_abathurSlapLifePerStack = 30; // matches AbathurSlapathurQuest
 const fixed libAffx_abathurSlapStunPerStack = 0.01;
 const int libAffx_abathurHeroHitStacks = 2;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
+const fixed libAffx_abathurSlapNestArming = 2.0; // Parasitic Slap
 
 bool libAffx_abathurStarted;
 bool libAffx_abathurFrenzyActive;
@@ -62,7 +63,23 @@ bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Slapathur Stun applied to an enemy Hero: opens the Slapathur quest window
+// Parasitic Slap: a Toxic Nest under the stunned Hero that arms after 2 seconds instead of the usual 1
+void libAffx_AbathurSlapNest(unit target) {
+    point at = UnitGetPosition(target);
+    unitgroup nests;
+    int i;
+    unit nest;
+    UnitCreateEffectPoint(libAffx_AbathurHero(), "AbathurToxicNestInitialSet", at);
+    nests = UnitGroupSearch("AbathurToxicNest", libAffx_player, at, 1.0, UnitFilter(0, 0, 0, 0), 0);
+    for (i = UnitGroupCount(nests, c_unitCountAll); i > 0; i -= 1) {
+        nest = UnitGroupUnitFromEnd(nests, i);
+        if (nest != null && UnitHasBehavior2(nest, "ToxicNestArmingBehavior")) {
+            UnitBehaviorSetDurationRemaining(nest, "ToxicNestArmingBehavior", libAffx_abathurSlapNestArming);
+        }
+    }
+}
+
+// Slapathur Stun applied to an enemy Hero: opens the Slapathur quest window (and Parasitic Slap drops a nest)
 bool libAffx_AbathurSlapStun_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit caster = UnitBehaviorEffectUnit(victim, "AbathurSlapathurStun", c_effectUnitCaster, 0);
@@ -70,6 +87,9 @@ bool libAffx_AbathurSlapStun_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_abathurSlapStunTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (UnitHasBehavior2(caster, "AbathurParasiticSlapMarker")) {
+        libAffx_AbathurSlapNest(victim);
+    }
     return true;
 }
 

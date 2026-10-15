@@ -15,6 +15,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- Rapid Gestation (Rare): nests drop every 2 seconds instead of 3 -->
   <CBehaviorBuff id="AbathurRapidGestationMarker" parent="CarryBehaviorParent" />
+  <!-- Parasitic Slap (Epic): Slapathur's Stun on a Hero drops a nest under them (script) -->
+  <CBehaviorBuff id="AbathurParasiticSlapMarker" parent="CarryBehaviorParent" />
 
   <!-- 15% Movement Speed for 1.5 seconds after each dropped nest (re-applied by the script on every drop). A
        multiplier, so it stacks with other Movement Speed bonuses instead of only the highest counting -->
@@ -158,12 +160,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <Behavior value="AbathurMinefieldFrenzyBuff" />
   </CEffectApplyBehavior>
-  <!-- Prolonged Frenzy only: 40% Movement Speed for the (5 second) Frenzy -->
+  <!-- Prolonged Frenzy only: 30% Movement Speed for the (5 second) Frenzy -->
   <CBehaviorBuff id="AbathurMinefieldFrenzySpeed">
     <Alignment value="Positive" />
     <Duration value="5" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0.4" />
+      <UnifiedMoveSpeedFactor value="0.3" />
     </Modification>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="AbathurMinefieldFrenzyApplySpeed">
@@ -174,7 +176,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="AbathurMinefieldFrenzy" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
   </CButton>
-  <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 40% Movement Speed. Clean Slate (script): activating Frenzy
+  <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 30% Movement Speed. Clean Slate (script): activating Frenzy
        removes all of Abathur's nests, and Frenzy drops about 25 nests. -->
   <CTalent id="AbathurProlongedFrenzy">
     <Face value="AbathurProlongedFrenzy" />
