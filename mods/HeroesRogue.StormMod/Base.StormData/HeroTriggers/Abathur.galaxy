@@ -4,7 +4,8 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 4 seconds of his Basic Attack hitting anything. During Frenzy they drop every 0.5 seconds regardless (0.12 with Clean
-// Slate, which also removes every nest when Frenzy starts). Nesting Instinct makes every rate 40% faster.
+// Slate). Activating Frenzy removes the oldest half of his nests (90% with Clean Slate). Nesting Instinct makes every
+// rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 4 seconds of that Stun, adds 1%
 // Slapathur Stun duration, 30 maximum Health, 2 flat nest damage (AbathurData.xml) and 3% Locust Health.
@@ -23,8 +24,11 @@ const fixed libAffx_abathurSlapStunPerStack = 0.01;
 const int libAffx_abathurHeroHitStacks = 2;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
 const fixed libAffx_abathurSlapNestArming = 2.0; // Parasitic Slap
+const fixed libAffx_abathurFrenzyRemoveFraction = 0.5;
+const fixed libAffx_abathurCleanSlateRemoveFraction = 0.9;
 
 bool libAffx_abathurStarted;
+unitgroup libAffx_abathurNests; // Abathur's nests, oldest first
 bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
 fixed libAffx_abathurAttackLockoutLeft; // counts down only while the game isn't paused
@@ -150,14 +154,18 @@ void libAffx_AbathurSyncSlapRewards(unit hero) {
     }
 }
 
-// New Locusts gain 3% Health per Slapathur quest stack
-bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
+// New nests are recorded oldest first; new Locusts gain 3% Health per Slapathur quest stack
+bool libAffx_AbathurUnitCreated_Func (bool testConds, bool runActions) {
     unit locust = EventUnitCreatedUnit();
     string type = UnitGetType(locust);
     fixed lifeMax;
     unit hero = libAffx_AbathurHero();
     if (UnitGetOwner(locust) != libAffx_player || hero == null || !libAffx_AbathurHasStarter()) {
         return false;
+    }
+    if (type == "AbathurToxicNest") {
+        UnitGroupAdd(libAffx_abathurNests, locust);
+        return true;
     }
     if (type != "AbathurLocustNormal" && type != "AbathurLocustBombardStrain" && type != "AbathurLocustAssaultStrain") {
         return false;
@@ -177,13 +185,29 @@ bool libAffx_AbathurAttackHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Clean Slate: removes every Toxic Nest Abathur has placed
-void libAffx_AbathurRemoveNests() {
-    unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
-    int i = UnitGroupCount(nests, c_unitCountAll);
+// Frenzy: removes the oldest share of Abathur's Toxic Nests. The list is split first and the doomed nests are removed
+// afterwards, so removing units never shifts the list being read.
+void libAffx_AbathurRemoveOldestNests(fixed fraction) {
+    unitgroup kept = UnitGroupEmpty();
+    unitgroup doomed = UnitGroupEmpty();
+    int total = UnitGroupCount(libAffx_abathurNests, c_unitCountAll);
+    int toRemove = FixedToInt(IntToFixed(UnitGroupCount(libAffx_abathurNests, c_unitCountAlive)) * fraction);
+    int i;
     unit nest;
-    for (; i > 0; i -= 1) {
-        nest = UnitGroupUnitFromEnd(nests, i);
+    for (i = 1; i <= total; i += 1) {
+        nest = UnitGroupUnit(libAffx_abathurNests, i);
+        if (nest != null && UnitIsAlive(nest)) {
+            if (toRemove > 0) {
+                UnitGroupAdd(doomed, nest);
+                toRemove -= 1;
+            } else {
+                UnitGroupAdd(kept, nest);
+            }
+        }
+    }
+    libAffx_abathurNests = kept;
+    for (i = UnitGroupCount(doomed, c_unitCountAll); i > 0; i -= 1) {
+        nest = UnitGroupUnitFromEnd(doomed, i);
         if (nest != null) {
             UnitRemove(nest);
         }
@@ -213,10 +237,12 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
             interval = libAffx_abathurDropIntervalCleanSlate;
         }
         if (!libAffx_abathurFrenzyActive) {
-            // Frenzy just started: Clean Slate clears the field, and the first nest drops right away
+            // Frenzy just started: clear out the oldest nests, and the first new one drops right away
             libAffx_abathurFrenzyActive = true;
             if (PlayerHasTalent(libAffx_player, "AbathurCleanSlate")) {
-                libAffx_AbathurRemoveNests();
+                libAffx_AbathurRemoveOldestNests(libAffx_abathurCleanSlateRemoveFraction);
+            } else {
+                libAffx_AbathurRemoveOldestNests(libAffx_abathurFrenzyRemoveFraction);
             }
             libAffx_abathurSinceLastNest = interval;
         }
@@ -272,6 +298,7 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
         return true;
     }
     libAffx_abathurStarted = true;
+    libAffx_abathurNests = UnitGroupEmpty();
     libAffx_abathurSinceLastNest = libAffx_abathurDropInterval;
     nestHit = TriggerCreate("libAffx_AbathurNestHit_Func");
     TriggerAddEventUnitDamaged(nestHit, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
@@ -280,7 +307,7 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
     slapKill = TriggerCreate("libAffx_AbathurSlapKill_Func");
     TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AbathurAttackHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "AbathurWeaponDamage");
-    TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurLocustSpawned_Func"), null, null, null);
+    TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurUnitCreated_Func"), null, null, null);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
 }
