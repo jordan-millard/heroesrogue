@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Abathur, Minefield.
 // Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy,
-// 3 times as fast again with Clean Slate, which also removes every nest when Frenzy starts).
+// 0.12 with Clean Slate, about 25 nests, which also removes every nest when Frenzy starts).
 // Hit quest: each enemy Hero hit by a nest explosion adds 3% nest damage.
 // Slapathur quest: an enemy Hero takedown within 3 seconds of Abathur's Basic Attack hitting them adds 20 flat nest
 // damage and 50 maximum Health.
@@ -13,7 +13,7 @@ include "AffixTriggers"
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
-const fixed libAffx_abathurCleanSlateFactor = 3.0; // Frenzy drop rate multiplier
+const fixed libAffx_abathurDropIntervalCleanSlate = 0.12; // about 25 nests over the 3 second Frenzy
 const fixed libAffx_abathurScuttlingBroodFactor = 0.6; // 40% faster while moving
 const fixed libAffx_abathurTakedownWindow = 3.0;
 const int libAffx_abathurSlapLifePerStack = 50; // matches AbathurSlapathurQuestLife
@@ -140,7 +140,7 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (frenzy) {
         interval = libAffx_abathurDropIntervalFrenzy;
         if (PlayerHasTalent(libAffx_player, "AbathurCleanSlate")) {
-            interval = interval / libAffx_abathurCleanSlateFactor;
+            interval = libAffx_abathurDropIntervalCleanSlate;
         }
         if (!libAffx_abathurFrenzyActive) {
             // Frenzy just started: Clean Slate clears the field, and the first nest drops right away
