@@ -213,6 +213,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="AbathurLocustStrain" Modifier="0" />
   </CEffectDamage>
 
+  <!-- Minefield drops a nest every few seconds and they never expire, so the owner's spawn, arming and armed-loop sounds
+       stack into constant noise. Filter them out for the owner (Self); enemies still hear them, and the explosion
+       warning sound is unchanged. -->
+  <CActorSound id="AbathurToxicNestSpawnSoundFriendly">
+    <Filter index="Self" value="1" />
+  </CActorSound>
+  <CActorSound id="AbathurToxicNestArmingSound">
+    <Filter index="Self" value="1" />
+  </CActorSound>
+  <CActorSound id="AbathurToxicNestArmedSound">
+    <Filter index="Self" value="1" />
+  </CActorSound>
+
   <CButton id="AbathurMinefieldTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
