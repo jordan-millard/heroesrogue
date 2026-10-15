@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Abathur, Minefield.
 // Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy).
-// Hit quest: each enemy Hero hit by a nest explosion adds 10% nest damage, any other enemy adds 1%.
+// Hit quest: each enemy Hero hit by a nest explosion adds 5% nest damage.
 // Takedown quest: an enemy Hero who dies within 1 second of nest damage adds 5 flat nest damage.
 // Stacks carry over between games through QuestRetain; the damage itself is in AbathurData.xml.
 // ============================================================
@@ -12,8 +12,7 @@ const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
 const fixed libAffx_abathurTakedownWindow = 1.0;
-const int libAffx_abathurHeroHitStacks = 10;
-const int libAffx_abathurOtherHitStacks = 1;
+const int libAffx_abathurHeroHitStacks = 5;
 
 bool libAffx_abathurStarted;
 fixed libAffx_abathurLastNest;
@@ -27,19 +26,18 @@ bool libAffx_AbathurHasStarter() {
     return hero != null && UnitHasBehavior2(hero, "AbathurMinefieldMarker");
 }
 
-// Nest explosion: hit quest stacks
+// Nest explosion on an enemy Hero: hit quest stacks and a shield stack
 bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AbathurHasStarter()) {
         return false;
     }
-    if (UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
-        libGame_gf_ModifyTokenCount(libAffx_abathurHeroHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
-        UnitBehaviorAdd(libAffx_AbathurHero(), "AbathurMinefieldShield", libAffx_AbathurHero(), 1);
-        SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
-    } else {
-        libGame_gf_ModifyTokenCount(libAffx_abathurOtherHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
+    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        return false;
     }
+    libGame_gf_ModifyTokenCount(libAffx_abathurHeroHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
+    UnitBehaviorAdd(libAffx_AbathurHero(), "AbathurMinefieldShield", libAffx_AbathurHero(), 1);
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
     return true;
 }
 
