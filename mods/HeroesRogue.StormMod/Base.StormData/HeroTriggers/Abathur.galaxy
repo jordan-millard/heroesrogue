@@ -1,0 +1,43 @@
+include "AffixTriggers"
+
+// ============================================================
+// Abathur, Minefield.
+// Each enemy Hero hit by a Toxic Nest explosion adds 1 flat and 1% Toxic Nest damage.
+// Stacks carry over between games through QuestRetain; the damage itself is in AbathurData.xml.
+// ============================================================
+
+bool libAffx_abathurStarted;
+
+unit libAffx_AbathurHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+
+// Toxic Nest explosion hit on an enemy Hero: one Minefield stack, with a quest ding
+bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AbathurHero();
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player) {
+        return false;
+    }
+    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        return false;
+    }
+    if (hero == null || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
+        return false;
+    }
+    libGame_gf_ModifyTokenCount(1, "AbathurMinefieldTokenCounter", hero);
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+    return true;
+}
+
+// AffixAdded for Minefield
+bool libAffx_AbathurStart (bool testConds, bool runActions) {
+    trigger nestHit;
+    if (libAffx_abathurStarted) {
+        return true;
+    }
+    libAffx_abathurStarted = true;
+    nestHit = TriggerCreate("libAffx_AbathurNestHit_Func");
+    TriggerAddEventUnitDamaged(nestHit, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
+    return true;
+}

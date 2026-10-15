@@ -4534,6 +4534,9 @@
             <String String="Butcher">
                 <Field Id="HeroesExcluded" />
             </String>
+            <String String="Abathur">
+                <Field Id="HeroesExcluded" Index="1" />
+            </String>
             <String String="HeroLevelUp libAffx_AllTalentsLevelUp">
                 <Field Id="Trigger" />
             </String>
@@ -4568,6 +4571,44 @@
             </String>
             <String String="1 1 Set Effect,ButcherFreshMeatQuestCompleteSetTokenCount,Chance 0">
                 <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="AbathurMinefield">
+            <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 AbathurMinefieldMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AbathurMinefieldTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="AbathurMinefieldTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Set Behavior,ToxicNestSearchBehaviorTimedLife,Duration 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Unit,AbathurToxicNest,LifeMax 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Multiply Unit,AbathurToxicNest,LifeStart 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Multiply Behavior,ToxicNestArmingBehavior,Duration 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Subtract Abil,AbathurToxicNest,Cost.Charge.TimeUse 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_AbathurStart">
+                <Field Id="Trigger" />
             </String>
         </Instances>
         <Instances Id="OverwhelmingPower">
