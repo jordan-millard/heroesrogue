@@ -4583,14 +4583,83 @@
             <String String="Abathur">
                 <Field Id="HeroSpecific" />
             </String>
+            <String String="AbathurCombatStyleBombardStrain">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AbathurSlapathur">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="AbathurMasteryPressurizedGlands">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="AbathurReinforcedCarapace">
+                <Field Id="TalentsDisable" Index="1" />
+            </String>
+            <String String="AbathurSymbioteAdrenalOverload">
+                <Field Id="TalentsDisable" Index="2" />
+            </String>
+            <String String="AbathurMasteryNeedlespine">
+                <Field Id="TalentsDisable" Index="3" />
+            </String>
+            <String String="AbathurMasteryProlificDispersal">
+                <Field Id="TalentsDisable" Index="4" />
+            </String>
+            <String String="AbathurSymbioteCarapaceNetworkedCarapace">
+                <Field Id="TalentsDisable" Index="5" />
+            </String>
+            <String String="AbathurHeroicAbilityUltimateEvolution">
+                <Field Id="TalentsDisable" Index="6" />
+            </String>
+            <String String="AbathurHeroicAbilityEvolveMonstrosity">
+                <Field Id="TalentsDisable" Index="7" />
+            </String>
+            <String String="AbathurMasterySpatialEfficiency">
+                <Field Id="TalentsDisable" Index="8" />
+            </String>
+            <String String="AbathurSymbioteSpikeBurstSomaTransference">
+                <Field Id="TalentsDisable" Index="9" />
+            </String>
+            <String String="AbathurMasteryEnvenomedSpikes">
+                <Field Id="TalentsDisable" Index="10" />
+            </String>
+            <String String="AbathurMasteryAdrenalineBoost">
+                <Field Id="TalentsDisable" Index="11" />
+            </String>
+            <String String="AbathurVolatileMutation">
+                <Field Id="TalentsDisable" Index="12" />
+            </String>
+            <String String="AbathurUltimateEvolutionEvolutionaryLink">
+                <Field Id="TalentsDisable" Index="13" />
+            </String>
+            <String String="AbathurMasteryEvolutionComplete">
+                <Field Id="TalentsDisable" Index="14" />
+            </String>
+            <String String="AbathurSymbioteHivemind">
+                <Field Id="TalentsDisable" Index="15" />
+            </String>
+            <String String="AbathurMinefieldFrenzyTalent">
+                <Field Id="TalentsShow" />
+            </String>
+            <String String="DoNothing4">
+                <Field Id="TalentsShow" Index="1" />
+            </String>
+            <String String="DoNothing13">
+                <Field Id="TalentsShow" Index="2" />
+            </String>
             <String String="1 0 AbathurMinefieldMarker">
                 <Field Id="Behavior" />
             </String>
             <String String="1 0 AbathurMinefieldTokenCounter">
                 <Field Id="Behavior" Index="1" />
             </String>
-            <String String="AbathurMinefieldTokenCounter 1.0">
+            <String String="1 0 AbathurMinefieldTakedownTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AbathurMinefieldTokenCounter 0.5">
                 <Field Id="QuestRetain" />
+            </String>
+            <String String="AbathurMinefieldTakedownTokenCounter 1.0">
+                <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Behavior,ToxicNestSearchBehaviorTimedLife,Duration 0">
                 <Field Id="CatalogModification" />
@@ -4601,14 +4670,11 @@
             <String String="1 1 Multiply Unit,AbathurToxicNest,LifeStart 2">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Multiply Behavior,ToxicNestArmingBehavior,Duration 0.5">
+            <String String="1 1 Set Behavior,ToxicNestArmingBehavior,Duration 0.0625">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Subtract Abil,AbathurToxicNest,Cost.Charge.TimeUse 1">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
             <String String="1 1 Set Effect,AbathurMinefieldApplyNestSpellArmor,Chance 1">
-                <Field Id="CatalogModification" Index="5" />
+                <Field Id="CatalogModification" Index="4" />
             </String>
             <String String="AffixAdded libAffx_AbathurStart">
                 <Field Id="Trigger" />
@@ -4616,11 +4682,11 @@
             <String String="HeroGainTalent libAffx_AbathurTalentGained">
                 <Field Id="Trigger" Index="1" />
             </String>
+            <String String="HeroTakedown libAffx_AbathurTakedown">
+                <Field Id="Trigger" Index="2" />
+            </String>
         </Instances>
-        <Instances Id="AbathurBroodSacs">
-            <Int Int="2">
-                <Field Id="Max" />
-            </Int>
+        <Instances Id="AbathurRapidGestation">
             <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
                 <Field Id="Icon" />
             </String>
@@ -4633,14 +4699,57 @@
             <User Type="Affix" Instance="AbathurMinefield">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 3 Add Abil,AbathurToxicNest,Cost.Charge.CountMax 2">
+            <String String="1 0 AbathurRapidGestationMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AbathurLocustStrain">
+            <String String="Assets/Textures/storm_ui_icon_abathur_spawnlocust.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AbathurMinefield">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Weapon,AbathurLocustBombardWeapon,Range 0.5">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 3 Add Abil,AbathurToxicNest,Cost.Charge.CountStart 2">
+            <String String="1 1 Add Weapon,AbathurLocustBombardWeaponCloseRange,Range 0.5">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 3 Subtract Abil,AbathurToxicNest,Cost.Charge.TimeUse 1">
+            <String String="1 1 Add Weapon,AbathurLocustWeapon,Range 0.5">
                 <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,AbathurLocustBombardWeaponDamage,MultiplicativeModifierArray[AbathurLocustStrain].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,AbathurLocustBombardWeaponCloseRangeDamage,MultiplicativeModifierArray[AbathurLocustStrain].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,AbathurLocustWeaponDamage,MultiplicativeModifierArray[AbathurLocustStrain].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+        </Instances>
+        <Instances Id="AbathurRestlessBrood">
+            <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AbathurMinefield">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AbathurRestlessBroodMarker">
+                <Field Id="Behavior" />
             </String>
         </Instances>
         <Instances Id="AbathurVolatileSpores">
@@ -4664,23 +4773,6 @@
             </String>
             <String String="1 1 Multiply Effect,ToxicNestSearchAreaTrigger,AreaArray[0].Radius 1.5">
                 <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="AbathurMineTrail">
-            <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Abathur">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AbathurMinefield">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AffixAdded libAffx_AbathurTrailStart">
-                <Field Id="Trigger" />
             </String>
         </Instances>
         <Instances Id="OverwhelmingPower">

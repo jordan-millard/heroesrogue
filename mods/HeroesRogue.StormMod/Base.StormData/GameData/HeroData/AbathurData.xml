@@ -3,29 +3,44 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Abathur, Minefield: Toxic Nest lifetime, Health, arming time and cooldown are set in AffixData.xml.
-       The quest is counted in HeroTriggers/Abathur.galaxy; its damage is applied here. -->
+  <!-- Abathur, Minefield: Toxic Nests are no longer cast. HeroTriggers/Abathur.galaxy drops one under Abathur while he
+       moves (every 3 seconds, 2 with Rapid Gestation, 0.5 during Frenzy). Nest lifetime, Health and arming time are
+       set in AffixData.xml. Both quests are counted in the script; their damage is applied here. -->
   <!-- ============================================================ -->
-  <CBehaviorBuff id="AbathurMinefieldMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AbathurMinefieldMarker" parent="CarryBehaviorParent">
+    <Modification>
+      <AbilLinkDisableArray value="AbathurToxicNest" />
+      <AbilLinkDisableArray value="AbathurSymbiote" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Rapid Gestation (Rare): nests drop every 2 seconds instead of 3 -->
+  <CBehaviorBuff id="AbathurRapidGestationMarker" parent="CarryBehaviorParent" />
+  <!-- Restless Brood (Epic): nests drop on the normal timer even while Abathur stands still -->
+  <CBehaviorBuff id="AbathurRestlessBroodMarker" parent="CarryBehaviorParent" />
 
-  <!-- Each token is 1 flat and 1% Toxic Nest damage -->
+  <!-- Hit quest: each token is 1% Toxic Nest damage (10 per enemy Hero hit, 1 per other enemy) -->
   <CBehaviorTokenCounter id="AbathurMinefieldTokenCounter" parent="StormQuestToken">
     <Face value="AbathurMinefieldTokenCounter" />
-    <Max value="100000" />
+    <Max value="1000000" />
   </CBehaviorTokenCounter>
-  <CAccumulatorToken id="AbathurMinefieldFlatAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="AbathurMinefieldTokenCounter" />
-    <Scale value="1" />
-  </CAccumulatorToken>
   <CAccumulatorToken id="AbathurMinefieldPercentAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AbathurMinefieldTokenCounter" />
     <Scale value="0.01" />
+  </CAccumulatorToken>
+  <!-- Takedown quest: each token is 5 flat Toxic Nest damage -->
+  <CBehaviorTokenCounter id="AbathurMinefieldTakedownTokenCounter" parent="StormQuestToken">
+    <Face value="AbathurMinefieldTakedownTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AbathurMinefieldFlatAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="1000000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AbathurMinefieldTakedownTokenCounter" />
+    <Scale value="5" />
   </CAccumulatorToken>
 
   <CEffectDamage id="ToxicNestDamage">
@@ -70,7 +85,95 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <SpawnEffect value="AbathurMinefieldNestSpawnSet" />
   </CEffectCreateUnit>
 
+  <!-- Frenzy: the level 10 Heroic that replaces Ultimate Evolution and Evolve Monstrosity (both disabled by the
+       starter). 3 seconds of Unstoppable and 40% Movement Speed; the script drops a nest every 0.5 seconds meanwhile. -->
+  <CBehaviorBuff id="AbathurMinefieldFrenzyUnlocked">
+    <BehaviorFlags index="Permanent" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+  </CBehaviorBuff>
+  <CRequirementCountBehavior id="CountBehaviorAbathurMinefieldFrenzyUnlockedAtUnit">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="AbathurMinefieldFrenzyUnlocked" State="CompleteOnlyAtUnit" />
+  </CRequirementCountBehavior>
+  <CRequirementGTE id="GTECountBehaviorAbathurMinefieldFrenzyUnlockedAtUnit1">
+    <OperandArray index="0" value="CountBehaviorAbathurMinefieldFrenzyUnlockedAtUnit" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="AbathurMinefieldFrenzyUnlocked">
+    <NodeArray index="Use" Link="EqCountBehaviorHeroGenericPregameAbilitySuppressionCompleteOnlyAtUnit0" />
+    <NodeArray index="Show" Link="GTECountBehaviorAbathurMinefieldFrenzyUnlockedAtUnit1" />
+  </CRequirement>
+  <CAbilEffectInstant id="AbathurMinefieldFrenzy">
+    <Effect value="AbathurMinefieldFrenzySet" />
+    <Cost>
+      <Cooldown TimeUse="60" />
+    </Cost>
+    <CmdButtonArray index="Execute" DefaultButtonFace="AbathurMinefieldFrenzy" Requirements="AbathurMinefieldFrenzyUnlocked" />
+  </CAbilEffectInstant>
+  <CEffectSet id="AbathurMinefieldFrenzySet">
+    <EffectArray value="AbathurMinefieldFrenzyApplyUnstoppable" />
+    <EffectArray value="AbathurMinefieldFrenzyApplyBuff" />
+  </CEffectSet>
+  <CBehaviorBuff id="AbathurMinefieldFrenzyUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="3" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AbathurMinefieldFrenzyApplyUnstoppable">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AbathurMinefieldFrenzyUnstoppable" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="AbathurMinefieldFrenzyBuff">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
+    <Duration value="3" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0.4" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AbathurMinefieldFrenzyApplyBuff">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AbathurMinefieldFrenzyBuff" />
+  </CEffectApplyBehavior>
+  <CButton id="AbathurMinefieldFrenzy" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
+  </CButton>
+  <CTalent id="AbathurMinefieldFrenzyTalent">
+    <Face value="AbathurMinefieldFrenzy" />
+    <RankArray>
+      <BehaviorArray value="AbathurMinefieldFrenzyUnlocked" />
+    </RankArray>
+    <Active value="1" />
+    <Abil value="AbathurMinefieldFrenzy" />
+  </CTalent>
+  <CUnit id="HeroAbathur">
+    <AbilArray Link="AbathurMinefieldFrenzy" />
+    <CardLayouts index="0">
+      <LayoutButtons Face="AbathurMinefieldFrenzy" Type="AbilCmd" AbilCmd="AbathurMinefieldFrenzy,Execute" Slot="Heroic" />
+    </CardLayouts>
+  </CUnit>
+
+  <!-- Talents shown only with the starter (TalentsShow): Frenzy replaces both Heroics, and Do Nothing fills the level 4
+       and level 13 tiers, which lose every other talent once the Symbiote talents are disabled. -->
+  <CHero id="Abathur">
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="5" />
+    <TalentTreeArray Talent="AbathurMinefieldFrenzyTalent" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+  </CHero>
+
+  <!-- Locust Strain (Rare): +15% Locust damage; the range is added in AffixData.xml -->
+  <CEffectDamage id="AbathurLocustBombardWeaponDamage">
+    <MultiplicativeModifierArray index="AbathurLocustStrain" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AbathurLocustBombardWeaponCloseRangeDamage">
+    <MultiplicativeModifierArray index="AbathurLocustStrain" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AbathurLocustWeaponDamage">
+    <MultiplicativeModifierArray index="AbathurLocustStrain" Modifier="0" />
+  </CEffectDamage>
+
   <CButton id="AbathurMinefieldTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
+  </CButton>
+  <CButton id="AbathurMinefieldTakedownTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
 </Catalog>
