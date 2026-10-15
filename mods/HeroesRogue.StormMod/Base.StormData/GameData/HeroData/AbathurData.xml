@@ -226,7 +226,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CUnit>
 
   <!-- Talents shown only with the starter (TalentsShow): Prolonged Frenzy and Clean Slate replace both Heroics, and Chitinous Bulwark and
-       Scuttling Brood fill the level 4 and level 13 tiers, which lose every other talent once the Symbiote talents are
+       Nesting Instinct fill the level 4 and level 13 tiers, which lose every other talent once the Symbiote talents are
        disabled. Both are handled in HeroTriggers/Abathur.galaxy. -->
   <CTalent id="AbathurChitinousBulwark">
     <Face value="AbathurChitinousBulwark" />
@@ -234,17 +234,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="AbathurChitinousBulwark" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
   </CButton>
-  <CTalent id="AbathurScuttlingBrood">
-    <Face value="AbathurScuttlingBrood" />
+  <CTalent id="AbathurNestingInstinct">
+    <Face value="AbathurNestingInstinct" />
   </CTalent>
-  <CButton id="AbathurScuttlingBrood" parent="StormButtonParent">
+  <CButton id="AbathurNestingInstinct" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
   <CHero id="Abathur">
     <TalentTreeArray Talent="AbathurChitinousBulwark" Tier="2" Column="5" />
     <TalentTreeArray Talent="AbathurProlongedFrenzy" Tier="4" Column="3" />
     <TalentTreeArray Talent="AbathurCleanSlate" Tier="4" Column="4" />
-    <TalentTreeArray Talent="AbathurScuttlingBrood" Tier="5" Column="4" />
+    <TalentTreeArray Talent="AbathurNestingInstinct" Tier="5" Column="4" />
     <!-- The ability bar is built from HeroAbilArray, so Frenzy needs an entry here as well as the command card button -->
     <HeroAbilArray Abil="AbathurMinefieldFrenzy" Button="AbathurMinefieldFrenzy">
       <Flags index="AffectedByCooldownReduction" value="1" />

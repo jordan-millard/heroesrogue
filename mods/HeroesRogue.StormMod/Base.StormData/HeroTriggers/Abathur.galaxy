@@ -14,7 +14,7 @@ const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
 const fixed libAffx_abathurDropIntervalCleanSlate = 0.12; // about 25 nests over the 3 second Frenzy
-const fixed libAffx_abathurScuttlingBroodFactor = 0.6; // 40% faster while moving
+const fixed libAffx_abathurNestingInstinctFactor = 0.5; // 50% faster while standing still
 const fixed libAffx_abathurTakedownWindow = 3.0;
 const int libAffx_abathurSlapLifePerStack = 50; // matches AbathurSlapathurQuestLife
 const int libAffx_abathurHeroHitStacks = 3;
@@ -115,7 +115,7 @@ void libAffx_AbathurRemoveNests() {
     }
 }
 
-// Drops a nest under Abathur on the timer (Scuttling Brood: 40% faster while he moves)
+// Drops a nest under Abathur on the timer (Nesting Instinct: 50% faster while he stands still)
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
     point position;
@@ -155,8 +155,8 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
         if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
             interval = libAffx_abathurDropIntervalRapid;
         }
-        if (moved && PlayerHasTalent(libAffx_player, "AbathurScuttlingBrood")) {
-            interval = interval * libAffx_abathurScuttlingBroodFactor;
+        if (!moved && PlayerHasTalent(libAffx_player, "AbathurNestingInstinct")) {
+            interval = interval * libAffx_abathurNestingInstinctFactor;
         }
     }
     libAffx_abathurSinceLastNest += libAffx_abathurDropTickPeriod;
