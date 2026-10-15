@@ -16,7 +16,8 @@ const fixed libAffx_abathurTakedownWindow = 1.0;
 const int libAffx_abathurHeroHitStacks = 5;
 
 bool libAffx_abathurStarted;
-fixed libAffx_abathurLastNest;
+const fixed libAffx_abathurDropTickPeriod = 0.25;
+fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
 point libAffx_abathurLastPosition;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurNestDamageTime; // per enemy player, last damage from a nest
 
@@ -109,10 +110,14 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
             interval = interval * libAffx_abathurScuttlingBroodFactor;
         }
     }
-    if (GameGetMissionTime() - libAffx_abathurLastNest < interval - 0.01) {
+    if (libAffx_gamePaused || UnitHasBehaviorWithCategoryFlag(hero, c_behaviorCategoryTimeStop)) {
         return false;
     }
-    libAffx_abathurLastNest = GameGetMissionTime();
+    libAffx_abathurSinceLastNest += libAffx_abathurDropTickPeriod;
+    if (libAffx_abathurSinceLastNest < interval - 0.01) {
+        return false;
+    }
+    libAffx_abathurSinceLastNest = 0.0;
     UnitCreateEffectPoint(hero, "AbathurToxicNestInitialSet", position);
     UnitBehaviorAdd(hero, "AbathurMinefieldDropSpeed", hero, 1);
     return true;
@@ -141,12 +146,12 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
         return true;
     }
     libAffx_abathurStarted = true;
-    libAffx_abathurLastNest = -libAffx_abathurDropInterval;
+    libAffx_abathurSinceLastNest = libAffx_abathurDropInterval;
     nestHit = TriggerCreate("libAffx_AbathurNestHit_Func");
     TriggerAddEventUnitDamaged(nestHit, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
     nestDamage = TriggerCreate("libAffx_AbathurNestDamage_Func");
     TriggerAddEventUnitDamaged(nestDamage, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
     TriggerAddEventUnitDamaged(nestDamage, null, c_unitDamageTypeAny, c_unitDamageEither, "AbathurToxicNestEnvenomedNestDamage");
-    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), 0.25, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
 }
