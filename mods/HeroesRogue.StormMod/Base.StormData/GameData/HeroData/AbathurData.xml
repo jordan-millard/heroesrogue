@@ -242,6 +242,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <DisableEffect value="ApplyGenericDecloakCaster" />
   </CBehaviorBuff>
 
+  <!-- Brutal Slap (Legendary): Slapathur's Stun on a Hero also deals 10% of the Hero's maximum Health. Added to the
+       Hero branch, which only runs when the Stun lands (not on the per-Hero internal cooldown, not Unstoppable). -->
+  <CEffectDamage id="AbathurBrutalSlapDamage" parent="StormSpell">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.1" />
+  </CEffectDamage>
+  <CEffectSet id="AbathurSlapathurApplyStunSetHero">
+    <EffectArray value="AbathurBrutalSlapDamage" />
+  </CEffectSet>
+
   <CButton id="AbathurMinefieldTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>

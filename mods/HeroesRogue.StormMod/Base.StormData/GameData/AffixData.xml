@@ -4775,6 +4775,23 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
+        <Instances Id="AbathurBrutalSlap">
+            <String String="Assets/Textures/storm_ui_icon_abathur_carapace.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Abathur">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AbathurMinefield">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AbathurBrutalSlapDamage,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
         <Instances Id="AbathurVolatileSpores">
             <String String="Assets/Textures/storm_ui_icon_abathur_toxicNest.dds">
                 <Field Id="Icon" />
