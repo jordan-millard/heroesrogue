@@ -8,7 +8,7 @@ include "AffixTriggers"
 // recharges twice as fast instead.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 4 seconds of that Stun, adds 1%
-// Slapathur Stun duration and 30 maximum Health.
+// Slapathur Stun duration, 30 maximum Health, 1 flat nest damage (AbathurData.xml) and 1% Locust Health.
 // Stacks carry over between games through QuestRetain; nest damage is in AbathurData.xml.
 // ============================================================
 
@@ -133,6 +133,24 @@ void libAffx_AbathurSyncSlapRewards(unit hero) {
     }
 }
 
+// New Locusts gain 1% Health per Slapathur quest stack
+bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
+    unit locust = EventUnitCreatedUnit();
+    string type = UnitGetType(locust);
+    fixed lifeMax;
+    unit hero = libAffx_AbathurHero();
+    if (UnitGetOwner(locust) != libAffx_player || hero == null || !libAffx_AbathurHasStarter()) {
+        return false;
+    }
+    if (type != "AbathurLocustNormal" && type != "AbathurLocustBombardStrain" && type != "AbathurLocustAssaultStrain") {
+        return false;
+    }
+    lifeMax = UnitGetPropertyFixed(locust, c_unitPropLifeMax, c_unitPropCurrent) * (1.0 + UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter") / 100.0);
+    UnitSetPropertyFixed(locust, c_unitPropLifeMax, lifeMax);
+    UnitSetPropertyFixed(locust, c_unitPropLife, lifeMax);
+    return true;
+}
+
 // Clean Slate: removes every Toxic Nest Abathur has placed
 void libAffx_AbathurRemoveNests() {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
@@ -251,6 +269,7 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
     TriggerAddEventUnitBehaviorChange(slapStun, null, "AbathurSlapathurStun", c_unitBehaviorChangeCreate);
     slapKill = TriggerCreate("libAffx_AbathurSlapKill_Func");
     TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
+    TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurLocustSpawned_Func"), null, null, null);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
 }
