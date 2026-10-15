@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast: one drops under Abathur every 3 seconds (2 with Rapid Gestation, 0.5 during Frenzy,
 // 0.12 with Clean Slate, about 25 nests, which also removes every nest when Frenzy starts).
-// Hit quest: each enemy Hero hit by a nest explosion adds 3% nest damage.
+// Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown within 3 seconds of Abathur's Basic Attack hitting them adds 20 flat nest
 // damage and 50 maximum Health.
 // Stacks carry over between games through QuestRetain; the damage itself is in AbathurData.xml.
@@ -17,7 +17,7 @@ const fixed libAffx_abathurDropIntervalCleanSlate = 0.12; // about 25 nests over
 const fixed libAffx_abathurNestingInstinctFactor = 0.5; // 50% faster while standing still
 const fixed libAffx_abathurTakedownWindow = 3.0;
 const int libAffx_abathurSlapLifePerStack = 50; // matches AbathurSlapathurQuestLife
-const int libAffx_abathurHeroHitStacks = 3;
+const int libAffx_abathurHeroHitStacks = 2;
 
 bool libAffx_abathurStarted;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
