@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 3 seconds of Slapathur stunning an enemy Hero. Activating Frenzy removes all of his nests; during Frenzy they drop
-// every 0.5 seconds regardless (0.12 with Overgrowth, which then stops normal drops for 30 seconds after Frenzy ends).
+// every 0.5 seconds regardless (0.135 with Overgrowth, whose Frenzy nests only last 30 seconds).
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 5 seconds of that Stun, adds 1%
@@ -15,8 +15,7 @@ include "AffixTriggers"
 const fixed libAffx_abathurDropInterval = 3.0;
 const fixed libAffx_abathurDropIntervalRapid = 2.0;
 const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
-const fixed libAffx_abathurDropIntervalOvergrowth = 0.12; // about 25 nests over the 3 second Overgrowth Frenzy
-const fixed libAffx_abathurOvergrowthLockout = 30.0; // no normal drops this long after an Overgrowth Frenzy
+const fixed libAffx_abathurDropIntervalOvergrowth = 0.135; // about 22 nests over the 3 second Overgrowth Frenzy
 const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
 const fixed libAffx_abathurAttackLockout = 3.0; // no nests this long after a Slapathur Stun on a Hero, outside Frenzy
 const fixed libAffx_abathurTakedownWindow = 5.0;
@@ -30,7 +29,6 @@ bool libAffx_abathurStarted;
 bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
 fixed libAffx_abathurAttackLockoutLeft; // counts down only while the game isn't paused
-fixed libAffx_abathurOvergrowthLockoutLeft; // counts down only while the game isn't paused
 fixed libAffx_abathurStunBonusApplied; // seconds the Slapathur quest currently adds to AbathurSlapathurStun
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapStunTime; // per enemy player, last Slapathur Stun
 
@@ -155,7 +153,7 @@ void libAffx_AbathurSyncSlapRewards(unit hero) {
     }
 }
 
-// New Locusts gain 3% Health per Slapathur quest stack
+// Nests placed during an Overgrowth Frenzy only last 30 seconds; new Locusts gain 3% Health per Slapathur quest stack
 bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     unit locust = EventUnitCreatedUnit();
     string type = UnitGetType(locust);
@@ -163,6 +161,12 @@ bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
     if (UnitGetOwner(locust) != libAffx_player || hero == null || !libAffx_AbathurHasStarter()) {
         return false;
+    }
+    if (type == "AbathurToxicNest") {
+        if (UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff") && PlayerHasTalent(libAffx_player, "AbathurOvergrowth")) {
+            UnitBehaviorAdd(locust, "AbathurOvergrowthNestLifetime", locust, 1);
+        }
+        return true;
     }
     if (type != "AbathurLocustNormal" && type != "AbathurLocustBombardStrain" && type != "AbathurLocustAssaultStrain") {
         return false;
@@ -203,9 +207,6 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (libAffx_abathurAttackLockoutLeft > 0.0) {
         libAffx_abathurAttackLockoutLeft -= libAffx_abathurDropTickPeriod;
     }
-    if (libAffx_abathurOvergrowthLockoutLeft > 0.0) {
-        libAffx_abathurOvergrowthLockoutLeft -= libAffx_abathurDropTickPeriod;
-    }
     frenzy = UnitHasBehavior2(hero, "AbathurMinefieldFrenzyBuff");
     if (frenzy) {
         interval = libAffx_abathurDropIntervalFrenzy;
@@ -219,10 +220,6 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
             libAffx_abathurSinceLastNest = interval;
         }
     } else {
-        if (libAffx_abathurFrenzyActive && PlayerHasTalent(libAffx_player, "AbathurOvergrowth")) {
-            // Overgrowth Frenzy just ended
-            libAffx_abathurOvergrowthLockoutLeft = libAffx_abathurOvergrowthLockout;
-        }
         libAffx_abathurFrenzyActive = false;
         if (UnitHasBehavior2(hero, "AbathurRapidGestationMarker")) {
             interval = libAffx_abathurDropIntervalRapid;
@@ -235,7 +232,7 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (libAffx_abathurSinceLastNest > interval) {
         libAffx_abathurSinceLastNest = interval; // a full timer waits for the next chance to drop
     }
-    if (!frenzy && (libAffx_abathurAttackLockoutLeft > 0.0 || libAffx_abathurOvergrowthLockoutLeft > 0.0)) {
+    if (!frenzy && libAffx_abathurAttackLockoutLeft > 0.0) {
         return false;
     }
     if (libAffx_abathurSinceLastNest < interval - 0.01) {

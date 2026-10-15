@@ -178,7 +178,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
   </CButton>
   <!-- Level 10 talents. Prolonged Frenzy: +2 seconds and 30% Movement Speed. Overgrowth: 120 second cooldown and 1 second
-       shorter; Frenzy drops about 25 nests (script), then normal drops stop for 30 seconds after it ends. -->
+       shorter; Frenzy drops about 22 nests (script) that only last 30 seconds. -->
+  <CBehaviorBuff id="AbathurOvergrowthNestLifetime">
+    <Duration value="30" />
+    <DisplayDuration index="Self" value="1" />
+    <DisplayDuration index="Ally" value="1" />
+    <ExpireEffect value="ToxicNestSuicideSet" />
+  </CBehaviorBuff>
   <CTalent id="AbathurProlongedFrenzy">
     <Face value="AbathurProlongedFrenzy" />
     <Abil value="AbathurMinefieldFrenzy" />
