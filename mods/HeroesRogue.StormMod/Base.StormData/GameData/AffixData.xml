@@ -4531,11 +4531,34 @@
             <String String="ChoGall">
                 <Field Id="HeroTooltip" />
             </String>
+            <String String="Butcher">
+                <Field Id="HeroesExcluded" />
+            </String>
             <String String="HeroLevelUp libAffx_AllTalentsLevelUp">
                 <Field Id="Trigger" />
             </String>
             <String String="AffixAdded libAffx_AllTalentsAffixAdded">
                 <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ButcherPrimeCuts">
+            <String String="Assets/Textures/storm_ui_icon_butcher_freshmeat.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Butcher">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ButcherCleaver">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GenericTalentNexusBlades">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="ButcherFreshMeatTokenCounter 1.0">
+                <Field Id="QuestRetain" />
             </String>
         </Instances>
         <Instances Id="OverwhelmingPower">
