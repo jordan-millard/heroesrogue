@@ -30,6 +30,22 @@ bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// HeroGainTalent: Prolific Dispersal adds 45 seconds to the nest lifetime, which would end "last forever", so set it back
+bool libAffx_AbathurTalentGained (bool testConds, bool runActions) {
+    unit hero = libAffx_AbathurHero();
+    if (testConds) {
+        if (libGame_gf_HeroGainTalentPlayer() != libAffx_player) {
+            return false;
+        }
+    }
+    if (hero == null || !UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
+        return false;
+    }
+    Wait(0.0625, c_timeGame);
+    CatalogFieldValueSet(c_gameCatalogBehavior, "ToxicNestSearchBehaviorTimedLife", "Duration", libAffx_player, "0");
+    return true;
+}
+
 // AffixAdded for Minefield
 bool libAffx_AbathurStart (bool testConds, bool runActions) {
     trigger nestHit;
