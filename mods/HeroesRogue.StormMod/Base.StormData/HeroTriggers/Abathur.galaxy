@@ -5,7 +5,7 @@ include "AffixTriggers"
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
 // 3 seconds of Slapathur stunning an enemy Hero. During Frenzy they drop every 0.5 seconds regardless. Unleash the Swarm
 // (level 4 talent, activated with 1) removes all of his nests and summons a Locust for every 3 of them (Lingering Brood:
-// each has a 35% chance to stay; Colossal Locust: one scaled Locust instead); its button shows the nest count. Resilient
+// each has a 50% chance to stay; Colossal Locust: one scaled Locust instead); its button shows the nest count. Resilient
 // Nests gives each triggered nest a 30% chance to be replaced. Chitinous Bulwark (Epic) gives a shield stack per Hero hit.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
@@ -30,8 +30,10 @@ const fixed libAffx_abathurSlapNestScatterMin = 1.5; // Parasitic Slap nests lan
 const fixed libAffx_abathurSlapNestScatterMax = 3.5;
 const int libAffx_abathurRearmChance = 30; // Resilient Nests, percent
 const int libAffx_abathurMinesPerLocust = 3;
-const int libAffx_abathurLingeringKeepChance = 35; // percent per nest
+const int libAffx_abathurLingeringKeepChance = 50; // percent per nest
 const fixed libAffx_abathurColossalDamagePerStack = 0.1; // matches AbathurColossalLocustPower
+const fixed libAffx_abathurColossalDamageFactor = 2.0; // damage of 2 Locusts per 3 nests
+const fixed libAffx_abathurColossalLifeFactor = 0.5; // Health of half a Locust per 3 nests
 const fixed libAffx_abathurRearmDelay = 0.5;
 const fixed libAffx_abathurFrenzyScatterMin = 0.75; // Frenzy nests land this far from Abathur, in a random direction
 const fixed libAffx_abathurFrenzyScatterMax = 2.5;
@@ -214,10 +216,10 @@ bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
         if (factor < 1.0) {
             factor = 1.0;
         }
-        lifeMax = lifeMax * factor;
+        lifeMax = lifeMax * factor * libAffx_abathurColossalLifeFactor;
         // Locusts lose Health over time; scale that too so the Colossal Locust lives as long as a normal one
-        UnitSetPropertyFixed(locust, c_unitPropLifeRegen, UnitGetPropertyFixed(locust, c_unitPropLifeRegen, c_unitPropCurrent) * factor);
-        stacks = FixedToInt((factor - 1.0) / libAffx_abathurColossalDamagePerStack);
+        UnitSetPropertyFixed(locust, c_unitPropLifeRegen, UnitGetPropertyFixed(locust, c_unitPropLifeRegen, c_unitPropCurrent) * factor * libAffx_abathurColossalLifeFactor);
+        stacks = FixedToInt((factor * libAffx_abathurColossalDamageFactor - 1.0) / libAffx_abathurColossalDamagePerStack);
         if (stacks > 0) {
             UnitBehaviorAdd(locust, "AbathurColossalLocustPower", locust, stacks);
         }
@@ -253,7 +255,7 @@ bool libAffx_AbathurNestTriggered_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Unleash the Swarm: removes all of Abathur's Toxic Nests (Lingering Brood: each has a 35% chance to stay) and summons a
+// Unleash the Swarm: removes all of Abathur's Toxic Nests (Lingering Brood: each has a 50% chance to stay) and summons a
 // Locust for every 3 of them, kept ones included. With Colossal Locust it summons one Locust scaled by the nest count instead.
 void libAffx_AbathurUnleashSwarm(unit hero) {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);

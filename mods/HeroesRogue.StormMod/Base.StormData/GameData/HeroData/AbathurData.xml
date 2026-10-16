@@ -253,9 +253,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_abathur_spawnlocust.dds" />
   </CButton>
   <!-- Level 10 talents, both handled in HeroTriggers/Abathur.galaxy. Lingering Brood: each nest Unleash the Swarm would
-       remove has a 35% chance to stay (it still counts toward Locusts). Colossal Locust: Unleash the Swarm summons one
-       Locust scaled by the number of nests instead of one Locust per 3 nests; AbathurColossalLocustPower stacks give it
-       +10% damage each. -->
+       remove has a 50% chance to stay (it still counts toward Locusts). Colossal Locust: Unleash the Swarm summons one
+       Locust scaled by the number of nests instead of one Locust per 3 nests: per 3 nests, the damage of 2 Locusts
+       (AbathurColossalLocustPower stacks, +10% damage each) and the Health of half a Locust. -->
   <CTalent id="AbathurLingeringBrood">
     <Face value="AbathurLingeringBrood" />
     <Abil value="AbathurUnleashSwarm" />
