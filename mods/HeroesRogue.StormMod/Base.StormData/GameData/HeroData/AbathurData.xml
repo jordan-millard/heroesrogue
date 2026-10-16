@@ -218,6 +218,30 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CTalent id="AbathurUnleashSwarm">
     <Face value="AbathurUnleashSwarm" />
     <Abil value="AbathurUnleashSwarm" />
+    <!-- +1.5 Locust attack range -->
+    <AbilityModificationArray>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Weapon" />
+        <Entry value="AbathurLocustBombardWeapon" />
+        <Field value="Range" />
+        <Value value="1.5" />
+      </Modifications>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Weapon" />
+        <Entry value="AbathurLocustBombardWeaponCloseRange" />
+        <Field value="Range" />
+        <Value value="1.5" />
+      </Modifications>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Weapon" />
+        <Entry value="AbathurLocustWeapon" />
+        <Field value="Range" />
+        <Value value="1.5" />
+      </Modifications>
+    </AbilityModificationArray>
     <RankArray>
       <BehaviorArray value="AbathurUnleashSwarmItem" />
       <BehaviorArray value="AbathurUnleashSwarmNestCount" />
