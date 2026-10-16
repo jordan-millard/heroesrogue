@@ -10,7 +10,7 @@ include "AffixTriggers"
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 6 seconds of that Stun, adds 1%
-// Slapathur Stun duration.
+// to how long Slapathur disables Minions, Mercenaries and Structures (not Heroes), 30 maximum Health, 2 flat nest damage (AbathurData.xml) and 3% Locust Health.
 // Stacks carry over between games through QuestRetain; nest damage is in AbathurData.xml.
 // ============================================================
 
@@ -20,7 +20,8 @@ const fixed libAffx_abathurDropIntervalFrenzy = 0.5;
 const fixed libAffx_abathurNestingInstinctFactor = 0.6; // 40% faster
 const fixed libAffx_abathurAttackLockout = 3.0; // no nests this long after a Slapathur Stun on a Hero, outside Frenzy
 const fixed libAffx_abathurTakedownWindow = 6.0; // matches Slapathur's 6 second internal cooldown visual
-const fixed libAffx_abathurSlapStunPerStack = 0.01;
+const int libAffx_abathurSlapLifePerStack = 30; // matches AbathurSlapathurQuestLife
+const fixed libAffx_abathurSlapDisablePerStack = 0.01; // non-Heroes only
 const int libAffx_abathurHeroHitStacks = 2;
 const fixed libAffx_abathurDropTickPeriod = 0.0625;
 const fixed libAffx_abathurSlapNestArming = 3.0; // Parasitic Slap
@@ -39,7 +40,6 @@ bool libAffx_abathurFrenzyActive;
 fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused (boon picks and menus)
 fixed libAffx_abathurAttackLockoutLeft; // counts down only while the game isn't paused
 int libAffx_abathurColossalPendingNests; // the next Locust becomes the Colossal Locust for this many nests
-fixed libAffx_abathurStunBonusApplied; // seconds the Slapathur quest currently adds to AbathurSlapathurStun
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapStunTime; // per enemy player, last Slapathur Stun
 
 unit libAffx_AbathurHero() {
@@ -93,12 +93,37 @@ void libAffx_AbathurSlapNest(unit target) {
     }
 }
 
+// Slapathur quest: Slapathur's Stun on a non-Hero, or its Structure disable, lasts 1% longer per stack
+void libAffx_AbathurExtendSlapDisable(unit victim, string behavior) {
+    unit caster = UnitBehaviorEffectUnit(victim, behavior, c_effectUnitCaster, 0);
+    fixed tokens;
+    if (caster == null || UnitGetOwner(caster) != libAffx_player || caster != libAffx_AbathurHero()) {
+        return;
+    }
+    tokens = UnitGetTokenCount(caster, "AbathurMinefieldTakedownTokenCounter");
+    if (tokens <= 0.0) {
+        return;
+    }
+    UnitBehaviorSetDurationRemaining(victim, behavior, UnitBehaviorDuration(victim, behavior) * (1.0 + tokens * libAffx_abathurSlapDisablePerStack));
+}
+bool libAffx_AbathurSlapStructureDisable_Func (bool testConds, bool runActions) {
+    libAffx_AbathurExtendSlapDisable(EventUnit(), "AbathurSlapathurStructureDisable");
+    return true;
+}
+
 // Slapathur Stun applied to an enemy Hero: opens the Slapathur quest window, pauses timed nest drops (and Parasitic
 // Slap drops a nest)
 bool libAffx_AbathurSlapStun_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit caster = UnitBehaviorEffectUnit(victim, "AbathurSlapathurStun", c_effectUnitCaster, 0);
-    if (caster == null || UnitGetOwner(caster) != libAffx_player || !libAffx_AbathurIsEnemyHero(victim)) {
+    if (caster == null || UnitGetOwner(caster) != libAffx_player) {
+        return false;
+    }
+    if (!UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        libAffx_AbathurExtendSlapDisable(victim, "AbathurSlapathurStun");
+        return true;
+    }
+    if (!libAffx_AbathurIsEnemyHero(victim)) {
         return false;
     }
     libAffx_abathurSlapStunTime[UnitGetOwner(victim)] = GameGetMissionTime();
@@ -148,20 +173,20 @@ bool libAffx_AbathurTakedown (bool testConds, bool runActions) {
     return true;
 }
 
-// Keeps the Slapathur quest reward equal to its stack count (covers stacks loaded from the bank): 1% Slapathur Stun
-// duration per stack on top of whatever the Stun duration is otherwise (Crushing Slap adds to it)
+// Keeps the Slapathur quest rewards equal to its stack count (covers stacks loaded from the bank): one
+// AbathurSlapathurQuestLife stack (+30 maximum Health) per stack
 void libAffx_AbathurSyncSlapRewards(unit hero) {
     int tokens = FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter"));
-    fixed stun = CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "AbathurSlapathurStun", "Duration", libAffx_player);
-    fixed baseStun = stun - libAffx_abathurStunBonusApplied;
-    fixed stunBonus = baseStun * libAffx_abathurSlapStunPerStack * IntToFixed(tokens);
-    if (stunBonus - libAffx_abathurStunBonusApplied > 0.001 || libAffx_abathurStunBonusApplied - stunBonus > 0.001) {
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AbathurSlapathurStun", "Duration", libAffx_player, baseStun + stunBonus);
-        libAffx_abathurStunBonusApplied = stunBonus;
+    int stacks = UnitBehaviorCount(hero, "AbathurSlapathurQuestLife");
+    if (tokens > stacks) {
+        UnitBehaviorAdd(hero, "AbathurSlapathurQuestLife", hero, tokens - stacks);
+        UnitSetPropertyFixed(hero, c_unitPropLife, UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent) + IntToFixed((tokens - stacks) * libAffx_abathurSlapLifePerStack));
+    } else if (tokens < stacks) {
+        UnitBehaviorRemove(hero, "AbathurSlapathurQuestLife", stacks - tokens);
     }
 }
 
-// A Colossal Locust counts as one Locust per 3 nests removed
+// New Locusts gain 3% Health per Slapathur quest stack; a Colossal Locust also counts as one Locust per 3 nests removed
 bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     unit locust = EventUnitCreatedUnit();
     string type = UnitGetType(locust);
@@ -176,7 +201,7 @@ bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     if (type != "AbathurLocustNormal" && type != "AbathurLocustBombardStrain" && type != "AbathurLocustAssaultStrain") {
         return false;
     }
-    lifeMax = UnitGetPropertyFixed(locust, c_unitPropLifeMax, c_unitPropCurrent);
+    lifeMax = UnitGetPropertyFixed(locust, c_unitPropLifeMax, c_unitPropCurrent) * (1.0 + UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter") * 0.03);
     if (libAffx_abathurColossalPendingNests > 0) {
         factor = IntToFixed(libAffx_abathurColossalPendingNests) / IntToFixed(libAffx_abathurMinesPerLocust);
         libAffx_abathurColossalPendingNests = 0;
@@ -367,6 +392,7 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(nestHit, null, c_unitDamageTypeAny, c_unitDamageEither, "ToxicNestDamage");
     slapStun = TriggerCreate("libAffx_AbathurSlapStun_Func");
     TriggerAddEventUnitBehaviorChange(slapStun, null, "AbathurSlapathurStun", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_AbathurSlapStructureDisable_Func"), null, "AbathurSlapathurStructureDisable", c_unitBehaviorChangeCreate);
     slapKill = TriggerCreate("libAffx_AbathurSlapKill_Func");
     TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
     TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurLocustSpawned_Func"), null, null, null);
