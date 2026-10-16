@@ -22,7 +22,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- Boon markers handled by the script -->
   <CBehaviorBuff id="ChenWildfireMarker" parent="CarryBehaviorParent" />
-  <CBehaviorBuff id="ChenClearMindMarker" parent="CarryBehaviorParent" />
+  <!-- Iron Ox: 50% of incoming damage reflected while Staggering or drinking Fortifying Brew (amount set by the script) -->
+  <CEffectDamage id="ChenIronOxReflectDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="ChenStagger" />
+  </CEffectDamage>
 
   <!-- ===== Stormstout Inferno ===== -->
   <!-- Breath of Fire also Ignites enemies that aren't soaked in Brew, for 50% damage: those get a weak-burn mark and the

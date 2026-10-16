@@ -5,9 +5,10 @@ include "AffixTriggers"
 // Stormstout Inferno, Eternal Flame quest: an enemy Hero takedown while they're Ignited (an Ignite tick within the
 // last 1.5 seconds) adds 1% Ignite and Ring of Fire damage (ChenData.xml). Wildfire (Epic): when an Ignited enemy
 // dies, the Ignite spreads to enemies within 4.
-// Iron Ox, Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 15
-// maximum Health (ChenIronBellyLife, kept equal to the stack count). Clear Mind (Epic): Basic Attacks on enemy Heroes
-// remove 10% of the damage Stagger has stored.
+// Iron Ox: 50% shorter Stuns, Roots and Slows (the base 50PercentCCReduction behavior, read by GameLib's CC
+// Recognition), and 50% of incoming damage is reflected to the attacker while Stagger is up or Chen is drinking
+// Fortifying Brew. Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 15
+// maximum Health (ChenIronBellyLife, kept equal to the stack count).
 // Drunken Master's quest and boons are all in ChenData.xml.
 // Stacks carry over between games through QuestRetain.
 // ============================================================
@@ -15,7 +16,7 @@ include "AffixTriggers"
 const fixed libAffx_chenIgniteWindow = 1.5; // Ignite ticks every second
 const fixed libAffx_chenWildfireRadius = 4.0;
 const fixed libAffx_chenIronBellyDamagePerStack = 1000.0;
-const fixed libAffx_chenClearMindFraction = 0.9; // stored Stagger damage kept per Basic Attack
+const fixed libAffx_chenReflectFraction = 0.5;
 const int libAffx_chenIronBellyLifePerStack = 15; // matches ChenIronBellyLife
 
 bool libAffx_chenStarted;
@@ -102,12 +103,21 @@ bool libAffx_ChenWildfire_Func (bool testConds, bool runActions) {
 
 // ---------- Iron Ox ----------
 
-// Damage to Chen: what Stagger prevented, or Fortifying Brew Shields absorbed, counts toward Iron Belly
+// Damage to Chen: reflected while Staggering or drinking, and what Stagger prevented, or Fortifying Brew Shields
+// absorbed, counts toward Iron Belly
 bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
+    unit attacker = EventUnitDamageSourceUnit();
     fixed blocked = 0.0;
+    fixed reflected;
     if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
+    }
+    if (UnitHasBehavior2(hero, "ChenStaggerProtectedBuff") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior")) {
+        reflected = EventUnitDamageAttempted() * libAffx_chenReflectFraction;
+        if (reflected > 0.0 && attacker != null && attacker != hero && UnitIsAlive(attacker) && UnitGetOwner(attacker) != libAffx_player) {
+            UnitDamage(hero, "ChenIronOxReflectDamage", attacker, reflected);
+        }
     }
     if (UnitHasBehavior2(hero, "ChenStaggerProtectedBuff")) {
         blocked = EventUnitDamageAttempted() - EventUnitDamageAmount();
@@ -126,13 +136,17 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Keeps ChenIronBellyLife equal to the Iron Belly stack count (covers stacks loaded from the bank)
+// Keeps ChenIronBellyLife equal to the Iron Belly stack count (covers stacks loaded from the bank), and keeps Iron Ox's
+// CC reduction on Chen
 bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
     int tokens;
     int stacks;
     if (hero == null || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
+    }
+    if (!UnitHasBehavior2(hero, "50PercentCCReduction")) {
+        UnitBehaviorAdd(hero, "50PercentCCReduction", hero, 1);
     }
     tokens = FixedToInt(UnitGetTokenCount(hero, "ChenIronBellyTokenCounter"));
     stacks = UnitBehaviorCount(hero, "ChenIronBellyLife");
@@ -147,33 +161,11 @@ bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Clear Mind: a Basic Attack on an enemy Hero removes 10% of the damage Stagger has stored
-bool libAffx_ChenClearMind_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_ChenHero();
-    fixed stored;
-    if (hero == null || EventUnitDamageSourceUnit() != hero || !UnitHasBehavior2(hero, "ChenClearMindMarker")) {
-        return false;
-    }
-    if (!libAffx_ChenIsEnemyHero(EventUnit())) {
-        return false;
-    }
-    stored = UnitGetTokenCount(hero, "ChenStaggerTokenCounter");
-    if (stored > 0.0) {
-        UnitSetTokenCount(hero, "ChenStaggerTokenCounter", stored * libAffx_chenClearMindFraction, hero);
-    }
-    stored = UnitGetTokenCount(hero, "ChenStaggerDisplayTokenCounter");
-    if (stored > 0.0) {
-        UnitSetTokenCount(hero, "ChenStaggerDisplayTokenCounter", stored * libAffx_chenClearMindFraction, hero);
-    }
-    return true;
-}
-
 // AffixAdded for all three starters
 bool libAffx_ChenStart (bool testConds, bool runActions) {
     trigger igniteTick;
     trigger wildfire;
     trigger ironBelly;
-    trigger clearMind;
     if (libAffx_chenStarted) {
         return true;
     }
@@ -184,8 +176,6 @@ bool libAffx_ChenStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(wildfire, null, c_unitDamageTypeAny, c_unitDamageFatal, null);
     ironBelly = TriggerCreate("libAffx_ChenIronBellyDamage_Func");
     TriggerAddEventUnitDamaged(ironBelly, null, c_unitDamageTypeAny, c_unitDamageEither, null);
-    clearMind = TriggerCreate("libAffx_ChenClearMind_Func");
-    TriggerAddEventUnitDamaged(clearMind, null, c_unitDamageTypeAny, c_unitDamageEither, "ChenHeroWeaponDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChenSync_Func"), 0.5, c_timeGame);
     return true;
 }
