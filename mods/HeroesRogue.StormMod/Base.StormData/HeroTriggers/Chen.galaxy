@@ -6,8 +6,8 @@ include "AffixTriggers"
 // last 1.5 seconds) adds 1% Ignite and Ring of Fire damage (ChenData.xml). Wildfire (Epic): when an Ignited enemy
 // dies, the Ignite spreads to enemies within 4.
 // Iron Ox: 50% shorter Stuns, Roots and Slows (the base 50PercentCCReduction behavior, read by GameLib's CC
-// Recognition), and 50% of incoming damage is reflected to the attacker while Stagger is up or Chen is drinking
-// Fortifying Brew (150% with the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 50
+// Recognition), and 150% of incoming damage is reflected to the attacker while Stagger is up or Chen is drinking
+// Fortifying Brew (300% with the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 50
 // maximum Health (ChenIronBellyLife, kept equal to the stack count).
 // Drunken Master's quest and boons are all in ChenData.xml.
 // Stacks carry over between games through QuestRetain.
@@ -16,8 +16,8 @@ include "AffixTriggers"
 const fixed libAffx_chenIgniteWindow = 1.5; // Ignite ticks every second
 const fixed libAffx_chenWildfireRadius = 4.0;
 const fixed libAffx_chenIronBellyDamagePerStack = 1000.0;
-const fixed libAffx_chenReflectFraction = 0.5;
-const fixed libAffx_chenReflectFractionLegendary = 1.5; // Mountain's Wrath
+const fixed libAffx_chenReflectFraction = 1.5;
+const fixed libAffx_chenReflectFractionLegendary = 3.0; // Mountain's Wrath
 const int libAffx_chenIronBellyLifePerStack = 50; // matches ChenIronBellyLife
 
 bool libAffx_chenStarted;
