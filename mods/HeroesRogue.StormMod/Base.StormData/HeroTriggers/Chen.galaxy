@@ -6,8 +6,8 @@ include "AffixTriggers"
 // last 1.5 seconds) adds 1% Ignite and Ring of Fire damage (ChenData.xml). Wildfire (Epic): when an Ignited enemy
 // dies, the Ignite spreads to enemies within 4.
 // Iron Ox: 50% shorter Stuns, Roots and Slows (the base 50PercentCCReduction behavior, read by GameLib's CC
-// Recognition), and 150% of incoming damage is reflected to the attacker while Stagger is up or Chen is drinking
-// Fortifying Brew (300% with the Legendary Mountain's Wrath; 10 times that against non-Heroes). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 15
+// Recognition), and 200% of incoming damage (1000% from non-Heroes) is reflected to the attacker while Stagger is up or Chen is drinking
+// Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 15
 // maximum Health (ChenIronBellyLife, kept equal to the stack count).
 // Drunken Master's quest and boons are all in ChenData.xml.
 // Stacks carry over between games through QuestRetain.
@@ -16,9 +16,9 @@ include "AffixTriggers"
 const fixed libAffx_chenIgniteWindow = 1.5; // Ignite ticks every second
 const fixed libAffx_chenWildfireRadius = 4.0;
 const fixed libAffx_chenIronBellyDamagePerStack = 1000.0;
-const fixed libAffx_chenReflectFraction = 1.5;
-const fixed libAffx_chenReflectFractionLegendary = 3.0; // Mountain's Wrath
-const fixed libAffx_chenReflectNonHeroMultiplier = 10.0; // non-Hero attackers take 1500% (3000% with Mountain's Wrath)
+const fixed libAffx_chenReflectFraction = 2.0; // Hero attackers
+const fixed libAffx_chenReflectFractionNonHero = 10.0;
+const fixed libAffx_chenReflectLegendaryMultiplier = 2.0; // Mountain's Wrath
 const int libAffx_chenIronBellyLifePerStack = 15; // matches ChenIronBellyLife
 
 bool libAffx_chenStarted;
@@ -117,11 +117,11 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     }
     if (UnitHasBehavior2(hero, "ChenStaggerProtectedBuff") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior")) {
         reflected = EventUnitDamageAttempted() * libAffx_chenReflectFraction;
-        if (UnitHasBehavior2(hero, "ChenMountainsWrathMarker")) {
-            reflected = EventUnitDamageAttempted() * libAffx_chenReflectFractionLegendary;
-        }
         if (attacker != null && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeHeroic)) {
-            reflected = reflected * libAffx_chenReflectNonHeroMultiplier;
+            reflected = EventUnitDamageAttempted() * libAffx_chenReflectFractionNonHero;
+        }
+        if (UnitHasBehavior2(hero, "ChenMountainsWrathMarker")) {
+            reflected = reflected * libAffx_chenReflectLegendaryMultiplier;
         }
         if (reflected > 0.0 && attacker != null && attacker != hero && UnitIsAlive(attacker) && UnitGetOwner(attacker) != libAffx_player) {
             UnitDamage(hero, "ChenIronOxReflectDamage", attacker, reflected);
