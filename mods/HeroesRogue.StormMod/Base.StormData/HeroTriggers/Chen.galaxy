@@ -156,15 +156,17 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
 // stack cap is set so the maximum Shield is 2% higher per quest stack (rounded to whole stacks)
 void libAffx_ChenSetBrewShield () {
     fixed tokens = UnitGetTokenCount(libAffx_ChenHero(), "ChenIronBellyTokenCounter");
-    fixed shield = StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenIronBellyShieldReference", "DamageResponse.ModifyLimit", libAffx_player));
+    fixed shield = StringToFixed(CatalogReferenceGet("Behavior,ChenIronBellyShieldReference,DamageResponse.ModifyLimit", libAffx_player));
     fixed gain = 1.0 + tokens * libAffx_chenIronBellyShieldPerStack;
     int maxStacks = FixedToInt(IntToFixed(libAffx_chenBrewShieldMaxStacks) * (1.0 + tokens * libAffx_chenIronBellyShieldMaxPerStack) / gain + 0.5);
     shield = shield * gain;
-    if (AbsF(StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player)) - shield) > 0.01) {
-        CatalogFieldValueSet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player, FixedToString(shield, 2));
+    // CatalogReferenceModify like the affix CatalogModifications: Iron Ox's MaxStackCount 9 is set that way, and a plain
+    // CatalogFieldValueSet stayed under it
+    if (AbsF(StringToFixed(CatalogReferenceGet("Behavior,ChenFortifyingBrewShield,DamageResponse.ModifyLimit", libAffx_player)) - shield) > 0.01) {
+        CatalogReferenceModify("Behavior,ChenFortifyingBrewShield,DamageResponse.ModifyLimit", libAffx_player, FixedToString(shield, 2), c_upgradeOperationSet);
     }
-    if (StringToInt(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "MaxStackCount", libAffx_player)) != maxStacks) {
-        CatalogFieldValueSet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "MaxStackCount", libAffx_player, IntToString(maxStacks));
+    if (StringToInt(CatalogReferenceGet("Behavior,ChenFortifyingBrewShield,MaxStackCount", libAffx_player)) != maxStacks) {
+        CatalogReferenceModify("Behavior,ChenFortifyingBrewShield,MaxStackCount", libAffx_player, IntToString(maxStacks), c_upgradeOperationSet);
     }
 }
 
