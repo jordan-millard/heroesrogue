@@ -3,10 +3,10 @@ include "AffixTriggers"
 // ============================================================
 // Abathur, Minefield.
 // Toxic Nests are no longer cast. One drops under Abathur every 3 seconds (2 with Rapid Gestation), but not within
-// 3 seconds of Slapathur stunning an enemy Hero. Activating Frenzy removes all of his nests; during Frenzy they drop
-// every 0.5 seconds regardless. Activating Frenzy removes all of his nests and summons a Locust for every 3 of them
-// (Lingering Brood: each has a 35% chance to stay; Colossal Locust: one scaled Locust instead). Resilient Nests gives
-// each triggered nest a 30% chance to be replaced.
+// 3 seconds of Slapathur stunning an enemy Hero. During Frenzy they drop every 0.5 seconds regardless. Unleash the Swarm
+// (level 4 talent, activated with 1) removes all of his nests and summons a Locust for every 3 of them (Lingering Brood:
+// each has a 35% chance to stay; Colossal Locust: one scaled Locust instead); its button shows the nest count. Resilient
+// Nests gives each triggered nest a 30% chance to be replaced. Chitinous Bulwark (Epic) gives a shield stack per Hero hit.
 // Nesting Instinct makes every rate 40% faster.
 // Hit quest: each enemy Hero hit by a nest explosion adds 2% nest damage.
 // Slapathur quest: an enemy Hero takedown by Slapathur's stunning hit, or within 6 seconds of that Stun, adds 1%
@@ -66,7 +66,7 @@ bool libAffx_AbathurNestHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libGame_gf_ModifyTokenCount(libAffx_abathurHeroHitStacks, "AbathurMinefieldTokenCounter", libAffx_AbathurHero());
-    if (PlayerHasTalent(libAffx_player, "AbathurChitinousBulwark")) {
+    if (UnitHasBehavior2(libAffx_AbathurHero(), "AbathurChitinousBulwarkMarker")) {
         UnitBehaviorAdd(libAffx_AbathurHero(), "AbathurMinefieldShield", libAffx_AbathurHero(), 1);
     }
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
@@ -226,9 +226,9 @@ bool libAffx_AbathurNestTriggered_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Frenzy: removes all of Abathur's Toxic Nests (Lingering Brood: each has a 35% chance to stay) and summons a Locust
-// for every 3 of them, kept ones included. With Colossal Locust it summons one Locust scaled by the nest count instead.
-void libAffx_AbathurFrenzyClearNests(unit hero) {
+// Unleash the Swarm: removes all of Abathur's Toxic Nests (Lingering Brood: each has a 35% chance to stay) and summons a
+// Locust for every 3 of them, kept ones included. With Colossal Locust it summons one Locust scaled by the nest count instead.
+void libAffx_AbathurUnleashSwarm(unit hero) {
     unitgroup nests = UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
     bool lingering = PlayerHasTalent(libAffx_player, "AbathurLingeringBrood");
     int total = 0;
@@ -257,6 +257,29 @@ void libAffx_AbathurFrenzyClearNests(unit hero) {
     }
 }
 
+bool libAffx_AbathurUnleashSwarm_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AbathurHero();
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero) {
+        return false;
+    }
+    libAffx_AbathurUnleashSwarm(hero);
+    return true;
+}
+
+// Unleash the Swarm's button shows the talent's quest counter; keep it equal to the number of nests on the field
+void libAffx_AbathurSyncNestCount(unit hero) {
+    int nests;
+    int shown;
+    if (!PlayerHasTalent(libAffx_player, "AbathurUnleashSwarm")) {
+        return;
+    }
+    nests = UnitGroupCount(UnitGroup("AbathurToxicNest", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0), c_unitCountAlive);
+    shown = FixedToInt(UnitGetTokenCount(hero, "AbathurUnleashSwarmNestCount"));
+    if (nests != shown) {
+        libGame_gf_ModifyTokenCount(nests - shown, "AbathurUnleashSwarmNestCount", hero);
+    }
+}
+
 // Drops nests on the timer, except shortly after a Basic Attack (Frenzy ignores that)
 bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AbathurHero();
@@ -268,6 +291,7 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_AbathurSyncSlapRewards(hero);
+    libAffx_AbathurSyncNestCount(hero);
     if (libAffx_gamePaused || UnitHasBehaviorWithCategoryFlag(hero, c_behaviorCategoryTimeStop)) {
         return false;
     }
@@ -278,9 +302,8 @@ bool libAffx_AbathurDropTick_Func (bool testConds, bool runActions) {
     if (frenzy) {
         interval = libAffx_abathurDropIntervalFrenzy;
         if (!libAffx_abathurFrenzyActive) {
-            // Frenzy just started: turn the old nests into Locusts, and the first new nest drops right away
+            // Frenzy just started: the first nest drops right away
             libAffx_abathurFrenzyActive = true;
-            libAffx_AbathurFrenzyClearNests(hero);
             libAffx_abathurSinceLastNest = interval;
         }
     } else {
@@ -352,6 +375,7 @@ bool libAffx_AbathurStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(slapKill, null, c_unitDamageTypeAny, c_unitDamageFatal, "AbathurWeaponDamage");
     TriggerAddEventUnitCreated(TriggerCreate("libAffx_AbathurLocustSpawned_Func"), null, null, null);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_AbathurNestTriggered_Func"), c_playerAny, "ToxicNestTriggerSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_AbathurUnleashSwarm_Func"), c_playerAny, "AbathurUnleashSwarmSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AbathurDropTick_Func"), libAffx_abathurDropTickPeriod, c_timeGame);
     return true;
 }

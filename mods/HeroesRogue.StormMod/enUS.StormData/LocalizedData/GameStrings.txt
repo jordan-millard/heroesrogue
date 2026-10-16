@@ -824,20 +824,20 @@ Button/Tooltip/AbathurMinefieldTokenCounter=<c val="#TooltipQuest">Bonus Toxic N
 Button/Name/AbathurMinefieldTakedownTokenCounter=Slapathur
 Button/Tooltip/AbathurMinefieldTakedownTokenCounter=<c val="#TooltipQuest">Bonus Slapathur Stun duration: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$" precision="0"/>%</c><n/>Bonus maximum Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*30" precision="0"/></c><n/>Bonus Toxic Nest damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*2" precision="0"/></c><n/>Bonus Locust Health: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurMinefieldTakedownTokenCounter$*3" precision="0"/>%</c></c>
 Button/Name/AbathurMinefieldFrenzy=Frenzy
-Button/Tooltip/AbathurMinefieldFrenzy=Remove all of your Toxic Nests and summon a Locust for every <c val="#TooltipNumbers">3</c> removed. Abathur then becomes Unstoppable for <c val="#TooltipNumbers">4</c> seconds, dropping a Toxic Nest every <c val="#TooltipNumbers">0.5</c> seconds.
-Button/SimpleDisplayText/AbathurMinefieldFrenzy=Turn your Toxic Nests into Locusts, become Unstoppable and drop Toxic Nests rapidly
-Button/Name/AbathurChitinousBulwark=Chitinous Bulwark
-Button/SimpleDisplayText/AbathurChitinousBulwark=Toxic Nest hits on Heroes grant a lasting Shield
-Button/Tooltip/AbathurChitinousBulwark=Each enemy Hero hit by a Toxic Nest grants a permanent Shield of <c val="#TooltipNumbers">5%</c> of Abathur's maximum Health, stacking up to <c val="#TooltipNumbers">30%</c>.
+Button/Tooltip/AbathurMinefieldFrenzy=Abathur becomes Unstoppable for <c val="#TooltipNumbers">4</c> seconds, dropping a Toxic Nest every <c val="#TooltipNumbers">0.5</c> seconds.
+Button/SimpleDisplayText/AbathurMinefieldFrenzy=Become Unstoppable and drop Toxic Nests rapidly
+Button/Name/AbathurUnleashSwarm=Unleash the Swarm
+Button/SimpleDisplayText/AbathurUnleashSwarm=Activate to turn your Toxic Nests into Locusts
+Button/Tooltip/AbathurUnleashSwarm=Activate to remove all of your Toxic Nests and summon a Locust for every <c val="#TooltipNumbers">3</c> removed.<n/><n/><c val="#TooltipQuest">Toxic Nests: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AbathurUnleashSwarmNestCount$" precision="0"/></c></c>
 Button/Name/AbathurNestingInstinct=Nesting Instinct
 Button/SimpleDisplayText/AbathurNestingInstinct=Drop Toxic Nests faster
 Button/Tooltip/AbathurNestingInstinct=Minefield drops Toxic Nests <c val="#TooltipNumbers">40%</c> faster, including during Frenzy.
 Button/Name/AbathurLingeringBrood=Lingering Brood
-Button/SimpleDisplayText/AbathurLingeringBrood=Some Toxic Nests survive Frenzy
-Button/Tooltip/AbathurLingeringBrood=When Frenzy removes your Toxic Nests, each has a <c val="#TooltipNumbers">35%</c> chance to stay. Toxic Nests that stay still count toward Locusts.
+Button/SimpleDisplayText/AbathurLingeringBrood=Some Toxic Nests survive Unleash the Swarm
+Button/Tooltip/AbathurLingeringBrood=When Unleash the Swarm removes your Toxic Nests, each has a <c val="#TooltipNumbers">35%</c> chance to stay. Toxic Nests that stay still count toward Locusts.
 Button/Name/AbathurColossalLocust=Colossal Locust
-Button/SimpleDisplayText/AbathurColossalLocust=Frenzy summons one giant Locust
-Button/Tooltip/AbathurColossalLocust=Frenzy summons a single Colossal Locust instead, with the Health and damage of one Locust for every <c val="#TooltipNumbers">3</c> Toxic Nests removed.
+Button/SimpleDisplayText/AbathurColossalLocust=Unleash the Swarm summons one giant Locust
+Button/Tooltip/AbathurColossalLocust=Unleash the Swarm summons a single Colossal Locust instead, with the Health and damage of one Locust for every <c val="#TooltipNumbers">3</c> Toxic Nests removed.
 Affix/Name/AbathurRapidGestation=Rapid Gestation
 Affix/Tooltip/AbathurRapidGestation=Minefield drops a Toxic Nest every <c val="#TooltipNumbers">2</c> seconds instead of <c val="#TooltipNumbers">3</c>.
 Affix/Name/AbathurLocustStrain=Locust Strain
@@ -856,6 +856,8 @@ Affix/Name/AbathurMendingCarapace=Mending Carapace
 Affix/Tooltip/AbathurMendingCarapace=When Slapathur Stuns an enemy Hero, Abathur regenerates <c val="#TooltipNumbers">10%</c> of his maximum Health over <c val="#TooltipNumbers">5</c> seconds. Stacks up to <c val="#TooltipNumbers">2</c> times.
 Affix/Name/AbathurVolatileSpores=Volatile Spores
 Affix/Tooltip/AbathurVolatileSpores=Increases the radius of Toxic Nest by <c val="#TooltipNumbers">50%</c>.
+Affix/Name/AbathurChitinousBulwark=Chitinous Bulwark
+Affix/Tooltip/AbathurChitinousBulwark=Each enemy Hero hit by a Toxic Nest grants a permanent Shield of <c val="#TooltipNumbers">5%</c> of Abathur's maximum Health, stacking up to <c val="#TooltipNumbers">30%</c>.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

@@ -46,8 +46,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <MoveSpeedMultiplier value="1.15" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Chitinous Bulwark (level 4 talent): each enemy Hero hit by a nest explosion adds a 5% max Health shield stack
-       (up to 6) that doesn't expire, the same way Falstad's Wildhammer's Bulwark stacks -->
+  <!-- Chitinous Bulwark (Epic): each enemy Hero hit by a nest explosion adds a 5% max Health shield stack (up to 6) that
+       doesn't expire, the same way Falstad's Wildhammer's Bulwark stacks (script) -->
+  <CBehaviorBuff id="AbathurChitinousBulwarkMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AbathurMinefieldShield" parent="StormShield">
     <InfoIcon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
     <MaxStackCount value="6" />
@@ -132,9 +133,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectCreateUnit>
 
   <!-- Frenzy: Minefield's Heroic, available from level 1 (the starter grants AbathurMinefieldFrenzyUnlocked). It replaces
-       Ultimate Evolution and Evolve Monstrosity, which the starter disables. 100 second cooldown. The script removes all
-       of Abathur's nests and summons a Locust per 3 of them, then he is Unstoppable for 4 seconds and drops a nest every
-       0.5 seconds. The level 10 talents Lingering Brood and Colossal Locust upgrade it. -->
+       Ultimate Evolution and Evolve Monstrosity, which the starter disables. 100 second cooldown. Abathur is Unstoppable
+       for 4 seconds and the script drops a nest every 0.5 seconds. -->
   <CBehaviorBuff id="AbathurMinefieldFrenzyUnlocked">
     <BehaviorFlags index="Permanent" value="1" />
     <BehaviorFlags index="EnabledWhileDead" value="1" />
@@ -181,19 +181,56 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="AbathurMinefieldFrenzy" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_evolvemonstrosity.dds" />
   </CButton>
-  <!-- Level 10 talents, both handled in HeroTriggers/Abathur.galaxy. Lingering Brood: each nest Frenzy would remove has a
-       35% chance to stay (it still counts toward Locusts). Colossal Locust: Frenzy summons one Locust scaled by the
-       number of nests instead of one Locust per 3 nests; AbathurColossalLocustPower stacks give it +10% damage each. -->
+  <!-- Unleash the Swarm (level 4 talent, activated with 1): the script removes all of Abathur's nests and summons a
+       Locust per 3 of them. The talent's quest counter (AbathurUnleashSwarmNestCount, kept equal to the nest count by
+       the script) shows on the button. -->
+  <CAbilEffectInstant id="AbathurUnleashSwarm">
+    <Effect value="AbathurUnleashSwarmSet" />
+    <Cost>
+      <Cooldown TimeUse="30" />
+    </Cost>
+    <CmdButtonArray index="Execute" DefaultButtonFace="AbathurUnleashSwarm" />
+    <PrepEffect value="DismountDecloakCasterSet" />
+  </CAbilEffectInstant>
+  <CEffectSet id="AbathurUnleashSwarmSet" />
+  <CBehaviorAbility id="AbathurUnleashSwarmItem">
+    <Buttons Face="AbathurUnleashSwarm" Type="AbilCmd" AbilCmd="AbathurUnleashSwarm,Execute" />
+  </CBehaviorAbility>
+  <CBehaviorTokenCounter id="AbathurUnleashSwarmNestCount" parent="StormQuestToken">
+    <InfoFlags index="Hidden" value="1" />
+    <Face value="AbathurUnleashSwarm" />
+    <Max value="100000" />
+    <IncreaseEvents index="0" EventId="" />
+    <DecreaseEvents index="0" EventId="" />
+    <AtMinEvents index="0" EventId="" />
+  </CBehaviorTokenCounter>
+  <CTalent id="AbathurUnleashSwarm">
+    <Face value="AbathurUnleashSwarm" />
+    <Abil value="AbathurUnleashSwarm" />
+    <RankArray>
+      <BehaviorArray value="AbathurUnleashSwarmItem" />
+      <BehaviorArray value="AbathurUnleashSwarmNestCount" />
+    </RankArray>
+    <Active value="1" />
+    <QuestData StackBehavior="AbathurUnleashSwarmNestCount" />
+  </CTalent>
+  <CButton id="AbathurUnleashSwarm" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_abathur_spawnlocust.dds" />
+  </CButton>
+  <!-- Level 10 talents, both handled in HeroTriggers/Abathur.galaxy. Lingering Brood: each nest Unleash the Swarm would
+       remove has a 35% chance to stay (it still counts toward Locusts). Colossal Locust: Unleash the Swarm summons one
+       Locust scaled by the number of nests instead of one Locust per 3 nests; AbathurColossalLocustPower stacks give it
+       +10% damage each. -->
   <CTalent id="AbathurLingeringBrood">
     <Face value="AbathurLingeringBrood" />
-    <Abil value="AbathurMinefieldFrenzy" />
+    <Abil value="AbathurUnleashSwarm" />
   </CTalent>
   <CButton id="AbathurLingeringBrood" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
   <CTalent id="AbathurColossalLocust">
     <Face value="AbathurColossalLocust" />
-    <Abil value="AbathurMinefieldFrenzy" />
+    <Abil value="AbathurUnleashSwarm" />
   </CTalent>
   <CButton id="AbathurColossalLocust" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_abathur_spawnlocust.dds" />
@@ -220,15 +257,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </CardLayouts>
   </CUnit>
 
-  <!-- Talents shown only with the starter (TalentsShow): Lingering Brood and Colossal Locust replace both Heroics, and Chitinous Bulwark and
+  <!-- Talents shown only with the starter (TalentsShow): Lingering Brood and Colossal Locust replace both Heroics, and Unleash the Swarm and
        Nesting Instinct fill the level 4 and level 13 tiers, which lose every other talent once the Symbiote talents are
        disabled. Both are handled in HeroTriggers/Abathur.galaxy. -->
-  <CTalent id="AbathurChitinousBulwark">
-    <Face value="AbathurChitinousBulwark" />
-  </CTalent>
-  <CButton id="AbathurChitinousBulwark" parent="StormButtonParent">
-    <Icon value="Assets\Textures\storm_ui_icon_abathur_carapace.dds" />
-  </CButton>
   <CTalent id="AbathurNestingInstinct">
     <Face value="AbathurNestingInstinct" />
   </CTalent>
@@ -236,7 +267,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_abathur_toxicNest.dds" />
   </CButton>
   <CHero id="Abathur">
-    <TalentTreeArray Talent="AbathurChitinousBulwark" Tier="2" Column="5" />
+    <TalentTreeArray Talent="AbathurUnleashSwarm" Tier="2" Column="5" />
     <TalentTreeArray Talent="AbathurLingeringBrood" Tier="4" Column="3" />
     <TalentTreeArray Talent="AbathurColossalLocust" Tier="4" Column="4" />
     <TalentTreeArray Talent="AbathurNestingInstinct" Tier="5" Column="4" />
