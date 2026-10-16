@@ -45,6 +45,10 @@ bool libAffx_ChenIsEnemyHero(unit target) {
     }
     return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
 }
+bool libAffx_ChenIsPlayerHero(unit target) {
+    int owner = UnitGetOwner(target);
+    return UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic) && owner >= 1 && owner <= libCore_gv_bALMaxPlayers;
+}
 void libAffx_ChenQuestDing() {
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
 }
@@ -116,16 +120,23 @@ bool libAffx_ChenWildfire_Func (bool testConds, bool runActions) {
 bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
     unit attacker = EventUnitDamageSourceUnit();
+    unitgroup bosses;
     fixed blocked = 0.0;
     fixed reflected;
     if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
+    // Slivan's Slime Spit puddle is cast from its invulnerable missile: reflect onto Slivan instead
+    if (attacker != null && UnitGetType(attacker) == "SlivanBossSlimeSpitMissile") {
+        bosses = UnitGroup("SlivanBoss", UnitGetOwner(attacker), RegionEntireMap(), UnitFilter(0, 0, 0, 0), 1);
+        attacker = UnitGroupUnit(bosses, 1);
+    }
     // a hit that breaks the last Shield stack still counts (EventUnitDamageBehaviorShield). Never while Stagger is up: its
     // prevented damage is also recorded as Shield damage, and leftover Brew Shields shouldn't make Stagger reflect.
     if (!UnitHasBehavior2(hero, "ChenStaggerProtectedBuff") && (UnitHasBehavior2(hero, "ChenFortifyingBrewShield") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior") || EventUnitDamageBehaviorShield() > 0.0)) {
         reflected = EventUnitDamageAttempted() * libAffx_chenReflectFraction;
-        if (attacker != null && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeHeroic) && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeStructure)) {
+        // the Hero rate only covers player-owned Heroic units, so Heroic bosses like Slivan take the non-Hero rate
+        if (attacker != null && !libAffx_ChenIsPlayerHero(attacker) && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeStructure)) {
             reflected = EventUnitDamageAttempted() * libAffx_chenReflectFractionNonHero;
         }
         if (UnitHasBehavior2(hero, "ChenMountainsWrathMarker")) {
