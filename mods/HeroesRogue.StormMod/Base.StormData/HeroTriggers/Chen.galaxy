@@ -9,7 +9,10 @@ include "AffixTriggers"
 // Recognition), and 200% of incoming damage (1500% from non-Hero, non-Structure units) is reflected to the attacker while Stagger is up or Chen is drinking
 // Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 5
 // maximum Health (ChenIronBellyLife, kept equal to the stack count) and 2% Fortifying Brew Shields (set per player from
-// ChenIronBellyShieldReference, which has the same base value and level scaling as ChenFortifyingBrewShield).
+// ChenIronBellyShieldReference, which has the same base value and level scaling as ChenFortifyingBrewShield). The Shield
+// bonus is full for stacks gained in the first second of a drink, fades out over the next second, and is gone from 2
+// seconds on. Iron Ox also keeps ChenIronOxArmor (-75 Armor) on Chen; the Unstoppable and never-expiring Shields are
+// in ChenData.xml.
 // Drunken Master's quest and boons are all in ChenData.xml.
 // Stacks carry over between games through QuestRetain.
 // ============================================================
@@ -22,9 +25,14 @@ const fixed libAffx_chenReflectFractionNonHero = 15.0;
 const fixed libAffx_chenReflectLegendaryMultiplier = 2.0; // Mountain's Wrath
 const int libAffx_chenIronBellyLifePerStack = 5; // matches ChenIronBellyLife
 const fixed libAffx_chenIronBellyShieldPerStack = 0.02;
+const fixed libAffx_chenBrewShieldPeriod = 0.5; // ChenFortifyingBrewRegen Period
+const fixed libAffx_chenBrewBonusFullTime = 1.0;
+const fixed libAffx_chenBrewBonusEndTime = 2.0;
 
 bool libAffx_chenStarted;
 fixed libAffx_chenIronBellyProgress; // blocked damage toward the next Iron Belly stack
+fixed libAffx_chenBrewStart = -10.0; // mission time of the current drink's first Shield stack
+fixed libAffx_chenBrewLastStack = -10.0;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_chenIgniteTime; // per enemy player, last Ignite tick
 
 unit libAffx_ChenHero() {
@@ -146,18 +154,53 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// Sets the Fortifying Brew Shield per stack to the level-scaled base plus the Iron Belly bonus times bonusFactor (0-1)
+void libAffx_ChenSetBrewShield (fixed bonusFactor) {
+    unit hero = libAffx_ChenHero();
+    fixed shield = StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenIronBellyShieldReference", "DamageResponse.ModifyLimit", libAffx_player));
+    shield = shield * (1.0 + UnitGetTokenCount(hero, "ChenIronBellyTokenCounter") * libAffx_chenIronBellyShieldPerStack * bonusFactor);
+    if (AbsF(StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player)) - shield) > 0.01) {
+        CatalogFieldValueSet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player, FixedToString(shield, 2));
+    }
+}
+
+// A Fortifying Brew Shield stack was just added: sets the bonus for the next one from how long Chen has been drinking
+bool libAffx_ChenBrewShieldStack_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ChenHero();
+    fixed now = GameGetMissionTime();
+    fixed nextTime;
+    fixed factor = 0.0;
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
+        return false;
+    }
+    if (now - libAffx_chenBrewLastStack > libAffx_chenBrewShieldPeriod * 1.5) {
+        libAffx_chenBrewStart = now;
+    }
+    libAffx_chenBrewLastStack = now;
+    nextTime = now - libAffx_chenBrewStart + libAffx_chenBrewShieldPeriod;
+    if (nextTime <= libAffx_chenBrewBonusFullTime + 0.05) {
+        factor = 1.0;
+    } else if (nextTime < libAffx_chenBrewBonusEndTime) {
+        factor = (libAffx_chenBrewBonusEndTime - nextTime) / (libAffx_chenBrewBonusEndTime - libAffx_chenBrewBonusFullTime);
+    }
+    libAffx_ChenSetBrewShield(factor);
+    return true;
+}
+
 // Keeps ChenIronBellyLife equal to the Iron Belly stack count (covers stacks loaded from the bank), and keeps Iron Ox's
 // CC reduction on Chen
 bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
     int tokens;
     int stacks;
-    fixed shield;
     if (hero == null || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
     if (!UnitHasBehavior2(hero, "50PercentCCReduction")) {
         UnitBehaviorAdd(hero, "50PercentCCReduction", hero, 1);
+    }
+    if (!UnitHasBehavior2(hero, "ChenIronOxArmor")) {
+        UnitBehaviorAdd(hero, "ChenIronOxArmor", hero, 1);
     }
     tokens = FixedToInt(UnitGetTokenCount(hero, "ChenIronBellyTokenCounter"));
     stacks = UnitBehaviorCount(hero, "ChenIronBellyLife");
@@ -169,10 +212,9 @@ bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     } else if (tokens < stacks) {
         UnitBehaviorRemove(hero, "ChenIronBellyLife", stacks - tokens);
     }
-    // Fortifying Brew Shields: the level-scaled reference value plus 3% per stack (re-applied after level-ups)
-    shield = StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenIronBellyShieldReference", "DamageResponse.ModifyLimit", libAffx_player)) * (1.0 + IntToFixed(tokens) * libAffx_chenIronBellyShieldPerStack);
-    if (AbsF(StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player)) - shield) > 0.01) {
-        CatalogFieldValueSet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player, FixedToString(shield, 2));
+    // Outside a drink the next drink's first Shield stack gets the full bonus (also re-applies it after level-ups)
+    if (!UnitHasBehavior2(hero, "ChenFortifyingBrewRegen")) {
+        libAffx_ChenSetBrewShield(1.0);
     }
     return true;
 }
@@ -193,5 +235,6 @@ bool libAffx_ChenStart (bool testConds, bool runActions) {
     ironBelly = TriggerCreate("libAffx_ChenIronBellyDamage_Func");
     TriggerAddEventUnitDamaged(ironBelly, null, c_unitDamageTypeAny, c_unitDamageEither, null);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChenSync_Func"), 0.5, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChenBrewShieldStack_Func"), libAffx_player, "FortifyingBrewApplyShieldStack");
     return true;
 }

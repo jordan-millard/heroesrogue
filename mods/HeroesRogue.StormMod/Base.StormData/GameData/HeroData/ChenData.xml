@@ -14,6 +14,47 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ============================================================ -->
   <CBehaviorBuff id="ChenInfernoMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ChenIronOxMarker" parent="CarryBehaviorParent" />
+  <!-- Iron Ox: -75 Armor (kept on Chen by the script), Unstoppable for the whole drink, and Fortifying Brew Shields never
+       time out (the removal switch doesn't run) -->
+  <CBehaviorBuff id="ChenIronOxArmor" parent="StormArmorPermanent">
+    <InfoFlags index="Hidden" value="1" />
+    <ArmorModification>
+      <AllArmorBonus value="-75" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChenCasterHasIronOx">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="ChenIronOxMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChenCasterLacksIronOx">
+    <WhichUnit Value="Caster" />
+    <Compare value="LT" />
+    <Value value="1" />
+    <Behavior value="ChenIronOxMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="ChenIronOxBrewUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="6" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChenIronOxBrewApplyUnstoppable">
+    <ValidatorArray value="ChenCasterHasIronOx" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChenIronOxBrewUnstoppable" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="ChenIronOxBrewRemoveUnstoppable">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="ChenIronOxBrewUnstoppable" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="ChenFortifyingBrewInitialSet">
+    <EffectArray value="ChenIronOxBrewApplyUnstoppable" />
+  </CEffectSet>
+  <CEffectSet id="ChenFortifyingBrewFinalSet">
+    <EffectArray value="ChenIronOxBrewRemoveUnstoppable" />
+  </CEffectSet>
+  <CEffectSwitch id="ChenFortifyingBrewRemoveStacksSwitch">
+    <ValidatorArray value="ChenCasterLacksIronOx" />
+  </CEffectSwitch>
   <!-- Drunken Master: 15% Attack Speed -->
   <CBehaviorBuff id="ChenDrunkenMasterMarker" parent="CarryBehaviorParent">
     <Modification>
@@ -104,7 +145,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <!-- Iron Belly: never applied; holds ChenFortifyingBrewShield's base Shield and level scaling, so the script can set
-       the real Shield to this value plus 2% per stack -->
+       the real Shield to this value plus up to 2% per stack -->
   <CBehaviorBuff id="ChenIronBellyShieldReference" parent="StormShield">
     <DamageResponse ModifyLimit="95" />
   </CBehaviorBuff>
