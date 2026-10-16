@@ -11432,6 +11432,291 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
+        <Instances Id="ChenStormstoutInferno">
+            <String String="Assets/Textures/storm_ui_icon_chen_breathoffire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ChenAccumulatingFlame">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ChenRingofFire">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ChenInfernoMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ChenEternalFlameTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="ChenEternalFlameTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ChenAccumulatingFlameQuest 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ChenInfernoApplyWeakBurnMark,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ChenInfernoApplyWeakIgnite,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ChenBreathOfFireDoTDamage,MultiplicativeModifierArray[ChenInfernoSoaked].Modifier 0.25">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_ChenStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ChenTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ChenHotBrew">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chen_BreathofFire_A.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenStormstoutInferno">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Effect,ChenBreathOfFireDoTDamage,MultiplicativeModifierArray[ChenHotBrew].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChenDragonsBreath">
+            <String String="Assets/Textures/storm_ui_icon_chen_breathoffire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenStormstoutInferno">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Multiply Effect,ChenBreathOfFireSearch,AreaArray[0].Radius 1.25">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Effect,ChenBreathOfFireSearch,AreaArray[0].RadiusBonus 1.25">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Behavior,ChenBreathofFireRingOfFire,Duration 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Add Behavior,ChenBreathofFireRingOfFire,PeriodCount 2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="ChenWildfire">
+            <String String="Assets/Textures/storm_ui_icon_Chen_BreathofFire_A.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenStormstoutInferno">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChenWildfireMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChenIronOx">
+            <String String="Assets/Textures/storm_ui_icon_chen_stagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ChenFreshestIngredients">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ChenGiftOfTheOxStagger">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ChenIronOxMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ChenIronBellyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="ChenIronBellyTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Set Behavior,ChenFortifyingBrewShield,MaxStackCount 9">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Subtract Abil,ChenStagger,Cost.Cooldown.TimeUse 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_ChenStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="ChenDeepKeg">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_chen_fortifyingbrew_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenIronOx">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,ChenFortifyingBrewController,Duration 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChenGroundingBrewBoon">
+            <String String="Assets/Textures/storm_ui_icon_chen_fortifyingbrew_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenIronOx">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ChenGroundingBrewBoonApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChenClearMind">
+            <String String="Assets/Textures/storm_ui_icon_Chen_Stagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenIronOx">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChenClearMindMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChenDrunkenMaster">
+            <String String="Assets/Textures/storm_ui_icon_chen_flyingkick.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ChenDeadlyStrike">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ChenComboStrikes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ChenDrunkenMasterMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ChenHundredFistsTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="ChenHundredFistsTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Set Effect,ChenDrunkenMasterKickRefund,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ChenHundredFistsAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_ChenStart">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
+        <Instances Id="ChenStrongBrew">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_chen_fortifyingbrew.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenDrunkenMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Effect,ChenHeroWeaponDamage,MultiplicativeModifierArray[ChenStrongBrew].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChenTigerStance">
+            <String String="Assets/Textures/storm_ui_icon_chen_flyingkick.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenDrunkenMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ChenTigerStanceApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChenFlurryOfBlows">
+            <String String="Assets/Textures/storm_ui_icon_Chen_StormstoutSecretRecipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chen">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChenDrunkenMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ChenFlurrySet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

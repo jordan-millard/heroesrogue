@@ -1,11 +1,210 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
-  
+
   <CBehaviorBuff id="ChenLargeBrewCarry" parent="CarryBehaviorParent">
     <Modification>
       <VitalMaxArray index="Energy" value="25" />
     </Modification>
   </CBehaviorBuff>
 
+  <!-- ============================================================ -->
+  <!-- Golden Chen. Three starters: Stormstout Inferno (fire), Iron Ox (Stagger and Fortifying Brew) and Drunken Master
+       (Flying Kick and Basic Attacks). Quests that need events are counted in HeroTriggers/Chen.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ChenInfernoMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChenIronOxMarker" parent="CarryBehaviorParent" />
+  <!-- Drunken Master: 15% Attack Speed -->
+  <CBehaviorBuff id="ChenDrunkenMasterMarker" parent="CarryBehaviorParent">
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.15" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Boon markers handled by the script -->
+  <CBehaviorBuff id="ChenWildfireMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChenClearMindMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Stormstout Inferno ===== -->
+  <!-- Breath of Fire also Ignites enemies that aren't soaked in Brew, for 50% damage: those get a weak-burn mark and the
+       normal Ignite, whose damage is halved while the mark lasts. Soaking them (the Brew-soaked branch) clears the mark.
+       Brew-soaked Ignites deal 25% more. -->
+  <CBehaviorBuff id="ChenInfernoWeakBurnMark">
+    <Duration value="6" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChenTargetHasInfernoWeakBurnMark">
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="ChenInfernoWeakBurnMark" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChenTargetLacksInfernoWeakBurnMark">
+    <Compare value="LT" />
+    <Value value="1" />
+    <Behavior value="ChenInfernoWeakBurnMark" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="ChenInfernoApplyWeakBurnMark">
+    <Chance value="0" />
+    <ValidatorArray value="TargetNotDead" />
+    <Behavior value="ChenInfernoWeakBurnMark" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ChenInfernoApplyWeakIgnite">
+    <Chance value="0" />
+    <ValidatorArray value="TargetNotDead" />
+    <Behavior value="ChenBreathofFireDoT" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="ChenInfernoRemoveWeakBurnMark">
+    <BehaviorLink value="ChenInfernoWeakBurnMark" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="ChenBreathOfFireNoProcSet">
+    <EffectArray value="ChenInfernoApplyWeakBurnMark" />
+    <EffectArray value="ChenInfernoApplyWeakIgnite" />
+  </CEffectSet>
+  <CEffectSet id="ChenBreathOfFireBoggedDownSet">
+    <EffectArray value="ChenInfernoRemoveWeakBurnMark" />
+  </CEffectSet>
+  <!-- Eternal Flame quest: each token is 1% Ignite and Ring of Fire damage -->
+  <CBehaviorTokenCounter id="ChenEternalFlameTokenCounter" parent="StormQuestToken">
+    <Face value="ChenEternalFlameTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ChenEternalFlameAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ChenEternalFlameTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ChenBreathOfFireDoTDamage">
+    <MultiplicativeModifierArray index="ChenInfernoWeakBurn" Validator="ChenTargetHasInfernoWeakBurnMark" Modifier="-0.5" />
+    <MultiplicativeModifierArray index="ChenInfernoSoaked" Validator="ChenTargetLacksInfernoWeakBurnMark" Modifier="0" />
+    <MultiplicativeModifierArray index="ChenHotBrew" Modifier="0" />
+    <MultiplicativeModifierArray index="ChenEternalFlame" Accumulator="ChenEternalFlameAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="ChenBreathOfFireRingOfFireTalentDamage">
+    <MultiplicativeModifierArray index="ChenEternalFlame" Accumulator="ChenEternalFlameAccumulator" />
+  </CEffectDamage>
+
+  <!-- ===== Iron Ox ===== -->
+  <!-- Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields (script) is a token;
+       each gives 15 maximum Health through ChenIronBellyLife (one stack per token, kept in sync by the script) -->
+  <CBehaviorTokenCounter id="ChenIronBellyTokenCounter" parent="StormQuestToken">
+    <Face value="ChenIronBellyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorBuff id="ChenIronBellyLife" parent="CarryBehaviorParent">
+    <MaxStackCount value="10000" />
+    <Modification>
+      <VitalMaxArray index="Life" value="15" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Grounding Brew (Rare): the cut talent's 40 Spell Armor while Chen has Fortifying Brew Shields -->
+  <CEffectApplyBehavior id="ChenGroundingBrewBoonApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChenFortifyingBrewGroundingBrew" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ChenFortifyingBrewInitialApplyShieldSet">
+    <EffectArray value="ChenGroundingBrewBoonApply" />
+  </CEffectSet>
+  <CEffectSet id="FortifyingBrewApplyShieldSet">
+    <EffectArray value="ChenGroundingBrewBoonApply" />
+  </CEffectSet>
+
+  <!-- ===== Drunken Master ===== -->
+  <!-- A Flying Kick that hits a Hero refunds 2 of its 5 second cooldown; Tiger Stance (Rare) gives 30% Attack Speed for
+       3 seconds after a Flying Kick hit -->
+  <CEffectModifyUnit id="ChenDrunkenMasterKickRefund">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ChenFlyingKick,Execute" CooldownOperation="Add" CooldownTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="ChenTigerStanceBuff">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_chen_flyingkick.dds" />
+    <BehaviorCategories index="BuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChenTigerStanceApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChenTigerStanceBuff" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ChenFlyingKickTargetImpactSet">
+    <EffectArray value="ChenDrunkenMasterKickRefund" />
+    <EffectArray value="ChenTigerStanceApply" />
+  </CEffectSet>
+  <!-- Hundred Fists quest: each Basic Attack on a Hero is a token, 0.4 Attack Damage each -->
+  <CBehaviorTokenCounter id="ChenHundredFistsTokenCounter" parent="StormQuestToken">
+    <Face value="ChenHundredFistsTokenCounter" />
+    <Max value="100000" />
+    <IncreaseEvents index="0" EventId="" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ChenHundredFistsAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ChenHundredFistsTokenCounter" />
+    <Scale value="0.4" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="ChenHundredFistsAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <TokenId value="ChenHundredFistsTokenCounter" />
+    <Value value="1" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="ChenWeaponPostImpactSet">
+    <EffectArray value="ChenHundredFistsAddToken" />
+  </CEffectSet>
+  <!-- Strong Brew (Uncommon, up to 3): +10% Basic Attack damage per copy while Chen has Fortifying Brew Shields -->
+  <CEffectDamage id="ChenHeroWeaponDamage">
+    <FlatModifierArray index="ChenHundredFists" Accumulator="ChenHundredFistsAccumulator" />
+    <MultiplicativeModifierArray index="ChenStrongBrew" Validator="ChenHasFortifyingBrewShieldCombine" Modifier="0" />
+  </CEffectDamage>
+  <!-- Flurry of Blows (Epic): the Combo Strikes hit (the target already has 2 Combo Strikes stacks) cuts Flying Kick's
+       cooldown by 2 seconds and deals Flying Kick's damage again -->
+  <CEffectModifyUnit id="ChenFlurryModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ChenFlyingKick,Execute" CooldownOperation="Add" CooldownTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CEffectDamage id="ChenFlurryDamage" parent="StormSpell">
+    <Amount value="130" />
+    <MultiplicativeModifierArray index="DeadlyStrikeDamage" Validator="ChenDeadlyStrikeDamageCombine" Modifier="1.25" Crit="1" />
+    <MultiplicativeModifierArray index="EnergizingBrewDamage" Validator="ChenFortifingBrewEnergizingBrewTalentBuff" Modifier="0.2" Crit="1" />
+  </CEffectDamage>
+  <CEffectSet id="ChenFlurrySet">
+    <Chance value="0" />
+    <ValidatorArray value="ChenFortifyingBrewTargetHas2StacksofComboStrikesEnemyCountBehavior" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <EffectArray value="ChenFlurryModifyCooldown" />
+    <EffectArray value="ChenFlurryDamage" />
+  </CEffectSet>
+  <CEffectSet id="ChenWeaponPreImpactSet">
+    <EffectArray value="ChenFlurrySet" />
+  </CEffectSet>
+  <CHero id="Chen">
+    <LevelScalingArray Ability="ChenFlyingKick">
+      <Modifications>
+        <Catalog value="Effect" />
+        <Entry value="ChenFlurryDamage" />
+        <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByAbilityPower value="1" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+  </CHero>
+
+  <CButton id="ChenEternalFlameTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_chen_breathoffire.dds" />
+  </CButton>
+  <CButton id="ChenIronBellyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_chen_stagger.dds" />
+  </CButton>
+  <CButton id="ChenHundredFistsTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_chen_flyingkick.dds" />
+  </CButton>
 </Catalog>

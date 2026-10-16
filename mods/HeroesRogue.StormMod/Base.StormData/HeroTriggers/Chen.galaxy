@@ -1,0 +1,191 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Chen.
+// Stormstout Inferno, Eternal Flame quest: an enemy Hero takedown while they're Ignited (an Ignite tick within the
+// last 1.5 seconds) adds 1% Ignite and Ring of Fire damage (ChenData.xml). Wildfire (Epic): when an Ignited enemy
+// dies, the Ignite spreads to enemies within 4.
+// Iron Ox, Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 15
+// maximum Health (ChenIronBellyLife, kept equal to the stack count). Clear Mind (Epic): Basic Attacks on enemy Heroes
+// remove 10% of the damage Stagger has stored.
+// Drunken Master's quest and boons are all in ChenData.xml.
+// Stacks carry over between games through QuestRetain.
+// ============================================================
+
+const fixed libAffx_chenIgniteWindow = 1.5; // Ignite ticks every second
+const fixed libAffx_chenWildfireRadius = 4.0;
+const fixed libAffx_chenIronBellyDamagePerStack = 1000.0;
+const fixed libAffx_chenClearMindFraction = 0.9; // stored Stagger damage kept per Basic Attack
+const int libAffx_chenIronBellyLifePerStack = 15; // matches ChenIronBellyLife
+
+bool libAffx_chenStarted;
+fixed libAffx_chenIronBellyProgress; // blocked damage toward the next Iron Belly stack
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_chenIgniteTime; // per enemy player, last Ignite tick
+
+unit libAffx_ChenHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ChenHas(string behavior) {
+    unit hero = libAffx_ChenHero();
+    return hero != null && UnitHasBehavior2(hero, behavior);
+}
+bool libAffx_ChenIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+void libAffx_ChenQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+
+// ---------- Stormstout Inferno ----------
+
+// Ignite tick on an enemy Hero: opens the Eternal Flame takedown window
+bool libAffx_ChenIgniteTick_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ChenIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_chenIgniteTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+// HeroTakedown for Eternal Flame
+bool libAffx_ChenTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    fixed igniteTime;
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_ChenHas("ChenInfernoMarker")) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    igniteTime = libAffx_chenIgniteTime[killedPlayer];
+    if (igniteTime <= 0.0 || GameGetMissionTime() - igniteTime > libAffx_chenIgniteWindow) {
+        return true;
+    }
+    libAffx_chenIgniteTime[killedPlayer] = 0.0;
+    libGame_gf_ModifyTokenCount(1, "ChenEternalFlameTokenCounter", libAffx_ChenHero());
+    libAffx_ChenQuestDing();
+    return true;
+}
+
+// Wildfire: an enemy dying while Ignited by Chen spreads the Ignite to enemies around them
+bool libAffx_ChenWildfire_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ChenHero();
+    unitgroup nearby;
+    unit other;
+    int i;
+    if (hero == null || !UnitHasBehavior2(hero, "ChenWildfireMarker")) {
+        return false;
+    }
+    if (UnitGetOwner(victim) == libAffx_player || !UnitHasBehavior2(victim, "ChenBreathofFireDoT")) {
+        return false;
+    }
+    if (UnitBehaviorEffectUnit(victim, "ChenBreathofFireDoT", c_effectUnitCaster, 0) != hero) {
+        return false;
+    }
+    nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(victim), libAffx_chenWildfireRadius), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile), 0), 0);
+    for (i = UnitGroupCount(nearby, c_unitCountAll); i > 0; i -= 1) {
+        other = UnitGroupUnitFromEnd(nearby, i);
+        if (other != null && other != victim && UnitIsAlive(other)) {
+            UnitCreateEffectUnit(hero, "ChenBreathOfFireApplyDoT", other);
+        }
+    }
+    return true;
+}
+
+// ---------- Iron Ox ----------
+
+// Damage to Chen: what Stagger prevented, or Fortifying Brew Shields absorbed, counts toward Iron Belly
+bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ChenHero();
+    fixed blocked = 0.0;
+    if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "ChenStaggerProtectedBuff")) {
+        blocked = EventUnitDamageAttempted() - EventUnitDamageAmount();
+    } else if (UnitHasBehavior2(hero, "ChenFortifyingBrewShield")) {
+        blocked = EventUnitDamageBehaviorShield();
+    }
+    if (blocked <= 0.0) {
+        return false;
+    }
+    libAffx_chenIronBellyProgress += blocked;
+    while (libAffx_chenIronBellyProgress >= libAffx_chenIronBellyDamagePerStack) {
+        libAffx_chenIronBellyProgress -= libAffx_chenIronBellyDamagePerStack;
+        libGame_gf_ModifyTokenCount(1, "ChenIronBellyTokenCounter", hero);
+        libAffx_ChenQuestDing();
+    }
+    return true;
+}
+
+// Keeps ChenIronBellyLife equal to the Iron Belly stack count (covers stacks loaded from the bank)
+bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ChenHero();
+    int tokens;
+    int stacks;
+    if (hero == null || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
+        return false;
+    }
+    tokens = FixedToInt(UnitGetTokenCount(hero, "ChenIronBellyTokenCounter"));
+    stacks = UnitBehaviorCount(hero, "ChenIronBellyLife");
+    if (tokens > stacks) {
+        UnitBehaviorAdd(hero, "ChenIronBellyLife", hero, tokens - stacks);
+        if (UnitIsAlive(hero)) {
+            UnitSetPropertyFixed(hero, c_unitPropLife, UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent) + IntToFixed((tokens - stacks) * libAffx_chenIronBellyLifePerStack));
+        }
+    } else if (tokens < stacks) {
+        UnitBehaviorRemove(hero, "ChenIronBellyLife", stacks - tokens);
+    }
+    return true;
+}
+
+// Clear Mind: a Basic Attack on an enemy Hero removes 10% of the damage Stagger has stored
+bool libAffx_ChenClearMind_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ChenHero();
+    fixed stored;
+    if (hero == null || EventUnitDamageSourceUnit() != hero || !UnitHasBehavior2(hero, "ChenClearMindMarker")) {
+        return false;
+    }
+    if (!libAffx_ChenIsEnemyHero(EventUnit())) {
+        return false;
+    }
+    stored = UnitGetTokenCount(hero, "ChenStaggerTokenCounter");
+    if (stored > 0.0) {
+        UnitSetTokenCount(hero, "ChenStaggerTokenCounter", stored * libAffx_chenClearMindFraction, hero);
+    }
+    stored = UnitGetTokenCount(hero, "ChenStaggerDisplayTokenCounter");
+    if (stored > 0.0) {
+        UnitSetTokenCount(hero, "ChenStaggerDisplayTokenCounter", stored * libAffx_chenClearMindFraction, hero);
+    }
+    return true;
+}
+
+// AffixAdded for all three starters
+bool libAffx_ChenStart (bool testConds, bool runActions) {
+    trigger igniteTick;
+    trigger wildfire;
+    trigger ironBelly;
+    trigger clearMind;
+    if (libAffx_chenStarted) {
+        return true;
+    }
+    libAffx_chenStarted = true;
+    igniteTick = TriggerCreate("libAffx_ChenIgniteTick_Func");
+    TriggerAddEventUnitDamaged(igniteTick, null, c_unitDamageTypeAny, c_unitDamageEither, "ChenBreathOfFireDoTDamage");
+    wildfire = TriggerCreate("libAffx_ChenWildfire_Func");
+    TriggerAddEventUnitDamaged(wildfire, null, c_unitDamageTypeAny, c_unitDamageFatal, null);
+    ironBelly = TriggerCreate("libAffx_ChenIronBellyDamage_Func");
+    TriggerAddEventUnitDamaged(ironBelly, null, c_unitDamageTypeAny, c_unitDamageEither, null);
+    clearMind = TriggerCreate("libAffx_ChenClearMind_Func");
+    TriggerAddEventUnitDamaged(clearMind, null, c_unitDamageTypeAny, c_unitDamageEither, "ChenHeroWeaponDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChenSync_Func"), 0.5, c_timeGame);
+    return true;
+}
