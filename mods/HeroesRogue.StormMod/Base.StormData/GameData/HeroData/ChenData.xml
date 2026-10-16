@@ -156,19 +156,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Iron Ox ===== -->
   <!-- Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields (script) is a token;
-       each gives 15 maximum Health through ChenIronBellyLife (one stack per token, kept in sync by the script) -->
+       its Brew Shield bonuses are applied by the script -->
   <CBehaviorTokenCounter id="ChenIronBellyTokenCounter" parent="StormQuestToken">
     <Face value="ChenIronBellyTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
-  <CBehaviorBuff id="ChenIronBellyLife" parent="CarryBehaviorParent">
-    <MaxStackCount value="10000" />
-    <Modification>
-      <VitalMaxArray index="Life" value="5" />
-    </Modification>
-  </CBehaviorBuff>
   <!-- Iron Belly: never applied; holds ChenFortifyingBrewShield's base Shield and level scaling, so the script can set
-       the real Shield to this value plus 0.5% per stack -->
+       the real Shield to this value plus 1% per stack -->
   <CBehaviorBuff id="ChenIronBellyShieldReference" parent="StormShield">
     <DamageResponse ModifyLimit="95" />
   </CBehaviorBuff>

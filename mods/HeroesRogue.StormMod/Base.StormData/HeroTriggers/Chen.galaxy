@@ -7,8 +7,8 @@ include "AffixTriggers"
 // dies, the Ignite spreads to enemies within 4.
 // Iron Ox: 50% shorter Stuns, Roots and Slows (the base 50PercentCCReduction behavior, read by GameLib's CC
 // Recognition), and 150% of incoming damage (800% from non-Hero, non-Structure units) is reflected to the attacker while Chen has Fortifying Brew Shields or is drinking
-// Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 5
-// maximum Health (ChenIronBellyLife, kept equal to the stack count), 0.5% Shield gained per Fortifying Brew stack (set
+// Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 1%
+// Shield gained per Fortifying Brew stack (set
 // per player from ChenIronBellyShieldReference, which has the same base value and level scaling as
 // ChenFortifyingBrewShield) and 2% maximum Brew Shield (a stack cap enforced by the script, rounded to whole stacks). Iron Ox also keeps ChenIronOxArmor (-75 Armor) on Chen; the Unstoppable and never-expiring Shields are
 // in ChenData.xml.
@@ -22,8 +22,7 @@ const fixed libAffx_chenIronBellyDamagePerStack = 1000.0;
 const fixed libAffx_chenReflectFraction = 1.5; // Hero and Structure attackers
 const fixed libAffx_chenReflectFractionNonHero = 8.0;
 const fixed libAffx_chenReflectLegendaryMultiplier = 2.0; // Mountain's Wrath
-const int libAffx_chenIronBellyLifePerStack = 5; // matches ChenIronBellyLife
-const fixed libAffx_chenIronBellyShieldPerStack = 0.005; // Shield per Brew stack
+const fixed libAffx_chenIronBellyShieldPerStack = 0.01; // Shield per Brew stack
 const fixed libAffx_chenIronBellyShieldMaxPerStack = 0.02; // maximum Brew Shield
 const int libAffx_chenBrewShieldMaxStacks = 9; // Iron Ox's Brew Shield cap before Iron Belly
 const int libAffx_chenBrewShieldDataMaxStacks = 40; // ChenFortifyingBrewShield MaxStackCount (ChenData.xml)
@@ -164,7 +163,7 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Iron Belly's Fortifying Brew bonuses: each Shield stack is the level-scaled base plus 0.5% per quest stack, and the
+// Iron Belly's Fortifying Brew bonuses: each Shield stack is the level-scaled base plus 1% per quest stack, and the
 // stack cap is set so the maximum Shield is 2% higher per quest stack (rounded to whole stacks)
 void libAffx_ChenSetBrewShield () {
     fixed tokens = UnitGetTokenCount(libAffx_ChenHero(), "ChenIronBellyTokenCounter");
@@ -177,7 +176,7 @@ void libAffx_ChenSetBrewShield () {
     }
 }
 
-// Iron Belly's Brew Shield stack cap: 9 raised 2% per quest stack, divided by the 0.5% per-stack gain bonus, rounded.
+// Iron Belly's Brew Shield stack cap: 9 raised 2% per quest stack, divided by the 1% per-stack gain bonus, rounded.
 // MaxStackCount can't be changed per player, so the data sets it to libAffx_chenBrewShieldDataMaxStacks for everyone
 // and this removes the stacks above the cap.
 int libAffx_ChenBrewShieldCap () {
@@ -203,12 +202,9 @@ bool libAffx_ChenBrewShieldStack_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Keeps ChenIronBellyLife equal to the Iron Belly stack count (covers stacks loaded from the bank), and keeps Iron Ox's
-// CC reduction on Chen
+// Keeps Iron Ox's CC reduction and Armor on Chen, and the Iron Belly Brew Shield bonuses up to date
 bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
-    int tokens;
-    int stacks;
     if (hero == null || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
@@ -217,16 +213,6 @@ bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     }
     if (!UnitHasBehavior2(hero, "ChenIronOxArmor")) {
         UnitBehaviorAdd(hero, "ChenIronOxArmor", hero, 1);
-    }
-    tokens = FixedToInt(UnitGetTokenCount(hero, "ChenIronBellyTokenCounter"));
-    stacks = UnitBehaviorCount(hero, "ChenIronBellyLife");
-    if (tokens > stacks) {
-        UnitBehaviorAdd(hero, "ChenIronBellyLife", hero, tokens - stacks);
-        if (UnitIsAlive(hero)) {
-            UnitSetPropertyFixed(hero, c_unitPropLife, UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent) + IntToFixed((tokens - stacks) * libAffx_chenIronBellyLifePerStack));
-        }
-    } else if (tokens < stacks) {
-        UnitBehaviorRemove(hero, "ChenIronBellyLife", stacks - tokens);
     }
     // re-applied every sync so level-ups don't erase it
     libAffx_ChenSetBrewShield();
