@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Tassadar. Starters: Eye of the Storm (Psionic Storm) and Templar's Lance (Shock Ray). Takedown quests and
+       the script-driven boons are in HeroTriggers/Tassadar.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="TassadarEyeOfTheStormMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TassadarTemplarsLanceMarker" parent="CarryBehaviorParent" />
+  <!-- Boon markers handled by the script -->
+  <CBehaviorBuff id="TassadarArcLightningMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TassadarTwinLancesMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Eye of the Storm ===== -->
+  <!-- Gathering Storm quest (this game only): each Storm tick on an enemy Hero is a token, 0.2% Storm damage each.
+       Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Storm hit (script), 1% Storm damage each. -->
+  <CBehaviorTokenCounter id="TassadarGatheringStormTokenCounter" parent="StormQuestToken">
+    <Face value="TassadarGatheringStormTokenCounter" />
+    <Max value="100000" />
+    <IncreaseEvents index="0" EventId="" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TassadarGatheringStormAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TassadarGatheringStormTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="TassadarGatheringStormAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="TassadarGatheringStormTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="TassadarStormOfAgesTokenCounter" parent="StormQuestToken">
+    <Face value="TassadarStormOfAgesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TassadarStormOfAgesAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TassadarStormOfAgesTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TassadarPsionicStormDamage">
+    <MultiplicativeModifierArray index="TassadarGatheringStorm" Accumulator="TassadarGatheringStormAccumulator" />
+    <MultiplicativeModifierArray index="TassadarStormOfAges" Accumulator="TassadarStormOfAgesAccumulator" />
+    <MultiplicativeModifierArray index="TassadarChargedCrystals" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TassadarPsionicStormPsionicEchoTalentDamage">
+    <MultiplicativeModifierArray index="TassadarGatheringStorm" Accumulator="TassadarGatheringStormAccumulator" />
+    <MultiplicativeModifierArray index="TassadarStormOfAges" Accumulator="TassadarStormOfAgesAccumulator" />
+    <MultiplicativeModifierArray index="TassadarChargedCrystals" Modifier="0" />
+  </CEffectDamage>
+  <!-- Static Field (Epic): each Storm tick Slows by 25% and removes 10 Spell Armor until the next tick -->
+  <CBehaviorBuff id="TassadarStaticFieldDebuff" parent="StormSlowParent">
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="0.6" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.25" />
+    </Modification>
+    <ArmorModification>
+      <ArmorSet index="Hero">
+        <ArmorMitigationTable index="Ability" value="-10" />
+      </ArmorSet>
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="TassadarStaticFieldApply" parent="StormSlowApply">
+    <Chance value="0" />
+    <Behavior value="TassadarStaticFieldDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Cataclysm (Legendary): an enemy Hero reaching the Storm's full ramp (5 ramp stacks, +100%) gets a free Psionic Storm
+       on them, once until the Storm ramp on them ends -->
+  <CBehaviorBuff id="TassadarCataclysmSpent">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="30" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareTokenCount id="TassadarTargetHasFullPsionicStormRamp">
+    <WhichUnit Value="Target" />
+    <Compare value="GE" />
+    <Value value="5" />
+    <TokenId value="TassadarPsionicStormTargetTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorUnitCompareBehaviorCount id="TassadarTargetLacksCataclysmSpent">
+    <WhichUnit Value="Target" />
+    <Compare value="LT" />
+    <Value value="1" />
+    <Behavior value="TassadarCataclysmSpent" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="TassadarCataclysmApplySpent">
+    <Behavior value="TassadarCataclysmSpent" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="TassadarCataclysmSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="TassadarTargetHasFullPsionicStormRamp" />
+    <ValidatorArray value="TassadarTargetLacksCataclysmSpent" />
+    <EffectArray value="TassadarCataclysmApplySpent" />
+    <EffectArray value="TassadarPsionicStormCreatePersistent" />
+  </CEffectSet>
+  <CEffectRemoveBehavior id="TassadarCataclysmRemoveSpent">
+    <BehaviorLink value="TassadarCataclysmSpent" />
+  </CEffectRemoveBehavior>
+  <!-- the ramp token is added before these run, so Cataclysm sees the new count -->
+  <CEffectSet id="TassadarPsionicStormDamageSet">
+    <EffectArray value="TassadarGatheringStormAddToken" />
+    <EffectArray value="TassadarStaticFieldApply" />
+    <EffectArray value="TassadarCataclysmSet" />
+  </CEffectSet>
+  <CEffectSet id="TassadarPsionicStormDamageDebuffFinalSet">
+    <EffectArray value="TassadarCataclysmRemoveSpent" />
+  </CEffectSet>
+
+  <!-- ===== Templar's Lance ===== -->
+  <!-- Lance of Aiur quest: an enemy Hero takedown within 2 seconds of a Shock Ray hit (script), 1% Shock Ray damage each -->
+  <CBehaviorTokenCounter id="TassadarLanceOfAiurTokenCounter" parent="StormQuestToken">
+    <Face value="TassadarLanceOfAiurTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TassadarLanceOfAiurAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TassadarLanceOfAiurTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TassadarShockRayDamage">
+    <MultiplicativeModifierArray index="TassadarLanceOfAiur" Accumulator="TassadarLanceOfAiurAccumulator" />
+    <MultiplicativeModifierArray index="TassadarOvercharge" Modifier="0" />
+  </CEffectDamage>
+  <!-- Static Charge's cap is 400 for everyone in data; without Templar's Lance new stacks stop at the normal 200 -->
+  <CBehaviorTokenCounter id="TassadarShockRayStaticChargeTalentTokenCounter">
+    <Max value="400" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TassadarStaticChargeDamageAccumulator">
+    <MaxAccumulation value="400" />
+  </CAccumulatorToken>
+  <CValidatorUnitCompareBehaviorCount id="TassadarCasterHasTemplarsLance">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="TassadarTemplarsLanceMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareTokenCount id="TassadarCasterStaticChargeBelowNormalCap">
+    <WhichUnit Value="Caster" />
+    <Compare value="LT" />
+    <Value value="200" />
+    <TokenId value="TassadarShockRayStaticChargeTalentTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="TassadarStaticChargeCanStack">
+    <Type value="Or" />
+    <CombineArray value="TassadarCasterHasTemplarsLance" />
+    <CombineArray value="TassadarCasterStaticChargeBelowNormalCap" />
+  </CValidatorCombine>
+  <CEffectModifyTokenCount id="TassadarShockRayStaticChargeTalentModifyToken">
+    <ValidatorArray value="TassadarStaticChargeCanStack" />
+  </CEffectModifyTokenCount>
+  <CEffectModifyTokenCount id="TassadarShockRayStaticChargeTalentBonusModifyToken">
+    <ValidatorArray value="TassadarStaticChargeCanStack" />
+  </CEffectModifyTokenCount>
+  <!-- Arc Lightning (Epic) and Twin Lances (Legendary): amounts set by the script from the Shock Ray hit, which already
+       includes Spell Power -->
+  <CEffectDamage id="TassadarArcLightningDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="TassadarShockRay" />
+  </CEffectDamage>
+  <CEffectDamage id="TassadarTwinLancesDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="TassadarShockRay" />
+  </CEffectDamage>
+  <CActorModel id="TassadarShockRayImpactModel">
+    <On Terms="Effect.TassadarArcLightningDamage.Start; At Target" Send="Create" />
+    <On Terms="Effect.TassadarTwinLancesDamage.Start; At Target" Send="Create" />
+  </CActorModel>
+
+  <CButton id="TassadarGatheringStormTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tassadar_psionicstorm.dds" />
+  </CButton>
+  <CButton id="TassadarStormOfAgesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tassadar_psionicstorm.dds" />
+  </CButton>
+  <CButton id="TassadarLanceOfAiurTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tassadar_rework_q_ray.dds" />
+  </CButton>
+</Catalog>

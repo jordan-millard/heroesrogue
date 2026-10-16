@@ -11731,6 +11731,294 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
+        <Instances Id="TassadarEyeOfTheStorm">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_psionicstorm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TassadarPsychicShock">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TassadarPsionicStormPsiInfusion">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TassadarEyeOfTheStormMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TassadarGatheringStormTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TassadarStormOfAgesTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TassadarStormOfAgesTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Multiply Effect,TassadarPsionicStormSearchArea,AreaArray[0].Radius 1.2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Effect,TassadarPsionicStormInitialSearchArea,AreaArray[0].Radius 1.2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,TassadarPsionicStormPsionicEchoTalentModifyToken,Value 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Subtract Abil,TassadarPsionicStorm,Cost.Cooldown.TimeUse 2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,TassadarGatheringStormAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_TassadarStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TassadarTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarChargedCrystals">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tassadar_psionicstorm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarEyeOfTheStorm">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TassadarPsionicStormDamage,MultiplicativeModifierArray[TassadarChargedCrystals].Modifier 0.04">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,TassadarPsionicStormPsionicEchoTalentDamage,MultiplicativeModifierArray[TassadarChargedCrystals].Modifier 0.04">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarLingeringStorm">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tassadar_psionicstorm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarEyeOfTheStorm">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Effect,TassadarPsionicStormCreatePersistent,PeriodCount 4">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarTwinStorms">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_psionicstorm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarEyeOfTheStorm">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Abil,TassadarPsionicStorm,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,TassadarPsionicStorm,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,TassadarPsionicStorm,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,TassadarPsionicStorm,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,TassadarPsionicStorm,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,TassadarPsionicStorm,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarStaticField">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_psionicstorm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarEyeOfTheStorm">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TassadarStaticFieldApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarCataclysm">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_psionicstorm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarEyeOfTheStorm">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TassadarCataclysmSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarTemplarsLance">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_rework_q_ray.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TassadarStaticCharge">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TassadarThermalLance">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TassadarTemplarsLanceMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TassadarLanceOfAiurTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="TassadarLanceOfAiurTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Subtract Abil,TassadarShockRay,Cost.Vital[Energy] 20">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Subtract Abil,TassadarShockRay,Cost.Cooldown.TimeUse 1.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_TassadarStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TassadarTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarFocusedCrystal">
+            <Int Int="4">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tassadar_rework_q_ray.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarTemplarsLance">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,TassadarShockRay,Cost.Vital[Energy] -5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarOvercharge">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tassadar_rework_q_ray.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarTemplarsLance">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TassadarShockRayDamage,MultiplicativeModifierArray[TassadarOvercharge].Modifier 0.06">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarBeamAlignmentBoon">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_rework_q_ray.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarTemplarsLance">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TassadarBeamAlignment">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarArcLightning">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_rework_q_ray.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarTemplarsLance">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TassadarArcLightningMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TassadarTwinLances">
+            <String String="Assets/Textures/storm_ui_icon_tassadar_rework_q_ray.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tassadar">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TassadarTemplarsLance">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TassadarTwinLancesMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

@@ -1,0 +1,132 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Tassadar.
+// Eye of the Storm, Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Psionic Storm hit adds 1%
+// Storm damage. Gathering Storm (this game only) and Cataclysm are in TassadarData.xml.
+// Templar's Lance, Lance of Aiur quest: an enemy Hero takedown within 2 seconds of a Shock Ray hit adds 1% Shock Ray
+// damage. Arc Lightning (Epic): a Shock Ray hit on an enemy Hero deals 50% of its damage to the 2 nearest other enemies.
+// Twin Lances (Legendary): every enemy hit by Shock Ray is hit again 0.5 seconds later for 50% of the damage.
+// Stacks carry over between games through QuestRetain.
+// ============================================================
+
+const fixed libAffx_tassadarStormWindow = 1.5;
+const fixed libAffx_tassadarLanceWindow = 2.0;
+const fixed libAffx_tassadarArcRadius = 5.0;
+const int libAffx_tassadarArcTargets = 2;
+const fixed libAffx_tassadarArcFraction = 0.5;
+const fixed libAffx_tassadarTwinLanceDelay = 0.5;
+const fixed libAffx_tassadarTwinLanceFraction = 0.5;
+
+bool libAffx_tassadarStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_tassadarStormTime; // per enemy player, last Psionic Storm hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_tassadarLanceTime; // per enemy player, last Shock Ray hit
+
+unit libAffx_TassadarHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_TassadarHas(string behavior) {
+    unit hero = libAffx_TassadarHero();
+    return hero != null && UnitHasBehavior2(hero, behavior);
+}
+bool libAffx_TassadarIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+void libAffx_TassadarQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+
+// Psionic Storm hit on an enemy Hero: opens the Storm of the Ages takedown window
+bool libAffx_TassadarStormHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_TassadarIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_tassadarStormTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+// Arc Lightning: part of a Shock Ray hit on an enemy Hero jumps to the nearest other enemies
+void libAffx_TassadarArcLightning (unit hero, unit victim, fixed amount) {
+    unitgroup nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(victim), libAffx_tassadarArcRadius), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile), 0), 0);
+    unit other;
+    int hits = 0;
+    UnitGroupRemove(nearby, victim);
+    while (hits < libAffx_tassadarArcTargets && UnitGroupCount(nearby, c_unitCountAll) > 0) {
+        other = UnitGroupClosestToPoint(nearby, UnitGetPosition(victim));
+        UnitGroupRemove(nearby, other);
+        if (other != null && UnitIsAlive(other)) {
+            UnitDamage(hero, "TassadarArcLightningDamage", other, amount);
+            hits += 1;
+        }
+    }
+}
+
+// Shock Ray hit: opens the Lance of Aiur takedown window, and runs Arc Lightning and Twin Lances
+bool libAffx_TassadarShockRayHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_TassadarHero();
+    fixed amount = EventUnitDamageAttempted();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || victim == null) {
+        return false;
+    }
+    if (libAffx_TassadarIsEnemyHero(victim)) {
+        libAffx_tassadarLanceTime[UnitGetOwner(victim)] = GameGetMissionTime();
+        if (UnitHasBehavior2(hero, "TassadarArcLightningMarker")) {
+            libAffx_TassadarArcLightning(hero, victim, amount * libAffx_tassadarArcFraction);
+        }
+    }
+    if (UnitHasBehavior2(hero, "TassadarTwinLancesMarker") && amount > 0.0) {
+        Wait(libAffx_tassadarTwinLanceDelay, c_timeGame);
+        if (UnitIsAlive(victim) && UnitIsAlive(hero)) {
+            UnitDamage(hero, "TassadarTwinLancesDamage", victim, amount * libAffx_tassadarTwinLanceFraction);
+        }
+    }
+    return true;
+}
+
+// HeroTakedown for Storm of the Ages and Lance of Aiur
+bool libAffx_TassadarTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_TassadarHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "TassadarEyeOfTheStormMarker") && libAffx_tassadarStormTime[killedPlayer] > 0.0 && now - libAffx_tassadarStormTime[killedPlayer] <= libAffx_tassadarStormWindow) {
+        libAffx_tassadarStormTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "TassadarStormOfAgesTokenCounter", hero);
+        libAffx_TassadarQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "TassadarTemplarsLanceMarker") && libAffx_tassadarLanceTime[killedPlayer] > 0.0 && now - libAffx_tassadarLanceTime[killedPlayer] <= libAffx_tassadarLanceWindow) {
+        libAffx_tassadarLanceTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "TassadarLanceOfAiurTokenCounter", hero);
+        libAffx_TassadarQuestDing();
+    }
+    return true;
+}
+
+// AffixAdded for both starters
+bool libAffx_TassadarStart (bool testConds, bool runActions) {
+    trigger stormHit;
+    trigger shockRayHit;
+    if (libAffx_tassadarStarted) {
+        return true;
+    }
+    libAffx_tassadarStarted = true;
+    stormHit = TriggerCreate("libAffx_TassadarStormHit_Func");
+    TriggerAddEventUnitDamaged(stormHit, null, c_unitDamageTypeAny, c_unitDamageEither, "TassadarPsionicStormDamage");
+    TriggerAddEventUnitDamaged(stormHit, null, c_unitDamageTypeAny, c_unitDamageEither, "TassadarPsionicStormPsionicEchoTalentDamage");
+    shockRayHit = TriggerCreate("libAffx_TassadarShockRayHit_Func");
+    TriggerAddEventUnitDamaged(shockRayHit, null, c_unitDamageTypeAny, c_unitDamageEither, "TassadarShockRayDamage");
+    return true;
+}
