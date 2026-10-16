@@ -10,8 +10,7 @@ include "AffixTriggers"
 // Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 5
 // maximum Health (ChenIronBellyLife, kept equal to the stack count) and 2% Fortifying Brew Shields (set per player from
 // ChenIronBellyShieldReference, which has the same base value and level scaling as ChenFortifyingBrewShield). The Shield
-// bonus is full for stacks gained in the first second of a drink, fades out over the next second, and is gone from 2
-// seconds on. Iron Ox also keeps ChenIronOxArmor (-75 Armor) on Chen; the Unstoppable and never-expiring Shields are
+// bonus is full for stacks gained in the first second of a drink, then fades to 25% of itself by 3 seconds. Iron Ox also keeps ChenIronOxArmor (-75 Armor) on Chen; the Unstoppable and never-expiring Shields are
 // in ChenData.xml.
 // Drunken Master's quest and boons are all in ChenData.xml.
 // Stacks carry over between games through QuestRetain.
@@ -27,7 +26,8 @@ const int libAffx_chenIronBellyLifePerStack = 5; // matches ChenIronBellyLife
 const fixed libAffx_chenIronBellyShieldPerStack = 0.02;
 const fixed libAffx_chenBrewShieldPeriod = 0.5; // ChenFortifyingBrewRegen Period
 const fixed libAffx_chenBrewBonusFullTime = 1.0;
-const fixed libAffx_chenBrewBonusEndTime = 2.0;
+const fixed libAffx_chenBrewBonusEndTime = 3.0;
+const fixed libAffx_chenBrewBonusFloor = 0.25; // fraction of the bonus kept from BonusEndTime on
 
 bool libAffx_chenStarted;
 fixed libAffx_chenIronBellyProgress; // blocked damage toward the next Iron Belly stack
@@ -169,7 +169,7 @@ bool libAffx_ChenBrewShieldStack_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
     fixed now = GameGetMissionTime();
     fixed nextTime;
-    fixed factor = 0.0;
+    fixed factor = libAffx_chenBrewBonusFloor;
     if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
@@ -181,7 +181,7 @@ bool libAffx_ChenBrewShieldStack_Func (bool testConds, bool runActions) {
     if (nextTime <= libAffx_chenBrewBonusFullTime + 0.05) {
         factor = 1.0;
     } else if (nextTime < libAffx_chenBrewBonusEndTime) {
-        factor = (libAffx_chenBrewBonusEndTime - nextTime) / (libAffx_chenBrewBonusEndTime - libAffx_chenBrewBonusFullTime);
+        factor = libAffx_chenBrewBonusFloor + (1.0 - libAffx_chenBrewBonusFloor) * (libAffx_chenBrewBonusEndTime - nextTime) / (libAffx_chenBrewBonusEndTime - libAffx_chenBrewBonusFullTime);
     }
     libAffx_ChenSetBrewShield(factor);
     return true;
