@@ -15,7 +15,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- Rapid Gestation (Rare): nests drop every 2 seconds instead of 3 -->
   <CBehaviorBuff id="AbathurRapidGestationMarker" parent="CarryBehaviorParent" />
-  <!-- Parasitic Slap (Epic): Slapathur's Stun on a Hero drops a nest under them (script) -->
+  <!-- Parasitic Slap (Epic): Slapathur's Stun on a Hero drops a nest in a random spot near them that arms after
+       3 seconds (script) -->
   <CBehaviorBuff id="AbathurParasiticSlapMarker" parent="CarryBehaviorParent" />
   <!-- Mending Carapace (Uncommon, up to 2): Slapathur's Stun on a Hero heals Abathur for 2% maximum Health per second per
        copy for 5 seconds (the boon adds 0.02 to the heal per copy; the script applies the buff) -->
@@ -69,29 +70,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <TokenId value="AbathurMinefieldTokenCounter" />
     <Scale value="0.01" />
   </CAccumulatorToken>
-  <!-- Slapathur quest: each token is 2 flat Toxic Nest damage, plus 30 maximum Health from AbathurSlapathurQuestLife
-       (one stack per token), 1% Slapathur Stun duration and 3% Locust Health, all applied by the script -->
-  <CBehaviorBuff id="AbathurSlapathurQuestLife" parent="CarryBehaviorParent">
-    <MaxStackCount value="10000" />
-    <Modification>
-      <VitalMaxArray index="Life" value="30" />
-    </Modification>
-  </CBehaviorBuff>
+  <!-- Slapathur quest: each token is 1% Slapathur Stun duration, applied by the script -->
   <CBehaviorTokenCounter id="AbathurMinefieldTakedownTokenCounter" parent="StormQuestToken">
     <Face value="AbathurMinefieldTakedownTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
 
-  <CAccumulatorToken id="AbathurMinefieldFlatAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="AbathurMinefieldTakedownTokenCounter" />
-    <Scale value="2" />
-  </CAccumulatorToken>
-
   <CEffectDamage id="ToxicNestDamage">
-    <FlatModifierArray index="AbathurMinefield" Accumulator="AbathurMinefieldFlatAccumulator" />
     <MultiplicativeModifierArray index="AbathurMinefield" Accumulator="AbathurMinefieldPercentAccumulator" />
   </CEffectDamage>
 
