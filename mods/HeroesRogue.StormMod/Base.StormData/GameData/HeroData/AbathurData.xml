@@ -70,12 +70,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <TokenId value="AbathurMinefieldTokenCounter" />
     <Scale value="0.01" />
   </CAccumulatorToken>
-  <!-- Slapathur quest: each token is 2 flat Toxic Nest damage, plus 30 maximum Health from AbathurSlapathurQuestLife
-       (one stack per token), 1% Slapathur disable duration on non-Heroes and 3% Locust Health, all applied by the script -->
+  <!-- Slapathur quest: each token is 1 flat Toxic Nest damage, plus 20 maximum Health from AbathurSlapathurQuestLife
+       (one stack per token), 1% Slapathur disable duration on non-Heroes, and 2% Locust Health and damage (one
+       AbathurSlapathurLocustPower stack per token), all applied by the script -->
   <CBehaviorBuff id="AbathurSlapathurQuestLife" parent="CarryBehaviorParent">
     <MaxStackCount value="10000" />
     <Modification>
-      <VitalMaxArray index="Life" value="30" />
+      <VitalMaxArray index="Life" value="20" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="AbathurSlapathurLocustPower">
+    <BehaviorFlags index="Permanent" value="1" />
+    <InfoFlags index="Hidden" value="1" />
+    <MaxStackCount value="10000" />
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0.02" />
+      <DamageDealtFraction index="Ability" value="0.02" />
     </Modification>
   </CBehaviorBuff>
   <CBehaviorTokenCounter id="AbathurMinefieldTakedownTokenCounter" parent="StormQuestToken">
@@ -88,7 +98,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AbathurMinefieldTakedownTokenCounter" />
-    <Scale value="2" />
+    <Scale value="1" />
   </CAccumulatorToken>
 
   <CEffectDamage id="ToxicNestDamage">
