@@ -55,6 +55,29 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSwitch id="ChenFortifyingBrewRemoveStacksSwitch">
     <ValidatorArray value="ChenCasterLacksIronOx" />
   </CEffectSwitch>
+  <!-- Brew Shield stack cap: MaxStackCount can't be changed per player (a CatalogModification or script set reads back
+       as 6), so it is 40 for everyone. Without Iron Ox new stacks stop at the normal 6; with Iron Ox the script trims
+       stacks above the Iron Belly cap. -->
+  <CBehaviorBuff id="ChenFortifyingBrewShield">
+    <MaxStackCount value="40" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChenCasterBrewShieldBelowNormalCap">
+    <WhichUnit Value="Caster" />
+    <Compare value="LT" />
+    <Value value="6" />
+    <Behavior value="ChenFortifyingBrewShield" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="ChenBrewShieldCanStack">
+    <Type value="Or" />
+    <CombineArray value="ChenCasterHasIronOx" />
+    <CombineArray value="ChenCasterBrewShieldBelowNormalCap" />
+  </CValidatorCombine>
+  <CEffectApplyBehavior id="FortifyingBrewApplyShieldStack">
+    <ValidatorArray value="ChenBrewShieldCanStack" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ChenFortifyingBrewApplyEnoughToShareTalentStacks">
+    <ValidatorArray value="ChenBrewShieldCanStack" />
+  </CEffectApplyBehavior>
   <!-- Drunken Master: 15% Attack Speed -->
   <CBehaviorBuff id="ChenDrunkenMasterMarker" parent="CarryBehaviorParent">
     <Modification>

@@ -26,7 +26,7 @@ const int libAffx_chenIronBellyLifePerStack = 5; // matches ChenIronBellyLife
 const fixed libAffx_chenIronBellyShieldPerStack = 0.005; // Shield per Brew stack
 const fixed libAffx_chenIronBellyShieldMaxPerStack = 0.02; // maximum Brew Shield
 const int libAffx_chenBrewShieldMaxStacks = 9; // Iron Ox's Brew Shield cap before Iron Belly
-const int libAffx_chenBrewShieldDataMaxStacks = 40; // Iron Ox's ChenFortifyingBrewShield MaxStackCount (AffixData)
+const int libAffx_chenBrewShieldDataMaxStacks = 40; // ChenFortifyingBrewShield MaxStackCount (ChenData.xml)
 
 bool libAffx_chenStarted;
 fixed libAffx_chenIronBellyProgress; // blocked damage toward the next Iron Belly stack
@@ -178,7 +178,7 @@ void libAffx_ChenSetBrewShield () {
 }
 
 // Iron Belly's Brew Shield stack cap: 9 raised 2% per quest stack, divided by the 0.5% per-stack gain bonus, rounded.
-// Changing MaxStackCount mid-game didn't take, so Iron Ox sets it to libAffx_chenBrewShieldDataMaxStacks at the start
+// MaxStackCount can't be changed per player, so the data sets it to libAffx_chenBrewShieldDataMaxStacks for everyone
 // and this removes the stacks above the cap.
 int libAffx_ChenBrewShieldCap () {
     fixed tokens = UnitGetTokenCount(libAffx_ChenHero(), "ChenIronBellyTokenCounter");
