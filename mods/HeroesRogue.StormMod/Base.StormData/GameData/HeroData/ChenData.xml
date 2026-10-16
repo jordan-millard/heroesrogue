@@ -65,7 +65,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ChenWildfireMarker" parent="CarryBehaviorParent" />
   <!-- Mountain's Wrath (Legendary): Iron Ox's reflect is doubled (script) -->
   <CBehaviorBuff id="ChenMountainsWrathMarker" parent="CarryBehaviorParent" />
-  <!-- Iron Ox: 200% of incoming damage (1500% from non-Heroes other than Structures) reflected while Chen has Fortifying Brew Shields or is drinking (amount set by the script) -->
+  <!-- Iron Ox: 150% of incoming damage (800% from non-Heroes other than Structures) reflected while Chen has Fortifying Brew Shields or is drinking (amount set by the script) -->
   <CEffectDamage id="ChenIronOxReflectDamage" parent="StormSpell">
     <Flags index="NoFractionDealtBonus" value="1" />
     <Amount value="0" />
