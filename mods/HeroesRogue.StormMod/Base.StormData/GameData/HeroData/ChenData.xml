@@ -22,6 +22,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- Boon markers handled by the script -->
   <CBehaviorBuff id="ChenWildfireMarker" parent="CarryBehaviorParent" />
+  <!-- Mountain's Wrath (Legendary): Iron Ox's reflect is 150% instead of 50% (script) -->
+  <CBehaviorBuff id="ChenMountainsWrathMarker" parent="CarryBehaviorParent" />
   <!-- Iron Ox: 50% of incoming damage reflected while Staggering or drinking Fortifying Brew (amount set by the script) -->
   <CEffectDamage id="ChenIronOxReflectDamage" parent="StormSpell">
     <Flags index="NoFractionDealtBonus" value="1" />
