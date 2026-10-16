@@ -6,7 +6,7 @@ include "AffixTriggers"
 // last 1.5 seconds) adds 1% Ignite and Ring of Fire damage (ChenData.xml). Wildfire (Epic): when an Ignited enemy
 // dies, the Ignite spreads to enemies within 4.
 // Iron Ox: 50% shorter Stuns, Roots and Slows (the base 50PercentCCReduction behavior, read by GameLib's CC
-// Recognition), and 200% of incoming damage (1500% from non-Hero, non-Structure units) is reflected to the attacker while Stagger is up or Chen is drinking
+// Recognition), and 200% of incoming damage (1500% from non-Hero, non-Structure units) is reflected to the attacker while Chen has Fortifying Brew Shields or is drinking
 // Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 5
 // maximum Health (ChenIronBellyLife, kept equal to the stack count) and 2% Fortifying Brew Shields (set per player from
 // ChenIronBellyShieldReference, which has the same base value and level scaling as ChenFortifyingBrewShield). The Shield
@@ -115,7 +115,7 @@ bool libAffx_ChenWildfire_Func (bool testConds, bool runActions) {
 
 // ---------- Iron Ox ----------
 
-// Damage to Chen: reflected while Staggering or drinking, and what Stagger prevented, or Fortifying Brew Shields
+// Damage to Chen: reflected while Shielded by Fortifying Brew or drinking, and what Stagger prevented, or Fortifying Brew Shields
 // absorbed, counts toward Iron Belly
 bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
@@ -125,7 +125,8 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
-    if (UnitHasBehavior2(hero, "ChenStaggerProtectedBuff") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior")) {
+    // a hit that breaks the last Shield stack still counts (EventUnitDamageBehaviorShield)
+    if (UnitHasBehavior2(hero, "ChenFortifyingBrewShield") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior") || EventUnitDamageBehaviorShield() > 0.0) {
         reflected = EventUnitDamageAttempted() * libAffx_chenReflectFraction;
         if (attacker != null && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeHeroic) && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeStructure)) {
             reflected = EventUnitDamageAttempted() * libAffx_chenReflectFractionNonHero;
