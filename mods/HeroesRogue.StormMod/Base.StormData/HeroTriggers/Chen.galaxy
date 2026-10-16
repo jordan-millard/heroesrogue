@@ -125,8 +125,9 @@ bool libAffx_ChenIronBellyDamage_Func (bool testConds, bool runActions) {
     if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
-    // a hit that breaks the last Shield stack still counts (EventUnitDamageBehaviorShield)
-    if (UnitHasBehavior2(hero, "ChenFortifyingBrewShield") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior") || EventUnitDamageBehaviorShield() > 0.0) {
+    // a hit that breaks the last Shield stack still counts (EventUnitDamageBehaviorShield). Never while Stagger is up: its
+    // prevented damage is also recorded as Shield damage, and leftover Brew Shields shouldn't make Stagger reflect.
+    if (!UnitHasBehavior2(hero, "ChenStaggerProtectedBuff") && (UnitHasBehavior2(hero, "ChenFortifyingBrewShield") || UnitHasBehavior2(hero, "ChenFortifyingBrewEnergyBehavior") || EventUnitDamageBehaviorShield() > 0.0)) {
         reflected = EventUnitDamageAttempted() * libAffx_chenReflectFraction;
         if (attacker != null && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeHeroic) && !UnitTypeTestAttribute(UnitGetType(attacker), c_unitAttributeStructure)) {
             reflected = EventUnitDamageAttempted() * libAffx_chenReflectFractionNonHero;
