@@ -100,8 +100,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ChenIronBellyLife" parent="CarryBehaviorParent">
     <MaxStackCount value="10000" />
     <Modification>
-      <VitalMaxArray index="Life" value="15" />
+      <VitalMaxArray index="Life" value="5" />
     </Modification>
+  </CBehaviorBuff>
+  <!-- Iron Belly: never applied; holds ChenFortifyingBrewShield's base Shield and level scaling, so the script can set
+       the real Shield to this value plus 3% per stack -->
+  <CBehaviorBuff id="ChenIronBellyShieldReference" parent="StormShield">
+    <DamageResponse ModifyLimit="95" />
   </CBehaviorBuff>
   <!-- Grounding Brew (Rare): the cut talent's 40 Spell Armor while Chen has Fortifying Brew Shields -->
   <CEffectApplyBehavior id="ChenGroundingBrewBoonApply">
@@ -198,6 +203,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
         <Catalog value="Effect" />
         <Entry value="ChenFlurryDamage" />
         <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByAbilityPower value="1" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+    <LevelScalingArray Ability="ChenFortifyingBrew">
+      <Modifications>
+        <Catalog value="Behavior" />
+        <Entry value="ChenIronBellyShieldReference" />
+        <Field value="DamageResponse.ModifyLimit" />
         <Value value="0.040000" />
         <AffectedByAbilityPower value="1" />
         <AffectedByOverdrive value="1" />

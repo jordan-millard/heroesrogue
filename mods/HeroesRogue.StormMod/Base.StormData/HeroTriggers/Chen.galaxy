@@ -7,8 +7,9 @@ include "AffixTriggers"
 // dies, the Ignite spreads to enemies within 4.
 // Iron Ox: 50% shorter Stuns, Roots and Slows (the base 50PercentCCReduction behavior, read by GameLib's CC
 // Recognition), and 200% of incoming damage (1500% from non-Hero, non-Structure units) is reflected to the attacker while Stagger is up or Chen is drinking
-// Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 15
-// maximum Health (ChenIronBellyLife, kept equal to the stack count).
+// Fortifying Brew (doubled by the Legendary Mountain's Wrath). Iron Belly quest: every 1000 damage blocked by Stagger or absorbed by Fortifying Brew Shields adds 5
+// maximum Health (ChenIronBellyLife, kept equal to the stack count) and 3% Fortifying Brew Shields (set per player from
+// ChenIronBellyShieldReference, which has the same base value and level scaling as ChenFortifyingBrewShield).
 // Drunken Master's quest and boons are all in ChenData.xml.
 // Stacks carry over between games through QuestRetain.
 // ============================================================
@@ -19,7 +20,8 @@ const fixed libAffx_chenIronBellyDamagePerStack = 1000.0;
 const fixed libAffx_chenReflectFraction = 2.0; // Hero and Structure attackers
 const fixed libAffx_chenReflectFractionNonHero = 15.0;
 const fixed libAffx_chenReflectLegendaryMultiplier = 2.0; // Mountain's Wrath
-const int libAffx_chenIronBellyLifePerStack = 15; // matches ChenIronBellyLife
+const int libAffx_chenIronBellyLifePerStack = 5; // matches ChenIronBellyLife
+const fixed libAffx_chenIronBellyShieldPerStack = 0.03;
 
 bool libAffx_chenStarted;
 fixed libAffx_chenIronBellyProgress; // blocked damage toward the next Iron Belly stack
@@ -150,6 +152,7 @@ bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
     int tokens;
     int stacks;
+    fixed shield;
     if (hero == null || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }
@@ -165,6 +168,11 @@ bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
         }
     } else if (tokens < stacks) {
         UnitBehaviorRemove(hero, "ChenIronBellyLife", stacks - tokens);
+    }
+    // Fortifying Brew Shields: the level-scaled reference value plus 3% per stack (re-applied after level-ups)
+    shield = StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenIronBellyShieldReference", "DamageResponse.ModifyLimit", libAffx_player)) * (1.0 + IntToFixed(tokens) * libAffx_chenIronBellyShieldPerStack);
+    if (AbsF(StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player)) - shield) > 0.01) {
+        CatalogFieldValueSet(c_gameCatalogBehavior, "ChenFortifyingBrewShield", "DamageResponse.ModifyLimit", libAffx_player, FixedToString(shield, 2));
     }
     return true;
 }
