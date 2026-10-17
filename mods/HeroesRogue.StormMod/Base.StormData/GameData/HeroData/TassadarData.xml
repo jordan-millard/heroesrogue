@@ -13,7 +13,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="TassadarTwinLancesMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Eye of the Storm ===== -->
-  <!-- Gathering Storm quest (this game only): each Storm tick on an enemy Hero is a token, 0.2% Storm damage each.
+  <!-- Gathering Storm quest (35% kept between games): each Storm tick on an enemy Hero is a token, 0.2% Storm damage each.
        Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Storm hit (script); each adds 0.05 seconds
        of Storm duration, set by the script in whole 0.25 second Storm periods. -->
   <CBehaviorTokenCounter id="TassadarGatheringStormTokenCounter" parent="StormQuestToken">
