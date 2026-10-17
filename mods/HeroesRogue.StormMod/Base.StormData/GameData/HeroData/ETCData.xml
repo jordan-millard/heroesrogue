@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden E.T.C. Starters: Headliner (Powerslide), Amplified (Face Melt) and Rock Legend (Guitar Solo and Basic
+       Attacks). Takedown quests and the script-driven boons are in HeroTriggers/ETC.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ETCHeadlinerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ETCAmplifiedMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ETCRockLegendMarker" parent="CarryBehaviorParent" />
+  <!-- Boon markers handled by the script -->
+  <CBehaviorBuff id="ETCStageCrashMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ETCSonicBoomMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Headliner ===== -->
+  <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 1% Powerslide damage each.
+       Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit, 0.01 seconds of Powerslide
+       Stun each (script). -->
+  <CBehaviorTokenCounter id="ETCSlideGuitarTokenCounter" parent="StormQuestToken">
+    <Face value="ETCSlideGuitarTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ETCSlideGuitarAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ETCSlideGuitarTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="ETCSlideGuitarAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="ETCSlideGuitarTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="ETCStandingOvationTokenCounter" parent="StormQuestToken">
+    <Face value="ETCStandingOvationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="PowerSlideDamage">
+    <MultiplicativeModifierArray index="ETCSlideGuitar" Accumulator="ETCSlideGuitarAccumulator" />
+    <MultiplicativeModifierArray index="ETCHeavyRiffs" Modifier="0" />
+  </CEffectDamage>
+  <!-- Second Verse (Epic): each enemy Hero hit by Powerslide reduces its cooldown by 2 seconds -->
+  <CEffectModifyUnit id="ETCSecondVerseModifyCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CEffectSet id="PowerSlideImpactSet">
+    <EffectArray value="ETCSlideGuitarAddToken" />
+    <EffectArray value="ETCSecondVerseModifyCooldown" />
+  </CEffectSet>
+  <!-- Stage Crash (Legendary): the shockwave from an enemy Hero hit by Powerslide (script) -->
+  <CBehaviorBuff id="ETCStageCrashStun" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ETCStageCrashApplyStun">
+    <Behavior value="ETCStageCrashStun" />
+  </CEffectApplyBehavior>
+  <CEffectDamage id="ETCStageCrashDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="L90ETCPowerslide" />
+  </CEffectDamage>
+  <CActorModel id="L90ETCPowerslideImpact">
+    <On Terms="Effect.ETCStageCrashDamage.Start; At Target" Send="Create" />
+  </CActorModel>
+
+  <!-- ===== Amplified ===== -->
+  <!-- Turn It Up quest (35% kept between games): each enemy Hero hit by Face Melt, 1% Face Melt damage each.
+       Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit, 1% Face Melt radius each
+       (script). -->
+  <CBehaviorTokenCounter id="ETCTurnItUpTokenCounter" parent="StormQuestToken">
+    <Face value="ETCTurnItUpTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ETCTurnItUpAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ETCTurnItUpTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="ETCTurnItUpAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="ETCTurnItUpTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="ETCRoarOfTheCrowdTokenCounter" parent="StormQuestToken">
+    <Face value="ETCRoarOfTheCrowdTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="FaceMeltDamage">
+    <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />
+    <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="L90ETCFaceMeltPinballWizardDamage">
+    <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />
+    <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
+  </CEffectDamage>
+  <!-- Melted Faces (Epic): enemy Heroes hit by Face Melt lose 20 Armor for 3 seconds -->
+  <CBehaviorBuff id="ETCMeltedFacesDebuff">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_ETC_FaceMelt.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-20" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ETCMeltedFacesApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="ETCMeltedFacesDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Wall of Sound (Legendary): Face Melt also Stuns enemy Heroes for 0.75 seconds -->
+  <CBehaviorBuff id="ETCWallOfSoundStun" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ETCWallOfSoundApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="ETCWallOfSoundStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="FaceMeltSet">
+    <EffectArray value="ETCTurnItUpAddToken" />
+    <EffectArray value="ETCMeltedFacesApply" />
+    <EffectArray value="ETCWallOfSoundApply" />
+  </CEffectSet>
+
+  <!-- ===== Rock Legend ===== -->
+  <!-- Shred quest (35% kept between games): each Basic Attack on an enemy Hero, 0.2% Basic Attack damage each.
+       Fan Club quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them (script), 2 Guitar Solo healing
+       per second each. -->
+  <CBehaviorTokenCounter id="ETCShredTokenCounter" parent="StormQuestToken">
+    <Face value="ETCShredTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ETCShredAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ETCShredTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="ETCShredAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="ETCShredTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="ETCFanClubTokenCounter" parent="StormQuestToken">
+    <Face value="ETCFanClubTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ETCFanClubAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ETCFanClubTokenCounter" />
+    <Scale value="2" />
+  </CAccumulatorToken>
+  <CEffectCreateHealer id="L90ETCGuitarSoloHeroHeal">
+    <RechargeVitalRate>
+      <AccumulatorArray value="ETCFanClubAccumulator" />
+    </RechargeVitalRate>
+  </CEffectCreateHealer>
+  <CEffectCreateHealer id="L90ETCGuitarSoloHeroHealDummy">
+    <RechargeVitalRate>
+      <AccumulatorArray value="ETCFanClubAccumulator" />
+    </RechargeVitalRate>
+  </CEffectCreateHealer>
+  <CEffectDamage id="L90ETCWeaponDamage">
+    <MultiplicativeModifierArray index="ETCShred" Accumulator="ETCShredAccumulator" />
+    <MultiplicativeModifierArray index="ETCPowerChord" Modifier="0" />
+  </CEffectDamage>
+  <CEffectSet id="L90ETCWeaponPostImpactSet">
+    <EffectArray value="ETCShredAddToken" />
+  </CEffectSet>
+  <!-- Headbanger (Legendary): while Guitar Solo is active, Basic Attacks reduce Powerslide's and Face Melt's cooldowns by
+       0.75 seconds -->
+  <CValidatorUnitCompareBehaviorCount id="ETCCasterHasGuitarSolo">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="L90ETCGuitarSoloHeroHeal" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectModifyUnit id="ETCHeadbangerModifyCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="ETCCasterHasGuitarSolo" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" />
+    <Cost Abil="L90ETCFaceMelt,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" />
+  </CEffectModifyUnit>
+  <CEffectSet id="L90ETCWeaponPreImpactSet">
+    <EffectArray value="ETCHeadbangerModifyCooldown" />
+  </CEffectSet>
+  <!-- Sonic Boom (Epic): the splash from a Basic Attack while Guitar Solo is active (script) -->
+  <CEffectDamage id="ETCSonicBoomDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="L90ETCGuitarSolo" />
+  </CEffectDamage>
+
+  <CButton id="ETCSlideGuitarTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_etc_powerslide.dds" />
+  </CButton>
+  <CButton id="ETCStandingOvationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_etc_powerslide.dds" />
+  </CButton>
+  <CButton id="ETCTurnItUpTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_ETC_FaceMelt.dds" />
+  </CButton>
+  <CButton id="ETCRoarOfTheCrowdTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_ETC_FaceMelt.dds" />
+  </CButton>
+  <CButton id="ETCShredTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_ETC_GuitarSolo.dds" />
+  </CButton>
+  <CButton id="ETCFanClubTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_ETC_GuitarSolo.dds" />
+  </CButton>
+</Catalog>

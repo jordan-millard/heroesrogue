@@ -1,0 +1,198 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden E.T.C.
+// Headliner, Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit adds 0.01 seconds of
+// Powerslide Stun. Stage Crash (Legendary): an enemy Hero hit by Powerslide sends a shockwave that deals 50% of the hit
+// to other enemies within 3 range and Stuns them for 0.75 seconds.
+// Amplified, Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit adds 1% Face Melt
+// radius.
+// Rock Legend, Fan Club quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds 2 Guitar Solo
+// healing per second (ETCData.xml). Sonic Boom (Epic): while Guitar Solo is active, Basic Attacks deal 50% of their
+// damage to other enemies within 2.5 range of the target.
+// The Slide Guitar, Turn It Up and Shred quests are in ETCData.xml. Stacks carry over between games through QuestRetain.
+// ============================================================
+
+const fixed libAffx_etcTakedownWindow = 3.0;
+const fixed libAffx_etcStunPerStack = 0.01; // Standing Ovation
+const fixed libAffx_etcRadiusPerStack = 0.06; // Roar of the Crowd: 1% of Face Melt's 6 radius with Loud Speakers
+const fixed libAffx_etcStageCrashRadius = 3.0;
+const fixed libAffx_etcStageCrashFraction = 0.5;
+const fixed libAffx_etcSonicBoomRadius = 2.5;
+const fixed libAffx_etcSonicBoomFraction = 0.5;
+
+bool libAffx_etcStarted;
+fixed libAffx_etcStunAdded; // Powerslide Stun duration added by Standing Ovation this game
+fixed libAffx_etcRadiusAdded; // Face Melt radius added by Roar of the Crowd this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_etcSlideTime; // per enemy player, last Powerslide hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_etcMeltTime; // per enemy player, last Face Melt hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_etcAttackTime; // per enemy player, last Basic Attack hit
+
+unit libAffx_ETCHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ETCIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+void libAffx_ETCQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+
+// Deals part of a hit to the other enemies near the victim, optionally Stunning them with an apply-behavior effect
+void libAffx_ETCSplash (unit hero, unit victim, fixed radius, string damageEffect, fixed amount, string stunEffect) {
+    unitgroup nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(victim), radius), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32)) | (1 << (c_targetFilterStasis - 32))), 0);
+    unit other;
+    int i;
+    UnitGroupRemove(nearby, victim);
+    for (i = UnitGroupCount(nearby, c_unitCountAll); i >= 1; i -= 1) {
+        other = UnitGroupUnit(nearby, i);
+        if (other != null && UnitIsAlive(other)) {
+            if (amount > 0.0) {
+                UnitDamage(hero, damageEffect, other, amount);
+            }
+            if (stunEffect != "") {
+                UnitCreateEffectUnit(hero, stunEffect, other);
+            }
+        }
+    }
+}
+
+// Standing Ovation: Powerslide's Stun lasts 0.01 seconds longer per stack. Adds only the change since the last sync.
+void libAffx_ETCSyncStun () {
+    unit hero = libAffx_ETCHero();
+    fixed wanted;
+    fixed delta;
+    if (hero == null || !UnitHasBehavior2(hero, "ETCHeadlinerMarker")) {
+        return;
+    }
+    wanted = libAffx_etcStunPerStack * UnitGetTokenCount(hero, "ETCStandingOvationTokenCounter");
+    delta = wanted - libAffx_etcStunAdded;
+    if (AbsF(delta) < 0.005) {
+        return;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "PowerslideStun", "Duration", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "PowerslideStun", "Duration", libAffx_player) + delta);
+    libAffx_etcStunAdded = wanted;
+}
+
+// Roar of the Crowd: Face Melt (and the Encore Amp) reach further, and the range indicator follows
+void libAffx_ETCSyncRadius () {
+    unit hero = libAffx_ETCHero();
+    fixed wanted;
+    fixed delta;
+    if (hero == null || !UnitHasBehavior2(hero, "ETCAmplifiedMarker")) {
+        return;
+    }
+    wanted = libAffx_etcRadiusPerStack * UnitGetTokenCount(hero, "ETCRoarOfTheCrowdTokenCounter");
+    delta = wanted - libAffx_etcRadiusAdded;
+    if (AbsF(delta) < 0.01) {
+        return;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "FaceMeltSearch", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "FaceMeltSearch", "AreaArray[0].Radius", libAffx_player) + delta);
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "FaceMeltEncoreMasterySearch", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "FaceMeltEncoreMasterySearch", "AreaArray[0].Radius", libAffx_player) + delta);
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "L90ETCFaceMeltRangeSplat", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "L90ETCFaceMeltRangeSplat", "Scale", libAffx_player) + delta);
+    libAffx_etcRadiusAdded = wanted;
+}
+bool libAffx_ETCSync_Func (bool testConds, bool runActions) {
+    libAffx_ETCSyncStun();
+    libAffx_ETCSyncRadius();
+    return true;
+}
+
+// Powerslide hit: opens the Standing Ovation takedown window, and runs Stage Crash
+bool libAffx_ETCSlideHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ETCHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ETCIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_etcSlideTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (UnitHasBehavior2(hero, "ETCStageCrashMarker")) {
+        libAffx_ETCSplash(hero, victim, libAffx_etcStageCrashRadius, "ETCStageCrashDamage", EventUnitDamageAttempted() * libAffx_etcStageCrashFraction, "ETCStageCrashApplyStun");
+    }
+    return true;
+}
+
+// Face Melt hit on an enemy Hero: opens the Roar of the Crowd takedown window
+bool libAffx_ETCMeltHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ETCIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_etcMeltTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+// Basic Attack hit: opens the Fan Club takedown window, and runs Sonic Boom
+bool libAffx_ETCAttackHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ETCHero();
+    fixed amount = EventUnitDamageAttempted();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || victim == null) {
+        return false;
+    }
+    if (libAffx_ETCIsEnemyHero(victim)) {
+        libAffx_etcAttackTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    }
+    if (UnitHasBehavior2(hero, "ETCSonicBoomMarker") && UnitHasBehavior2(hero, "L90ETCGuitarSoloHeroHeal") && amount > 0.0) {
+        libAffx_ETCSplash(hero, victim, libAffx_etcSonicBoomRadius, "ETCSonicBoomDamage", amount * libAffx_etcSonicBoomFraction, "");
+    }
+    return true;
+}
+
+bool libAffx_ETCInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_etcTakedownWindow;
+}
+
+// HeroTakedown for Standing Ovation, Roar of the Crowd and Fan Club
+bool libAffx_ETCTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_ETCHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "ETCHeadlinerMarker") && libAffx_ETCInWindow(libAffx_etcSlideTime[killedPlayer], now)) {
+        libAffx_etcSlideTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ETCStandingOvationTokenCounter", hero);
+        libAffx_ETCSyncStun();
+        libAffx_ETCQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "ETCAmplifiedMarker") && libAffx_ETCInWindow(libAffx_etcMeltTime[killedPlayer], now)) {
+        libAffx_etcMeltTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ETCRoarOfTheCrowdTokenCounter", hero);
+        libAffx_ETCSyncRadius();
+        libAffx_ETCQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "ETCRockLegendMarker") && libAffx_ETCInWindow(libAffx_etcAttackTime[killedPlayer], now)) {
+        libAffx_etcAttackTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ETCFanClubTokenCounter", hero);
+        libAffx_ETCQuestDing();
+    }
+    return true;
+}
+
+// AffixAdded for all three starters
+bool libAffx_ETCStart (bool testConds, bool runActions) {
+    trigger meltHit;
+    if (libAffx_etcStarted) {
+        return true;
+    }
+    libAffx_etcStarted = true;
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ETCSlideHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "PowerSlideDamage");
+    meltHit = TriggerCreate("libAffx_ETCMeltHit_Func");
+    TriggerAddEventUnitDamaged(meltHit, null, c_unitDamageTypeAny, c_unitDamageEither, "FaceMeltDamage");
+    TriggerAddEventUnitDamaged(meltHit, null, c_unitDamageTypeAny, c_unitDamageEither, "L90ETCFaceMeltPinballWizardDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ETCAttackHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "L90ETCWeaponDamage");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ETCSync_Func"), 1.0, c_timeGame);
+    return true;
+}
