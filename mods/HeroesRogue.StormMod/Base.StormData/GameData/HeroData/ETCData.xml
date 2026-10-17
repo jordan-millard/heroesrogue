@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ETCSonicBoomMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Headliner ===== -->
-  <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 1% Powerslide damage each.
+  <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 2% Powerslide damage each.
        Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit, 0.01 seconds of Powerslide
        Stun each (script). -->
   <CBehaviorTokenCounter id="ETCSlideGuitarTokenCounter" parent="StormQuestToken">
@@ -26,7 +26,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ETCSlideGuitarTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.02" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="ETCSlideGuitarAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
@@ -47,7 +47,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Chance value="0" />
     <ValidatorArray value="TargetIsHero" />
     <ImpactUnit Value="Caster" />
-    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-2" />
+    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
   </CEffectModifyUnit>
   <CEffectSet id="PowerSlideImpactSet">
     <EffectArray value="ETCSlideGuitarAddToken" />
@@ -195,8 +195,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="ETCCasterHasGuitarSolo" />
     <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
     <ImpactUnit Value="Caster" />
-    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" />
-    <Cost Abil="L90ETCFaceMelt,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" />
+    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" ChargeTimeUse="-0.75" />
+    <Cost Abil="L90ETCFaceMelt,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" ChargeTimeUse="-0.75" />
   </CEffectModifyUnit>
   <CEffectSet id="L90ETCWeaponPreImpactSet">
     <EffectArray value="ETCHeadbangerModifyCooldown" />
@@ -207,6 +207,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Amount value="0" />
     <SourceButtonFace value="L90ETCGuitarSolo" />
   </CEffectDamage>
+
+  <!-- Each starter gives its ability 2 charges, so the base cooldown changes and refunds also have to reach the charge
+       timer. Abilities without charges ignore these fields. -->
+  <CEffectModifyUnit id="L90ETCPowerSlideCrowdSurferCooldownReduction">
+    <Cost index="0" ChargeTimeUse="-6" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="L90ETCPowerslideCrowdSurferRefundCheck">
+    <Cost index="0" ChargeCountUse="-1" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="L90ETCTourBusModifyCooldown">
+    <Cost index="0" ChargeCountUse="-1" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="FaceMeltMicCheckMasteryModifyCooldown">
+    <Cost index="0" ChargeTimeUse="-6" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="ETCGuitarSoloAggressiveShreddingTalentModifyCooldown">
+    <Cost index="0" ChargeTimeUse="-0.75" />
+  </CEffectModifyUnit>
 
   <CButton id="ETCSlideGuitarTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_etc_powerslide.dds" />
