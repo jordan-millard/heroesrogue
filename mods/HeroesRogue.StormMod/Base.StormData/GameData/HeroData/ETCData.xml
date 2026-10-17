@@ -134,19 +134,23 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="TargetIsHero" />
     <Behavior value="ETCMeltedFacesDebuff" />
   </CEffectApplyBehavior>
-  <!-- Wall of Sound (Legendary): Face Melt also Stuns enemy Heroes for 0.75 seconds -->
+  <!-- Implosion (Legendary, affix ETCWallOfSound): Face Melt pulls enemies in instead of knocking them back (the affix
+       makes FaceMeltApplyForce's Amount negative), then Stuns enemy Heroes for 0.75 seconds when the pull ends. The affix
+       swaps FaceMeltKnockback's ExpireEffect for ETCWallOfSoundExpireSet, which keeps the base Face Smelt switch. -->
   <CBehaviorBuff id="ETCWallOfSoundStun" parent="StormStun">
     <Duration value="0.75" />
   </CBehaviorBuff>
   <CEffectApplyBehavior id="ETCWallOfSoundApply">
-    <Chance value="0" />
     <ValidatorArray value="TargetIsHero" />
     <Behavior value="ETCWallOfSoundStun" />
   </CEffectApplyBehavior>
+  <CEffectSet id="ETCWallOfSoundExpireSet">
+    <EffectArray value="L90ETCFaceSmeltingApplySlowSwitch" />
+    <EffectArray value="ETCWallOfSoundApply" />
+  </CEffectSet>
   <CEffectSet id="FaceMeltSet">
     <EffectArray value="ETCTurnItUpAddToken" />
     <EffectArray value="ETCMeltedFacesApply" />
-    <EffectArray value="ETCWallOfSoundApply" />
   </CEffectSet>
 
   <!-- ===== Rock Legend ===== -->
