@@ -14,23 +14,25 @@ const int libAffx_teamChaosIndex = libGame_gv_teamChaosIndex_C;
 
 const int libAffx_maxHeroes = 91;
 const int libAffx_maxMaps = 19; // highest map ID (ARAM maps are 11-14)
-const int libAffx_maxTalents = 20;
+const int libAffx_maxTalents = 18; // most used: 17 TalentsDisable (AbathurMinefield)
 const int libAffx_maxCatalogModifications = 20;
 const int libAffx_maxBehaviors = 10;
 const int libAffx_maxAffixBehaviors = 1000;
 const int libAffx_maxTriggers = 10;
-const int libAffx_maxQuests = 10;
+const int libAffx_maxQuests = 6; // QuestRetain entries; most used: 5
 const int libAffx_maxFilters = 100;
-const int libAffx_maxAffixes = 700; // AffixData.xml instances past this are silently dropped
+const int libAffx_maxAffixes = 560; // AffixData.xml instances past this are silently dropped. libAffx_affixes is the
+// biggest global: 700 with the old per-affix array sizes soft-locked the map (likely the script memory limit), so the
+// arrays below were trimmed to keep 560 no bigger than the old 500.
 const int libAffx_maxOwnedAffixesPerPage = 90;
 const int libAffx_maxQueue = 100;
-const int libAffx_maxRequirements = 20;
+const int libAffx_maxRequirements = 5; // AffixesRequired/Excluded per affix; most used: 2
 const int libAffx_maxEligibleAffixes = libAffx_maxAffixes; // Maximum affixes that can be eligible for a slot when rolling
 const int libAffx_maxAffixSelection = 5;
 const int libAffx_maxAffixTypes = 2;
 const int libAffx_maxOptionDialogs = 20;
 const int libAffx_maxAchievements = libAffx_maxHeroes + 9;
-const int libAffx_maxSaveValues = 10;
+const int libAffx_maxSaveValues = 3; // per-affix bank values; only Pacifism uses one
 
 // ============================================================
 // Affix Types IDs
