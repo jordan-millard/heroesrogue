@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden E.T.C.
-// Headliner, Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit adds 0.01 seconds of
+// Headliner, Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit adds 0.03 seconds of
 // Powerslide Stun. Stage Crash (Legendary): an enemy Hero hit by Powerslide sends a shockwave that deals 50% of the hit
 // to other enemies within 3 range and Stuns them for 0.75 seconds.
 // Amplified, Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit adds 1% Face Melt
@@ -15,7 +15,7 @@ include "AffixTriggers"
 // ============================================================
 
 const fixed libAffx_etcTakedownWindow = 3.0;
-const fixed libAffx_etcStunPerStack = 0.01; // Standing Ovation
+const fixed libAffx_etcStunPerStack = 0.03; // Standing Ovation
 const fixed libAffx_etcRadiusPerStack = 0.06; // Roar of the Crowd: 1% of Face Melt's 6 radius with Loud Speakers
 const fixed libAffx_etcStageCrashRadius = 3.0;
 const fixed libAffx_etcStageCrashFraction = 0.5;
@@ -62,7 +62,7 @@ void libAffx_ETCSplash (unit hero, unit victim, fixed radius, string damageEffec
     }
 }
 
-// Standing Ovation: Powerslide's Stun lasts 0.01 seconds longer per stack. Adds only the change since the last sync.
+// Standing Ovation: Powerslide's Stun lasts 0.03 seconds longer per stack. Adds only the change since the last sync.
 void libAffx_ETCSyncStun () {
     unit hero = libAffx_ETCHero();
     fixed wanted;
