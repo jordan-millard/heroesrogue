@@ -12697,6 +12697,15 @@
             <String String="1 1 Set Effect,ETCTurnItUpAddToken,Chance 1">
                 <Field Id="CatalogModification" Index="7" />
             </String>
+            <String String="1 1 Set Effect,FaceMeltDamage,MultiplicativeModifierArray[ETCAmplifiedPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,L90ETCFaceMeltPinballWizardDamage,MultiplicativeModifierArray[ETCAmplifiedPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,FaceMeltApplyForce,Amount -10">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
             <String String="AffixAdded libAffx_ETCStart">
                 <Field Id="Trigger" />
             </String>
@@ -12764,7 +12773,7 @@
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
-        <Instances Id="ETCMeltedFaces">
+        <Instances Id="ETCHypeMan">
             <String String="Assets/Textures/storm_ui_icon_ETC_FaceMelt.dds">
                 <Field Id="Icon" />
             </String>
@@ -12777,11 +12786,11 @@
             <User Type="Affix" Instance="ETCAmplified">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 1 Set Effect,ETCMeltedFacesApply,Chance 1">
+            <String String="1 1 Set Effect,ETCHypeManApply,Chance 1">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
-        <Instances Id="ETCWallOfSound">
+        <Instances Id="ETCGrandFinale">
             <String String="Assets/Textures/storm_ui_icon_ETC_FaceMelt.dds">
                 <Field Id="Icon" />
             </String>
@@ -12794,11 +12803,8 @@
             <User Type="Affix" Instance="ETCAmplified">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 1 Set Effect,FaceMeltApplyForce,Amount -10">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 String Behavior,FaceMeltKnockback,ExpireEffect ETCWallOfSoundExpireSet">
-                <Field Id="CatalogModification" Index="1" />
+            <String String="1 0 ETCGrandFinaleMarker">
+                <Field Id="Behavior" />
             </String>
         </Instances>
         <Instances Id="ETCRockLegend">

@@ -5,7 +5,7 @@ include "AffixTriggers"
 // Headliner, Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit adds 0.02 seconds of
 // Powerslide Stun, up to 1 second; each stack past that adds 2% Powerslide damage instead. Stage Crash (Legendary): an enemy Hero hit by Powerslide sends a shockwave that deals 50% of the hit
 // to other enemies within 3 range and Stuns them for 0.75 seconds.
-// Amplified, Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit adds 1% Face Melt
+// Amplified, Roar of the Crowd quest: an enemy Hero takedown within 6 seconds of a Face Melt hit adds 1% Face Melt
 // radius.
 // Rock Legend, Fan Club quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds 2 Guitar Solo
 // healing per second (ETCData.xml). Sonic Boom (Epic): while Guitar Solo is active, Basic Attacks deal 50% of their
@@ -15,6 +15,7 @@ include "AffixTriggers"
 // ============================================================
 
 const fixed libAffx_etcTakedownWindow = 3.0;
+const fixed libAffx_etcMeltWindow = 6.0; // Roar of the Crowd
 const fixed libAffx_etcStunPerStack = 0.02; // Standing Ovation
 const fixed libAffx_etcStunMax = 1.0; // reached at 50 stacks
 const fixed libAffx_etcOverflowDamagePerStack = 0.02; // Standing Ovation stacks past the Stun cap
@@ -156,8 +157,8 @@ bool libAffx_ETCAttackHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
-bool libAffx_ETCInWindow (fixed hitTime, fixed now) {
-    return hitTime > 0.0 && now - hitTime <= libAffx_etcTakedownWindow;
+bool libAffx_ETCInWindow (fixed hitTime, fixed now, fixed window) {
+    return hitTime > 0.0 && now - hitTime <= window;
 }
 
 // HeroTakedown for Standing Ovation, Roar of the Crowd and Fan Club
@@ -173,19 +174,19 @@ bool libAffx_ETCTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
-    if (UnitHasBehavior2(hero, "ETCHeadlinerMarker") && libAffx_ETCInWindow(libAffx_etcSlideTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "ETCHeadlinerMarker") && libAffx_ETCInWindow(libAffx_etcSlideTime[killedPlayer], now, libAffx_etcTakedownWindow)) {
         libAffx_etcSlideTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ETCStandingOvationTokenCounter", hero);
         libAffx_ETCSyncStun();
         libAffx_ETCQuestDing();
     }
-    if (UnitHasBehavior2(hero, "ETCAmplifiedMarker") && libAffx_ETCInWindow(libAffx_etcMeltTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "ETCAmplifiedMarker") && libAffx_ETCInWindow(libAffx_etcMeltTime[killedPlayer], now, libAffx_etcMeltWindow)) {
         libAffx_etcMeltTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ETCRoarOfTheCrowdTokenCounter", hero);
         libAffx_ETCSyncRadius();
         libAffx_ETCQuestDing();
     }
-    if (UnitHasBehavior2(hero, "ETCRockLegendMarker") && libAffx_ETCInWindow(libAffx_etcAttackTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "ETCRockLegendMarker") && libAffx_ETCInWindow(libAffx_etcAttackTime[killedPlayer], now, libAffx_etcTakedownWindow)) {
         libAffx_etcAttackTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ETCFanClubTokenCounter", hero);
         libAffx_ETCQuestDing();

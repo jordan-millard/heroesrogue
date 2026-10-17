@@ -89,7 +89,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Amplified ===== -->
   <!-- Turn It Up quest (35% kept between games): each enemy Hero hit by Face Melt, 2% Face Melt damage each
        (doubled against lane Minions by a second modifier).
-       Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit, 1% Face Melt radius each
+       Roar of the Crowd quest: an enemy Hero takedown within 6 seconds of a Face Melt hit, 1% Face Melt radius each
        (script). -->
   <CBehaviorTokenCounter id="ETCTurnItUpTokenCounter" parent="StormQuestToken">
     <Face value="ETCTurnItUpTokenCounter" />
@@ -112,48 +112,62 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="ETCRoarOfTheCrowdTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- Amplified itself: +50% Face Melt damage (ETCAmplifiedPower, set by the affix), and Face Melt pulls enemies toward
+       E.T.C. instead of knocking them back (the affix makes FaceMeltApplyForce's Amount negative) -->
+  <!-- Grand Finale (Legendary): Face Melt deals 1% more damage to enemy Heroes per 1% Health they are missing -->
+  <CBehaviorBuff id="ETCGrandFinaleMarker" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="ETCCasterHasGrandFinale">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="ETCGrandFinaleMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="ETCGrandFinaleCombine">
+    <CombineArray value="TargetIsHero" />
+    <CombineArray value="ETCCasterHasGrandFinale" />
+  </CValidatorCombine>
+  <CAccumulatorVitals id="ETCGrandFinaleAccumulator" parent="BaseVitalAccumulator">
+    <UnitSource Value="Target" />
+    <VitalType value="Life" />
+    <Missing value="1" />
+    <Ratio value="1" />
+    <ModificationType value="Relative" />
+    <ApplicationRule value="Add" />
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="1" />
+  </CAccumulatorVitals>
   <CEffectDamage id="FaceMeltDamage">
     <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />
     <MultiplicativeModifierArray index="ETCTurnItUpMinions" Validator="TargetIsMinionAndNotMercLaner" Accumulator="ETCTurnItUpAccumulator" />
     <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
+    <MultiplicativeModifierArray index="ETCAmplifiedPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ETCGrandFinale" Validator="ETCGrandFinaleCombine" Accumulator="ETCGrandFinaleAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="L90ETCFaceMeltPinballWizardDamage">
     <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />
     <MultiplicativeModifierArray index="ETCTurnItUpMinions" Validator="TargetIsMinionAndNotMercLaner" Accumulator="ETCTurnItUpAccumulator" />
     <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
+    <MultiplicativeModifierArray index="ETCAmplifiedPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ETCGrandFinale" Validator="ETCGrandFinaleCombine" Accumulator="ETCGrandFinaleAccumulator" />
   </CEffectDamage>
-  <!-- Melted Faces (Epic): enemy Heroes hit by Face Melt lose 20 Armor for 3 seconds -->
-  <CBehaviorBuff id="ETCMeltedFacesDebuff" parent="StormArmor">
+  <!-- Hype Man (Epic): enemy Heroes hit by Face Melt lose 25 Armor for 4 seconds -->
+  <CBehaviorBuff id="ETCHypeManDebuff" parent="StormArmor">
     <Alignment value="Negative" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_ETC_FaceMelt.dds" />
     <BehaviorCategories index="DebuffVulnerable" value="1" />
-    <Duration value="3" />
+    <Duration value="4" />
     <ArmorModification>
-      <AllArmorBonus value="-20" />
+      <AllArmorBonus value="-25" />
     </ArmorModification>
   </CBehaviorBuff>
-  <CEffectApplyBehavior id="ETCMeltedFacesApply">
+  <CEffectApplyBehavior id="ETCHypeManApply">
     <Chance value="0" />
     <ValidatorArray value="TargetIsHero" />
-    <Behavior value="ETCMeltedFacesDebuff" />
+    <Behavior value="ETCHypeManDebuff" />
   </CEffectApplyBehavior>
-  <!-- Implosion (Legendary, affix ETCWallOfSound): Face Melt pulls enemies in instead of knocking them back (the affix
-       makes FaceMeltApplyForce's Amount negative), then Stuns enemy Heroes for 0.75 seconds when the pull ends. The affix
-       swaps FaceMeltKnockback's ExpireEffect for ETCWallOfSoundExpireSet, which keeps the base Face Smelt switch. -->
-  <CBehaviorBuff id="ETCWallOfSoundStun" parent="StormStun">
-    <Duration value="0.75" />
-  </CBehaviorBuff>
-  <CEffectApplyBehavior id="ETCWallOfSoundApply">
-    <ValidatorArray value="TargetIsHero" />
-    <Behavior value="ETCWallOfSoundStun" />
-  </CEffectApplyBehavior>
-  <CEffectSet id="ETCWallOfSoundExpireSet">
-    <EffectArray value="L90ETCFaceSmeltingApplySlowSwitch" />
-    <EffectArray value="ETCWallOfSoundApply" />
-  </CEffectSet>
   <CEffectSet id="FaceMeltSet">
     <EffectArray value="ETCTurnItUpAddToken" />
-    <EffectArray value="ETCMeltedFacesApply" />
+    <EffectArray value="ETCHypeManApply" />
   </CEffectSet>
 
   <!-- ===== Rock Legend ===== -->
