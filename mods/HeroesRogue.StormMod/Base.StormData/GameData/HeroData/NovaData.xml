@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Nova. Starters: Deadeye (Snipe), Crippling Fire (Pinning Shot) and Holo Corps (Holo Decoy). Takedown
+       quests and the script-driven boons are in HeroTriggers/Nova.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="NovaDeadeyeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="NovaCripplingFireMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="NovaHoloCorpsMarker" parent="CarryBehaviorParent" />
+  <!-- Boon markers handled by the script -->
+  <CBehaviorBuff id="NovaKillshotMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="NovaRicochetMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="NovaMimicryMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Deadeye ===== -->
+  <!-- Steady Aim quest (this game only): each Snipe hit on an enemy Hero, 1% Snipe damage each.
+       Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit (script), 1% Snipe damage each. -->
+  <CBehaviorTokenCounter id="NovaSteadyAimTokenCounter" parent="StormQuestToken">
+    <Face value="NovaSteadyAimTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaSteadyAimAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaSteadyAimTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="NovaSteadyAimAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="CasterIsNova" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="NovaSteadyAimTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="SnipeImpactSet">
+    <EffectArray value="NovaSteadyAimAddToken" />
+  </CEffectSet>
+  <CBehaviorTokenCounter id="NovaConfirmedKillTokenCounter" parent="StormQuestToken">
+    <Face value="NovaConfirmedKillTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaConfirmedKillAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaConfirmedKillTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <!-- Headshot (Epic): Snipe deals 50% more to Heroes below 50% Health -->
+  <CValidatorUnitCompareVital id="NovaHeadshotTargetBelowHalfLife" parent="CasterLifePercent">
+    <WhichUnit Value="Target" />
+    <Compare value="LT" />
+    <Value value="0.5" />
+  </CValidatorUnitCompareVital>
+  <CValidatorCombine id="NovaHeadshotCombine">
+    <CombineArray value="TargetIsHero" />
+    <CombineArray value="NovaHeadshotTargetBelowHalfLife" />
+  </CValidatorCombine>
+  <CEffectDamage id="StormSnipeDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+    <MultiplicativeModifierArray index="NovaSteadyAim" Accumulator="NovaSteadyAimAccumulator" />
+    <MultiplicativeModifierArray index="NovaConfirmedKill" Accumulator="NovaConfirmedKillAccumulator" />
+    <MultiplicativeModifierArray index="NovaHollowPoint" Modifier="0" />
+    <MultiplicativeModifierArray index="NovaHeadshot" Validator="NovaHeadshotCombine" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="SnipeExplosiveDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+    <MultiplicativeModifierArray index="NovaSteadyAim" Accumulator="NovaSteadyAimAccumulator" />
+    <MultiplicativeModifierArray index="NovaConfirmedKill" Accumulator="NovaConfirmedKillAccumulator" />
+    <MultiplicativeModifierArray index="NovaHollowPoint" Modifier="0" />
+    <MultiplicativeModifierArray index="NovaHeadshot" Validator="NovaHeadshotCombine" Modifier="0" />
+  </CEffectDamage>
+  <!-- A Snipe that misses removes only 2 Precision Sniper stacks with Deadeye. The removal runs before the hit marker is
+       cleared (SnipeFinishSet's second effect), like the base reset. -->
+  <CValidatorUnitCompareBehaviorCount id="NovaCasterHasDeadeye">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="NovaDeadeyeMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="NovaCasterLacksDeadeye">
+    <WhichUnit Value="Caster" />
+    <Compare value="LT" />
+    <Value value="1" />
+    <Behavior value="NovaDeadeyeMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectModifyTokenCount id="NovaPrecisionSniperRemoveTokenCount">
+    <ValidatorArray value="NovaCasterLacksDeadeye" />
+  </CEffectModifyTokenCount>
+  <CEffectModifyTokenCount id="NovaDeadeyeMissRemoveTokens" parent="BaseEffectModifyTokenCount">
+    <ValidatorArray value="NovaSnipeMasterCasterDoesNotHaveHeroHitBehavior" />
+    <ValidatorArray value="NovaCasterHasDeadeye" />
+    <TokenId value="NovaPrecisionSniperTokenCounter" />
+    <Value value="-2" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="NovaDeadeyeFinishSet">
+    <EffectArray value="NovaDeadeyeMissRemoveTokens" />
+    <EffectArray value="NovaSnipeMasterRemoveHeroHit" />
+  </CEffectSet>
+  <CEffectSet id="SnipeFinishSet">
+    <EffectArray index="1" value="NovaDeadeyeFinishSet" />
+  </CEffectSet>
+  <!-- Killshot (Legendary): run by the script on a Snipe takedown -->
+  <CEffectModifyUnit id="NovaKillshotRefund">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="NovaSnipeStorm,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+    <VitalArray index="Energy">
+      <Change value="50" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CEffectSet id="NovaKillshotSet">
+    <EffectArray value="NovaKillshotRefund" />
+    <EffectArray value="NovaPermanentCloakClearCooldownModifyUnit" />
+  </CEffectSet>
+
+  <!-- ===== Crippling Fire ===== -->
+  <!-- Marked Targets quest (this game only): each Pinning Shot hit on an enemy Hero, 0.5% damage against enemies Slowed by
+       Pinning Shot. Hunter's Mark quest: an enemy Hero takedown within 3 seconds of a Pinning Shot hit (script), 1%. -->
+  <CBehaviorTokenCounter id="NovaMarkedTargetsTokenCounter" parent="StormQuestToken">
+    <Face value="NovaMarkedTargetsTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaMarkedTargetsAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaMarkedTargetsTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="NovaMarkedTargetsAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="CasterIsNova" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="NovaMarkedTargetsTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="NovaHuntersMarkTokenCounter" parent="StormQuestToken">
+    <Face value="NovaHuntersMarkTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaHuntersMarkAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaHuntersMarkTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CValidatorUnitCompareBehaviorCount id="NovaTargetHasPinningShotSlow">
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="PinningShotSlow" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="NovaTargetHasCovertOpsSlow">
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="NovaPinningShotCovertOpsSlow" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="NovaTargetPinned">
+    <Type value="Or" />
+    <CombineArray value="NovaTargetHasPinningShotSlow" />
+    <CombineArray value="NovaTargetHasCovertOpsSlow" />
+  </CValidatorCombine>
+  <CEffectDamage id="RangedAttackNovaDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="NovaRangedAttackNovaAntiArmorShellsDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="PinningShotDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+    <MultiplicativeModifierArray index="NovaHeavyRounds" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TripleTapMissileDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="PrecisionStrikeDamage">
+    <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
+    <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+  </CEffectDamage>
+  <!-- Pinned Down (Epic): Pinning Shot also Roots for 0.5 seconds -->
+  <CBehaviorBuff id="NovaPinnedDownRoot" parent="StormRoot">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="NovaPinnedDownApply" parent="StormRootApply">
+    <Chance value="0" />
+    <ValidatorArray value="CasterIsNotNovaHoloClone" />
+    <Behavior value="NovaPinnedDownRoot" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="PinningShotImpactSet">
+    <EffectArray value="NovaMarkedTargetsAddToken" />
+    <EffectArray value="NovaPinnedDownApply" />
+  </CEffectSet>
+  <!-- Ricochet (Legendary): marks a Hero the bounce hit, so it doesn't bounce again from them (script) -->
+  <CBehaviorBuff id="NovaRicochetHit">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+
+  <!-- ===== Holo Corps ===== -->
+  <!-- Illusionist quest (this game only): each Decoy hit on an enemy Hero, 0.5% Decoy damage. Phantom Strike quest: an
+       enemy Hero takedown while a Decoy is alive, 2% Decoy damage. Decoys deal the damage, so the script copies both
+       counts onto each Decoy when it spawns. -->
+  <CBehaviorTokenCounter id="NovaIllusionistTokenCounter" parent="StormQuestToken">
+    <Face value="NovaIllusionistTokenCounter" />
+    <Max value="100000" />
+    <IncreaseEvents index="0" EventId="" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaIllusionistAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaIllusionistTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CBehaviorTokenCounter id="NovaPhantomStrikeTokenCounter" parent="StormQuestToken">
+    <Face value="NovaPhantomStrikeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaPhantomStrikeAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaPhantomStrikeTokenCounter" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HoloDecoyWeaponRelicDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NovaHoloDecoyWeaponRelicAntiArmorShellsDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoloDecoyWeaponDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoloDecoyExplodeDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NovaHoloDecoySnipeDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+    <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NovaHoloDecoySnipeExplosiveShotDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+    <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NovaHoloDecoyPinningShotDamage">
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
+    <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
+  </CEffectDamage>
+  <!-- Holo Corps: casting Holo Decoy resets Permanent Cloak's cooldown. Twin Projection (Rare): a second Decoy 1.5 to the
+       side. -->
+  <CEffectModifyUnit id="NovaHoloCorpsCloakReset">
+    <Chance value="0" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="NovaCloakCooldownDisplay,Execute" CooldownOperation="Set" />
+  </CEffectModifyUnit>
+  <CEffectCreateUnit id="NovaTwinProjectionCreateUnit">
+    <WhichLocation Value="TargetPoint" />
+    <CreateFlags index="PlacementIgnoreBlockers" value="1" />
+    <SpawnEffect value="HoloCloneSpawnSet" />
+    <SpawnUnit value="NovaHoloClone" />
+    <SpawnRange value="100" />
+  </CEffectCreateUnit>
+  <CEffectCreatePersistent id="NovaTwinProjectionPersistent">
+    <Chance value="0" />
+    <PeriodCount value="1" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicOffsetArray X="1.5" />
+    <PeriodicEffectArray value="NovaTwinProjectionCreateUnit" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="NovaHoloDecoyInitialSet">
+    <EffectArray value="NovaHoloCorpsCloakReset" />
+    <EffectArray value="NovaTwinProjectionPersistent" />
+  </CEffectSet>
+  <!-- Decoy Detonation (Legendary): the base expire explosion (HoloDecoySearch, Chance 0) plus a 0.75 second Stun -->
+  <CBehaviorBuff id="NovaDecoyDetonationStun" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="NovaDecoyDetonationApplyStun">
+    <ValidatorArray value="TargetNotUnstoppable" />
+    <Behavior value="NovaDecoyDetonationStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HoloDecoyImpactSet">
+    <EffectArray value="NovaDecoyDetonationApplyStun" />
+  </CEffectSet>
+
+  <CButton id="NovaSteadyAimTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nova_snipe.dds" />
+  </CButton>
+  <CButton id="NovaConfirmedKillTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nova_snipe.dds" />
+  </CButton>
+  <CButton id="NovaMarkedTargetsTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nova_pinningshot.dds" />
+  </CButton>
+  <CButton id="NovaHuntersMarkTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nova_pinningshot.dds" />
+  </CButton>
+  <CButton id="NovaIllusionistTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nova_holodecoy.dds" />
+  </CButton>
+  <CButton id="NovaPhantomStrikeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nova_holodecoy.dds" />
+  </CButton>
+</Catalog>

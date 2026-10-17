@@ -12019,6 +12019,447 @@
                 <Field Id="Behavior" />
             </String>
         </Instances>
+        <Instances Id="NovaDeadeye">
+            <String String="Assets/Textures/storm_ui_icon_nova_snipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="NovaMasteryPerfectShotSnipe">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="NovaMasteryPsionicEfficiency">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 NovaDeadeyeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 NovaSteadyAimTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 NovaConfirmedKillTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="NovaConfirmedKillTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Subtract Abil,NovaSnipeStorm,Cost.Cooldown.TimeUse 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,NovaSteadyAimAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_NovaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_NovaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="NovaHollowPoint">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nova_snipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaDeadeye">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,StormSnipeDamage,MultiplicativeModifierArray[NovaHollowPoint].Modifier 0.04">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,SnipeExplosiveDamage,MultiplicativeModifierArray[NovaHollowPoint].Modifier 0.04">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="NovaQuickChamber">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nova_snipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaDeadeye">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,NovaSnipeStorm,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="NovaExplosiveRoundBoon">
+            <String String="Assets/Textures/storm_ui_icon_nova_snipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaDeadeye">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NovaMasteryExplosiveShot">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="NovaHeadshot">
+            <String String="Assets/Textures/storm_ui_icon_nova_snipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaDeadeye">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,StormSnipeDamage,MultiplicativeModifierArray[NovaHeadshot].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SnipeExplosiveDamage,MultiplicativeModifierArray[NovaHeadshot].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="NovaKillshot">
+            <String String="Assets/Textures/storm_ui_icon_nova_snipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaDeadeye">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 NovaKillshotMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="NovaCripplingFire">
+            <String String="Assets/Textures/storm_ui_icon_Nova_PinningShot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="NovaMasteryLongshot">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="NovaMasteryCripplingShot">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 NovaCripplingFireMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 NovaMarkedTargetsTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 NovaHuntersMarkTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="NovaHuntersMarkTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Subtract Abil,NovaPinningShot,Cost.Charge.TimeUse 3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Behavior,PinningShotSlow,Modification.UnifiedMoveSpeedFactor -0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,NovaMarkedTargetsAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_NovaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_NovaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="NovaHeavyRounds">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Nova_PinningShot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaCripplingFire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,PinningShotDamage,MultiplicativeModifierArray[NovaHeavyRounds].Modifier 0.08">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="NovaLingeringSlow">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Nova_PinningShot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaCripplingFire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,PinningShotSlow,Duration 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="NovaDoubleTapBoon">
+            <String String="Assets/Textures/storm_ui_icon_Nova_PinningShot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaCripplingFire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NovaMasteryDoubleTap">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 1 Add Abil,NovaPinningShot,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,NovaPinningShot,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,NovaPinningShot,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="NovaPinnedDown">
+            <String String="Assets/Textures/storm_ui_icon_Nova_PinningShot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaCripplingFire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,NovaPinnedDownApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="NovaRicochet">
+            <String String="Assets/Textures/storm_ui_icon_Nova_PinningShot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaCripplingFire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 NovaRicochetMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="NovaHoloCorps">
+            <String String="Assets/Textures/storm_ui_icon_nova_holodecoy.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="NovaRapidProjection">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="NovaMasteryLethalDecoy">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 NovaHoloCorpsMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 NovaIllusionistTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 NovaPhantomStrikeTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="NovaPhantomStrikeTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="1 1 Add Behavior,NovaHoloDecoyTimedLife,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,NovaHoloCorpsCloakReset,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_NovaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_NovaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="NovaSharperImage">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nova_holodecoy.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaHoloCorps">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,HoloDecoyWeaponRelicDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,NovaHoloDecoyWeaponRelicAntiArmorShellsDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,HoloDecoyWeaponDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,HoloDecoyExplodeDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,NovaHoloDecoySnipeDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,NovaHoloDecoySnipeExplosiveShotDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,NovaHoloDecoyPinningShotDamage,MultiplicativeModifierArray[NovaSharperImage].Modifier 0.05">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+        </Instances>
+        <Instances Id="NovaStableProjection">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nova_holodecoy.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaHoloCorps">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,NovaHoloDecoyTimedLife,Duration 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="NovaTwinProjection">
+            <String String="Assets/Textures/storm_ui_icon_nova_holodecoy.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaHoloCorps">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,NovaTwinProjectionPersistent,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="NovaMimicry">
+            <String String="Assets/Textures/storm_ui_icon_nova_holodecoy.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaHoloCorps">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 NovaMimicryMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Set Effect,NovaHoloDecoySnipeDamage,MultiplicativeModifierArray[NovaMimicry].Modifier 1.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,NovaHoloDecoySnipeExplosiveShotDamage,MultiplicativeModifierArray[NovaMimicry].Modifier 1.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,NovaHoloDecoyPinningShotDamage,MultiplicativeModifierArray[NovaMimicry].Modifier 1.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="NovaDecoyDetonation">
+            <String String="Assets/Textures/storm_ui_icon_nova_holodecoy.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Nova">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="NovaHoloCorps">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,HoloDecoySearch,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

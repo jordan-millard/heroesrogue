@@ -1,0 +1,235 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Nova.
+// Deadeye, Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit adds 1% Snipe damage. Killshot
+// (Legendary): that takedown also refunds Snipe's cooldown and Mana and resets Permanent Cloak. Steady Aim (this game
+// only), Headshot and the 2-stack miss penalty are in NovaData.xml.
+// Crippling Fire, Hunter's Mark quest: an enemy Hero takedown within 3 seconds of a Pinning Shot hit adds 1% damage
+// against enemies Slowed by Pinning Shot. Ricochet (Legendary): Pinning Shot also hits the nearest other enemy Hero.
+// Holo Corps, Phantom Strike quest: an enemy Hero takedown while a Decoy is alive adds 2% Decoy damage; Illusionist
+// (this game only) counts Decoy hits on enemy Heroes. Decoys deal the damage, so both counts are copied onto each Decoy
+// when it spawns. Mimicry (Epic): Decoys cast Snipe and Pinning Shot along with Nova.
+// Stacks carry over between games through QuestRetain.
+// ============================================================
+
+const fixed libAffx_novaSnipeWindow = 2.0;
+const fixed libAffx_novaPinWindow = 3.0;
+const fixed libAffx_novaRicochetRadius = 6.0;
+const fixed libAffx_novaRicochetDelay = 0.15;
+
+bool libAffx_novaStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_novaSnipeTime; // per enemy player, last Snipe hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_novaPinTime; // per enemy player, last Pinning Shot hit
+
+unit libAffx_NovaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_NovaIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+void libAffx_NovaQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+unitgroup libAffx_NovaDecoys() {
+    return UnitGroup("NovaHoloClone", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+}
+// Adds n to a token on Nova and on every live Decoy (the Decoys' copies feed their damage)
+void libAffx_NovaAddDecoyToken(string token, int n) {
+    unitgroup decoys = libAffx_NovaDecoys();
+    unit decoy;
+    int i;
+    libGame_gf_ModifyTokenCount(n, token, libAffx_NovaHero());
+    for (i = UnitGroupCount(decoys, c_unitCountAll); i > 0; i -= 1) {
+        decoy = UnitGroupUnitFromEnd(decoys, i);
+        if (decoy != null && UnitIsAlive(decoy) && UnitHasBehavior2(decoy, token)) {
+            libGame_gf_ModifyTokenCount(n, token, decoy);
+        }
+    }
+}
+
+// ---------- Deadeye ----------
+
+// Snipe hit on an enemy Hero by Nova: opens the Confirmed Kill window
+bool libAffx_NovaSnipeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourceUnit() != libAffx_NovaHero() || !libAffx_NovaIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_novaSnipeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+// ---------- Crippling Fire ----------
+
+// Pinning Shot hit by Nova: opens the Hunter's Mark window, and Ricochet bounces it to the nearest other enemy Hero
+bool libAffx_NovaPinHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_NovaHero();
+    unitgroup nearby;
+    unit other;
+    unit target;
+    int i;
+    if (hero == null || victim == null || EventUnitDamageSourceUnit() != hero) {
+        return false;
+    }
+    if (libAffx_NovaIsEnemyHero(victim)) {
+        libAffx_novaPinTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    }
+    if (!UnitHasBehavior2(hero, "NovaRicochetMarker") || UnitHasBehavior2(victim, "NovaRicochetHit")) {
+        return true;
+    }
+    nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(victim), libAffx_novaRicochetRadius), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile), 0), 0);
+    UnitGroupRemove(nearby, victim);
+    for (i = UnitGroupCount(nearby, c_unitCountAll); i > 0; i -= 1) {
+        other = UnitGroupUnitFromEnd(nearby, i);
+        if (other == null || !UnitIsAlive(other) || !libAffx_NovaIsEnemyHero(other)) {
+            UnitGroupRemove(nearby, other);
+        }
+    }
+    if (UnitGroupCount(nearby, c_unitCountAll) == 0) {
+        return true;
+    }
+    target = UnitGroupClosestToPoint(nearby, UnitGetPosition(victim));
+    // marked first so the bounce's own hit doesn't bounce again
+    UnitBehaviorAdd(target, "NovaRicochetHit", hero, 1);
+    Wait(libAffx_novaRicochetDelay, c_timeGame);
+    if (UnitIsAlive(target) && UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "PinningShotImpactSet", target);
+    }
+    return true;
+}
+
+// ---------- Holo Corps ----------
+
+// A Decoy spawned: copy the Decoy damage quest counts onto it
+bool libAffx_NovaDecoySpawned_Func (bool testConds, bool runActions) {
+    unit decoy = EventUnitCreatedUnit();
+    unit hero = libAffx_NovaHero();
+    int count;
+    if (hero == null || UnitGetType(decoy) != "NovaHoloClone" || UnitGetOwner(decoy) != libAffx_player || !UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
+        return false;
+    }
+    UnitBehaviorAdd(decoy, "NovaIllusionistTokenCounter", decoy, 1);
+    UnitBehaviorAdd(decoy, "NovaPhantomStrikeTokenCounter", decoy, 1);
+    count = FixedToInt(UnitGetTokenCount(hero, "NovaIllusionistTokenCounter"));
+    if (count > 0) {
+        libGame_gf_ModifyTokenCount(count, "NovaIllusionistTokenCounter", decoy);
+    }
+    count = FixedToInt(UnitGetTokenCount(hero, "NovaPhantomStrikeTokenCounter"));
+    if (count > 0) {
+        libGame_gf_ModifyTokenCount(count, "NovaPhantomStrikeTokenCounter", decoy);
+    }
+    return true;
+}
+
+// Illusionist: a Decoy damaged an enemy Hero
+bool libAffx_NovaDecoyDamage_Func (bool testConds, bool runActions) {
+    unit source = EventUnitDamageSourceUnit();
+    unit hero = libAffx_NovaHero();
+    if (hero == null || source == null || UnitGetType(source) != "NovaHoloClone" || UnitGetOwner(source) != libAffx_player) {
+        return false;
+    }
+    if (!UnitHasBehavior2(hero, "NovaHoloCorpsMarker") || !libAffx_NovaIsEnemyHero(EventUnit()) || EventUnitDamageAmount() <= 0.0) {
+        return false;
+    }
+    libAffx_NovaAddDecoyToken("NovaIllusionistTokenCounter", 1);
+    return true;
+}
+
+// Mimicry: when Nova casts Snipe or Pinning Shot, every Decoy casts it too
+void libAffx_NovaMimic (order ord) {
+    unitgroup decoys = libAffx_NovaDecoys();
+    unit decoy;
+    int i;
+    for (i = UnitGroupCount(decoys, c_unitCountAll); i > 0; i -= 1) {
+        decoy = UnitGroupUnitFromEnd(decoys, i);
+        if (decoy != null && UnitIsAlive(decoy)) {
+            UnitSetPropertyFixed(decoy, c_unitPropEnergy, UnitGetPropertyFixed(decoy, c_unitPropEnergyMax, c_unitPropCurrent));
+            UnitIssueOrder(decoy, ord, c_orderQueueReplace);
+            UnitIssueOrder(decoy, OrderTargetingPoint(AbilityCommand("attack", 0), UnitGetPosition(decoy)), c_orderQueueAddToEnd);
+        }
+    }
+}
+bool libAffx_NovaMimicSnipe_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_NovaHero();
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "NovaMimicryMarker")) {
+        return false;
+    }
+    libAffx_NovaMimic(OrderTargetingPoint(AbilityCommand("NovaSnipeStorm", 0), EventPlayerEffectUsedPoint(c_effectLocationTargetPoint)));
+    return true;
+}
+bool libAffx_NovaMimicPin_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_NovaHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "NovaMimicryMarker")) {
+        return false;
+    }
+    libAffx_NovaMimic(OrderTargetingUnit(AbilityCommand("NovaPinningShot", 0), target));
+    return true;
+}
+
+// HeroTakedown for Confirmed Kill, Killshot, Hunter's Mark and Phantom Strike
+bool libAffx_NovaTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_NovaHero();
+    fixed now = GameGetMissionTime();
+    unitgroup decoys;
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "NovaDeadeyeMarker") && libAffx_novaSnipeTime[killedPlayer] > 0.0 && now - libAffx_novaSnipeTime[killedPlayer] <= libAffx_novaSnipeWindow) {
+        libAffx_novaSnipeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "NovaConfirmedKillTokenCounter", hero);
+        libAffx_NovaQuestDing();
+        if (UnitHasBehavior2(hero, "NovaKillshotMarker") && UnitIsAlive(hero)) {
+            UnitCreateEffectUnit(hero, "NovaKillshotSet", hero);
+        }
+    }
+    if (UnitHasBehavior2(hero, "NovaCripplingFireMarker") && libAffx_novaPinTime[killedPlayer] > 0.0 && now - libAffx_novaPinTime[killedPlayer] <= libAffx_novaPinWindow) {
+        libAffx_novaPinTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "NovaHuntersMarkTokenCounter", hero);
+        libAffx_NovaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
+        decoys = libAffx_NovaDecoys();
+        if (UnitGroupCount(decoys, c_unitCountAlive) > 0) {
+            libAffx_NovaAddDecoyToken("NovaPhantomStrikeTokenCounter", 1);
+            libAffx_NovaQuestDing();
+        }
+    }
+    return true;
+}
+
+// AffixAdded for all three starters
+bool libAffx_NovaStart (bool testConds, bool runActions) {
+    trigger snipeHit;
+    trigger pinHit;
+    trigger decoyDamage;
+    trigger decoySpawned;
+    if (libAffx_novaStarted) {
+        return true;
+    }
+    libAffx_novaStarted = true;
+    snipeHit = TriggerCreate("libAffx_NovaSnipeHit_Func");
+    TriggerAddEventUnitDamaged(snipeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "StormSnipeDamage");
+    TriggerAddEventUnitDamaged(snipeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "SnipeExplosiveDamage");
+    pinHit = TriggerCreate("libAffx_NovaPinHit_Func");
+    TriggerAddEventUnitDamaged(pinHit, null, c_unitDamageTypeAny, c_unitDamageEither, "PinningShotDamage");
+    decoyDamage = TriggerCreate("libAffx_NovaDecoyDamage_Func");
+    TriggerAddEventUnitDamaged(decoyDamage, null, c_unitDamageTypeAny, c_unitDamageEither, null);
+    decoySpawned = TriggerCreate("libAffx_NovaDecoySpawned_Func");
+    TriggerAddEventUnitCreated(decoySpawned, null, "NovaHoloDecoy", null);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_NovaMimicSnipe_Func"), libAffx_player, "NovaSnipeInitialSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_NovaMimicPin_Func"), libAffx_player, "PinningShotSet");
+    return true;
+}
