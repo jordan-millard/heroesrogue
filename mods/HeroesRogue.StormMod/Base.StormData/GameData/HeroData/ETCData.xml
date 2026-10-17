@@ -15,7 +15,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Headliner ===== -->
   <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 2% Powerslide damage each.
-       Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit, 0.03 seconds of Powerslide
+       Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit, 0.02 seconds of Powerslide
        Stun each (script). -->
   <CBehaviorTokenCounter id="ETCSlideGuitarTokenCounter" parent="StormQuestToken">
     <Face value="ETCSlideGuitarTokenCounter" />
@@ -38,6 +38,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="ETCStandingOvationTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- Headliner: E.T.C. is Unstoppable for the first 0.5 seconds of Powerslide -->
+  <CBehaviorBuff id="ETCHeadlinerUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ETCHeadlinerApplyUnstoppable">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ETCHeadlinerUnstoppable" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="PowerSlideInitialSet">
+    <EffectArray value="ETCHeadlinerApplyUnstoppable" />
+  </CEffectSet>
   <CEffectDamage id="PowerSlideDamage">
     <MultiplicativeModifierArray index="ETCSlideGuitar" Accumulator="ETCSlideGuitarAccumulator" />
     <MultiplicativeModifierArray index="ETCHeavyRiffs" Modifier="0" />
