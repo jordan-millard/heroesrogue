@@ -16,6 +16,10 @@ include "AffixTriggers"
 const fixed libAffx_novaSnipeWindow = 2.0;
 const fixed libAffx_novaSnipeBaseRange = 10.0; // SnipeCreatePersistent's first offset is Y -10
 const fixed libAffx_novaRangePerStack = 0.01; // Confirmed Kill
+// The Snipe missile (speed 50) only hits while SnipeMissileScanPersistent runs: PeriodCount 4 x 0.0625 seconds covers
+// about 12.5 range, so longer Snipes need more scan periods
+const fixed libAffx_novaSnipeScanRangePerPeriod = 3.125;
+const int libAffx_novaSnipeScanMinPeriods = 4;
 const fixed libAffx_novaPinWindow = 3.0;
 const fixed libAffx_novaRicochetRadius = 6.0;
 const fixed libAffx_novaRicochetDelay = 0.15;
@@ -71,8 +75,16 @@ void libAffx_NovaSyncSnipeRange () {
     unit hero = libAffx_NovaHero();
     fixed wanted;
     fixed delta;
+    string offset;
+    int periods;
     if (hero == null || !UnitHasBehavior2(hero, "NovaDeadeyeMarker")) {
         return;
+    }
+    // scan long enough to reach the missile's target offset (checked every sync, since Psionic Efficiency also moves it)
+    offset = StringReplaceWord(CatalogFieldValueGet(c_gameCatalogEffect, "SnipeCreatePersistent", "PeriodicOffsetArray[1]", libAffx_player), ",", " ", c_stringReplaceAll, c_stringCase);
+    periods = MaxI(libAffx_novaSnipeScanMinPeriods, FixedToInt(-StringToFixed(StringWord(offset, 2)) / libAffx_novaSnipeScanRangePerPeriod) + 1);
+    if (CatalogFieldValueGetAsInt(c_gameCatalogEffect, "SnipeMissileScanPersistent", "PeriodCount", libAffx_player) != periods) {
+        CatalogFieldValueSetInt(c_gameCatalogEffect, "SnipeMissileScanPersistent", "PeriodCount", libAffx_player, periods);
     }
     wanted = libAffx_novaSnipeBaseRange * libAffx_novaRangePerStack * UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter");
     delta = wanted - libAffx_novaSnipeRangeAdded;
