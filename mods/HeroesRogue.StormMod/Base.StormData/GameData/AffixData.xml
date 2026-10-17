@@ -12527,34 +12527,11 @@
             <String String="1 1 Set Effect,ETCSlideGuitarAddToken,Chance 1">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,ETCHeadlinerApplyUnstoppable,Chance 1">
-                <Field Id="CatalogModification" Index="8" />
-            </String>
             <String String="AffixAdded libAffx_ETCStart">
                 <Field Id="Trigger" />
             </String>
             <String String="HeroTakedown libAffx_ETCTakedown">
                 <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="ETCHeavyRiffs">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_etc_powerslide.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="L90ETC">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ETCHeadliner">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,PowerSlideDamage,MultiplicativeModifierArray[ETCHeavyRiffs].Modifier 0.06">
-                <Field Id="CatalogModification" />
             </String>
         </Instances>
         <Instances Id="ETCRoadCrew">
@@ -12564,7 +12541,7 @@
             <String String="Assets/Textures/storm_ui_icon_etc_powerslide.dds">
                 <Field Id="Icon" />
             </String>
-            <String String="Uncommon">
+            <String String="Common">
                 <Field Id="Rarity" />
             </String>
             <String String="L90ETC">
@@ -12581,7 +12558,7 @@
             <String String="Assets/Textures/storm_ui_icon_etc_powerslide.dds">
                 <Field Id="Icon" />
             </String>
-            <String String="Rare">
+            <String String="Uncommon">
                 <Field Id="Rarity" />
             </String>
             <String String="L90ETC">
@@ -12592,6 +12569,23 @@
             </User>
             <String String="ETCMasteryRollingLikeaStone">
                 <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ETCStagePresence">
+            <String String="Assets/Textures/storm_ui_icon_etc_powerslide.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="L90ETC">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ETCHeadliner">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ETCStagePresenceApplyUnstoppable,Chance 1">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
         <Instances Id="ETCSecondVerse">

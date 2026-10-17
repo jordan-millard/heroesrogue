@@ -38,21 +38,20 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="ETCStandingOvationTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
-  <!-- Headliner: E.T.C. is Unstoppable for the first 0.5 seconds of Powerslide -->
-  <CBehaviorBuff id="ETCHeadlinerUnstoppable" parent="StormUnstoppableParent">
+  <!-- Stage Presence (Rare): E.T.C. is Unstoppable for the first 0.5 seconds of Powerslide -->
+  <CBehaviorBuff id="ETCStagePresenceUnstoppable" parent="StormUnstoppableParent">
     <Duration value="0.5" />
   </CBehaviorBuff>
-  <CEffectApplyBehavior id="ETCHeadlinerApplyUnstoppable">
+  <CEffectApplyBehavior id="ETCStagePresenceApplyUnstoppable">
     <Chance value="0" />
     <WhichUnit Value="Caster" />
-    <Behavior value="ETCHeadlinerUnstoppable" />
+    <Behavior value="ETCStagePresenceUnstoppable" />
   </CEffectApplyBehavior>
   <CEffectSet id="PowerSlideInitialSet">
-    <EffectArray value="ETCHeadlinerApplyUnstoppable" />
+    <EffectArray value="ETCStagePresenceApplyUnstoppable" />
   </CEffectSet>
   <CEffectDamage id="PowerSlideDamage">
     <MultiplicativeModifierArray index="ETCSlideGuitar" Accumulator="ETCSlideGuitarAccumulator" />
-    <MultiplicativeModifierArray index="ETCHeavyRiffs" Modifier="0" />
     <MultiplicativeModifierArray index="ETCStandingOvation" Modifier="0" />
   </CEffectDamage>
   <!-- Second Verse (Epic): each enemy Hero hit by Powerslide reduces its cooldown by 1 second and refunds 10 Mana -->
