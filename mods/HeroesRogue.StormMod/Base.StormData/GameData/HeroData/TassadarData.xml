@@ -14,7 +14,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Eye of the Storm ===== -->
   <!-- Gathering Storm quest (this game only): each Storm tick on an enemy Hero is a token, 0.2% Storm damage each.
-       Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Storm hit (script), 1% Storm damage each. -->
+       Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Storm hit (script); each adds 0.05 seconds
+       of Storm duration, set by the script in whole 0.25 second Storm periods. -->
   <CBehaviorTokenCounter id="TassadarGatheringStormTokenCounter" parent="StormQuestToken">
     <Face value="TassadarGatheringStormTokenCounter" />
     <Max value="100000" />
@@ -37,21 +38,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="TassadarStormOfAgesTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
-  <CAccumulatorToken id="TassadarStormOfAgesAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="TassadarStormOfAgesTokenCounter" />
-    <Scale value="0.01" />
-  </CAccumulatorToken>
   <CEffectDamage id="TassadarPsionicStormDamage">
     <MultiplicativeModifierArray index="TassadarGatheringStorm" Accumulator="TassadarGatheringStormAccumulator" />
-    <MultiplicativeModifierArray index="TassadarStormOfAges" Accumulator="TassadarStormOfAgesAccumulator" />
     <MultiplicativeModifierArray index="TassadarChargedCrystals" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="TassadarPsionicStormPsionicEchoTalentDamage">
     <MultiplicativeModifierArray index="TassadarGatheringStorm" Accumulator="TassadarGatheringStormAccumulator" />
-    <MultiplicativeModifierArray index="TassadarStormOfAges" Accumulator="TassadarStormOfAgesAccumulator" />
     <MultiplicativeModifierArray index="TassadarChargedCrystals" Modifier="0" />
   </CEffectDamage>
   <!-- Static Field (Epic): each Storm tick Slows by 25% and removes 10 Spell Armor until the next tick -->
