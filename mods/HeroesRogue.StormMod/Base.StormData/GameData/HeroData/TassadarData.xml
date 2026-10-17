@@ -63,6 +63,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Chance value="0" />
     <Behavior value="TassadarStaticFieldDebuff" />
   </CEffectApplyBehavior>
+  <!-- Rising Storm (Uncommon) raises the ramp cap (TassadarPsionicStormDamageAccumulator MaxAccumulation, 0.2 per
+       stack) up to 160%, so the ramp token needs room for 8 stacks; the cap still stops everyone else at 100% -->
+  <CBehaviorTokenCounter id="TassadarPsionicStormTargetTokenCounte">
+    <Max value="8" />
+  </CBehaviorTokenCounter>
   <!-- Cataclysm (Legendary): an enemy Hero reaching the Storm's full ramp (5 ramp stacks, +100%) gets a free Psionic Storm
        on them, once until the Storm ramp on them ends -->
   <CBehaviorBuff id="TassadarCataclysmSpent">

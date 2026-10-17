@@ -42,7 +42,7 @@ void libAffx_TassadarQuestDing() {
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
 }
 
-// Storm of the Ages: adds the Psionic Storm periods earned by the quest stacks (Lingering Storm's are kept)
+// Storm of the Ages: adds the Psionic Storm periods earned by the quest stacks (other PeriodCount changes are kept)
 void libAffx_TassadarSyncStormDuration () {
     unit hero = libAffx_TassadarHero();
     int wanted;
