@@ -2,8 +2,8 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Tassadar.
-// Eye of the Storm, Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Psionic Storm hit adds 0.05
-// seconds of Storm duration, applied in whole 0.25 second Storm periods. Gathering Storm (35% kept between games) and Cataclysm are in TassadarData.xml.
+// Eye of the Storm, Storm of the Ages quest: an enemy Hero takedown within 1.5 seconds of a Psionic Storm hit adds 0.5%
+// Storm damage (TassadarData.xml) and 0.025 seconds of Storm duration, applied in whole 0.25 second Storm periods. Gathering Storm (35% kept between games) and Cataclysm are in TassadarData.xml.
 // Templar's Lance, Lance of Aiur quest: an enemy Hero takedown within 2 seconds of a Shock Ray hit adds 1% Shock Ray
 // damage. Arc Lightning (Epic): a Shock Ray hit on an enemy Hero deals 50% of its damage to the 2 nearest other enemies.
 // Twin Lances (Legendary): every enemy hit by Shock Ray is hit again 0.5 seconds later for 50% of the damage.
@@ -11,7 +11,7 @@ include "AffixTriggers"
 // ============================================================
 
 const fixed libAffx_tassadarStormWindow = 1.5;
-const int libAffx_tassadarStormStacksPerPeriod = 5; // 0.05 seconds per stack, 0.25 second periods
+const int libAffx_tassadarStormStacksPerPeriod = 10; // 0.025 seconds per stack, 0.25 second periods
 const fixed libAffx_tassadarLanceWindow = 2.0;
 const fixed libAffx_tassadarArcRadius = 5.0;
 const int libAffx_tassadarArcTargets = 2;
