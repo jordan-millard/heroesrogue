@@ -15,7 +15,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="NovaMimicryMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Deadeye ===== -->
-  <!-- Steady Aim quest (this game only): each Snipe hit on an enemy Hero, 1% Snipe damage each.
+  <!-- Steady Aim quest (35% kept between games): each Snipe hit on an enemy Hero, 3% Snipe damage each.
        Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit (script), 1% Snipe damage each. -->
   <CBehaviorTokenCounter id="NovaSteadyAimTokenCounter" parent="StormQuestToken">
     <Face value="NovaSteadyAimTokenCounter" />
@@ -26,7 +26,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="NovaSteadyAimTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.03" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="NovaSteadyAimAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
