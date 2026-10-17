@@ -123,7 +123,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
   </CEffectDamage>
   <!-- Melted Faces (Epic): enemy Heroes hit by Face Melt lose 20 Armor for 3 seconds -->
-  <CBehaviorBuff id="ETCMeltedFacesDebuff">
+  <CBehaviorBuff id="ETCMeltedFacesDebuff" parent="StormArmor">
     <Alignment value="Negative" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_ETC_FaceMelt.dds" />
     <BehaviorCategories index="DebuffVulnerable" value="1" />

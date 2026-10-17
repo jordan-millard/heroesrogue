@@ -62,8 +62,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Modification>
       <UnifiedMoveSpeedFactor value="-0.25" />
     </Modification>
-    <ArmorModification>
+    <!-- StackCount 1 is what the StormArmor parent sets; without it the armor change counts for nothing -->
+    <ArmorModification StackCount="1">
       <ArmorSet index="Hero">
+        <ArmorMitigationTable index="Ability" value="-10" />
+      </ArmorSet>
+      <ArmorSet index="Merc">
+        <ArmorMitigationTable index="Ability" value="-10" />
+      </ArmorSet>
+      <ArmorSet index="Monster">
+        <ArmorMitigationTable index="Ability" value="-10" />
+      </ArmorSet>
+      <ArmorSet index="Summon">
+        <ArmorMitigationTable index="Ability" value="-10" />
+      </ArmorSet>
+      <ArmorSet index="Structure">
+        <ArmorMitigationTable index="Ability" value="-10" />
+      </ArmorSet>
+      <ArmorSet index="Minion">
         <ArmorMitigationTable index="Ability" value="-10" />
       </ArmorSet>
     </ArmorModification>
