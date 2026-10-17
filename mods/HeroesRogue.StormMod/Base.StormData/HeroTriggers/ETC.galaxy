@@ -28,6 +28,7 @@ const fixed libAffx_etcSonicBoomFraction = 0.5;
 bool libAffx_etcStarted;
 fixed libAffx_etcStunAdded; // Powerslide Stun duration added by Standing Ovation this game
 fixed libAffx_etcRadiusAdded; // Face Melt radius added by Roar of the Crowd this game
+fixed libAffx_etcRingRadius; // radius the Amplified ring was last created with
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_etcSlideTime; // per enemy player, last Powerslide hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_etcMeltTime; // per enemy player, last Face Melt hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_etcAttackTime; // per enemy player, last Basic Attack hit
@@ -110,9 +111,37 @@ void libAffx_ETCSyncRadius () {
     CatalogFieldValueSetFixed(c_gameCatalogActor, "L90ETCFaceMeltRangeSplat", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "L90ETCFaceMeltRangeSplat", "Scale", libAffx_player) + delta);
     libAffx_etcRadiusAdded = wanted;
 }
+// Amplified: keeps the Face Melt radius ring on E.T.C. while he is alive. A splat's size is fixed when it is created, so a
+// radius change recreates it.
+void libAffx_ETCSyncRing () {
+    unit hero = libAffx_ETCHero();
+    fixed radius;
+    bool shown;
+    if (hero == null || !UnitHasBehavior2(hero, "ETCAmplifiedMarker")) {
+        return;
+    }
+    shown = UnitHasBehavior2(hero, "ETCAmplifiedRadiusIndicator");
+    if (!UnitIsAlive(hero)) {
+        if (shown) {
+            UnitBehaviorRemove(hero, "ETCAmplifiedRadiusIndicator", 1);
+        }
+        return;
+    }
+    radius = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "FaceMeltSearch", "AreaArray[0].Radius", libAffx_player);
+    if (shown && AbsF(radius - libAffx_etcRingRadius) < 0.01) {
+        return;
+    }
+    if (shown) {
+        UnitBehaviorRemove(hero, "ETCAmplifiedRadiusIndicator", 1);
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "ETCAmplifiedRadiusSplat", "Scale", libAffx_player, radius);
+    UnitBehaviorAdd(hero, "ETCAmplifiedRadiusIndicator", hero, 1);
+    libAffx_etcRingRadius = radius;
+}
 bool libAffx_ETCSync_Func (bool testConds, bool runActions) {
     libAffx_ETCSyncStun();
     libAffx_ETCSyncRadius();
+    libAffx_ETCSyncRing();
     return true;
 }
 
@@ -184,6 +213,7 @@ bool libAffx_ETCTakedown (bool testConds, bool runActions) {
         libAffx_etcMeltTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ETCRoarOfTheCrowdTokenCounter", hero);
         libAffx_ETCSyncRadius();
+        libAffx_ETCSyncRing();
         libAffx_ETCQuestDing();
     }
     if (UnitHasBehavior2(hero, "ETCRockLegendMarker") && libAffx_ETCInWindow(libAffx_etcAttackTime[killedPlayer], now, libAffx_etcTakedownWindow)) {

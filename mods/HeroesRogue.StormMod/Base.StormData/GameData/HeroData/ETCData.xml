@@ -114,6 +114,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorTokenCounter>
   <!-- Amplified itself: +50% Face Melt damage (ETCAmplifiedPower, set by the affix), and Face Melt pulls enemies toward
        E.T.C. instead of knocking them back (the affix makes FaceMeltApplyForce's Amount negative) -->
+  <!-- Amplified: a thin ring always shows Face Melt's radius around E.T.C. The script adds and removes the indicator
+       behavior, and sets the ring's Scale to Face Melt's current radius before each add. -->
+  <CBehaviorBuff id="ETCAmplifiedRadiusIndicator">
+    <InfoFlags index="Hidden" value="1" />
+  </CBehaviorBuff>
+  <CActorSplat id="ETCAmplifiedRadiusSplat" parent="StormRangeSplat">
+    <On Terms="Behavior.ETCAmplifiedRadiusIndicator.On" Send="Create" />
+    <On Terms="Behavior.ETCAmplifiedRadiusIndicator.Off" Send="Destroy" />
+    <HostSiteOps Ops="SOpAttachOrigin" />
+    <Scale value="6" />
+  </CActorSplat>
   <!-- Grand Finale (Legendary): Face Melt deals 1% more damage to enemy Heroes per 1% Health they are missing -->
   <CBehaviorBuff id="ETCGrandFinaleMarker" parent="CarryBehaviorParent" />
   <CValidatorUnitCompareBehaviorCount id="ETCCasterHasGrandFinale">
