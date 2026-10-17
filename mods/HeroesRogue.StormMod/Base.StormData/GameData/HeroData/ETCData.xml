@@ -87,7 +87,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CActorModel>
 
   <!-- ===== Amplified ===== -->
-  <!-- Turn It Up quest (35% kept between games): each enemy Hero hit by Face Melt, 1% Face Melt damage each.
+  <!-- Turn It Up quest (35% kept between games): each enemy Hero hit by Face Melt, 2% Face Melt damage each.
        Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit, 1% Face Melt radius each
        (script). -->
   <CBehaviorTokenCounter id="ETCTurnItUpTokenCounter" parent="StormQuestToken">
@@ -99,7 +99,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ETCTurnItUpTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.02" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="ETCTurnItUpAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
