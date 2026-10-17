@@ -87,7 +87,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CActorModel>
 
   <!-- ===== Amplified ===== -->
-  <!-- Turn It Up quest (35% kept between games): each enemy Hero hit by Face Melt, 2% Face Melt damage each.
+  <!-- Turn It Up quest (35% kept between games): each enemy Hero hit by Face Melt, 2% Face Melt damage each
+       (doubled against lane Minions by a second modifier).
        Roar of the Crowd quest: an enemy Hero takedown within 3 seconds of a Face Melt hit, 1% Face Melt radius each
        (script). -->
   <CBehaviorTokenCounter id="ETCTurnItUpTokenCounter" parent="StormQuestToken">
@@ -113,10 +114,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorTokenCounter>
   <CEffectDamage id="FaceMeltDamage">
     <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />
+    <MultiplicativeModifierArray index="ETCTurnItUpMinions" Validator="TargetIsMinionAndNotMercLaner" Accumulator="ETCTurnItUpAccumulator" />
     <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="L90ETCFaceMeltPinballWizardDamage">
     <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />
+    <MultiplicativeModifierArray index="ETCTurnItUpMinions" Validator="TargetIsMinionAndNotMercLaner" Accumulator="ETCTurnItUpAccumulator" />
     <MultiplicativeModifierArray index="ETCDistortion" Modifier="0" />
   </CEffectDamage>
   <!-- Melted Faces (Epic): enemy Heroes hit by Face Melt lose 20 Armor for 3 seconds -->
