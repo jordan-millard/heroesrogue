@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Nova.
-// Deadeye, Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit adds 1% Snipe damage. Killshot
+// Deadeye, Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit adds 1% Snipe range. Killshot
 // (Legendary): that takedown also refunds Snipe's cooldown and Mana and resets Permanent Cloak. Steady Aim (35% kept
 // between games), Headshot and the 2-stack miss penalty are in NovaData.xml.
 // Crippling Fire, Hunter's Mark quest: an enemy Hero takedown within 3 seconds of a Pinning Shot hit adds 1% damage
@@ -14,6 +14,8 @@ include "AffixTriggers"
 // ============================================================
 
 const fixed libAffx_novaSnipeWindow = 2.0;
+const fixed libAffx_novaSnipeBaseRange = 10.0; // SnipeCreatePersistent's first offset is Y -10
+const fixed libAffx_novaRangePerStack = 0.01; // Confirmed Kill
 const fixed libAffx_novaPinWindow = 3.0;
 const fixed libAffx_novaRicochetRadius = 6.0;
 const fixed libAffx_novaRicochetDelay = 0.15;
@@ -21,6 +23,7 @@ const fixed libAffx_novaRicochetDelay = 0.15;
 bool libAffx_novaStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_novaSnipeTime; // per enemy player, last Snipe hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_novaPinTime; // per enemy player, last Pinning Shot hit
+fixed libAffx_novaSnipeRangeAdded; // Snipe range added by Confirmed Kill this game
 
 unit libAffx_NovaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -53,6 +56,38 @@ void libAffx_NovaAddDecoyToken(string token, int n) {
 }
 
 // ---------- Deadeye ----------
+
+// Moves one of SnipeCreatePersistent's "X,Y,Z" offsets further forward (more negative Y), the way GameLib applies
+// Psionic Efficiency
+void libAffx_NovaExtendSnipeOffset (string field, fixed delta) {
+    string offset = StringReplaceWord(CatalogFieldValueGet(c_gameCatalogEffect, "SnipeCreatePersistent", field, libAffx_player), ",", " ", c_stringReplaceAll, c_stringCase);
+    fixed y = StringToFixed(StringWord(offset, 2)) - delta;
+    CatalogFieldValueSet(c_gameCatalogEffect, "SnipeCreatePersistent", field, libAffx_player, StringWord(offset, 1) + "," + FixedToString(y, 2) + "," + StringWord(offset, 3));
+}
+
+// Confirmed Kill: Snipe range is 1% of its base range higher per stack. Adds only the change since the last sync, so it
+// stacks with Psionic Efficiency whichever is applied first.
+void libAffx_NovaSyncSnipeRange () {
+    unit hero = libAffx_NovaHero();
+    fixed wanted;
+    fixed delta;
+    if (hero == null || !UnitHasBehavior2(hero, "NovaDeadeyeMarker")) {
+        return;
+    }
+    wanted = libAffx_novaSnipeBaseRange * libAffx_novaRangePerStack * UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter");
+    delta = wanted - libAffx_novaSnipeRangeAdded;
+    if (AbsF(delta) < 0.01) {
+        return;
+    }
+    libAffx_NovaExtendSnipeOffset("PeriodicOffsetArray[0]", delta);
+    libAffx_NovaExtendSnipeOffset("PeriodicOffsetArray[1]", delta);
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "NovaSnipeGuide", "Height", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "NovaSnipeGuide", "Height", libAffx_player) + delta);
+    libAffx_novaSnipeRangeAdded = wanted;
+}
+bool libAffx_NovaSync_Func (bool testConds, bool runActions) {
+    libAffx_NovaSyncSnipeRange();
+    return true;
+}
 
 // Snipe hit on an enemy Hero by Nova: opens the Confirmed Kill window
 bool libAffx_NovaSnipeHit_Func (bool testConds, bool runActions) {
@@ -190,6 +225,7 @@ bool libAffx_NovaTakedown (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "NovaDeadeyeMarker") && libAffx_novaSnipeTime[killedPlayer] > 0.0 && now - libAffx_novaSnipeTime[killedPlayer] <= libAffx_novaSnipeWindow) {
         libAffx_novaSnipeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "NovaConfirmedKillTokenCounter", hero);
+        libAffx_NovaSyncSnipeRange();
         libAffx_NovaQuestDing();
         if (UnitHasBehavior2(hero, "NovaKillshotMarker") && UnitIsAlive(hero)) {
             UnitCreateEffectUnit(hero, "NovaKillshotSet", hero);
@@ -231,5 +267,7 @@ bool libAffx_NovaStart (bool testConds, bool runActions) {
     TriggerAddEventUnitCreated(decoySpawned, null, "NovaHoloDecoy", null);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_NovaMimicSnipe_Func"), libAffx_player, "NovaSnipeInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_NovaMimicPin_Func"), libAffx_player, "PinningShotSet");
+    // also picks up Confirmed Kill stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_NovaSync_Func"), 1.0, c_timeGame);
     return true;
 }

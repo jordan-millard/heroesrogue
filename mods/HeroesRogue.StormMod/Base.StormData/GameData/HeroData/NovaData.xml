@@ -15,8 +15,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="NovaMimicryMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Deadeye ===== -->
-  <!-- Steady Aim quest (35% kept between games): each Snipe hit on an enemy Hero, 3% Snipe damage each.
-       Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit (script), 1% Snipe damage each. -->
+  <!-- Steady Aim quest (35% kept between games): each Snipe hit on an enemy Hero, 2% Snipe damage each.
+       Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit, 1% Snipe range each (script). -->
   <CBehaviorTokenCounter id="NovaSteadyAimTokenCounter" parent="StormQuestToken">
     <Face value="NovaSteadyAimTokenCounter" />
     <Max value="100000" />
@@ -26,7 +26,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="NovaSteadyAimTokenCounter" />
-    <Scale value="0.03" />
+    <Scale value="0.02" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="NovaSteadyAimAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
@@ -42,13 +42,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="NovaConfirmedKillTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
-  <CAccumulatorToken id="NovaConfirmedKillAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="NovaConfirmedKillTokenCounter" />
-    <Scale value="0.01" />
-  </CAccumulatorToken>
   <!-- Headshot (Epic): Snipe deals 50% more to Heroes below 50% Health -->
   <CValidatorUnitCompareVital id="NovaHeadshotTargetBelowHalfLife" parent="CasterLifePercent">
     <WhichUnit Value="Target" />
@@ -63,7 +56,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
     <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
     <MultiplicativeModifierArray index="NovaSteadyAim" Accumulator="NovaSteadyAimAccumulator" />
-    <MultiplicativeModifierArray index="NovaConfirmedKill" Accumulator="NovaConfirmedKillAccumulator" />
     <MultiplicativeModifierArray index="NovaHollowPoint" Modifier="0" />
     <MultiplicativeModifierArray index="NovaHeadshot" Validator="NovaHeadshotCombine" Modifier="0" />
   </CEffectDamage>
@@ -71,7 +63,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
     <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
     <MultiplicativeModifierArray index="NovaSteadyAim" Accumulator="NovaSteadyAimAccumulator" />
-    <MultiplicativeModifierArray index="NovaConfirmedKill" Accumulator="NovaConfirmedKillAccumulator" />
     <MultiplicativeModifierArray index="NovaHollowPoint" Modifier="0" />
     <MultiplicativeModifierArray index="NovaHeadshot" Validator="NovaHeadshotCombine" Modifier="0" />
   </CEffectDamage>
