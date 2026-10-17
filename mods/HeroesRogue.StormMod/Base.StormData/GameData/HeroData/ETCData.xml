@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ETCSonicBoomMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Headliner ===== -->
-  <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 2% Powerslide damage each.
+  <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 3% Powerslide damage each.
        Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit, 0.02 seconds of Powerslide
        Stun each (script). -->
   <CBehaviorTokenCounter id="ETCSlideGuitarTokenCounter" parent="StormQuestToken">
@@ -26,7 +26,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ETCSlideGuitarTokenCounter" />
-    <Scale value="0.02" />
+    <Scale value="0.03" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="ETCSlideGuitarAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
