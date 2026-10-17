@@ -972,11 +972,11 @@ Affix/Tooltip/NovaMimicry=When Nova casts Snipe or Pinning Shot, each Decoy cast
 Affix/Name/NovaDecoyDetonation=Decoy Detonation
 Affix/Tooltip/NovaDecoyDetonation=Decoys explode when they expire or are destroyed, damaging nearby enemies and Stunning them for <c val="#TooltipNumbers">0.75</c> seconds.
 Affix/Name/ETCHeadliner=Headliner
-Affix/Tooltip/ETCHeadliner=Gain <c val="#TooltipNumbers">Crowd Surfer</c> and <c val="#TooltipNumbers">Show Stopper</c>.<n/><n/>Powerslide gains a second charge, its cooldown is reduced by <c val="#TooltipNumbers">2</c> seconds, and it costs <c val="#TooltipNumbers">20</c> less Mana. E.T.C. is Unstoppable for the first <c val="#TooltipNumbers">0.5</c> seconds of Powerslide.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Powerslide permanently adds <c val="#TooltipNumbers">3%</c> Powerslide damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of Powerslide hitting them permanently adds <c val="#TooltipNumbers">0.02</c> seconds to Powerslide's Stun.<n/><n/>Retain <c val="#TooltipNumbers">35%</c> of the Powerslide hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Affix/Tooltip/ETCHeadliner=Gain <c val="#TooltipNumbers">Crowd Surfer</c> and <c val="#TooltipNumbers">Show Stopper</c>.<n/><n/>Powerslide gains a second charge, its cooldown is reduced by <c val="#TooltipNumbers">2</c> seconds, and it costs <c val="#TooltipNumbers">25</c> less Mana. E.T.C. is Unstoppable for the first <c val="#TooltipNumbers">0.5</c> seconds of Powerslide.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Powerslide permanently adds <c val="#TooltipNumbers">3%</c> Powerslide damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of Powerslide hitting them permanently adds <c val="#TooltipNumbers">0.02</c> seconds to Powerslide's Stun, up to <c val="#TooltipNumbers">1</c> second. Past that, each one adds <c val="#TooltipNumbers">2%</c> Powerslide damage instead.<n/><n/>Retain <c val="#TooltipNumbers">35%</c> of the Powerslide hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
 Button/Name/ETCSlideGuitarTokenCounter=Slide Guitar
 Button/Tooltip/ETCSlideGuitarTokenCounter=<c val="#TooltipQuest">Bonus Powerslide damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ETCSlideGuitarTokenCounter$*3" precision="0"/>%</c></c>
 Button/Name/ETCStandingOvationTokenCounter=Standing Ovation
-Button/Tooltip/ETCStandingOvationTokenCounter=<c val="#TooltipQuest">Bonus Powerslide Stun duration: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ETCStandingOvationTokenCounter$*0.02" precision="2"/> seconds</c></c>
+Button/Tooltip/ETCStandingOvationTokenCounter=<c val="#TooltipQuest">Standing Ovation stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ETCStandingOvationTokenCounter$" precision="0"/></c></c><n/>Each stack adds <c val="#TooltipNumbers">0.02</c> seconds of Powerslide Stun, up to <c val="#TooltipNumbers">1</c> second at <c val="#TooltipNumbers">50</c> stacks. Each stack past <c val="#TooltipNumbers">50</c> adds <c val="#TooltipNumbers">2%</c> Powerslide damage.
 Affix/Name/ETCHeavyRiffs=Heavy Riffs
 Affix/Tooltip/ETCHeavyRiffs=Powerslide deals <c val="#TooltipNumbers">6%</c> more damage.
 Affix/Name/ETCRoadCrew=Road Crew
@@ -984,7 +984,7 @@ Affix/Tooltip/ETCRoadCrew=Reduce Powerslide's cooldown by <c val="#TooltipNumber
 Affix/Name/ETCRollingLikeAStone=Rolling Like a Stone
 Affix/Tooltip/ETCRollingLikeAStone=Gain the lost talent <c val="#TooltipNumbers">Rolling Like a Stone</c>: Powerslide's range is increased by <c val="#TooltipNumbers">20%</c>.
 Affix/Name/ETCSecondVerse=Second Verse
-Affix/Tooltip/ETCSecondVerse=Each enemy Hero hit by Powerslide reduces its cooldown by <c val="#TooltipNumbers">2</c> seconds.
+Affix/Tooltip/ETCSecondVerse=Each enemy Hero hit by Powerslide reduces its cooldown by <c val="#TooltipNumbers">1</c> second and refunds <c val="#TooltipNumbers">10</c> Mana.
 Affix/Name/ETCStageCrash=Stage Crash
 Affix/Tooltip/ETCStageCrash=When Powerslide hits an enemy Hero, a shockwave deals <c val="#TooltipNumbers">50%</c> of the damage to other enemies within <c val="#TooltipNumbers">3</c> range and Stuns them for <c val="#TooltipNumbers">0.75</c> seconds.
 Affix/Name/ETCAmplified=Amplified

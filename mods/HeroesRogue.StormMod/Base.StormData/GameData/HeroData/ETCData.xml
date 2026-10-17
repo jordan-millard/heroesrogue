@@ -16,7 +16,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Headliner ===== -->
   <!-- Slide Guitar quest (35% kept between games): each enemy Hero hit by Powerslide, 3% Powerslide damage each.
        Standing Ovation quest: an enemy Hero takedown within 3 seconds of a Powerslide hit, 0.02 seconds of Powerslide
-       Stun each (script). -->
+       Stun each up to 1 second, then 2% Powerslide damage each (script). -->
   <CBehaviorTokenCounter id="ETCSlideGuitarTokenCounter" parent="StormQuestToken">
     <Face value="ETCSlideGuitarTokenCounter" />
     <Max value="100000" />
@@ -53,13 +53,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="PowerSlideDamage">
     <MultiplicativeModifierArray index="ETCSlideGuitar" Accumulator="ETCSlideGuitarAccumulator" />
     <MultiplicativeModifierArray index="ETCHeavyRiffs" Modifier="0" />
+    <MultiplicativeModifierArray index="ETCStandingOvation" Modifier="0" />
   </CEffectDamage>
-  <!-- Second Verse (Epic): each enemy Hero hit by Powerslide reduces its cooldown by 2 seconds -->
+  <!-- Second Verse (Epic): each enemy Hero hit by Powerslide reduces its cooldown by 1 second and refunds 10 Mana -->
   <CEffectModifyUnit id="ETCSecondVerseModifyCooldown">
     <Chance value="0" />
     <ValidatorArray value="TargetIsHero" />
     <ImpactUnit Value="Caster" />
-    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+    <Cost Abil="L90ETCPowerslide,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+    <VitalArray index="Energy">
+      <Change value="10" />
+    </VitalArray>
   </CEffectModifyUnit>
   <CEffectSet id="PowerSlideImpactSet">
     <EffectArray value="ETCSlideGuitarAddToken" />
