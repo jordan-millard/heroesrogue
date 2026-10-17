@@ -12534,6 +12534,26 @@
                 <Field Id="Trigger" Index="1" />
             </String>
         </Instances>
+        <Instances Id="ETCHeavyRiffs">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_etc_powerslide.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="L90ETC">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ETCHeadliner">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,PowerSlideDamage,MultiplicativeModifierArray[ETCHeavyRiffs].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
         <Instances Id="ETCRoadCrew">
             <Int Int="3">
                 <Field Id="Max" />

@@ -53,6 +53,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="PowerSlideDamage">
     <MultiplicativeModifierArray index="ETCSlideGuitar" Accumulator="ETCSlideGuitarAccumulator" />
     <MultiplicativeModifierArray index="ETCStandingOvation" Modifier="0" />
+    <!-- Heavy Riffs (Common): its own multiplier, 15% per stack -->
+    <MultiplicativeModifierArray index="ETCHeavyRiffs" Modifier="0" />
   </CEffectDamage>
   <!-- Second Verse (Epic): each enemy Hero hit by Powerslide reduces its cooldown by 1 second and refunds 10 Mana -->
   <CEffectModifyUnit id="ETCSecondVerseModifyCooldown">
