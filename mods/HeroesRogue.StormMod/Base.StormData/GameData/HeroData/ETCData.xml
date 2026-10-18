@@ -125,7 +125,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <HostSiteOps Ops="SOpAttachOrigin" />
     <Scale value="6" />
   </CActorSplat>
-  <!-- Grand Finale (Legendary): Face Melt deals 1% more damage to enemy Heroes per 1% Health they are missing -->
+  <!-- Grand Finale (Legendary): Face Melt deals 2% more damage to enemy Heroes per 1% Health they are missing -->
   <CBehaviorBuff id="ETCGrandFinaleMarker" parent="CarryBehaviorParent" />
   <CValidatorUnitCompareBehaviorCount id="ETCCasterHasGrandFinale">
     <WhichUnit Value="Caster" />
@@ -141,11 +141,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <UnitSource Value="Target" />
     <VitalType value="Life" />
     <Missing value="1" />
-    <Ratio value="1" />
+    <Ratio value="2" />
     <ModificationType value="Relative" />
     <ApplicationRule value="Add" />
     <MinAccumulation value="0" />
-    <MaxAccumulation value="1" />
+    <MaxAccumulation value="2" />
   </CAccumulatorVitals>
   <CEffectDamage id="FaceMeltDamage">
     <MultiplicativeModifierArray index="ETCTurnItUp" Accumulator="ETCTurnItUpAccumulator" />

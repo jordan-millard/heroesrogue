@@ -12655,7 +12655,7 @@
             <String String="L90ETCMasteryFaceMeltLoudSpeakers">
                 <Field Id="TalentsAdd" />
             </String>
-            <String String="ETCMasteryFaceSmelt">
+            <String String="ETCMasteryEncore">
                 <Field Id="TalentsAdd" Index="1" />
             </String>
             <String String="1 0 ETCAmplifiedMarker">
@@ -12697,14 +12697,17 @@
             <String String="1 1 Set Effect,ETCTurnItUpAddToken,Chance 1">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,FaceMeltDamage,MultiplicativeModifierArray[ETCAmplifiedPower].Modifier 0.5">
+            <String String="1 1 Set Effect,FaceMeltDamage,MultiplicativeModifierArray[ETCAmplifiedPower].Modifier 1">
                 <Field Id="CatalogModification" Index="8" />
             </String>
-            <String String="1 1 Set Effect,L90ETCFaceMeltPinballWizardDamage,MultiplicativeModifierArray[ETCAmplifiedPower].Modifier 0.5">
+            <String String="1 1 Set Effect,L90ETCFaceMeltPinballWizardDamage,MultiplicativeModifierArray[ETCAmplifiedPower].Modifier 1">
                 <Field Id="CatalogModification" Index="9" />
             </String>
             <String String="1 1 Set Effect,FaceMeltApplyForce,Amount -10">
                 <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,FaceMeltApplyEncoreMasteryForce,Amount -10">
+                <Field Id="CatalogModification" Index="11" />
             </String>
             <String String="AffixAdded libAffx_ETCStart">
                 <Field Id="Trigger" />
@@ -12756,7 +12759,7 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
-        <Instances Id="ETCEncoreBoon">
+        <Instances Id="ETCMeltingPoint">
             <String String="Assets/Textures/storm_ui_icon_ETC_FaceMelt.dds">
                 <Field Id="Icon" />
             </String>
@@ -12769,11 +12772,35 @@
             <User Type="Affix" Instance="ETCAmplified">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="ETCMasteryEncore">
+            <String String="ETCMasteryFaceSmelt">
                 <Field Id="TalentsAdd" />
             </String>
-            <String String="1 1 Set Effect,FaceMeltApplyEncoreMasteryForce,Amount -10">
+            <String String="1 1 Set Behavior,L90ETCFaceSmeltSlow,Modification.UnifiedMoveSpeedFactor -0.7">
                 <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Behavior,L90ETCFaceSmeltSlow50PercentCCReduction,Modification.UnifiedMoveSpeedFactor -0.7">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Behavior,L90ETCFaceSmeltSlow75PercentCCReduction,Modification.UnifiedMoveSpeedFactor -0.7">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Accumulator,L90ETCFaceSmeltDecayAccumulator,MaxAccumulation 0.7">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Accumulator,L90ETCFaceSmeltDecayAccumulator,MultiplierPerStep 0.021875">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Accumulator,L90ETCFaceSmeltDecayAccumulator50PercentCCReduction,MaxAccumulation 0.7">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Accumulator,L90ETCFaceSmeltDecayAccumulator50PercentCCReduction,MultiplierPerStep 0.04375">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Accumulator,L90ETCFaceSmeltDecayAccumulator75PercentCCReduction,MaxAccumulation 0.7">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Accumulator,L90ETCFaceSmeltDecayAccumulator75PercentCCReduction,MultiplierPerStep 0.0875">
+                <Field Id="CatalogModification" Index="8" />
             </String>
         </Instances>
         <Instances Id="ETCHypeMan">
