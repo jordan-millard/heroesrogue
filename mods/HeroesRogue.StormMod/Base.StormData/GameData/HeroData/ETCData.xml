@@ -182,6 +182,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="ETCTurnItUpAddToken" />
     <EffectArray value="ETCHypeManApply" />
   </CEffectSet>
+  <!-- Encore's Amp hits also count toward Turn It Up (its damage is FaceMeltDamage, so the damage bonuses and the Roar of
+       the Crowd window already apply) -->
+  <CEffectSet id="FaceMeltEncoreMasteryImpactSet">
+    <EffectArray value="ETCTurnItUpAddToken" />
+  </CEffectSet>
 
   <!-- ===== Rock Legend ===== -->
   <!-- Shred quest (35% kept between games): each Basic Attack on an enemy Hero, 0.2% Basic Attack damage each.
