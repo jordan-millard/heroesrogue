@@ -12,6 +12,36 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- Boon markers handled by the script -->
   <CBehaviorBuff id="MurkyChainReactionMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MurkyShellShockMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MurkyPanicBubbleMarker" parent="CarryBehaviorParent" />
+
+  <!-- Panic Bubble (Common, any Murky): Safety Bubble can be used while Stunned. Stuns (StormStun and the 100+ hero stuns
+       built on it) let Safety Bubble through for everyone, and the Bubble's effect then refuses the cast while Stunned
+       unless Murky has the marker. -->
+  <CBehaviorBuff id="StormStun">
+    <Modification>
+      <AbilLinkEnableArray value="MurkySafetyBubble" />
+    </Modification>
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="MurkyCasterNotStunned">
+    <WhichUnit Value="Caster" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Categories index="Stun" value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="MurkyCasterHasPanicBubble">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MurkyPanicBubbleMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="MurkySafetyBubbleStunCheck">
+    <Type value="Or" />
+    <CombineArray value="MurkyCasterNotStunned" />
+    <CombineArray value="MurkyCasterHasPanicBubble" />
+  </CValidatorCombine>
+  <CEffectSet id="SafetyBubbleApplyBehaviorsSet">
+    <ValidatorArray value="MurkySafetyBubbleStunCheck" />
+  </CEffectSet>
 
   <!-- ===== Slime King ===== -->
   <!-- Ooze quest (50% kept between games): each enemy Hero hit by Slime, 1% Slime damage each.
