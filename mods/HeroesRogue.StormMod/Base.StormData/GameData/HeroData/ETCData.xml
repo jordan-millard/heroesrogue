@@ -122,7 +122,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CActorSplat id="ETCAmplifiedRadiusSplat" parent="StormRangeSplat">
     <On Terms="Behavior.ETCAmplifiedRadiusIndicator.On" Send="Create" />
     <On Terms="Behavior.ETCAmplifiedRadiusIndicator.Off" Send="Destroy" />
-    <HostSiteOps Ops="SOpAttachOrigin" />
     <Scale value="6" />
   </CActorSplat>
   <!-- Grand Finale (Legendary): Face Melt deals 2% more damage to enemy Heroes per 1% Health they are missing -->

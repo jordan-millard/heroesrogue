@@ -138,7 +138,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CActorSplat id="MurkySlimeKingRadiusSplat" parent="StormRangeSplat">
     <On Terms="Behavior.MurkySlimeKingRadiusIndicator.On" Send="Create" />
     <On Terms="Behavior.MurkySlimeKingRadiusIndicator.Off" Send="Destroy" />
-    <HostSiteOps Ops="SOpAttachOrigin" />
     <Scale value="3.9" />
   </CActorSplat>
   <CButton id="MurkyHinderingSlimeTalent" parent="StormButtonParent">
