@@ -107,8 +107,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Big Tuna ===== -->
   <!-- Blowfish quest (50% kept between games): each enemy Hero hit by Pufferfish, 2% Pufferfish damage each.
-       Catch of the Day quest: an enemy Hero takedown within 4 seconds of a Pufferfish hit (script), 3% Pufferfish damage
-       each. -->
+       Catch of the Day quest: an enemy Hero takedown within 4 seconds of a Pufferfish hit (script), 1% Pufferfish radius
+       each up to 75%, then 1% Pufferfish damage each (MurkyCatchOfTheDay, set by script). -->
   <CBehaviorTokenCounter id="MurkyBlowfishTokenCounter" parent="StormQuestToken">
     <Face value="MurkyBlowfishTokenCounter" />
     <Max value="100000" />
@@ -130,18 +130,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="MurkyCatchOfTheDayTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
-  <CAccumulatorToken id="MurkyCatchOfTheDayAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="MurkyCatchOfTheDayTokenCounter" />
-    <Scale value="0.03" />
-  </CAccumulatorToken>
   <!-- Big Tuna itself: +50% Pufferfish damage (MurkyBigTunaPower, set by the affix). Spiny (Common): its own multiplier,
        15% per stack. -->
   <CEffectDamage id="MurkyPufferfishDamage">
     <MultiplicativeModifierArray index="MurkyBlowfish" Accumulator="MurkyBlowfishAccumulator" />
-    <MultiplicativeModifierArray index="MurkyCatchOfTheDay" Accumulator="MurkyCatchOfTheDayAccumulator" />
+    <MultiplicativeModifierArray index="MurkyCatchOfTheDay" Modifier="0" />
     <MultiplicativeModifierArray index="MurkyBigTunaPower" Modifier="0" />
     <MultiplicativeModifierArray index="MurkySpiny" Modifier="0" />
   </CEffectDamage>

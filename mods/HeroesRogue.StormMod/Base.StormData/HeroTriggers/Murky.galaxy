@@ -4,8 +4,8 @@ include "AffixTriggers"
 // Golden Murky
 // Slime King, Slime Mountain quest: an enemy Hero takedown within 3 seconds of a Slime hit adds 1% Slime radius, up to
 // 75%; each stack past that adds 1% Slime damage instead.
-// Big Tuna, Catch of the Day quest: an enemy Hero takedown within 4 seconds of a Pufferfish hit adds 3% Pufferfish damage
-// (MurkyData.xml). Chain Reaction (Legendary): an enemy Hero hit by Pufferfish sets off a second explosion that deals 50%
+// Big Tuna, Catch of the Day quest: an enemy Hero takedown within 4 seconds of a Pufferfish hit adds 1% Pufferfish radius,
+// up to 75%; each stack past that adds 1% Pufferfish damage instead. Chain Reaction (Legendary): an enemy Hero hit by Pufferfish sets off a second explosion that deals 50%
 // of the hit to other enemies within 3 range.
 // Mrrgl Warrior, Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds Rejuvenating
 // Bubble healing (MurkyData.xml). Shell Shock (Legendary): Basic Attacks deal 50% of their damage to other enemies within
@@ -20,6 +20,9 @@ const fixed libAffx_murkyPufferWindow = 4.0; // Catch of the Day
 const fixed libAffx_murkyRadiusPerStack = 0.039; // Slime Mountain: 1% of Slime's 3.9 radius with Black Lagoon
 const fixed libAffx_murkyRadiusMaxStacks = 75.0; // Slime Mountain radius cap (+75%)
 const fixed libAffx_murkyMountainDamagePerStack = 0.01; // Slime Mountain stacks past the radius cap
+const fixed libAffx_murkyPufferRadiusPerStack = 0.045; // Catch of the Day: 1% of Pufferfish's 4.5 radius
+const fixed libAffx_murkyPufferRadiusMaxStacks = 75.0; // Catch of the Day radius cap (+75%)
+const fixed libAffx_murkyCatchDamagePerStack = 0.01; // Catch of the Day stacks past the radius cap
 const fixed libAffx_murkyChainRadius = 3.0;
 const fixed libAffx_murkyChainFraction = 0.5;
 const fixed libAffx_murkyShellShockRadius = 2.5;
@@ -27,6 +30,7 @@ const fixed libAffx_murkyShellShockFraction = 0.5;
 
 bool libAffx_murkyStarted;
 fixed libAffx_murkyRadiusAdded; // Slime radius added by Slime Mountain this game
+fixed libAffx_murkyPufferRadiusAdded; // Pufferfish radius added by Catch of the Day this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkySlimeTime; // per enemy player, last Slime hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkyPufferTime; // per enemy player, last Pufferfish hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkyAttackTime; // per enemy player, last Basic Attack hit
@@ -92,8 +96,37 @@ void libAffx_MurkySyncRadius () {
     CatalogFieldValueSetFixed(c_gameCatalogActor, "MurkySlimeCastModel", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "MurkySlimeCastModel", "Scale", libAffx_player) + delta / 3.0);
     libAffx_murkyRadiusAdded = wanted;
 }
+// Catch of the Day: the same for Pufferfish's explosion. Compressed Air's search shares the 4.5 radius, so it grows too, and
+// the explosion model scales with it (the cursor follows the explosion search on its own).
+void libAffx_MurkySyncPufferRadius () {
+    unit hero = libAffx_MurkyHero();
+    fixed stacks;
+    fixed overflow;
+    fixed wanted;
+    fixed delta;
+    if (hero == null || !UnitHasBehavior2(hero, "MurkyBigTunaMarker")) {
+        return;
+    }
+    stacks = UnitGetTokenCount(hero, "MurkyCatchOfTheDayTokenCounter");
+    overflow = 0.0;
+    if (stacks > libAffx_murkyPufferRadiusMaxStacks) {
+        overflow = stacks - libAffx_murkyPufferRadiusMaxStacks;
+        stacks = libAffx_murkyPufferRadiusMaxStacks;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishDamage", "MultiplicativeModifierArray[MurkyCatchOfTheDay].Modifier", libAffx_player, libAffx_murkyCatchDamagePerStack * overflow);
+    wanted = libAffx_murkyPufferRadiusPerStack * stacks;
+    delta = wanted - libAffx_murkyPufferRadiusAdded;
+    if (AbsF(delta) < 0.01) {
+        return;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishSearchAreaUnnamed", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkyPufferfishSearchAreaUnnamed", "AreaArray[0].Radius", libAffx_player) + delta);
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishCompressedAirTalentSearch", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkyPufferfishCompressedAirTalentSearch", "AreaArray[0].Radius", libAffx_player) + delta);
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "Storm_Effect_Murky_Base_PufferFish_Explosion", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "Storm_Effect_Murky_Base_PufferFish_Explosion", "Scale", libAffx_player) + delta / 4.5);
+    libAffx_murkyPufferRadiusAdded = wanted;
+}
 bool libAffx_MurkySync_Func (bool testConds, bool runActions) {
     libAffx_MurkySyncRadius();
+    libAffx_MurkySyncPufferRadius();
     return true;
 }
 
@@ -163,6 +196,7 @@ bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "MurkyBigTunaMarker") && libAffx_MurkyInWindow(libAffx_murkyPufferTime[killedPlayer], now, libAffx_murkyPufferWindow)) {
         libAffx_murkyPufferTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "MurkyCatchOfTheDayTokenCounter", hero);
+        libAffx_MurkySyncPufferRadius();
         libAffx_MurkyQuestDing();
     }
     if (UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker") && libAffx_MurkyInWindow(libAffx_murkyAttackTime[killedPlayer], now, libAffx_murkyTakedownWindow)) {
