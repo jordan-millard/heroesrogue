@@ -130,6 +130,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Effect value="MurkyGoldenSlimeSet" />
   </CAbilEffectInstant>
   <!-- Hindering Slime: a cut talent granted by Slime King, so it needs a button -->
+  <!-- Slime King: a thin ring always shows Slime's radius around Murky. The script adds and removes the indicator
+       behavior, and sets the ring's Scale to Slime's current radius before each add. -->
+  <CBehaviorBuff id="MurkySlimeKingRadiusIndicator">
+    <InfoFlags index="Hidden" value="1" />
+  </CBehaviorBuff>
+  <CActorSplat id="MurkySlimeKingRadiusSplat" parent="StormRangeSplat">
+    <On Terms="Behavior.MurkySlimeKingRadiusIndicator.On" Send="Create" />
+    <On Terms="Behavior.MurkySlimeKingRadiusIndicator.Off" Send="Destroy" />
+    <HostSiteOps Ops="SOpAttachOrigin" />
+    <Scale value="3.9" />
+  </CActorSplat>
   <CButton id="MurkyHinderingSlimeTalent" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Murky_Slime.dds" />
     <HotkeyAlias value="MurkySlime" />

@@ -30,6 +30,7 @@ const fixed libAffx_murkyShellShockFraction = 0.5;
 
 bool libAffx_murkyStarted;
 fixed libAffx_murkyRadiusAdded; // Slime radius added by Slime Mountain this game
+fixed libAffx_murkyRingRadius; // radius the Slime King ring was last created with
 fixed libAffx_murkyPufferRadiusAdded; // Pufferfish radius added by Catch of the Day this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkySlimeTime; // per enemy player, last Slime hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkyPufferTime; // per enemy player, last Pufferfish hit
@@ -124,8 +125,36 @@ void libAffx_MurkySyncPufferRadius () {
     CatalogFieldValueSetFixed(c_gameCatalogActor, "Storm_Effect_Murky_Base_PufferFish_Explosion", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "Storm_Effect_Murky_Base_PufferFish_Explosion", "Scale", libAffx_player) + delta / 4.5);
     libAffx_murkyPufferRadiusAdded = wanted;
 }
+// Slime King: keeps the Slime radius ring on Murky while he is alive. A splat's size is fixed when it is created, so a
+// radius change recreates it.
+void libAffx_MurkySyncRing () {
+    unit hero = libAffx_MurkyHero();
+    fixed radius;
+    bool shown;
+    if (hero == null || !UnitHasBehavior2(hero, "MurkySlimeKingMarker")) {
+        return;
+    }
+    shown = UnitHasBehavior2(hero, "MurkySlimeKingRadiusIndicator");
+    if (!UnitIsAlive(hero)) {
+        if (shown) {
+            UnitBehaviorRemove(hero, "MurkySlimeKingRadiusIndicator", 1);
+        }
+        return;
+    }
+    radius = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkySlimeSearch", "AreaArray[0].Radius", libAffx_player);
+    if (shown && AbsF(radius - libAffx_murkyRingRadius) < 0.01) {
+        return;
+    }
+    if (shown) {
+        UnitBehaviorRemove(hero, "MurkySlimeKingRadiusIndicator", 1);
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "MurkySlimeKingRadiusSplat", "Scale", libAffx_player, radius);
+    UnitBehaviorAdd(hero, "MurkySlimeKingRadiusIndicator", hero, 1);
+    libAffx_murkyRingRadius = radius;
+}
 bool libAffx_MurkySync_Func (bool testConds, bool runActions) {
     libAffx_MurkySyncRadius();
+    libAffx_MurkySyncRing();
     libAffx_MurkySyncPufferRadius();
     return true;
 }
@@ -191,6 +220,7 @@ bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
         libAffx_murkySlimeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "MurkySlimeMountainTokenCounter", hero);
         libAffx_MurkySyncRadius();
+        libAffx_MurkySyncRing();
         libAffx_MurkyQuestDing();
     }
     if (UnitHasBehavior2(hero, "MurkyBigTunaMarker") && libAffx_MurkyInWindow(libAffx_murkyPufferTime[killedPlayer], now, libAffx_murkyPufferWindow)) {
