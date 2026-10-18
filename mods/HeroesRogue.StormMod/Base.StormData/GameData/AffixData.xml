@@ -12993,6 +12993,549 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
+        <Instances Id="MurkySlimeKing">
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MurkyBlackLagoon">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MurkyMasteryHinderingSlow">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MurkySlimeKingMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MurkyOozeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MurkySlimeMountainTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MurkySlimeMountainTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MurkyOozeTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MurkySlime,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MurkySlime,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MurkySlime,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MurkySlime,Cost.Charge.TimeUse 3">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MurkySlime,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,MurkySlime,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MurkyOozeAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MurkySlimeDamage,MultiplicativeModifierArray[MurkySlimeKingPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,MurkySlimeBonusDamage,MultiplicativeModifierArray[MurkySlimeKingPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_MurkyStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MurkyTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+            <String String="HeroGainTalent libAffx_MurkyMakingInkyGained">
+                <Field Id="Trigger" Index="2" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyGooey">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkySlimeKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MurkySlimeDamage,MultiplicativeModifierArray[MurkyGooey].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MurkySlimeBonusDamage,MultiplicativeModifierArray[MurkyGooey].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyQuickSlime">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkySlimeKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MurkySlime,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkySlimeTimeBoon">
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkySlimeKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MurkySlimeTime">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkySlimeRush">
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkySlimeKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MurkySlimeRushModifyCooldown,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyCorrosiveSlime">
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkySlimeKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MurkyCorrosiveSlimeApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyPrimordialOoze">
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkySlimeKing">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MurkyPrimordialOozePersistent,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyBigTuna">
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MurkyFasterFish">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MurkyMasteryCompressedAir">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MurkyBigTunaMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MurkyBlowfishTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MurkyCatchOfTheDayTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MurkyCatchOfTheDayTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MurkyBlowfishTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MurkyPufferfish,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MurkyPufferfish,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MurkyPufferfish,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MurkyPufferfish,Cost.Charge.TimeUse 12">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MurkyPufferfish,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,MurkyPufferfish,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MurkyBlowfishAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MurkyPufferfishDamage,MultiplicativeModifierArray[MurkyBigTunaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_MurkyStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MurkyTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkySpiny">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyBigTuna">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MurkyPufferfishDamage,MultiplicativeModifierArray[MurkySpiny].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyFishFood">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyBigTuna">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MurkyPufferfish,Cost.Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyFishOilBoon">
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyBigTuna">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MurkyFishOil">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyWrathOfCodBoon">
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyBigTuna">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MurkyMasteryWrathOfCod">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyFishFrenzy">
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyBigTuna">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MurkyFishFrenzyModifyCooldown,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyChainReaction">
+            <String String="Assets/Textures/storm_ui_icon_murky_pufferfish.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyBigTuna">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MurkyChainReactionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyMrrglWarrior">
+            <String String="Assets/Textures/storm_ui_icon_murky_fishtank.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MurkyTimetoKrill">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MurkyMasteryRejuvenatingBubble">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MurkyMrrglWarriorMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MurkyFinFuryTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MurkyLivingLegendTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MurkyLivingLegendTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MurkyFinFuryTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MurkySafetyBubble,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MurkySafetyBubble,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MurkySafetyBubble,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MurkySafetyBubble,Cost.Charge.TimeUse 11">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MurkySafetyBubble,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,MurkySafetyBubble,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MurkyFinFuryAddToken,Chance 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MurkyWeaponDamage,MultiplicativeModifierArray[MurkyMrrglWarriorPower].Modifier 0.25">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_MurkyStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MurkyTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+            <String String="HeroGainTalent libAffx_MurkySlipperyGained">
+                <Field Id="Trigger" Index="2" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkySharpFins">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_murky_fishtank.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyMrrglWarrior">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MurkyWeaponDamage,MultiplicativeModifierArray[MurkySharpFins].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyBubbleWrap">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_murky_safetybubble.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyMrrglWarrior">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MurkySafetyBubble,Cost.Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkySlipperyBoon">
+            <String String="Assets/Textures/storm_ui_icon_murky_safetybubble.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyMrrglWarrior">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MurkySlipperyWhenWet">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyToxicBuildupBoon">
+            <String String="Assets/Textures/storm_ui_icon_murky_slime.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyMrrglWarrior">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MurkyToxicBuildup">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyBubbleBurst">
+            <String String="Assets/Textures/storm_ui_icon_murky_safetybubble.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyMrrglWarrior">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MurkyBubbleBurstApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="MurkyShellShock">
+            <String String="Assets/Textures/storm_ui_icon_murky_fishtank.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Murky">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MurkyMrrglWarrior">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MurkyShellShockMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

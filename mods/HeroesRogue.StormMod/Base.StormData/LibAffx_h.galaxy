@@ -20,10 +20,15 @@ const int libAffx_maxBehaviors = 10;
 const int libAffx_maxAffixBehaviors = 1000;
 const int libAffx_maxTriggers = 10;
 const int libAffx_maxQuests = 6; // QuestRetain entries; most used: 5
+const int libAffx_maxShowTalents = 6; // TalentsShow per affix; most used: 4
+const int libAffx_maxRequiredTalents = 4; // TalentsRequired per affix; most used: 1
+const int libAffx_maxAffixBehaviorEntries = 6; // AffixBehavior per affix; most used: 5
+const int libAffx_maxRemoveBehaviors = 5; // RemoveBehavior per affix; most used: 3
 const int libAffx_maxFilters = 100;
-const int libAffx_maxAffixes = 560; // AffixData.xml instances past this are silently dropped. libAffx_affixes is the
+const int libAffx_maxAffixes = 600; // AffixData.xml instances past this are silently dropped. libAffx_affixes is the
 // biggest global: 700 with the old per-affix array sizes soft-locked the map (likely the script memory limit), so the
-// arrays below were trimmed to keep 560 no bigger than the old 500.
+// arrays below were trimmed to keep 560 no bigger than the old 500, and trimmed again (TalentsShow, TalentsRequired,
+// AffixBehavior, RemoveBehavior) to keep 600 no bigger than 560.
 const int libAffx_maxOwnedAffixesPerPage = 90;
 const int libAffx_maxQueue = 100;
 const int libAffx_maxRequirements = 5; // AffixesRequired/Excluded per affix; most used: 2
@@ -586,16 +591,16 @@ struct libAffx_AffixData {
     int minRound;
 
     string[libAffx_maxTalents + 1] addTalents;
-    string[libAffx_maxTalents + 1] showTalents;
+    string[libAffx_maxShowTalents + 1] showTalents;
     string[libAffx_maxTalents + 1] disableTalents;
-    string[libAffx_maxTalents + 1] requiredTalents;
+    string[libAffx_maxRequiredTalents + 1] requiredTalents;
     int requiredTalentsCount;
     bool talentsApplied;
 
     libAffx_CatalogModification[libAffx_maxCatalogModifications + 1] catalogModifications;
     libAffx_Behavior[libAffx_maxBehaviors + 1] behaviors;
-    libAffx_Behavior[libAffx_maxBehaviors + 1] affixBehaviors;
-    libAffx_Behavior[libAffx_maxBehaviors + 1] removeBehaviors;
+    libAffx_Behavior[libAffx_maxAffixBehaviorEntries + 1] affixBehaviors;
+    libAffx_Behavior[libAffx_maxRemoveBehaviors + 1] removeBehaviors;
     libAffx_Trigger[libAffx_maxTriggers + 1] triggers;
     trigger[libAffx_maxTriggers + 1] createdTriggers;
 

@@ -2920,9 +2920,11 @@ void libAffx_ApplyTalents(int affix) {
         if (disableTalent != "" && disableTalent != null) {
             libAffx_DisableTalent(disableTalent, true);
         }
-        showTalent = libAffx_affixes[affix].showTalents[i];
-        if (showTalent != "" && showTalent != null) {
-            libAffx_ShowTalent(showTalent, true);
+        if (i <= libAffx_maxShowTalents) {
+            showTalent = libAffx_affixes[affix].showTalents[i];
+            if (showTalent != "" && showTalent != null) {
+                libAffx_ShowTalent(showTalent, true);
+            }
         }
     }
     libAffx_affixes[affix].talentsApplied = true;
@@ -3020,7 +3022,7 @@ void libAffx_RemoveBehaviors(int affix) {
     int i2;
     string behavior;
     int behaviorPlayer;
-    for (i = 1; i <= libAffx_maxBehaviors; i += 1) {
+    for (i = 1; i <= libAffx_maxRemoveBehaviors; i += 1) {
         behavior = libAffx_affixes[affix].removeBehaviors[i].behavior;
         if (behavior != "" && behavior != null) {
             behaviorPlayer = libAffx_affixes[affix].removeBehaviors[i].player;
@@ -3088,7 +3090,7 @@ void libAffx_ApplyAffixBehaviors(int affix, int amount) {
     int i2;
     string behavior;
     int behaviorPlayer;
-    for (i = 1; i <= libAffx_maxBehaviors; i += 1) {
+    for (i = 1; i <= libAffx_maxAffixBehaviorEntries; i += 1) {
         behavior = libAffx_affixes[affix].affixBehaviors[i].behavior;
         if (behavior != "" && behavior != null) {
             behaviorPlayer = libAffx_affixes[affix].affixBehaviors[i].player;
@@ -5911,6 +5913,7 @@ void libAffx_InitVariables () {
     libAffx_SetGoldenHero("Tassadar");
     libAffx_SetGoldenHero("Nova");
     libAffx_SetGoldenHero("L90ETC");
+    libAffx_SetGoldenHero("Murky");
 
     libAffx_InitVariables_completed = true;
 }
@@ -6100,12 +6103,12 @@ void libAffx_InitAffixes () {
             if (talentsDisable != "" && talentsDisable != null) {
                 libAffx_affixes[i].disableTalents[i2] = talentsDisable;
             }
-            if (talentsShow != "" && talentsShow != null) {
+            if (talentsShow != "" && talentsShow != null && i2 <= libAffx_maxShowTalents) {
                 libAffx_affixes[i].showTalents[i2] = talentsShow;
                 libAffx_ShowTalent(talentsShow, false);
             }
-            if (talentsRequired != "" && talentsRequired != null) {
-                libAffx_affixes[i].requiredTalents[i2] = talentsRequired;
+            if (talentsRequired != "" && talentsRequired != null && libAffx_affixes[i].requiredTalentsCount < libAffx_maxRequiredTalents) {
+                libAffx_affixes[i].requiredTalents[libAffx_affixes[i].requiredTalentsCount + 1] = talentsRequired;
                 libAffx_affixes[i].requiredTalentsCount += 1;
             }
         }
@@ -6170,7 +6173,7 @@ void libAffx_InitAffixes () {
                 }
             }
             behavior = UserDataGetString("Affix", affixInstance, "RemoveBehavior", i2);
-            if (behavior != "" && behavior != null) {
+            if (behavior != "" && behavior != null && i2 <= libAffx_maxRemoveBehaviors) {
                 behaviorPlayer = StringToInt(StringWord(behavior, 1));
                 behaviorName = StringWord(behavior, 2);
 
@@ -6181,7 +6184,7 @@ void libAffx_InitAffixes () {
                 }
             }
             behavior = UserDataGetString("Affix", affixInstance, "AffixBehavior", i2);
-            if (behavior != "" && behavior != null) {
+            if (behavior != "" && behavior != null && i2 <= libAffx_maxAffixBehaviorEntries) {
                 behaviorPlayer = StringToInt(StringWord(behavior, 1));
                 behaviorName = StringWord(behavior, 2);
 

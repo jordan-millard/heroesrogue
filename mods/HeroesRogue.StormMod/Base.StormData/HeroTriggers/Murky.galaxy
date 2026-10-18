@@ -1,0 +1,209 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Murky
+// Slime King, Slime Mountain quest: an enemy Hero takedown within 3 seconds of a Slime hit adds 1% Slime radius, up to
+// 75%; each stack past that adds 1% Slime damage instead.
+// Big Tuna, Catch of the Day quest: an enemy Hero takedown within 4 seconds of a Pufferfish hit adds 3% Pufferfish damage
+// (MurkyData.xml). Chain Reaction (Legendary): an enemy Hero hit by Pufferfish sets off a second explosion that deals 50%
+// of the hit to other enemies within 3 range.
+// Mrrgl Warrior, Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds Rejuvenating
+// Bubble healing (MurkyData.xml). Shell Shock (Legendary): Basic Attacks deal 50% of their damage to other enemies within
+// 2.5 range of the target.
+// Each starter gives its ability 2 charges (AffixData.xml), so the tree talents that lower those cooldowns are moved onto
+// the charge timer here.
+// The Ooze, Blowfish and Fin Fury quests are in MurkyData.xml. Stacks carry over between games through QuestRetain.
+// ============================================================
+
+const fixed libAffx_murkyTakedownWindow = 3.0;
+const fixed libAffx_murkyPufferWindow = 4.0; // Catch of the Day
+const fixed libAffx_murkyRadiusPerStack = 0.039; // Slime Mountain: 1% of Slime's 3.9 radius with Black Lagoon
+const fixed libAffx_murkyRadiusMaxStacks = 75.0; // Slime Mountain radius cap (+75%)
+const fixed libAffx_murkyMountainDamagePerStack = 0.01; // Slime Mountain stacks past the radius cap
+const fixed libAffx_murkyChainRadius = 3.0;
+const fixed libAffx_murkyChainFraction = 0.5;
+const fixed libAffx_murkyShellShockRadius = 2.5;
+const fixed libAffx_murkyShellShockFraction = 0.5;
+
+bool libAffx_murkyStarted;
+fixed libAffx_murkyRadiusAdded; // Slime radius added by Slime Mountain this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkySlimeTime; // per enemy player, last Slime hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkyPufferTime; // per enemy player, last Pufferfish hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_murkyAttackTime; // per enemy player, last Basic Attack hit
+
+unit libAffx_MurkyHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_MurkyIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+void libAffx_MurkyQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+
+// Deals part of a hit to the other enemies near the victim
+void libAffx_MurkySplash (unit hero, unit victim, fixed radius, string damageEffect, fixed amount) {
+    unitgroup nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(victim), radius), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32)) | (1 << (c_targetFilterStasis - 32))), 0);
+    unit other;
+    int i;
+    if (amount <= 0.0) {
+        return;
+    }
+    UnitGroupRemove(nearby, victim);
+    for (i = UnitGroupCount(nearby, c_unitCountAll); i >= 1; i -= 1) {
+        other = UnitGroupUnit(nearby, i);
+        if (other != null && UnitIsAlive(other)) {
+            UnitDamage(hero, damageEffect, other, amount);
+        }
+    }
+}
+
+// Slime Mountain: Slime reaches further (adds only the change since the last sync), and its range indicator and cast
+// model follow. Stacks past the radius cap set the Slime Mountain damage modifier on both Slime damage effects, 1% each.
+void libAffx_MurkySyncRadius () {
+    unit hero = libAffx_MurkyHero();
+    fixed stacks;
+    fixed overflow;
+    fixed wanted;
+    fixed delta;
+    if (hero == null || !UnitHasBehavior2(hero, "MurkySlimeKingMarker")) {
+        return;
+    }
+    stacks = UnitGetTokenCount(hero, "MurkySlimeMountainTokenCounter");
+    overflow = 0.0;
+    if (stacks > libAffx_murkyRadiusMaxStacks) {
+        overflow = stacks - libAffx_murkyRadiusMaxStacks;
+        stacks = libAffx_murkyRadiusMaxStacks;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkySlimeDamage", "MultiplicativeModifierArray[MurkySlimeMountain].Modifier", libAffx_player, libAffx_murkyMountainDamagePerStack * overflow);
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkySlimeBonusDamage", "MultiplicativeModifierArray[MurkySlimeMountain].Modifier", libAffx_player, libAffx_murkyMountainDamagePerStack * overflow);
+    wanted = libAffx_murkyRadiusPerStack * stacks;
+    delta = wanted - libAffx_murkyRadiusAdded;
+    if (AbsF(delta) < 0.01) {
+        return;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkySlimeSearch", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkySlimeSearch", "AreaArray[0].Radius", libAffx_player) + delta);
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "MurkySlimeRangeSplat", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "MurkySlimeRangeSplat", "Scale", libAffx_player) + delta);
+    // Black Lagoon grows the cast model by a third of the radius it adds
+    CatalogFieldValueSetFixed(c_gameCatalogActor, "MurkySlimeCastModel", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "MurkySlimeCastModel", "Scale", libAffx_player) + delta / 3.0);
+    libAffx_murkyRadiusAdded = wanted;
+}
+bool libAffx_MurkySync_Func (bool testConds, bool runActions) {
+    libAffx_MurkySyncRadius();
+    return true;
+}
+
+// Slime hit on an enemy Hero: opens the Slime Mountain takedown window
+bool libAffx_MurkySlimeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MurkyIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_murkySlimeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+// Pufferfish hit on an enemy Hero: opens the Catch of the Day takedown window, and runs Chain Reaction
+bool libAffx_MurkyPufferHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MurkyHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MurkyIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_murkyPufferTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (UnitHasBehavior2(hero, "MurkyChainReactionMarker")) {
+        libAffx_MurkySplash(hero, victim, libAffx_murkyChainRadius, "MurkyChainReactionDamage", EventUnitDamageAttempted() * libAffx_murkyChainFraction);
+    }
+    return true;
+}
+
+// Basic Attack hit: opens the Living Legend takedown window, and runs Shell Shock
+bool libAffx_MurkyAttackHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MurkyHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || victim == null) {
+        return false;
+    }
+    if (libAffx_MurkyIsEnemyHero(victim)) {
+        libAffx_murkyAttackTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    }
+    if (UnitHasBehavior2(hero, "MurkyShellShockMarker")) {
+        libAffx_MurkySplash(hero, victim, libAffx_murkyShellShockRadius, "MurkyShellShockDamage", EventUnitDamageAttempted() * libAffx_murkyShellShockFraction);
+    }
+    return true;
+}
+
+bool libAffx_MurkyInWindow (fixed hitTime, fixed now, fixed window) {
+    return hitTime > 0.0 && now - hitTime <= window;
+}
+
+// HeroTakedown for Slime Mountain, Catch of the Day and Living Legend
+bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_MurkyHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "MurkySlimeKingMarker") && libAffx_MurkyInWindow(libAffx_murkySlimeTime[killedPlayer], now, libAffx_murkyTakedownWindow)) {
+        libAffx_murkySlimeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MurkySlimeMountainTokenCounter", hero);
+        libAffx_MurkySyncRadius();
+        libAffx_MurkyQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "MurkyBigTunaMarker") && libAffx_MurkyInWindow(libAffx_murkyPufferTime[killedPlayer], now, libAffx_murkyPufferWindow)) {
+        libAffx_murkyPufferTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MurkyCatchOfTheDayTokenCounter", hero);
+        libAffx_MurkyQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker") && libAffx_MurkyInWindow(libAffx_murkyAttackTime[killedPlayer], now, libAffx_murkyTakedownWindow)) {
+        libAffx_murkyAttackTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MurkyLivingLegendTokenCounter", hero);
+        libAffx_MurkyQuestDing();
+    }
+    return true;
+}
+
+// HeroGainTalent (Slime King): Making Inky lowers Slime's cooldown, which the charges ignore, so it goes on the charge timer
+bool libAffx_MurkyMakingInkyGained (bool testConds, bool runActions) {
+    if (libGame_gf_HeroGainTalentPlayer() != libAffx_player || libGame_gf_HeroGainTalentGainedTalent() != "MurkyMakingInky") {
+        return false;
+    }
+    libAffx_CatalogReferenceModify("Abil,MurkySlime,Cost.Charge.TimeUse", libAffx_player, "-1.5", c_upgradeOperationAdd);
+    return true;
+}
+
+// HeroGainTalent (Mrrgl Warrior): the same for Slippery When Wet on Safety Bubble
+bool libAffx_MurkySlipperyGained (bool testConds, bool runActions) {
+    if (libGame_gf_HeroGainTalentPlayer() != libAffx_player || libGame_gf_HeroGainTalentGainedTalent() != "MurkySlipperyWhenWet") {
+        return false;
+    }
+    libAffx_CatalogReferenceModify("Abil,MurkySafetyBubble,Cost.Charge.TimeUse", libAffx_player, "-2", c_upgradeOperationAdd);
+    return true;
+}
+
+// AffixAdded for all three starters
+bool libAffx_MurkyStart (bool testConds, bool runActions) {
+    trigger slimeHit;
+    if (libAffx_murkyStarted) {
+        return true;
+    }
+    libAffx_murkyStarted = true;
+    slimeHit = TriggerCreate("libAffx_MurkySlimeHit_Func");
+    TriggerAddEventUnitDamaged(slimeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "MurkySlimeDamage");
+    TriggerAddEventUnitDamaged(slimeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "MurkySlimeBonusDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_MurkyPufferHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "MurkyPufferfishDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_MurkyAttackHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "MurkyWeaponDamage");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MurkySync_Func"), 1.0, c_timeGame);
+    return true;
+}

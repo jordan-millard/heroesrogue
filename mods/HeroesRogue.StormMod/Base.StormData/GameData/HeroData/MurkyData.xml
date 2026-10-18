@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Murky. Starters: Slime King (Slime), Big Tuna (Pufferfish) and Mrrgl Warrior (Basic Attacks and Safety
+       Bubble). Takedown quests and the script-driven boons are in HeroTriggers/Murky.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="MurkySlimeKingMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MurkyBigTunaMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MurkyMrrglWarriorMarker" parent="CarryBehaviorParent" />
+  <!-- Boon markers handled by the script -->
+  <CBehaviorBuff id="MurkyChainReactionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MurkyShellShockMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Slime King ===== -->
+  <!-- Ooze quest (50% kept between games): each enemy Hero hit by Slime, 1% Slime damage each.
+       Slime Mountain quest: an enemy Hero takedown within 3 seconds of a Slime hit, 1% Slime radius each up to 75%,
+       then 1% Slime damage each (script). -->
+  <CBehaviorTokenCounter id="MurkyOozeTokenCounter" parent="StormQuestToken">
+    <Face value="MurkyOozeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MurkyOozeAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MurkyOozeTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="MurkyOozeAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="MurkyOozeTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="MurkySlimeMountainTokenCounter" parent="StormQuestToken">
+    <Face value="MurkySlimeMountainTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <!-- Slime King itself: +50% Slime damage (MurkySlimeKingPower, set by the affix). Gooey (Common): its own multiplier,
+       15% per stack. -->
+  <CEffectDamage id="MurkySlimeDamage">
+    <MultiplicativeModifierArray index="MurkyOoze" Accumulator="MurkyOozeAccumulator" />
+    <MultiplicativeModifierArray index="MurkySlimeMountain" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkySlimeKingPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkyGooey" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MurkySlimeBonusDamage">
+    <MultiplicativeModifierArray index="MurkyOoze" Accumulator="MurkyOozeAccumulator" />
+    <MultiplicativeModifierArray index="MurkySlimeMountain" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkySlimeKingPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkyGooey" Modifier="0" />
+  </CEffectDamage>
+  <!-- Slime Rush (Rare): each enemy Hero hit by Slime reduces its cooldown by 1 second -->
+  <CEffectModifyUnit id="MurkySlimeRushModifyCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="MurkySlime,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Corrosive Slime (Epic): enemy Heroes hit by Slime lose 20 Armor for 3 seconds -->
+  <CBehaviorBuff id="MurkyCorrosiveSlimeDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Murky_Slime.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-20" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MurkyCorrosiveSlimeApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="MurkyCorrosiveSlimeDebuff" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MurkySlimeImpactSet">
+    <EffectArray value="MurkyOozeAddToken" />
+    <EffectArray value="MurkySlimeRushModifyCooldown" />
+    <EffectArray value="MurkyCorrosiveSlimeApply" />
+  </CEffectSet>
+  <CEffectSet id="MurkySlimeImpactSetUnstoppableTarget">
+    <EffectArray value="MurkyOozeAddToken" />
+    <EffectArray value="MurkySlimeRushModifyCooldown" />
+    <EffectArray value="MurkyCorrosiveSlimeApply" />
+  </CEffectSet>
+  <!-- Primordial Ooze (Legendary): Slime is cast again at the same spot 1 second later. Slime's ability effect becomes a
+       set holding the normal search plus the delayed copy, which stays off (Chance 0) unless the boon is taken. -->
+  <CEffectCreatePersistent id="MurkyPrimordialOozePersistent">
+    <Chance value="0" />
+    <WhichLocation Value="CasterPoint" />
+    <ExpireDelay value="1" />
+    <ExpireEffect value="MurkySlimeSearch" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="MurkyGoldenSlimeSet">
+    <EffectArray value="MurkySlimeSearch" />
+    <EffectArray value="MurkyPrimordialOozePersistent" />
+  </CEffectSet>
+  <CAbilEffectInstant id="MurkySlime">
+    <Effect value="MurkyGoldenSlimeSet" />
+  </CAbilEffectInstant>
+  <!-- Hindering Slime: a cut talent granted by Slime King, so it needs a button -->
+  <CButton id="MurkyHinderingSlimeTalent" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_Slime.dds" />
+    <HotkeyAlias value="MurkySlime" />
+  </CButton>
+
+  <!-- ===== Big Tuna ===== -->
+  <!-- Blowfish quest (50% kept between games): each enemy Hero hit by Pufferfish, 2% Pufferfish damage each.
+       Catch of the Day quest: an enemy Hero takedown within 4 seconds of a Pufferfish hit (script), 3% Pufferfish damage
+       each. -->
+  <CBehaviorTokenCounter id="MurkyBlowfishTokenCounter" parent="StormQuestToken">
+    <Face value="MurkyBlowfishTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MurkyBlowfishAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MurkyBlowfishTokenCounter" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="MurkyBlowfishAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="MurkyBlowfishTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="MurkyCatchOfTheDayTokenCounter" parent="StormQuestToken">
+    <Face value="MurkyCatchOfTheDayTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MurkyCatchOfTheDayAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MurkyCatchOfTheDayTokenCounter" />
+    <Scale value="0.03" />
+  </CAccumulatorToken>
+  <!-- Big Tuna itself: +50% Pufferfish damage (MurkyBigTunaPower, set by the affix). Spiny (Common): its own multiplier,
+       15% per stack. -->
+  <CEffectDamage id="MurkyPufferfishDamage">
+    <MultiplicativeModifierArray index="MurkyBlowfish" Accumulator="MurkyBlowfishAccumulator" />
+    <MultiplicativeModifierArray index="MurkyCatchOfTheDay" Accumulator="MurkyCatchOfTheDayAccumulator" />
+    <MultiplicativeModifierArray index="MurkyBigTunaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkySpiny" Modifier="0" />
+  </CEffectDamage>
+  <!-- Fish Frenzy (Epic): each enemy Hero hit by Pufferfish reduces its cooldown by 2 seconds -->
+  <CEffectModifyUnit id="MurkyFishFrenzyModifyCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="MurkyPufferfish,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CEffectSet id="MurkyPufferfishExplosionImpactSet">
+    <EffectArray value="MurkyBlowfishAddToken" />
+    <EffectArray value="MurkyFishFrenzyModifyCooldown" />
+  </CEffectSet>
+  <!-- Chain Reaction (Legendary): the second explosion from an enemy Hero hit by Pufferfish (script) -->
+  <CEffectDamage id="MurkyChainReactionDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="MurkyPufferfish" />
+  </CEffectDamage>
+  <!-- Compressed Air: a cut talent granted by Big Tuna, so it needs a button -->
+  <CButton id="MurkyPufferfishCompressedAirTalent" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_Pufferfish.dds" />
+    <HotkeyAlias value="MurkyPufferfish" />
+  </CButton>
+
+  <!-- ===== Mrrgl Warrior ===== -->
+  <!-- Fin Fury quest (50% kept between games): each Basic Attack on an enemy Hero, 0.2% Basic Attack damage each.
+       Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them (script), Rejuvenating
+       Bubble heals 0.25% more of Murky's maximum Health per tick (4 ticks a Bubble, so 1% a Bubble) each. -->
+  <CBehaviorTokenCounter id="MurkyFinFuryTokenCounter" parent="StormQuestToken">
+    <Face value="MurkyFinFuryTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MurkyFinFuryAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MurkyFinFuryTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="MurkyFinFuryAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="MurkyFinFuryTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="MurkyLivingLegendTokenCounter" parent="StormQuestToken">
+    <Face value="MurkyLivingLegendTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MurkyLivingLegendAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MurkyLivingLegendTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectCreateHealer id="MurkySafetyBubbleCreateRejuvenatingBubbleMasteryHealer">
+    <RechargeVitalFraction>
+      <AccumulatorArray value="MurkyLivingLegendAccumulator" />
+    </RechargeVitalFraction>
+  </CEffectCreateHealer>
+  <!-- Mrrgl Warrior itself: +25% Basic Attack damage (MurkyMrrglWarriorPower, set by the affix). Sharp Fins (Common): its
+       own multiplier, 15% per stack. -->
+  <CEffectDamage id="MurkyWeaponDamage">
+    <MultiplicativeModifierArray index="MurkyFinFury" Accumulator="MurkyFinFuryAccumulator" />
+    <MultiplicativeModifierArray index="MurkyMrrglWarriorPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkySharpFins" Modifier="0" />
+  </CEffectDamage>
+  <CEffectSet id="MurkyWeaponPostImpactSet">
+    <EffectArray value="MurkyFinFuryAddToken" />
+  </CEffectSet>
+  <!-- Bubble Burst (Epic): when Safety Bubble ends, Murky gains 50% Attack Speed for 4 seconds -->
+  <CBehaviorBuff id="MurkyBubbleBurstBuff">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Murky_SafetyBubble.dds" />
+    <Duration value="4" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MurkyBubbleBurstApply">
+    <Chance value="0" />
+    <Behavior value="MurkyBubbleBurstBuff" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="MurkySafetyBubble">
+    <FinalEffect value="MurkyBubbleBurstApply" />
+  </CBehaviorBuff>
+  <!-- Shell Shock (Legendary): the splash from a Basic Attack (script) -->
+  <CEffectDamage id="MurkyShellShockDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+  </CEffectDamage>
+
+  <CButton id="MurkyOozeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_Slime.dds" />
+  </CButton>
+  <CButton id="MurkySlimeMountainTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_Slime.dds" />
+  </CButton>
+  <CButton id="MurkyBlowfishTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_Pufferfish.dds" />
+  </CButton>
+  <CButton id="MurkyCatchOfTheDayTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_Pufferfish.dds" />
+  </CButton>
+  <CButton id="MurkyFinFuryTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_FishTank.dds" />
+  </CButton>
+  <CButton id="MurkyLivingLegendTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Murky_SafetyBubble.dds" />
+  </CButton>
+</Catalog>

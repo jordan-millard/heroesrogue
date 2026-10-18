@@ -1021,6 +1021,64 @@ Affix/Name/ETCSonicBoom=Sonic Boom
 Affix/Tooltip/ETCSonicBoom=While Guitar Solo is active, Basic Attacks deal <c val="#TooltipNumbers">50%</c> of their damage to other enemies within <c val="#TooltipNumbers">2.5</c> range of the target.
 Affix/Name/ETCHeadbanger=Headbanger
 Affix/Tooltip/ETCHeadbanger=While Guitar Solo is active, Basic Attacks reduce the cooldowns of Powerslide and Face Melt by <c val="#TooltipNumbers">0.75</c> seconds.
+Affix/Name/MurkySlimeKing=Slime King
+Affix/Tooltip/MurkySlimeKing=Gain <c val="#TooltipNumbers">Black Lagoon</c> and <c val="#TooltipNumbers">Hindering Slime</c>.<n/><n/>Slime deals <c val="#TooltipNumbers">50%</c> more damage, gains a second charge, and its cooldown is reduced by <c val="#TooltipNumbers">1</c> second.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Slime permanently adds <c val="#TooltipNumbers">1%</c> Slime damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of Slime hitting them permanently adds <c val="#TooltipNumbers">1%</c> Slime radius, up to <c val="#TooltipNumbers">75%</c>. Each takedown past that adds <c val="#TooltipNumbers">1%</c> Slime damage instead.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of the Slime hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Button/Name/MurkyOozeTokenCounter=Ooze
+Button/Tooltip/MurkyOozeTokenCounter=<c val="#TooltipQuest">Bonus Slime damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MurkyOozeTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/MurkySlimeMountainTokenCounter=Slime Mountain
+Button/Tooltip/MurkySlimeMountainTokenCounter=<c val="#TooltipQuest">Slime Mountain stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MurkySlimeMountainTokenCounter$" precision="0"/></c></c><n/>Each stack adds <c val="#TooltipNumbers">1%</c> Slime radius, up to <c val="#TooltipNumbers">75%</c> at <c val="#TooltipNumbers">75</c> stacks. Each stack past <c val="#TooltipNumbers">75</c> adds <c val="#TooltipNumbers">1%</c> Slime damage.
+Button/Name/MurkyHinderingSlimeTalent=Hindering Slime
+Button/Tooltip/MurkyHinderingSlimeTalent=Increase Slime's Slow by <c val="#TooltipNumbers">10%</c>.
+Affix/Name/MurkyGooey=Gooey
+Affix/Tooltip/MurkyGooey=Slime deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/MurkyQuickSlime=Quick Slime
+Affix/Tooltip/MurkyQuickSlime=Reduce Slime's cooldown by <c val="#TooltipNumbers">0.5</c> seconds.
+Affix/Name/MurkySlimeTimeBoon=Slime Time
+Affix/Tooltip/MurkySlimeTimeBoon=Gain the talent <c val="#TooltipNumbers">Slime Time</c>: Slime enemy Heroes that are already Slimed to increase Slime's bonus damage and Slow.
+Affix/Name/MurkySlimeRush=Slime Rush
+Affix/Tooltip/MurkySlimeRush=Each enemy Hero hit by Slime reduces Slime's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/MurkyCorrosiveSlime=Corrosive Slime
+Affix/Tooltip/MurkyCorrosiveSlime=Enemy Heroes hit by Slime lose <c val="#TooltipNumbers">20</c> Armor for <c val="#TooltipNumbers">3</c> seconds, taking more damage from all sources.
+Affix/Name/MurkyPrimordialOoze=Primordial Ooze
+Affix/Tooltip/MurkyPrimordialOoze=Slime is cast again at the same spot <c val="#TooltipNumbers">1</c> second later.
+Affix/Name/MurkyBigTuna=Big Tuna
+Affix/Tooltip/MurkyBigTuna=Gain <c val="#TooltipNumbers">Big Tuna Kahuna</c> and <c val="#TooltipNumbers">Compressed Air</c>.<n/><n/>Pufferfish deals <c val="#TooltipNumbers">50%</c> more damage, gains a second charge, and its cooldown is reduced by <c val="#TooltipNumbers">3</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Pufferfish permanently adds <c val="#TooltipNumbers">2%</c> Pufferfish damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">4</c> seconds of Pufferfish hitting them permanently adds <c val="#TooltipNumbers">3%</c> Pufferfish damage.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of the Pufferfish hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Button/Name/MurkyBlowfishTokenCounter=Blowfish
+Button/Tooltip/MurkyBlowfishTokenCounter=<c val="#TooltipQuest">Bonus Pufferfish damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MurkyBlowfishTokenCounter$*2" precision="1"/>%</c></c>
+Button/Name/MurkyCatchOfTheDayTokenCounter=Catch of the Day
+Button/Tooltip/MurkyCatchOfTheDayTokenCounter=<c val="#TooltipQuest">Bonus Pufferfish damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MurkyCatchOfTheDayTokenCounter$*3" precision="1"/>%</c></c>
+Button/Name/MurkyPufferfishCompressedAirTalent=Compressed Air
+Button/Tooltip/MurkyPufferfishCompressedAirTalent=Increase Pufferfish's explosion radius. Pufferfish deals <c val="#TooltipNumbers">50%</c> more damage if it hits at least <c val="#TooltipNumbers">2</c> enemy Heroes.
+Affix/Name/MurkySpiny=Spiny
+Affix/Tooltip/MurkySpiny=Pufferfish deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/MurkyFishFood=Fish Food
+Affix/Tooltip/MurkyFishFood=Reduce Pufferfish's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/MurkyFishOilBoon=Fish Oil
+Affix/Tooltip/MurkyFishOilBoon=Gain the talent <c val="#TooltipNumbers">Fish Oil</c>: the Pufferfish casts Slime at its location upon landing.
+Affix/Name/MurkyWrathOfCodBoon=Wrath of Cod
+Affix/Tooltip/MurkyWrathOfCodBoon=Gain the talent <c val="#TooltipNumbers">Wrath of Cod</c>: Heroes hit by Pufferfish take additional damage equal to a share of their maximum Health over time.
+Affix/Name/MurkyFishFrenzy=Fish Frenzy
+Affix/Tooltip/MurkyFishFrenzy=Each enemy Hero hit by Pufferfish reduces Pufferfish's cooldown by <c val="#TooltipNumbers">2</c> seconds.
+Affix/Name/MurkyChainReaction=Chain Reaction
+Affix/Tooltip/MurkyChainReaction=When Pufferfish hits an enemy Hero, it sets off a second explosion on them that deals <c val="#TooltipNumbers">50%</c> of the damage to other enemies within <c val="#TooltipNumbers">3</c> range.
+Affix/Name/MurkyMrrglWarrior=Mrrgl Warrior
+Affix/Tooltip/MurkyMrrglWarrior=Gain <c val="#TooltipNumbers">Time to Krill</c> and <c val="#TooltipNumbers">Rejuvenating Bubble</c>.<n/><n/>Basic Attacks deal <c val="#TooltipNumbers">25%</c> more damage. Safety Bubble gains a second charge, and its cooldown is reduced by <c val="#TooltipNumbers">3</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Basic Attack against an enemy Hero permanently adds <c val="#TooltipNumbers">0.2%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of a Basic Attack against them permanently makes Rejuvenating Bubble restore <c val="#TooltipNumbers">1%</c> more of Murky's maximum Health.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of the Basic Attack stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Button/Name/MurkyFinFuryTokenCounter=Fin Fury
+Button/Tooltip/MurkyFinFuryTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MurkyFinFuryTokenCounter$*0.2" precision="1"/>%</c></c>
+Button/Name/MurkyLivingLegendTokenCounter=Living Legend
+Button/Tooltip/MurkyLivingLegendTokenCounter=<c val="#TooltipQuest">Bonus Rejuvenating Bubble healing: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MurkyLivingLegendTokenCounter$*1" precision="1"/>%</c></c> of maximum Health
+Affix/Name/MurkySharpFins=Sharp Fins
+Affix/Tooltip/MurkySharpFins=Basic Attacks deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/MurkyBubbleWrap=Bubble Wrap
+Affix/Tooltip/MurkyBubbleWrap=Reduce Safety Bubble's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/MurkySlipperyBoon=Slippery When Wet
+Affix/Tooltip/MurkySlipperyBoon=Gain the talent <c val="#TooltipNumbers">Slippery When Wet</c>: move faster and through units while in Safety Bubble, and Safety Bubble's cooldown is reduced by <c val="#TooltipNumbers">2</c> seconds.
+Affix/Name/MurkyToxicBuildupBoon=Toxic Buildup
+Affix/Tooltip/MurkyToxicBuildupBoon=Gain the talent <c val="#TooltipNumbers">Toxic Buildup</c>: every 3rd consecutive Basic Attack against an enemy Hero casts a free Slime on them.
+Affix/Name/MurkyBubbleBurst=Bubble Burst
+Affix/Tooltip/MurkyBubbleBurst=When Safety Bubble ends, Murky gains <c val="#TooltipNumbers">50%</c> Attack Speed for <c val="#TooltipNumbers">4</c> seconds.
+Affix/Name/MurkyShellShock=Shell Shock
+Affix/Tooltip/MurkyShellShock=Basic Attacks deal <c val="#TooltipNumbers">50%</c> of their damage to other enemies within <c val="#TooltipNumbers">2.5</c> range of the target.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=
