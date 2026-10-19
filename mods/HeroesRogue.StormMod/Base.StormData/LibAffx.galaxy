@@ -4737,6 +4737,96 @@ void libAffx_TestCommandTrigger_Init () {
     libAffx_AddTestCommand("xpall");
 }
 
+// ============================================================
+// Mythic objectives: Mythic makes every enemy unit stronger, including their structures and the objectives and bosses
+// they win, while your side's stay at base strength. So your team's mercenaries, bosses, map objective units and
+// vehicles (Dragon Knight, Garden Terror, Protector) get half the round's Mythic bonus (AffixObjectiveDifficultyBehavior),
+// and objective damage to enemy structures is raised to make up for the structures' Mythic Health bonus, so it does
+// what it would in a normal game.
+// ============================================================
+const fixed libAffx_objectiveDifficultyFraction = 0.5;
+fixed libAffx_mythicScaledModifier; // the enemy's Mythic bonus this game, 0 until libAffx_ApplyDifficulty runs
+
+bool libAffx_IsOrderPlayer (int player) {
+    return (player >= 1 && player <= 5) || player == libAffx_teamOrder;
+}
+bool libAffx_IsObjectiveUnit (unit unitVar) {
+    string unitType = UnitGetType(unitVar);
+    if (UnitTypeTestAttribute(unitType, c_unitAttributeMerc) || UnitTypeTestAttribute(unitType, c_unitAttributeMapBoss) ||
+            UnitTypeTestAttribute(unitType, c_unitAttributeMapCreature)) {
+        return true;
+    }
+    return StringContains(unitType, "Vehicle", c_stringAnywhere, c_stringNoCase);
+}
+// Objective damage: from an objective unit, or one of the objectives that deal damage from a structure or a Hero (Sky
+// Temple's temples, Blackheart's cannonballs, Warhead nukes, the Hanamura payload)
+bool libAffx_IsObjectiveDamage (unit source, string effect) {
+    if (source != null && libAffx_IsObjectiveUnit(source)) {
+        return true;
+    }
+    return StringContains(effect, "LuxoriaTemple", c_stringBegin, c_stringNoCase) || StringContains(effect, "Battleship", c_stringBegin, c_stringNoCase) ||
+        StringContains(effect, "Nuke", c_stringBegin, c_stringNoCase) || StringContains(effect, "HanamuraPayload", c_stringBegin, c_stringNoCase);
+}
+void libAffx_UpdateObjectiveDifficulty (unit unitVar) {
+    if (unitVar == null || libAffx_mythicScaledModifier <= 0.0) {
+        return;
+    }
+    if (libAffx_IsOrderPlayer(UnitGetOwner(unitVar)) && libAffx_IsObjectiveUnit(unitVar)) {
+        if (!UnitHasBehavior2(unitVar, "AffixObjectiveDifficultyBehavior")) {
+            UnitBehaviorAdd(unitVar, "AffixObjectiveDifficultyBehavior", unitVar, 1);
+        }
+    } else if (UnitHasBehavior2(unitVar, "AffixObjectiveDifficultyBehavior")) {
+        UnitBehaviorRemove(unitVar, "AffixObjectiveDifficultyBehavior", 1);
+    }
+}
+void libAffx_ApplyObjectiveDifficulty () {
+    unitgroup unitGroup = UnitGroup(null, c_playerAny, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32))), 0);
+    int i = UnitGroupCount(unitGroup, c_unitCountAll);
+    string value = FixedToString(libAffx_mythicScaledModifier * libAffx_objectiveDifficultyFraction, c_fixedPrecisionAny);
+    libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.DamageDealtFraction[Ability]", value);
+    libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.DamageDealtFraction[Basic]", value);
+    libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.VitalMaxFractionArray[Life]", value);
+    libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.VitalRegenMultiplier[Life]", value);
+    for (;; i -= 1) {
+        if (i <= 0) { break; }
+        libAffx_UpdateObjectiveDifficulty(UnitGroupUnitFromEnd(unitGroup, i));
+    }
+}
+bool libAffx_ObjectiveStructureDamage_Func (bool testConds, bool runActions) {
+    unit target = EventUnit();
+    unit source = EventUnitDamageSourceUnit();
+    fixed amount = EventUnitDamageAmount();
+    fixed extra;
+    fixed life;
+    if (testConds) {
+        if (libAffx_mythicScaledModifier <= 0.0 || amount <= 0.0) {
+            return false;
+        }
+        if (!UnitHasBehavior2(target, "AffixDifficultyBehavior") || !UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeStructure)) {
+            return false;
+        }
+        if (!libAffx_IsOrderPlayer(EventUnitDamageSourcePlayer()) || !libAffx_IsObjectiveDamage(source, EventUnitDamageEffect())) {
+            return false;
+        }
+    }
+    if (!runActions || !UnitIsAlive(target)) {
+        return true;
+    }
+    // Total damage = what this hit would do to the structure without its Mythic Health bonus. An objective unit's own
+    // half bonus already counts toward that.
+    if (source != null && UnitHasBehavior2(source, "AffixObjectiveDifficultyBehavior")) {
+        extra = amount * ((1.0 + libAffx_mythicScaledModifier) / (1.0 + libAffx_mythicScaledModifier * libAffx_objectiveDifficultyFraction) - 1.0);
+    } else {
+        extra = amount * libAffx_mythicScaledModifier;
+    }
+    // Taken from the structure's Health directly, never below 1, so the kill still comes from a real hit
+    life = UnitGetPropertyFixed(target, c_unitPropLife, c_unitPropCurrent);
+    if (life > 1.0) {
+        UnitSetPropertyFixed(target, c_unitPropLife, MaxF(life - extra, 1.0));
+    }
+    return true;
+}
+
 bool libAffx_DifficultyUnitCreated_Func (bool testConds, bool runActions) {
     if (testConds) {
         if (libAffx_difficulty <= libAffx_difficultyHeroic) {
@@ -4744,6 +4834,7 @@ bool libAffx_DifficultyUnitCreated_Func (bool testConds, bool runActions) {
         }
     }
     libAffx_AddUnitBehaviorFilter(EventUnitCreatedUnit(), "AffixDifficultyBehavior", 1, libAffx_filterDifficulty);
+    libAffx_UpdateObjectiveDifficulty(EventUnitCreatedUnit());
     return true;
 }
 bool libAffx_DifficultyUnitChangeOwner_Func (bool testConds, bool runActions) {
@@ -4753,6 +4844,7 @@ bool libAffx_DifficultyUnitChangeOwner_Func (bool testConds, bool runActions) {
         }
     }
     libAffx_UpdateUnitBehaviorFilter(EventUnit(), "AffixDifficultyBehavior", 1, libAffx_filterDifficulty);
+    libAffx_UpdateObjectiveDifficulty(EventUnit());
     return true;
 }
 void libAffx_Difficulty_Init() {
@@ -4760,6 +4852,7 @@ void libAffx_Difficulty_Init() {
     libAffx_DifficultyUnitChangeOwner = TriggerCreate("libAffx_DifficultyUnitChangeOwner_Func");
     TriggerAddEventUnitCreated(libAffx_DifficultyUnitCreatedTrigger, null, null, null);
     TriggerAddEventUnitChangeOwner(libAffx_DifficultyUnitChangeOwner, null);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ObjectiveStructureDamage_Func"), null, c_unitDamageTypeAny, c_unitDamageNonFatal, null);
 }
 
 void libAffx_ApplyDifficulty () {
@@ -4772,6 +4865,8 @@ void libAffx_ApplyDifficulty () {
         scaledModifier = MaxF(0, (libAffx_mythicModifier + libAffx_mythicModifierPerRound * libAffx_currentRun) * libAffx_currentRun);
         libAffx_SetAffix(libAffx_GetAffixId("DifficultyMythic"), libAffx_currentRun);
         libAffx_AddUnitBehaviorToAllFilter("AffixDifficultyBehavior", 1, libAffx_filterDifficulty);
+        libAffx_mythicScaledModifier = scaledModifier;
+        libAffx_ApplyObjectiveDifficulty();
     } else if (libAffx_difficulty == libAffx_difficultyHeroic) {
         libAffx_heroicDifficultyXPModifier = libAffx_heroicModifierXP * libAffx_currentRun;
         libGame_xpModifier[libGame_gv_teamChaosIndex_C] += libAffx_heroicDifficultyXPModifier;

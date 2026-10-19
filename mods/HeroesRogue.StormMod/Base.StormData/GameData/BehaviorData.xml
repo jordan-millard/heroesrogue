@@ -454,6 +454,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </Modification>
 </CBehaviorBuff>
 
+<!-- Mythic: your team's mercenaries, bosses, map objective units and vehicles get half the round's Mythic bonus (values
+     set by libAffx_ApplyDifficulty) -->
+<CBehaviorBuff id="AffixObjectiveDifficultyBehavior" parent="CarryBehaviorParent">
+  <Modification>
+    <DamageDealtFraction index="Ability" value="0" />
+    <DamageDealtFraction index="Basic" value="0" />
+    <VitalMaxFractionArray index="Life" value="0" />
+    <VitalRegenMultiplier index="Life" value="0" />
+  </Modification>
+</CBehaviorBuff>
+
 <CBehaviorBuff id="AffixSlowStartBehavior" parent="StormTimeStopParent">
   <BehaviorCategories index="Temporary" value="1" />
   <BehaviorCategories index="Restorable" value="1" />
