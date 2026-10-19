@@ -113,10 +113,44 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
 // player through DryadPoisonerLethalTarget) over each enemy Hero that Crippling Spores would kill right now. The game's green bar can't be made exact, so the burst is predicted from the poison's own ticks instead.
 // Each tick's real damage, divided by the talent bonuses it had (tick probes), leaves a factor for that target (Spell
 // Power, armor, the Poisoner quest). The prediction is the burst's ticks times one tick times that factor times the
-// bonuses the burst would have (burst probes). Shields aren't counted, so a shielded enemy can survive a LETHAL burst.
+// bonuses the burst would have (burst probes). The marker needs the burst to cover the target's Health plus their
+// shields plus a second of their Health regeneration (time to react). Armor is inside the factor, so while the target
+// has gained or lost an Armor buff or debuff since the last tick, the marker waits for the next tick to relearn it.
 // ============================================================
+const fixed libAffx_lunaraLethalRegenSeconds = 1.0;
 string libAffx_LunaraBurstFactorKey(unit target) {
     return "LunaraBurstFactor_" + IntToString(UnitGetTag(target));
+}
+string libAffx_LunaraArmorStateKey(unit target) {
+    return "LunaraArmorState_" + IntToString(UnitGetTag(target));
+}
+// Which kinds of Armor change the target has (1: an Armor buff, 2: an Armor debuff), plus 4 so a stored 0 means none yet
+int libAffx_LunaraArmorState(unit target) {
+    int state = 4;
+    if (UnitHasBehaviorWithCategoryFlag(target, c_behaviorCategoryBuffResistant)) {
+        state += 1;
+    }
+    if (UnitHasBehaviorWithCategoryFlag(target, c_behaviorCategoryDebuffVulnerable)) {
+        state += 2;
+    }
+    return state;
+}
+// Damage the target's shields would soak, over all their behaviors (behaviors that don't absorb report 0)
+fixed libAffx_LunaraShields(unit target) {
+    int i;
+    int count = UnitBehaviorCountAll(target);
+    string behavior;
+    string previous = "";
+    fixed total = 0.0;
+    for (i = 1; i <= count; i += 1) {
+        behavior = UnitBehaviorGet(target, i);
+        if (behavior == previous) {
+            continue;
+        }
+        previous = behavior;
+        total += UnitBehaviorDamageModifyRemaining(target, behavior);
+    }
+    return total;
 }
 // Reads and clears the probes: the product of the bonuses they mark (Intensifying Toxin, Unfair Advantage,
 // Nature's Culling, as on DryadNaturesToxinDamage)
@@ -159,6 +193,7 @@ bool libAffx_LunaraToxinTick_Func (bool testConds, bool runActions) {
         return true;
     }
     DataTableSetFixed(true, libAffx_LunaraBurstFactorKey(target), dealt / (perSecond * mult));
+    DataTableSetInt(true, libAffx_LunaraArmorStateKey(target), libAffx_LunaraArmorState(target));
     return true;
 }
 void libAffx_LunaraShowLethal(unit target, bool show) {
@@ -192,10 +227,12 @@ bool libAffx_LunaraLethalTick_Func (bool testConds, bool runActions) {
         lethal = false;
         factor = DataTableGetFixed(true, libAffx_LunaraBurstFactorKey(target));
         ticks = libAffx_LunaraBurstTicks(target);
-        if (heroReady && factor > 0.0 && ticks > 0.0 && UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        if (heroReady && factor > 0.0 && ticks > 0.0 && UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic) &&
+                DataTableGetInt(true, libAffx_LunaraArmorStateKey(target)) == libAffx_LunaraArmorState(target)) {
             UnitCreateEffectUnit(hero, "DryadPoisonerBurstProbeSet", target);
             burst = perSecond * ticks * factor * libAffx_LunaraTakeProbes(target, "DryadPoisonerBurstProbe");
-            lethal = burst >= UnitGetPropertyFixed(target, c_unitPropLife, c_unitPropCurrent);
+            lethal = burst >= UnitGetPropertyFixed(target, c_unitPropLife, c_unitPropCurrent) + libAffx_LunaraShields(target) +
+                MaxF(0.0, UnitGetPropertyFixed(target, c_unitPropLifeRegen, c_unitPropCurrent)) * libAffx_lunaraLethalRegenSeconds;
         }
         libAffx_LunaraShowLethal(target, lethal);
     }
