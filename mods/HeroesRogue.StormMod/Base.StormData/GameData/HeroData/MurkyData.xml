@@ -180,6 +180,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="MurkyPufferfishDamage">
     <MultiplicativeModifierArray index="MurkyBlowfish" Accumulator="MurkyBlowfishAccumulator" />
     <MultiplicativeModifierArray index="MurkyCatchOfTheDay" Modifier="0" />
+    <MultiplicativeModifierArray index="MurkyFinFury" Accumulator="MurkyFinFuryAccumulator" />
     <MultiplicativeModifierArray index="MurkyBigTunaPower" Modifier="0" />
     <MultiplicativeModifierArray index="MurkySpiny" Modifier="0" />
   </CEffectDamage>
@@ -207,9 +208,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Mrrgl Warrior ===== -->
-  <!-- Fin Fury quest (50% kept between games): each Basic Attack on an enemy Hero, 0.2% Basic Attack damage each.
+  <!-- Fin Fury quest (50% kept between games): each Basic Attack on an enemy Hero, 0.4% Basic Attack and Pufferfish
+       damage each.
        Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them (script), Rejuvenating
-       Bubble heals 0.25% more of Murky's maximum Health per tick (4 ticks a Bubble, so 1% a Bubble) each. -->
+       Bubble heals 0.25% more of Murky's maximum Health per tick (4 ticks a Bubble, so 1% a Bubble) each, and 0.5%
+       maximum Health each (MurkyLivingLegendHealth stacks, kept equal to the quest stacks by script). -->
   <CBehaviorTokenCounter id="MurkyFinFuryTokenCounter" parent="StormQuestToken">
     <Face value="MurkyFinFuryTokenCounter" />
     <Max value="100000" />
@@ -219,7 +222,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="MurkyFinFuryTokenCounter" />
-    <Scale value="0.002" />
+    <Scale value="0.004" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="MurkyFinFuryAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
@@ -244,7 +247,68 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <AccumulatorArray value="MurkyLivingLegendAccumulator" />
     </RechargeVitalFraction>
   </CEffectCreateHealer>
-  <!-- Mrrgl Warrior itself: +25% Basic Attack damage (MurkyMrrglWarriorPower, set by the affix). Sharp Fins (Common): its
+  <CBehaviorBuff id="MurkyLivingLegendHealth">
+    <InfoFlags index="Hidden" value="1" />
+    <BehaviorFlags index="Permanent" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <MaxStackCount value="1000" />
+    <Modification>
+      <VitalMaxAdditiveMultiplierArray index="Life" value="0.005" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Mrrgl Warrior's emergency Bubble: when a hit would kill Murky (this damage response, which cancels the hit the way
+       Artanis's Shield Overload does) or leaves him below 30% Health (script), Safety Bubble casts itself if it has a
+       charge, and spends that charge. It works while Stunned. The next one can't happen for 3 seconds (the 2 second
+       Bubble plus 1). -->
+  <CBehaviorBuff id="MurkyEmergencyBubbleLockout">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="3" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareChargeUsed id="MurkySafetyBubbleHasCharge">
+    <WhichUnit Value="Caster" />
+    <Compare value="LT" />
+    <ChargeLink value="Abil/MurkySafetyBubble" />
+    <Location value="Unit" />
+    <Ability value="MurkySafetyBubble" />
+    <Value value="2" />
+  </CValidatorUnitCompareChargeUsed>
+  <CValidatorUnitCompareBehaviorCount id="MurkyEmergencyBubbleNotLocked">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MurkyEmergencyBubbleLockout" />
+    <Compare value="EQ" />
+    <Value value="0" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="MurkyEmergencyBubbleReady">
+    <Type value="And" />
+    <CombineArray value="MurkySafetyBubbleHasCharge" />
+    <CombineArray value="MurkyEmergencyBubbleNotLocked" />
+  </CValidatorCombine>
+  <CEffectModifyUnit id="MurkyEmergencyBubbleSpendCharge">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="MurkySafetyBubble,Execute" ChargeCountUse="1" CooldownOperation="Add" />
+  </CEffectModifyUnit>
+  <CEffectApplyBehavior id="MurkyEmergencyBubbleApplyLockout">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MurkyEmergencyBubbleLockout" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MurkyEmergencyBubbleSet">
+    <ValidatorArray value="MurkyEmergencyBubbleReady" />
+    <EffectArray value="ApplySafetyBubble" />
+    <EffectArray value="ApplySafetyBubbleMoveSpeedMastery" />
+    <EffectArray value="MurkyEmergencyBubbleSpendCharge" />
+    <EffectArray value="MurkyEmergencyBubbleApplyLockout" />
+  </CEffectSet>
+  <CBehaviorBuff id="MurkyEmergencyBubble" parent="CarryBehaviorParent">
+    <DamageResponse>
+      <Chance value="1" />
+      <Handled value="MurkyEmergencyBubbleSet" />
+      <Priority value="80" />
+      <Fatal value="1" />
+      <RestoreLifeAfterFatal value="1" />
+    </DamageResponse>
+    <DisableValidatorArray value="MurkyEmergencyBubbleReady" />
+  </CBehaviorBuff>
+  <!-- Mrrgl Warrior itself: +75% Basic Attack damage (MurkyMrrglWarriorPower, set by the affix). Sharp Fins (Common): its
        own multiplier, 15% per stack. -->
   <CEffectDamage id="MurkyWeaponDamage">
     <MultiplicativeModifierArray index="MurkyFinFury" Accumulator="MurkyFinFuryAccumulator" />
@@ -254,7 +318,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="MurkyWeaponPostImpactSet">
     <EffectArray value="MurkyFinFuryAddToken" />
   </CEffectSet>
-  <!-- Bubble Burst (Epic): when Safety Bubble ends, Murky gains 50% Attack Speed for 4 seconds -->
+  <!-- Bubble Burst (Epic): when Safety Bubble ends, Murky gains 50% Attack Speed for 4 seconds, and his Basic Attacks
+       heal him for 20% of their damage meanwhile (script) -->
   <CBehaviorBuff id="MurkyBubbleBurstBuff">
     <Alignment value="Positive" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_Murky_SafetyBubble.dds" />
@@ -270,7 +335,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="MurkySafetyBubble">
     <FinalEffect value="MurkyBubbleBurstApply" />
   </CBehaviorBuff>
-  <!-- Shell Shock (Legendary): the splash from a Basic Attack (script) -->
+  <!-- Mrrgl Warrior's Basic Attack splash (25% within 2 range), and Shell Shock's bigger one (Legendary, 75% within 3
+       range); both script -->
   <CEffectDamage id="MurkyShellShockDamage" parent="StormSpell">
     <Flags index="NoFractionDealtBonus" value="1" />
     <Amount value="0" />

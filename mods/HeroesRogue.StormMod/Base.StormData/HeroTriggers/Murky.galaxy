@@ -8,8 +8,10 @@ include "AffixTriggers"
 // up to 75%; each stack past that adds 1% Pufferfish damage instead. Chain Reaction (Legendary): an enemy Hero hit by Pufferfish sets off a second explosion that deals 50%
 // of the hit to other enemies within 3 range.
 // Mrrgl Warrior, Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds Rejuvenating
-// Bubble healing (MurkyData.xml). Shell Shock (Legendary): Basic Attacks deal 50% of their damage to other enemies within
-// 2.5 range of the target.
+// Bubble healing (MurkyData.xml) and 0.5% maximum Health. Basic Attacks deal 25% of their damage to other enemies within
+// 2 range of the target; Shell Shock (Legendary) raises that to 75% within 3 range. Dropping below 30% Health casts an
+// emergency Safety Bubble (MurkyEmergencyBubbleSet; the fatal-hit case is a damage response in MurkyData.xml). Bubble
+// Burst (Epic) heals for 20% of Basic Attack damage while its Attack Speed lasts.
 // Each starter gives its ability 2 charges (AffixData.xml), so the tree talents that lower those cooldowns are moved onto
 // the charge timer here.
 // The Ooze, Blowfish and Fin Fury quests are in MurkyData.xml. Stacks carry over between games through QuestRetain.
@@ -25,8 +27,13 @@ const fixed libAffx_murkyPufferRadiusMaxStacks = 75.0; // Catch of the Day radiu
 const fixed libAffx_murkyCatchDamagePerStack = 0.01; // Catch of the Day stacks past the radius cap
 const fixed libAffx_murkyChainRadius = 3.0;
 const fixed libAffx_murkyChainFraction = 0.5;
-const fixed libAffx_murkyShellShockRadius = 2.5;
-const fixed libAffx_murkyShellShockFraction = 0.5;
+const fixed libAffx_murkySplashRadius = 2.0; // Mrrgl Warrior's Basic Attack splash
+const fixed libAffx_murkySplashFraction = 0.25;
+const fixed libAffx_murkyShellShockRadius = 3.0;
+const fixed libAffx_murkyShellShockFraction = 0.75;
+const fixed libAffx_murkyBubbleBurstLeech = 0.2;
+const fixed libAffx_murkyEmergencyLifePercent = 30.0;
+const int libAffx_murkyLivingLegendMaxStacks = 1000; // MurkyLivingLegendHealth MaxStackCount
 
 bool libAffx_murkyStarted;
 fixed libAffx_murkyRadiusAdded; // Slime radius added by Slime Mountain this game
@@ -164,10 +171,28 @@ void libAffx_MurkySyncRing () {
     UnitBehaviorAdd(hero, "MurkySlimeKingRadiusIndicator", hero, 1);
     libAffx_murkyRingRadius = radius;
 }
+// Living Legend: keeps one MurkyLivingLegendHealth stack (0.5% maximum Health) per quest stack
+void libAffx_MurkySyncLivingLegend () {
+    unit hero = libAffx_MurkyHero();
+    int wanted;
+    int have;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker")) {
+        return;
+    }
+    wanted = FixedToInt(UnitGetTokenCount(hero, "MurkyLivingLegendTokenCounter"));
+    if (wanted > libAffx_murkyLivingLegendMaxStacks) {
+        wanted = libAffx_murkyLivingLegendMaxStacks;
+    }
+    have = UnitBehaviorCount(hero, "MurkyLivingLegendHealth");
+    if (wanted > have) {
+        UnitBehaviorAdd(hero, "MurkyLivingLegendHealth", hero, wanted - have);
+    }
+}
 bool libAffx_MurkySync_Func (bool testConds, bool runActions) {
     libAffx_MurkySyncRadius();
     libAffx_MurkySyncRing();
     libAffx_MurkySyncPufferRadius();
+    libAffx_MurkySyncLivingLegend();
     return true;
 }
 
@@ -195,7 +220,8 @@ bool libAffx_MurkyPufferHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Basic Attack hit: opens the Living Legend takedown window, and runs Shell Shock
+// Basic Attack hit: opens the Living Legend takedown window, runs Mrrgl Warrior's splash (Shell Shock's when he has it),
+// and Bubble Burst's healing
 bool libAffx_MurkyAttackHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit hero = libAffx_MurkyHero();
@@ -208,8 +234,29 @@ bool libAffx_MurkyAttackHit_Func (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "MurkyShellShockMarker")) {
         libAffx_MurkySplash(hero, victim, libAffx_murkyShellShockRadius, "MurkyShellShockDamage", EventUnitDamageAttempted() * libAffx_murkyShellShockFraction);
     }
+    else if (UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker")) {
+        libAffx_MurkySplash(hero, victim, libAffx_murkySplashRadius, "MurkyShellShockDamage", EventUnitDamageAttempted() * libAffx_murkySplashFraction);
+    }
+    if (UnitHasBehavior2(hero, "MurkyBubbleBurstBuff") && UnitIsAlive(hero)) {
+        UnitSetPropertyFixed(hero, c_unitPropLife, UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent) + EventUnitDamageAmount() * libAffx_murkyBubbleBurstLeech);
+    }
     return true;
 }
+
+// Mrrgl Warrior: a hit that leaves Murky below 30% Health casts the emergency Safety Bubble (the set checks the charge and
+// the lockout itself)
+bool libAffx_MurkyHurt_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MurkyHero();
+    if (hero == null || EventUnit() != hero || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker")) {
+        return false;
+    }
+    if (UnitGetPropertyFixed(hero, c_unitPropLifePercent, c_unitPropCurrent) >= libAffx_murkyEmergencyLifePercent) {
+        return false;
+    }
+    UnitCreateEffectUnit(hero, "MurkyEmergencyBubbleSet", hero);
+    return true;
+}
+
 
 bool libAffx_MurkyInWindow (fixed hitTime, fixed now, fixed window) {
     return hitTime > 0.0 && now - hitTime <= window;
@@ -244,6 +291,7 @@ bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker") && libAffx_MurkyInWindow(libAffx_murkyAttackTime[killedPlayer], now, libAffx_murkyTakedownWindow)) {
         libAffx_murkyAttackTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "MurkyLivingLegendTokenCounter", hero);
+        libAffx_MurkySyncLivingLegend();
         libAffx_MurkyQuestDing();
     }
     return true;
@@ -279,6 +327,7 @@ bool libAffx_MurkyStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(slimeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "MurkySlimeBonusDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_MurkyPufferHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "MurkyPufferfishDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_MurkyAttackHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "MurkyWeaponDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_MurkyHurt_Func"), null, c_unitDamageTypeAny, c_unitDamageNonFatal, null);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MurkySync_Func"), 1.0, c_timeGame);
     return true;
