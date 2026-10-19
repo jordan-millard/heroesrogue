@@ -106,27 +106,35 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Poisoner: Crippling Spores deals the poison stored on each poisoned enemy (seconds left times Nature's Toxin
-// damage per second) and removes the poison. Hero kills by the burst grant a stack
+// Poisoner: Crippling Spores deals the poison stored on each poisoned enemy (the ticks left times Nature's Toxin
+// damage per tick) and removes the poison. Hero kills by the burst grant a stack. It matches the poison shown on the
+// Health bar: the same ticks (a part second left is still a whole tick), and the same bonuses (DryadPoisonerSporesDamage),
+// dealt before the poison is removed so Intensifying Toxin still sees it.
 bool libAffx_LunaraSporesBurst_Func (bool testConds, bool runActions) {
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
     string key = libAffx_LunaraToxinKey(target);
-    fixed remaining = DataTableGetFixed(true, key) - GameGetMissionTime();
+    fixed remaining = UnitBehaviorDuration(target, "DryadNaturesToxin");
     fixed perSecond = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "DryadNaturesToxinDamage", "Amount", libAffx_player));
+    fixed ticks;
+    bool dealt = false;
     unit hero = libAffx_LunaraHero();
     if (!runActions) {
         return true;
     }
     if (remaining <= 0.0) {
-        remaining = UnitBehaviorDuration(target, "DryadNaturesToxin");
+        remaining = DataTableGetFixed(true, key) - GameGetMissionTime();
+    }
+    ticks = Ceiling(remaining - 0.05);
+    if (ticks > 0.0 && hero != null && UnitIsAlive(target)) {
+        CatalogFieldValueSet(c_gameCatalogEffect, "DryadPoisonerSporesDamage", "Amount", libAffx_player, FixedToString(perSecond * ticks, 2));
+        UnitCreateEffectUnit(hero, "DryadPoisonerSporesDamage", target);
+        dealt = true;
     }
     UnitBehaviorRemove(target, "DryadNaturesToxin", c_unitBehaviorCountAll);
     DataTableSetFixed(true, key, 0.0);
-    if (remaining <= 0.0 || hero == null || !UnitIsAlive(target)) {
+    if (!dealt) {
         return true;
     }
-    CatalogFieldValueSet(c_gameCatalogEffect, "DryadPoisonerSporesDamage", "Amount", libAffx_player, FixedToString(perSecond * remaining, 2));
-    UnitCreateEffectUnit(hero, "DryadPoisonerSporesDamage", target);
     if (!UnitIsAlive(target) && !UnitTestState(target, c_unitStateHallucination) &&
         UnitFilterMatch(target, libAffx_player, UnitFilter((1 << c_targetFilterHeroic), 0, 0, 0))) {
         libGame_gf_ModifyTokenCount(1, libAffx_LunaraQuestToken(libAffx_lunaraPoisoner), hero);
@@ -161,6 +169,14 @@ bool libAffx_LunaraTick_Func (bool testConds, bool runActions) {
     if (libAffx_LunaraHasQuest(libAffx_lunaraPoisoner) && libAffx_lunaraToxinDuration != libAffx_LunaraPoisonerSecondsPerHit()) {
         libAffx_lunaraToxinDuration = libAffx_LunaraPoisonerSecondsPerHit();
         CatalogFieldValueSet(c_gameCatalogBehavior, "DryadNaturesToxin", "Duration", libAffx_player, FixedToString(libAffx_lunaraToxinDuration, 2));
+    }
+    // Poisoner: Health bars show the poison as what Crippling Spores would burst; one tick of it follows Nature's Toxin
+    // damage (level scaling and boons)
+    if (libAffx_LunaraHasQuest(libAffx_lunaraPoisoner)) {
+        if (CatalogFieldValueGet(c_gameCatalogBehavior, "DryadNaturesToxin", "PeriodicDisplayEffect", libAffx_player) != "DryadPoisonerToxinDisplayDamage") {
+            CatalogFieldValueSet(c_gameCatalogBehavior, "DryadNaturesToxin", "PeriodicDisplayEffect", libAffx_player, "DryadPoisonerToxinDisplayDamage");
+        }
+        CatalogFieldValueSet(c_gameCatalogEffect, "DryadPoisonerToxinDisplayDamage", "Amount", libAffx_player, CatalogFieldValueGet(c_gameCatalogEffect, "DryadNaturesToxinDamage", "Amount", libAffx_player));
     }
 
     // Splintered Huntress reward: Noxious Blossom empowers 4 Basic Attacks instead of 3

@@ -29,10 +29,30 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
   <!-- Script hook: deals the stored poison through DryadPoisonerSporesDamage and removes the poison -->
   <CEffectModifyUnit id="DryadPoisonerSporesBurst" />
+  <!-- The burst has every bonus a Nature's Toxin tick has, so it matches the poison shown on the Health bar
+       (DryadPoisonerToxinDisplayDamage). Unfair Advantage applies because Spores slows the target first. -->
   <CEffectDamage id="DryadPoisonerSporesDamage" parent="StormSpell">
     <Amount value="0" />
+    <MultiplicativeModifierArray index="IntensifyingToxinModifier" Validator="DryadIntensifyingToxinCombine" Modifier="0.4" Crit="1" />
+    <MultiplicativeModifierArray index="NaturesCullingModifier" Validator="DryadHasNaturesCullingandTargetisnotHero" Modifier="1.25" />
     <MultiplicativeModifierArray index="UnfairAdvantageModifier" Validator="DryadHasUnfairAdvantageandEnemyHeroisSlowedCombine" Modifier="0.6" Crit="1" />
     <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerBurstAccumulator" />
+  </CEffectDamage>
+  <!-- Poisoner: the poison shown on enemy Health bars is what Crippling Spores would burst. It's one Nature's Toxin tick
+       (Amount kept equal to DryadNaturesToxinDamage by script) with Unfair Advantage counted against any Hero that
+       Spores can slow, since the burst lands after Spores' slow. Script sets it as Nature's Toxin's display effect. -->
+  <CValidatorCombine id="DryadPoisonerUnfairAdvantageOnBurst">
+    <Type value="And" />
+    <CombineArray value="DryadHasUnfairAdvantageTalent" />
+    <CombineArray value="TargetNotUnstoppable" />
+    <CombineArray value="TargetIsHero" />
+  </CValidatorCombine>
+  <CEffectDamage id="DryadPoisonerToxinDisplayDamage" parent="StormSpellDot">
+    <Amount value="33" />
+    <MultiplicativeModifierArray index="IntensifyingToxinModifier" Validator="DryadIntensifyingToxinCombine" Modifier="0.4" Crit="1" />
+    <MultiplicativeModifierArray index="NaturesCullingModifier" Validator="DryadHasNaturesCullingandTargetisnotHero" Modifier="1.25" />
+    <MultiplicativeModifierArray index="UnfairAdvantageModifier" Validator="DryadPoisonerUnfairAdvantageOnBurst" Modifier="0.6" Crit="1" />
+    <MultiplicativeModifierArray index="Poisoner" Accumulator="DryadPoisonerAccumulator" />
   </CEffectDamage>
   <!-- Poisoner: Basic Attacks splash their damage and Nature's Toxin onto nearby enemies -->
   <CEffectEnumArea id="DryadPoisonerSplashSearch">
