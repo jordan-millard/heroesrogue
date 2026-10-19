@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Genji. Starters: Shuriken Storm (Shuriken), Blade of the Shimada (Swift Strike) and Dragon's Fury
+       (Dragonblade from level 1). Each damage effect has its own multipliers: the starter's power (set by the affix),
+       its Common boon (15% per stack), the hit quest (accumulator) and the takedown quest (accumulator, or a Modifier
+       the script sets for stacks past a cooldown cap). Takedown quests and the script-driven boons are in
+       HeroTriggers/Genji.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="GenjiShurikenStormMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GenjiBladeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GenjiDragonMarker" parent="CarryBehaviorParent" />
+  <!-- Boon markers handled by the script -->
+  <CBehaviorBuff id="GenjiThousandBladesMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GenjiIaidoMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GenjiShadowExecutionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GenjiEndlessDragonMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Shuriken Storm ===== -->
+  <!-- Hail of Steel quest (50% kept between games): each Shuriken hitting an enemy Hero, 0.5% Shuriken damage each.
+       Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken hit, 1% Shuriken damage each, and
+       every 15 stacks 1 more Shuriken charge, up to 3 (script). -->
+  <CBehaviorTokenCounter id="GenjiHailOfSteelTokenCounter" parent="StormQuestToken">
+    <Face value="GenjiHailOfSteelTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GenjiHailOfSteelAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GenjiHailOfSteelTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="GenjiHailOfSteelAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="GenjiHailOfSteelTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="GenjiThousandCutsTokenCounter" parent="StormQuestToken">
+    <Face value="GenjiThousandCutsTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GenjiThousandCutsAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GenjiThousandCutsTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GenjiShurikenDamage">
+    <MultiplicativeModifierArray index="GenjiShurikenPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiShurikenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
+    <MultiplicativeModifierArray index="GenjiThousandCuts" Accumulator="GenjiThousandCutsAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="GenjiShurikenShinganBonusDamage">
+    <MultiplicativeModifierArray index="GenjiShurikenPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiShurikenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
+    <MultiplicativeModifierArray index="GenjiThousandCuts" Accumulator="GenjiThousandCutsAccumulator" />
+  </CEffectDamage>
+  <!-- Ricochet (Rare): each Shuriken hitting an enemy Hero speeds up Shuriken's recharge by 0.5 seconds -->
+  <CEffectModifyUnit id="GenjiRicochetModifyCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="GenjiShuriken,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <!-- Shred (Epic): each Shuriken hitting an enemy Hero takes 5 Armor for 4 seconds, stacking up to 4 times -->
+  <CBehaviorBuff id="GenjiShredDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_genji_Shurikens.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="4" />
+    <Duration value="4" />
+    <ArmorModification>
+      <AllArmorBonus value="-5" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="GenjiShredApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="GenjiShredDebuff" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="GenjiShurikenImpactSetCenter">
+    <EffectArray value="GenjiHailOfSteelAddToken" />
+    <EffectArray value="GenjiRicochetModifyCooldown" />
+    <EffectArray value="GenjiShredApply" />
+  </CEffectSet>
+  <CEffectSet id="GenjiShurikenImpactSetLeft">
+    <EffectArray value="GenjiHailOfSteelAddToken" />
+    <EffectArray value="GenjiRicochetModifyCooldown" />
+    <EffectArray value="GenjiShredApply" />
+  </CEffectSet>
+  <CEffectSet id="GenjiShurikenImpactSetRight">
+    <EffectArray value="GenjiHailOfSteelAddToken" />
+    <EffectArray value="GenjiRicochetModifyCooldown" />
+    <EffectArray value="GenjiShredApply" />
+  </CEffectSet>
+
+  <!-- ===== Blade of the Shimada ===== -->
+  <!-- Precision quest (50% kept between games): each enemy Hero hit by Swift Strike, 2% Swift Strike damage each.
+       Shimada Legacy quest: an enemy Hero takedown within 3 seconds of a Swift Strike hit, 1% of Swift Strike's
+       8 second cooldown each up to 25%, then 1% Swift Strike damage each (script). -->
+  <CBehaviorTokenCounter id="GenjiPrecisionTokenCounter" parent="StormQuestToken">
+    <Face value="GenjiPrecisionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GenjiPrecisionAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GenjiPrecisionTokenCounter" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="GenjiPrecisionAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="GenjiPrecisionTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="GenjiShimadaLegacyTokenCounter" parent="StormQuestToken">
+    <Face value="GenjiShimadaLegacyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="GenjiSwiftStrikeDamage">
+    <MultiplicativeModifierArray index="GenjiSwiftPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiSwiftCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiPrecision" Accumulator="GenjiPrecisionAccumulator" />
+    <MultiplicativeModifierArray index="GenjiShimadaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GenjiSwiftStrikeStrikeAtTheHeartDamage">
+    <MultiplicativeModifierArray index="GenjiSwiftPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiSwiftCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiPrecision" Accumulator="GenjiPrecisionAccumulator" />
+    <MultiplicativeModifierArray index="GenjiShimadaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GenjiSwiftStrikeFinalCutDamage">
+    <MultiplicativeModifierArray index="GenjiSwiftPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiSwiftCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiPrecision" Accumulator="GenjiPrecisionAccumulator" />
+    <MultiplicativeModifierArray index="GenjiShimadaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectSet id="GenjiSwiftStrikeImpactSet">
+    <EffectArray value="GenjiPrecisionAddToken" />
+  </CEffectSet>
+  <!-- Iaido (Epic): Swift Strike also deals 8% of enemy Heroes' maximum Health (script) -->
+  <CEffectDamage id="GenjiIaidoDamage" parent="StormSpell">
+    <Amount value="0" />
+  </CEffectDamage>
+
+  <!-- ===== Dragon's Fury ===== -->
+  <!-- Dragon's Hunger quest (50% kept between games): each enemy Hero hit by Dragonblade, 1% Dragonblade damage each.
+       Dragon Soul quest: an enemy Hero takedown within 3 seconds of a Dragonblade hit, 1% of Dragonblade's
+       60 second cooldown each up to 40%, then 1% Dragonblade damage each (script). -->
+  <CBehaviorTokenCounter id="GenjiDragonHungerTokenCounter" parent="StormQuestToken">
+    <Face value="GenjiDragonHungerTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GenjiDragonHungerAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GenjiDragonHungerTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectModifyTokenCount id="GenjiDragonHungerAddToken" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <TokenId value="GenjiDragonHungerTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CBehaviorTokenCounter id="GenjiDragonSoulTokenCounter" parent="StormQuestToken">
+    <Face value="GenjiDragonSoulTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="GenjiDragonbladeAttackDamage">
+    <MultiplicativeModifierArray index="GenjiDragonPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiDragonCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiDragonHunger" Accumulator="GenjiDragonHungerAccumulator" />
+    <MultiplicativeModifierArray index="GenjiDragonSoul" Modifier="0" />
+  </CEffectDamage>
+  <CEffectSet id="GenjiDragonbladeAttackImpactSet">
+    <EffectArray value="GenjiDragonHungerAddToken" />
+  </CEffectSet>
+  <!-- Dragon Scales (Epic): 25 Armor while Dragonblade is active -->
+  <CBehaviorBuff id="GenjiDragonScalesBuff" parent="StormArmor">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
+    <RemoveValidatorArray value="GenjiCasterHasDragonbladeActive" />
+    <ArmorModification>
+      <AllArmorBonus value="25" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="GenjiDragonScalesApply">
+    <Chance value="0" />
+    <Behavior value="GenjiDragonScalesBuff" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="GenjiDragonbladeActiveInitialSet">
+    <EffectArray value="GenjiDragonScalesApply" />
+  </CEffectSet>
+
+  <CButton id="GenjiHailOfSteelTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_Shurikens.dds" />
+  </CButton>
+  <CButton id="GenjiThousandCutsTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_Shurikens.dds" />
+  </CButton>
+  <CButton id="GenjiPrecisionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_swiftstrike.dds" />
+  </CButton>
+  <CButton id="GenjiShimadaLegacyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_swiftstrike.dds" />
+  </CButton>
+  <CButton id="GenjiDragonHungerTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
+  </CButton>
+  <CButton id="GenjiDragonSoulTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
+  </CButton>
+</Catalog>

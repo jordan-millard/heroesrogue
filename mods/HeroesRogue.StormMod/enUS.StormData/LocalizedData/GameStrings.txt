@@ -1085,6 +1085,68 @@ Affix/Name/MurkyBubbleBurst=Bubble Burst
 Affix/Tooltip/MurkyBubbleBurst=When Safety Bubble ends, Murky gains <c val="#TooltipNumbers">50%</c> Attack Speed for <c val="#TooltipNumbers">4</c> seconds, and his Basic Attacks heal him for <c val="#TooltipNumbers">20%</c> of their damage meanwhile.
 Affix/Name/MurkyShellShock=Shell Shock
 Affix/Tooltip/MurkyShellShock=Basic Attacks deal <c val="#TooltipNumbers">75%</c> of their damage to other enemies within <c val="#TooltipNumbers">3</c> range of the target.
+Affix/Name/GenjiShurikenStorm=Shuriken Storm
+Affix/Tooltip/GenjiShurikenStorm=Gain <c val="#TooltipNumbers">Shuriken Mastery</c> and <c val="#TooltipNumbers">Shingan</c>.<n/><n/>Shuriken deals <c val="#TooltipNumbers">50%</c> more damage, stores <c val="#TooltipNumbers">4</c> charges, and recharges in <c val="#TooltipNumbers">10</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Shuriken that hits an enemy Hero permanently adds <c val="#TooltipNumbers">0.5%</c> Shuriken damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of a Shuriken hitting them permanently adds <c val="#TooltipNumbers">1%</c> Shuriken damage. Every <c val="#TooltipNumbers">15</c> takedowns, Shuriken stores <c val="#TooltipNumbers">1</c> more charge, up to <c val="#TooltipNumbers">3</c>.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of the Shuriken hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Affix/Name/GenjiSharpEdges=Sharp Edges
+Affix/Tooltip/GenjiSharpEdges=Shuriken deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GenjiQuickDraw=Quick Draw
+Affix/Tooltip/GenjiQuickDraw=Shuriken recharges <c val="#TooltipNumbers">1</c> second faster.
+Affix/Name/GenjiSharpenedStarsBoon=Sharpened Stars
+Affix/Tooltip/GenjiSharpenedStarsBoon=Gain the talent <c val="#TooltipNumbers">Sharpened Stars</c>: Shuriken pierce all enemies hit, and Swift Strike's refund also restores a Shuriken charge.
+Affix/Name/GenjiRicochet=Ricochet
+Affix/Tooltip/GenjiRicochet=Each Shuriken that hits an enemy Hero speeds up Shuriken's recharge by <c val="#TooltipNumbers">0.5</c> seconds.
+Affix/Name/GenjiShred=Shred
+Affix/Tooltip/GenjiShred=Each Shuriken that hits an enemy Hero removes <c val="#TooltipNumbers">5</c> Armor for <c val="#TooltipNumbers">4</c> seconds, stacking up to <c val="#TooltipNumbers">4</c> times (<c val="#TooltipNumbers">20</c> Armor).
+Affix/Name/GenjiThousandBlades=Thousand Blades
+Affix/Tooltip/GenjiThousandBlades=Each Shuriken throw is thrown again <c val="#TooltipNumbers">0.3</c> seconds later, toward the same spot, at no cost.
+Button/Name/GenjiHailOfSteelTokenCounter=Hail of Steel
+Button/Tooltip/GenjiHailOfSteelTokenCounter=<c val="#TooltipQuest">Bonus Shuriken damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GenjiHailOfSteelTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/GenjiThousandCutsTokenCounter=Thousand Cuts
+Button/Tooltip/GenjiThousandCutsTokenCounter=<c val="#TooltipQuest">Thousand Cuts stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GenjiThousandCutsTokenCounter$" precision="0"/></c></c><n/>Each stack adds <c val="#TooltipNumbers">1%</c> Shuriken damage. Every <c val="#TooltipNumbers">15</c> stacks, Shuriken stores <c val="#TooltipNumbers">1</c> more charge, up to <c val="#TooltipNumbers">3</c>.
+Affix/Name/GenjiBladeOfShimada=Blade of the Shimada
+Affix/Tooltip/GenjiBladeOfShimada=Gain <c val="#TooltipNumbers">Flow Like Water</c> and <c val="#TooltipNumbers">Steady Blade</c>.<n/><n/>Swift Strike deals <c val="#TooltipNumbers">50%</c> more damage, and its cooldown is reduced by <c val="#TooltipNumbers">4</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Swift Strike permanently adds <c val="#TooltipNumbers">2%</c> Swift Strike damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of Swift Strike hitting them permanently reduces Swift Strike's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">25%</c>. Each takedown past that adds <c val="#TooltipNumbers">1%</c> Swift Strike damage instead.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of the Swift Strike hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Affix/Name/GenjiKeenEdge=Keen Edge
+Affix/Tooltip/GenjiKeenEdge=Swift Strike deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GenjiQuickStep=Quick Step
+Affix/Tooltip/GenjiQuickStep=Reduce Swift Strike's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/GenjiStrikeAtTheHeartBoon=Strike at the Heart
+Affix/Tooltip/GenjiStrikeAtTheHeartBoon=Gain the talent <c val="#TooltipNumbers">Strike at the Heart</c>: enemies hit by the end of Swift Strike take additional damage shortly after.
+Affix/Name/GenjiFinalCutBoon=Final Cut
+Affix/Tooltip/GenjiFinalCutBoon=Gain the talent <c val="#TooltipNumbers">Final Cut</c>: Swift Strike deals its damage again to all enemies in its path shortly after.
+Affix/Name/GenjiIaido=Iaido
+Affix/Tooltip/GenjiIaido=Swift Strike also deals <c val="#TooltipNumbers">8%</c> of enemy Heroes' maximum Health as damage.
+Affix/Name/GenjiShadowExecution=Shadow Execution
+Affix/Tooltip/GenjiShadowExecution=When Swift Strike leaves an enemy Hero below <c val="#TooltipNumbers">30%</c> Health or kills them, its cooldown and Mana cost are refunded at once. This can happen once per Swift Strike.
+Button/Name/GenjiPrecisionTokenCounter=Precision
+Button/Tooltip/GenjiPrecisionTokenCounter=<c val="#TooltipQuest">Bonus Swift Strike damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GenjiPrecisionTokenCounter$*2" precision="1"/>%</c></c>
+Button/Name/GenjiShimadaLegacyTokenCounter=Shimada Legacy
+Button/Tooltip/GenjiShimadaLegacyTokenCounter=<c val="#TooltipQuest">Shimada Legacy stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GenjiShimadaLegacyTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Swift Strike's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">25%</c> at <c val="#TooltipNumbers">25</c> stacks. Each stack past <c val="#TooltipNumbers">25</c> adds <c val="#TooltipNumbers">1%</c> Swift Strike damage.
+Affix/Name/GenjiDragonsFury=Dragon's Fury
+Affix/Tooltip/GenjiDragonsFury=Gain <c val="#TooltipNumbers">Dragonblade</c>, usable from level <c val="#TooltipNumbers">1</c>, and <c val="#TooltipNumbers">The Dragon Becomes Me</c>. X-Strike can't be taken.<n/><n/>Dragonblade deals <c val="#TooltipNumbers">50%</c> more damage, and its cooldown is <c val="#TooltipNumbers">60</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Dragonblade permanently adds <c val="#TooltipNumbers">1%</c> Dragonblade damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero takedown within <c val="#TooltipNumbers">3</c> seconds of Dragonblade hitting them permanently reduces Dragonblade's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">40%</c>. Each takedown past that adds <c val="#TooltipNumbers">1%</c> Dragonblade damage instead.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of the Dragonblade hit stacks and <c val="#TooltipNumbers">100%</c> of the takedown stacks after winning the game.
+Affix/Name/GenjiHonedSteel=Honed Steel
+Affix/Tooltip/GenjiHonedSteel=Dragonblade deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GenjiPatientDragon=Patient Dragon
+Affix/Tooltip/GenjiPatientDragon=Reduce Dragonblade's cooldown by <c val="#TooltipNumbers">5</c> seconds.
+Affix/Name/GenjiPathfinderBoon=Pathfinder
+Affix/Tooltip/GenjiPathfinderBoon=Gain the talent <c val="#TooltipNumbers">Pathfinder</c>: jumping over terrain with Cyber Agility grants Stealth and Movement Speed, and Genji's Heroic Ability heals him for part of its damage to enemy Heroes.
+Affix/Name/GenjiFlurry=Flurry
+Affix/Tooltip/GenjiFlurry=Dragonblade can slash twice as often.
+Affix/Name/GenjiDragonScales=Dragon Scales
+Affix/Tooltip/GenjiDragonScales=Gain <c val="#TooltipNumbers">25</c> Armor while Dragonblade is active.
+Affix/Name/GenjiEndlessDragon=Endless Dragon
+Affix/Tooltip/GenjiEndlessDragon=Each enemy Hero takedown while Dragonblade is active restores Dragonblade's full duration.
+Button/Name/GenjiDragonHungerTokenCounter=Dragon's Hunger
+Button/Tooltip/GenjiDragonHungerTokenCounter=<c val="#TooltipQuest">Bonus Dragonblade damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GenjiDragonHungerTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/GenjiDragonSoulTokenCounter=Dragon Soul
+Button/Tooltip/GenjiDragonSoulTokenCounter=<c val="#TooltipQuest">Dragon Soul stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GenjiDragonSoulTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Dragonblade's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">40%</c> at <c val="#TooltipNumbers">40</c> stacks. Each stack past <c val="#TooltipNumbers">40</c> adds <c val="#TooltipNumbers">1%</c> Dragonblade damage.
+Behavior/Name/GenjiShredDebuff=Shred
+Behavior/Tooltip/GenjiShredDebuff=Armor reduced by Genji's Shuriken.
+Behavior/Name/GenjiDragonScalesBuff=Dragon Scales
+Behavior/Tooltip/GenjiDragonScalesBuff=Gaining Armor while Dragonblade is active.
+Affix/Name/GenjiFocusedMind=Focused Mind
+Affix/Tooltip/GenjiFocusedMind=Reduce Deflect's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/GenjiCyberShieldBoon=Cyber Shield
+Affix/Tooltip/GenjiCyberShieldBoon=Gain the talent <c val="#TooltipNumbers">Cyber Shield</c>: using Cyber Agility grants Spell Armor, and Genji periodically dodges a Heroic Basic Attack.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

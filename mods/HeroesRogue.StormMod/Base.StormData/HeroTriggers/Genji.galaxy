@@ -1,0 +1,230 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Genji
+// Shuriken Storm, Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken hit adds 1% Shuriken
+// damage (GenjiData.xml), and every 15 stacks 1 more Shuriken charge, up to 3. Thousand Blades (Legendary): each
+// Shuriken throw is thrown again 0.3 seconds later.
+// Blade of the Shimada, Shimada Legacy quest: an enemy Hero takedown within 3 seconds of a Swift Strike hit lowers Swift
+// Strike's cooldown by 1% of its 8 seconds, up to 25%; each stack past that adds 1% Swift Strike damage instead. Iaido
+// (Epic): Swift Strike also deals 8% of enemy Heroes' maximum Health. Shadow Execution (Legendary): a Swift Strike
+// that leaves an enemy Hero below 30% Health (or kills them) resets Swift Strike, once per dash.
+// Dragon's Fury, Dragon Soul quest: an enemy Hero takedown within 3 seconds of a Dragonblade hit lowers Dragonblade's
+// cooldown by 1% of its 60 seconds, up to 40%; each stack past that adds 1% Dragonblade damage instead. Endless Dragon
+// (Legendary): a takedown while Dragonblade is active restores its full duration.
+// The Hail of Steel, Precision and Dragon's Hunger quests are in GenjiData.xml. Stacks carry over between games through
+// QuestRetain.
+// ============================================================
+
+const fixed libAffx_genjiTakedownWindow = 3.0;
+const int libAffx_genjiStacksPerCharge = 15; // Thousand Cuts: stacks per extra Shuriken charge
+const int libAffx_genjiMaxBonusCharges = 3;
+const fixed libAffx_genjiSwiftCooldownPerStack = 0.08; // Shimada Legacy: 1% of Swift Strike's 8 second cooldown
+const int libAffx_genjiSwiftCooldownMaxStacks = 25;
+const fixed libAffx_genjiDragonCooldownPerStack = 0.6; // Dragon Soul: 1% of Dragonblade's 60 second cooldown
+const int libAffx_genjiDragonCooldownMaxStacks = 40;
+const fixed libAffx_genjiPastCapDamagePerStack = 0.01;
+const fixed libAffx_genjiIaidoFraction = 0.08;
+const fixed libAffx_genjiExecuteLifePercent = 30.0;
+const fixed libAffx_genjiThousandBladesDelay = 0.3;
+
+bool libAffx_genjiStarted;
+int libAffx_genjiChargesAdded; // Shuriken charges added by Thousand Cuts this game
+fixed libAffx_genjiSwiftCooldownAdded; // Swift Strike cooldown taken off by Shimada Legacy this game
+fixed libAffx_genjiDragonCooldownAdded; // Dragonblade cooldown taken off by Dragon Soul this game
+fixed libAffx_genjiLastEcho = -1.0; // Thousand Blades: when the last echo was thrown
+fixed libAffx_genjiLastExecute = -10.0; // Shadow Execution: when Swift Strike was last reset
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_genjiShurikenTime; // per enemy player, last Shuriken hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_genjiSwiftTime; // per enemy player, last Swift Strike hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_genjiDragonTime; // per enemy player, last Dragonblade hit
+
+unit libAffx_GenjiHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_GenjiIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_GenjiStacks(string tokenId) {
+    unit hero = libAffx_GenjiHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_GenjiQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+
+// Thousand Cuts: 1 more Shuriken charge per 15 stacks, up to 3
+void libAffx_GenjiSyncShuriken () {
+    unit hero = libAffx_GenjiHero();
+    int wanted;
+    if (hero == null || !UnitHasBehavior2(hero, "GenjiShurikenStormMarker")) {
+        return;
+    }
+    wanted = MinI(libAffx_genjiMaxBonusCharges, libAffx_GenjiStacks("GenjiThousandCutsTokenCounter") / libAffx_genjiStacksPerCharge);
+    if (wanted != libAffx_genjiChargesAdded) {
+        libAffx_CatalogReferenceModify("Abil,GenjiShuriken,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_genjiChargesAdded), c_upgradeOperationAdd);
+        libAffx_genjiChargesAdded = wanted;
+    }
+}
+// Shimada Legacy: Swift Strike's cooldown, then damage past the cap
+void libAffx_GenjiSyncSwift () {
+    unit hero = libAffx_GenjiHero();
+    int stacks;
+    fixed wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GenjiBladeMarker")) {
+        return;
+    }
+    stacks = libAffx_GenjiStacks("GenjiShimadaLegacyTokenCounter");
+    wanted = IntToFixed(MinI(stacks, libAffx_genjiSwiftCooldownMaxStacks)) * libAffx_genjiSwiftCooldownPerStack;
+    if (wanted != libAffx_genjiSwiftCooldownAdded) {
+        libAffx_CatalogReferenceModify("Abil,GenjiSwiftStrike,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(libAffx_genjiSwiftCooldownAdded - wanted, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_genjiSwiftCooldownAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - libAffx_genjiSwiftCooldownMaxStacks)) * libAffx_genjiPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeStrikeAtTheHeartDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeFinalCutDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
+}
+// Dragon Soul: Dragonblade's cooldown (the ability's and the one set when Dragonblade ends), then damage past the cap
+void libAffx_GenjiSyncDragon () {
+    unit hero = libAffx_GenjiHero();
+    int stacks;
+    fixed wanted;
+    string delta;
+    if (hero == null || !UnitHasBehavior2(hero, "GenjiDragonMarker")) {
+        return;
+    }
+    stacks = libAffx_GenjiStacks("GenjiDragonSoulTokenCounter");
+    wanted = IntToFixed(MinI(stacks, libAffx_genjiDragonCooldownMaxStacks)) * libAffx_genjiDragonCooldownPerStack;
+    if (wanted != libAffx_genjiDragonCooldownAdded) {
+        delta = FixedToString(libAffx_genjiDragonCooldownAdded - wanted, c_fixedPrecisionAny);
+        libAffx_CatalogReferenceModify("Abil,GenjiDragonblade,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GenjiDragonbladeSetCooldown,Cost[0].CooldownTimeUse", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_genjiDragonCooldownAdded = wanted;
+    }
+    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiDragonbladeAttackDamage", "MultiplicativeModifierArray[GenjiDragonSoul].Modifier", libAffx_player,
+        FixedToString(IntToFixed(MaxI(0, stacks - libAffx_genjiDragonCooldownMaxStacks)) * libAffx_genjiPastCapDamagePerStack, c_fixedPrecisionAny));
+}
+bool libAffx_GenjiSync_Func (bool testConds, bool runActions) {
+    libAffx_GenjiSyncShuriken();
+    libAffx_GenjiSyncSwift();
+    libAffx_GenjiSyncDragon();
+    return true;
+}
+
+// Shuriken hit on an enemy Hero: opens the Thousand Cuts takedown window
+bool libAffx_GenjiShurikenHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GenjiIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_genjiShurikenTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// Thousand Blades: each Shuriken throw is thrown again toward the same point. The echo is skipped by its own event
+// (same game time).
+bool libAffx_GenjiShurikenThrown_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GenjiHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "GenjiThousandBladesMarker") || GameGetMissionTime() == libAffx_genjiLastEcho) {
+        return false;
+    }
+    Wait(libAffx_genjiThousandBladesDelay, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_genjiLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "GenjiShurikenLaunchPersistent", target);
+    return true;
+}
+// Swift Strike hit on an enemy Hero: opens the Shimada Legacy takedown window, and runs Iaido and Shadow Execution
+bool libAffx_GenjiSwiftHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GenjiHero();
+    fixed now = GameGetMissionTime();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GenjiIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_genjiSwiftTime[UnitGetOwner(victim)] = now;
+    if (UnitHasBehavior2(hero, "GenjiIaidoMarker") && UnitIsAlive(victim)) {
+        UnitDamage(hero, "GenjiIaidoDamage", victim, UnitGetPropertyFixed(victim, c_unitPropLifeMax, c_unitPropCurrent) * libAffx_genjiIaidoFraction);
+    }
+    if (UnitHasBehavior2(hero, "GenjiShadowExecutionMarker") && now - libAffx_genjiLastExecute > 1.0 &&
+            (!UnitIsAlive(victim) || UnitGetPropertyFixed(victim, c_unitPropLifePercent, c_unitPropCurrent) < libAffx_genjiExecuteLifePercent)) {
+        libAffx_genjiLastExecute = now;
+        UnitCreateEffectUnit(hero, "GenjiSwiftStrikeCooldownAndManaResetSet", hero);
+    }
+    return true;
+}
+// Dragonblade hit on an enemy Hero: opens the Dragon Soul takedown window
+bool libAffx_GenjiDragonHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GenjiIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_genjiDragonTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+
+bool libAffx_GenjiInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_genjiTakedownWindow;
+}
+
+// HeroTakedown for Thousand Cuts, Shimada Legacy, Dragon Soul and Endless Dragon
+bool libAffx_GenjiTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_GenjiHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "GenjiShurikenStormMarker") && libAffx_GenjiInWindow(libAffx_genjiShurikenTime[killedPlayer], now)) {
+        libAffx_genjiShurikenTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GenjiThousandCutsTokenCounter", hero);
+        libAffx_GenjiSyncShuriken();
+        libAffx_GenjiQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "GenjiBladeMarker") && libAffx_GenjiInWindow(libAffx_genjiSwiftTime[killedPlayer], now)) {
+        libAffx_genjiSwiftTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GenjiShimadaLegacyTokenCounter", hero);
+        libAffx_GenjiSyncSwift();
+        libAffx_GenjiQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "GenjiDragonMarker") && libAffx_GenjiInWindow(libAffx_genjiDragonTime[killedPlayer], now)) {
+        libAffx_genjiDragonTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GenjiDragonSoulTokenCounter", hero);
+        libAffx_GenjiSyncDragon();
+        libAffx_GenjiQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "GenjiEndlessDragonMarker") && UnitHasBehavior2(hero, "GenjiDragonbladeActive")) {
+        UnitBehaviorSetDurationRemaining(hero, "GenjiDragonbladeActive", CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "GenjiDragonbladeActive", "Duration", libAffx_player));
+    }
+    return true;
+}
+
+// AffixAdded for all three starters
+bool libAffx_GenjiStart (bool testConds, bool runActions) {
+    if (libAffx_genjiStarted) {
+        return true;
+    }
+    libAffx_genjiStarted = true;
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GenjiShurikenHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiShurikenDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GenjiSwiftHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiSwiftStrikeDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GenjiDragonHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiDragonbladeAttackDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GenjiShurikenThrown_Func"), libAffx_player, "GenjiShurikenLaunchPersistent");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GenjiSync_Func"), 1.0, c_timeGame);
+    return true;
+}
