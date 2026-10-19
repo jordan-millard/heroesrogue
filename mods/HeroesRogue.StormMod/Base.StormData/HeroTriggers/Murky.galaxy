@@ -97,14 +97,19 @@ void libAffx_MurkySyncRadius () {
     CatalogFieldValueSetFixed(c_gameCatalogActor, "MurkySlimeCastModel", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "MurkySlimeCastModel", "Scale", libAffx_player) + delta / 3.0);
     libAffx_murkyRadiusAdded = wanted;
 }
-// Catch of the Day: the same for Pufferfish's explosion. Compressed Air's search shares the 4.5 radius, so it grows too, and
-// the explosion model scales with it (the cursor follows the explosion search on its own).
+// Catch of the Day: the same for Pufferfish's explosion. Compressed Air's search grows by the same amount. The explosion
+// model, the targeting circle and the warning splat (all scaled by Compressed Air too) grow in proportion to the radius.
+void libAffx_MurkyScaleActor (string actorId, fixed ratio) {
+    CatalogFieldValueSetFixed(c_gameCatalogActor, actorId, "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, actorId, "Scale", libAffx_player) * ratio);
+}
 void libAffx_MurkySyncPufferRadius () {
     unit hero = libAffx_MurkyHero();
     fixed stacks;
     fixed overflow;
     fixed wanted;
     fixed delta;
+    fixed oldRadius;
+    fixed ratio;
     if (hero == null || !UnitHasBehavior2(hero, "MurkyBigTunaMarker")) {
         return;
     }
@@ -120,9 +125,16 @@ void libAffx_MurkySyncPufferRadius () {
     if (AbsF(delta) < 0.01) {
         return;
     }
-    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishSearchAreaUnnamed", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkyPufferfishSearchAreaUnnamed", "AreaArray[0].Radius", libAffx_player) + delta);
+    oldRadius = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkyPufferfishSearchAreaUnnamed", "AreaArray[0].Radius", libAffx_player);
+    if (oldRadius <= 0.0) {
+        return;
+    }
+    ratio = (oldRadius + delta) / oldRadius;
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishSearchAreaUnnamed", "AreaArray[0].Radius", libAffx_player, oldRadius + delta);
     CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishCompressedAirTalentSearch", "AreaArray[0].Radius", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "MurkyPufferfishCompressedAirTalentSearch", "AreaArray[0].Radius", libAffx_player) + delta);
-    CatalogFieldValueSetFixed(c_gameCatalogActor, "Storm_Effect_Murky_Base_PufferFish_Explosion", "Scale", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "Storm_Effect_Murky_Base_PufferFish_Explosion", "Scale", libAffx_player) + delta / 4.5);
+    libAffx_MurkyScaleActor("Storm_Effect_Murky_Base_PufferFish_Explosion", ratio);
+    libAffx_MurkyScaleActor("MurkyPufferfishRangeCursorSplat", ratio);
+    libAffx_MurkyScaleActor("MurkyPufferfishWarningSplat", ratio);
     libAffx_murkyPufferRadiusAdded = wanted;
 }
 // Slime King: keeps the Slime radius ring on Murky while he is alive. A splat's size is fixed when it is created, so a
