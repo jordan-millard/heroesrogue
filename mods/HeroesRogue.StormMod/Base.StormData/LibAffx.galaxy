@@ -2421,6 +2421,7 @@ void libAffx_AddTalent(int lp_player, string talent) {
 }
 
 void libAffx_ShowTalent(string talent, bool show) {
+    DataTableSetBool(true, "libAffx_TalentBlocked_" + talent, !show);
     if (show) {
         SetTalentEnabled(talent, true);
         SetTalentHidden(talent, false);
@@ -2430,6 +2431,7 @@ void libAffx_ShowTalent(string talent, bool show) {
     }
 }
 void libAffx_DisableTalent(string talent, bool disable) {
+    DataTableSetBool(true, "libAffx_TalentBlocked_" + talent, disable);
     if (disable) {
         SetTalentEnabled(talent, false);
     } else {
@@ -2901,6 +2903,51 @@ void libAffx_CatalogReferenceSet (string reference, int player, string value) {
 // Affix effects
 // ============================================================
 
+// Boons can grant, hide or disable every talent on a tier. With nothing to pick there, the talent panel stays on that
+// tier and the later tiers can never be picked, so the tier's hidden "do nothing" talent (TalentFillerData.xml) is shown
+// while the tier has nothing else to pick. Tiers already picked are left alone.
+string libAffx_TalentTierFiller (int tier) {
+    if (tier == 1) { return "DoNothing"; }
+    if (tier == 2) { return "DoNothing4"; }
+    if (tier == 3) { return "DoNothing7"; }
+    if (tier == 4) { return "DoNothing10"; }
+    if (tier == 5) { return "DoNothing13"; }
+    if (tier == 6) { return "DoNothing16"; }
+    if (tier == 7) { return "DoNothing20"; }
+    return "";
+}
+void libAffx_UpdateEmptyTalentTiers (int player) {
+    int tier;
+    int i;
+    int available;
+    bool hasFiller;
+    string filler;
+    string talent;
+    for (tier = 1; tier <= libCore_gv_talents_MaxTiers_C; tier += 1) {
+        if (libGame_gv_talents_TalentChoices[player][tier].lv_selection != 0) {
+            continue;
+        }
+        filler = libAffx_TalentTierFiller(tier);
+        available = 0;
+        hasFiller = false;
+        for (i = 1; i <= MinI(libGame_gv_talents_TalentChoices[player][tier].lv_numberOfTalentsForThisTier, libCore_gv_talents_MaxTalentsPerTier_C); i += 1) {
+            talent = libGame_gv_talents_TalentChoices[player][tier].lv_talentData[i].lv_talentCatalogLink;
+            if (talent == "" || talent == null) {
+                continue;
+            }
+            if (talent == filler) {
+                hasFiller = true;
+                continue;
+            }
+            if (!PlayerHasTalent(player, talent) && !DataTableGetBool(true, "libAffx_TalentBlocked_" + talent)) {
+                available += 1;
+            }
+        }
+        if (hasFiller) {
+            libAffx_ShowTalent(filler, available == 0);
+        }
+    }
+}
 void libAffx_ApplyTalents(int affix) {
     int i;
     string addTalent;
@@ -2928,6 +2975,7 @@ void libAffx_ApplyTalents(int affix) {
         }
     }
     libAffx_affixes[affix].talentsApplied = true;
+    libAffx_UpdateEmptyTalentTiers(libAffx_player);
 }
 void libAffx_ApplyCatalogModificationBaseMult(string reference, int player, string valueString, fixed value, int stacks, int operation, fixed mult) {
     if (operation == c_upgradeOperationSubtract) {

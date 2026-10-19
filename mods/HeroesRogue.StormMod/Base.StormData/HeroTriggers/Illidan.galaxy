@@ -1,18 +1,12 @@
 include "AffixTriggers"
 
-int libAffx_IllidanTalentTier16Counter;
-int[libCore_gv_talents_MaxTiers_C + 1] libAffx_IllidanTalents;
 
 int libAffx_WheresIllidanIndex;
 
 // ============================================================
-// Illidan - Add an empty talent when all level 16 talents are unavailable
+// Illidan - the empty level 16 talent is now shown by libAffx_UpdateEmptyTalentTiers
 // ============================================================
 bool libAffx_IllidanTalent16 (bool testConds, bool runActions) {
-    libAffx_IllidanTalents[6] += 1;
-    if (libAffx_IllidanTalents[6] == 3) {
-        libAffx_ShowTalent("DoNothing16", true);
-    }
     return true;
 }
 // ============================================================

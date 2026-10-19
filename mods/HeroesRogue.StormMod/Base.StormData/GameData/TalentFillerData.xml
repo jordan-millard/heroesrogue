@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- A hidden "do nothing" talent in the next free column of every tier, for every hero whose talents a boon grants,
+       disables or shows. When boons leave a tier with nothing to pick, the talent panel would stay on that tier and the
+       later tiers could never be picked; libAffx_UpdateEmptyTalentTiers shows the filler on such a tier. This file loads
+       last so these entries come after the hero files' own additions (a column out of order drops talents from the
+       script's tier data). Generated from the base talent trees plus the mod's additions. -->
+  <CHero id="Abathur">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="5" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="5" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="5" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="5" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Alexstrasza">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Ana">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Anduin">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="5" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Anubarak">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Auriel">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Barbarian">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Butcher">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Chen">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="5" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Deckard">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Dryad">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="5" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="5" />
+  </CHero>
+  <CHero id="FaerieDragon">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Falstad">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="5" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Illidan">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Junkrat">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="5" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="L90ETC">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+  </CHero>
+  <CHero id="LiLi">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="LostVikings">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="5" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="5" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="5" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Lucio">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Malfurion">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Medic">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Monk">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+  </CHero>
+  <CHero id="Muradin">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Murky">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Nova">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Probius">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Rehgar">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="SgtHammer">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Stukov">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Tassadar">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Thrall">
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+  </CHero>
+  <CHero id="Tyrande">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Uther">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Valeera">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="5" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="5" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Whitemane">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="WitchDoctor">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+  <CHero id="Wizard">
+    <TalentTreeArray Talent="DoNothing" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DoNothing4" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DoNothing7" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DoNothing10" Tier="4" Column="3" />
+    <TalentTreeArray Talent="DoNothing13" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DoNothing16" Tier="6" Column="5" />
+    <TalentTreeArray Talent="DoNothing20" Tier="7" Column="5" />
+  </CHero>
+
+</Catalog>

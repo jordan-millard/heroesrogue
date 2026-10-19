@@ -1,6 +1,5 @@
 include "AffixTriggers"
 
-int[libCore_gv_talents_MaxTiers_C + 1] libAffx_NazeeboTalents;
 fixed libAffx_NazeeboZombieHandlerRange = 12;
 fixed libAffx_NazeeboZombieHandlerChance = 0.5;
 fixed libAffx_NazeeboZombieHandlerAdditionalChance = 0;
@@ -11,13 +10,9 @@ int libAffx_NazeeboRitualOfBoonsIndex;
 fixed libAffx_NazeeboMasterWebweaverChance = 0.5;
 
 // ============================================================
-// Nazeebo - Add an empty talent when all talents on a tier are unavailable
+// Nazeebo - the empty level 7 talent is now shown by libAffx_UpdateEmptyTalentTiers
 // ============================================================
 bool libAffx_NazeeboTalent7 (bool testConds, bool runActions) {
-    libAffx_NazeeboTalents[3] += 1;
-    if (libAffx_NazeeboTalents[3] == 3) {
-        libAffx_ShowTalent("DoNothing7", true);
-    }
     return true;
 }
 // ============================================================
