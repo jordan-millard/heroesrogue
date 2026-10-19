@@ -257,21 +257,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <!-- Mrrgl Warrior's emergency Bubble: when a hit would kill Murky (this damage response, which cancels the hit the way
-       Artanis's Shield Overload does) or leaves him below 30% Health (script), Safety Bubble casts itself if it has a
-       charge, and spends that charge. It works while Stunned. The next one can't happen for 3 seconds (the 2 second
-       Bubble plus 1). -->
+       Artanis's Shield Overload does) or leaves him below 30% Health (script), Murky gets a free Safety Bubble. It works
+       while Stunned and has its own 20 second cooldown, shown as a debuff; it doesn't use Safety Bubble's charges
+       (spending one through CEffectModifyUnit stopped the charges from recharging). -->
   <CBehaviorBuff id="MurkyEmergencyBubbleLockout">
-    <InfoFlags index="Hidden" value="1" />
-    <Duration value="3" />
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Murky_SafetyBubble.dds" />
+    <DisplayDuration index="Self" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <Duration value="20" />
   </CBehaviorBuff>
-  <CValidatorUnitCompareChargeUsed id="MurkySafetyBubbleHasCharge">
-    <WhichUnit Value="Caster" />
-    <Compare value="LT" />
-    <ChargeLink value="Abil/MurkySafetyBubble" />
-    <Location value="Unit" />
-    <Ability value="MurkySafetyBubble" />
-    <Value value="2" />
-  </CValidatorUnitCompareChargeUsed>
   <CValidatorUnitCompareBehaviorCount id="MurkyEmergencyBubbleNotLocked">
     <WhichUnit Value="Caster" />
     <Behavior value="MurkyEmergencyBubbleLockout" />
@@ -280,13 +275,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CValidatorUnitCompareBehaviorCount>
   <CValidatorCombine id="MurkyEmergencyBubbleReady">
     <Type value="And" />
-    <CombineArray value="MurkySafetyBubbleHasCharge" />
     <CombineArray value="MurkyEmergencyBubbleNotLocked" />
   </CValidatorCombine>
-  <CEffectModifyUnit id="MurkyEmergencyBubbleSpendCharge">
-    <ImpactUnit Value="Caster" />
-    <Cost Abil="MurkySafetyBubble,Execute" ChargeCountUse="1" CooldownOperation="Add" />
-  </CEffectModifyUnit>
   <CEffectApplyBehavior id="MurkyEmergencyBubbleApplyLockout">
     <WhichUnit Value="Caster" />
     <Behavior value="MurkyEmergencyBubbleLockout" />
@@ -295,7 +285,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="MurkyEmergencyBubbleReady" />
     <EffectArray value="ApplySafetyBubble" />
     <EffectArray value="ApplySafetyBubbleMoveSpeedMastery" />
-    <EffectArray value="MurkyEmergencyBubbleSpendCharge" />
     <EffectArray value="MurkyEmergencyBubbleApplyLockout" />
   </CEffectSet>
   <CBehaviorBuff id="MurkyEmergencyBubble" parent="CarryBehaviorParent">
@@ -335,8 +324,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="MurkySafetyBubble">
     <FinalEffect value="MurkyBubbleBurstApply" />
   </CBehaviorBuff>
-  <!-- Mrrgl Warrior's Basic Attack splash (25% within 2 range), and Shell Shock's bigger one (Legendary, 75% within 3
-       range); both script -->
+  <!-- Shell Shock (Legendary): the splash from a Basic Attack, 75% within 3 range (script) -->
   <CEffectDamage id="MurkyShellShockDamage" parent="StormSpell">
     <Flags index="NoFractionDealtBonus" value="1" />
     <Amount value="0" />
