@@ -208,7 +208,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Mrrgl Warrior ===== -->
-  <!-- Fin Fury quest (50% kept between games): each Basic Attack on an enemy Hero, 0.4% Basic Attack and Pufferfish
+  <!-- Fin Fury quest (50% kept between games): each Basic Attack on an enemy Hero, 0.75% Basic Attack and Pufferfish
        damage each.
        Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them (script), Rejuvenating
        Bubble heals 0.25% more of Murky's maximum Health per tick (4 ticks a Bubble, so 1% a Bubble) each, and 0.5%
@@ -222,7 +222,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="MurkyFinFuryTokenCounter" />
-    <Scale value="0.004" />
+    <Scale value="0.0075" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="MurkyFinFuryAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
