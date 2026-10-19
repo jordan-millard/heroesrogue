@@ -111,6 +111,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="DryadPoisonerBurstProbeUnfairApply" />
     <EffectArray value="DryadPoisonerBurstProbeCullingApply" />
   </CEffectSet>
+  <!-- Poisoner lethal marker: on an enemy Hero while Crippling Spores' burst would kill them (script). It shows
+       Malthael's Last Rites kill marker, which only the behavior's caster sees. -->
+  <CBehaviorBuff id="DryadPoisonerLethalTarget">
+    <InfoFlags index="Hidden" value="1" />
+    <RemoveValidatorArray value="TargetNotDead" />
+  </CBehaviorBuff>
+  <CActorModel id="ViableKillMarker">
+    <On Terms="Behavior.DryadPoisonerLethalTarget.On" Send="Create" />
+    <On Terms="Behavior.DryadPoisonerLethalTarget.Off" Send="AnimBracketStop BSD" />
+  </CActorModel>
   <CEffectSet id="DryadNaturesToxinPeriodicSet">
     <EffectArray index="0" value="DryadPoisonerTickProbeSet" />
     <EffectArray value="DryadNaturesToxinDamage" />

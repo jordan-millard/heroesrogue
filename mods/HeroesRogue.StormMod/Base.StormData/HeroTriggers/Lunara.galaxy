@@ -19,7 +19,6 @@ int[libAffx_lunaraQuests + 1] libAffx_lunaraRestored; // banked stacks given bac
 bool libAffx_lunaraHuntressRewarded;
 fixed libAffx_lunaraToxinDuration; // Poisoner duration per application last written to the catalog
 unitgroup libAffx_lunaraPoisoned;   // Poisoner: enemies poisoned this game, checked for the lethal marker
-const fixed libAffx_lunaraLethalHeight = 4.0;
 
 string libAffx_LunaraQuestToken(int quest) {
     if (quest == 1) { return "DryadPoisonerTokenCounter"; }
@@ -110,17 +109,14 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
 }
 
 // ============================================================
-// Poisoner lethal marker: a "LETHAL" tag, seen only by Lunara's player, over each enemy that Crippling Spores would kill
-// right now. The game's green bar can't be made exact, so the burst is predicted from the poison's own ticks instead.
+// Poisoner lethal marker: Malthael's Last Rites kill marker (the shared ViableKillMarker actor, seen only by Lunara's
+// player through DryadPoisonerLethalTarget) over each enemy Hero that Crippling Spores would kill right now. The game's green bar can't be made exact, so the burst is predicted from the poison's own ticks instead.
 // Each tick's real damage, divided by the talent bonuses it had (tick probes), leaves a factor for that target (Spell
 // Power, armor, the Poisoner quest). The prediction is the burst's ticks times one tick times that factor times the
 // bonuses the burst would have (burst probes). Shields aren't counted, so a shielded enemy can survive a LETHAL burst.
 // ============================================================
 string libAffx_LunaraBurstFactorKey(unit target) {
     return "LunaraBurstFactor_" + IntToString(UnitGetTag(target));
-}
-string libAffx_LunaraLethalTagKey(unit target) {
-    return "LunaraLethalTag_" + IntToString(UnitGetTag(target));
 }
 // Reads and clears the probes: the product of the bonuses they mark (Intensifying Toxin, Unfair Advantage,
 // Nature's Culling, as on DryadNaturesToxinDamage)
@@ -166,16 +162,11 @@ bool libAffx_LunaraToxinTick_Func (bool testConds, bool runActions) {
     return true;
 }
 void libAffx_LunaraShowLethal(unit target, bool show) {
-    string key = libAffx_LunaraLethalTagKey(target);
-    int stored = DataTableGetInt(true, key); // the tag + 1, 0 for none
-    if (show && stored == 0) {
-        TextTagCreate(StringToText("LETHAL"), 20, UnitGetPosition(target), libAffx_lunaraLethalHeight, true, true, PlayerGroupSingle(libAffx_player));
-        TextTagAttachToUnit(TextTagLastCreated(), target, libAffx_lunaraLethalHeight);
-        TextTagSetColor(TextTagLastCreated(), c_textTagColorText, Color(100, 25, 25));
-        DataTableSetInt(true, key, TextTagLastCreated() + 1);
-    } else if (!show && stored != 0) {
-        TextTagDestroy(stored - 1);
-        DataTableSetInt(true, key, 0);
+    unit hero = libAffx_LunaraHero();
+    if (show && hero != null && !UnitHasBehavior2(target, "DryadPoisonerLethalTarget")) {
+        UnitBehaviorAdd(target, "DryadPoisonerLethalTarget", hero, 1);
+    } else if (!show && UnitHasBehavior2(target, "DryadPoisonerLethalTarget")) {
+        UnitBehaviorRemove(target, "DryadPoisonerLethalTarget", c_unitBehaviorCountAll);
     }
 }
 bool libAffx_LunaraLethalTick_Func (bool testConds, bool runActions) {
@@ -201,7 +192,7 @@ bool libAffx_LunaraLethalTick_Func (bool testConds, bool runActions) {
         lethal = false;
         factor = DataTableGetFixed(true, libAffx_LunaraBurstFactorKey(target));
         ticks = libAffx_LunaraBurstTicks(target);
-        if (heroReady && factor > 0.0 && ticks > 0.0) {
+        if (heroReady && factor > 0.0 && ticks > 0.0 && UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
             UnitCreateEffectUnit(hero, "DryadPoisonerBurstProbeSet", target);
             burst = perSecond * ticks * factor * libAffx_LunaraTakeProbes(target, "DryadPoisonerBurstProbe");
             lethal = burst >= UnitGetPropertyFixed(target, c_unitPropLife, c_unitPropCurrent);
