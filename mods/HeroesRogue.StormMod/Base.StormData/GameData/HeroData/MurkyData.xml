@@ -42,6 +42,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="SafetyBubbleApplyBehaviorsSet">
     <ValidatorArray value="MurkySafetyBubbleStunCheck" />
   </CEffectSet>
+  <!-- Stuns also pause orders, so a normal Bubble order would wait for the stun to end. A Transient ability runs at once
+       without the order queue (Auriel's Resurrect Self works through death the same way). -->
+  <CAbilEffectInstant id="MurkySafetyBubble">
+    <Flags index="Transient" value="1" />
+  </CAbilEffectInstant>
 
   <!-- ===== Slime King ===== -->
   <!-- Ooze quest (50% kept between games): each enemy Hero hit by Slime, 1% Slime damage each.
