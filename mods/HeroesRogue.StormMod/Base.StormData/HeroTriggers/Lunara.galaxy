@@ -18,6 +18,8 @@ int[libAffx_lunaraQuests + 1] libAffx_lunaraBanked;   // stacks from previous ga
 int[libAffx_lunaraQuests + 1] libAffx_lunaraRestored; // banked stacks given back so far this game
 bool libAffx_lunaraHuntressRewarded;
 fixed libAffx_lunaraToxinDuration; // Poisoner duration per application last written to the catalog
+unitgroup libAffx_lunaraPoisoned;   // Poisoner: enemies poisoned this game, checked for the lethal marker
+const fixed libAffx_lunaraLethalHeight = 4.0;
 
 string libAffx_LunaraQuestToken(int quest) {
     if (quest == 1) { return "DryadPoisonerTokenCounter"; }
@@ -103,6 +105,109 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
         UnitBehaviorSetDurationRemaining(target, "DryadNaturesToxin", wanted);
     }
     DataTableSetFixed(true, key, now + wanted);
+    UnitGroupAdd(libAffx_lunaraPoisoned, target);
+    return true;
+}
+
+// ============================================================
+// Poisoner lethal marker: a "LETHAL" tag, seen only by Lunara's player, over each enemy that Crippling Spores would kill
+// right now. The game's green bar can't be made exact, so the burst is predicted from the poison's own ticks instead.
+// Each tick's real damage, divided by the talent bonuses it had (tick probes), leaves a factor for that target (Spell
+// Power, armor, the Poisoner quest). The prediction is the burst's ticks times one tick times that factor times the
+// bonuses the burst would have (burst probes). Shields aren't counted, so a shielded enemy can survive a LETHAL burst.
+// ============================================================
+string libAffx_LunaraBurstFactorKey(unit target) {
+    return "LunaraBurstFactor_" + IntToString(UnitGetTag(target));
+}
+string libAffx_LunaraLethalTagKey(unit target) {
+    return "LunaraLethalTag_" + IntToString(UnitGetTag(target));
+}
+// Reads and clears the probes: the product of the bonuses they mark (Intensifying Toxin, Unfair Advantage,
+// Nature's Culling, as on DryadNaturesToxinDamage)
+fixed libAffx_LunaraTakeProbes(unit target, string prefix) {
+    fixed mult = 1.0;
+    if (UnitHasBehavior2(target, prefix + "Intensifying")) {
+        mult = mult * 1.4;
+        UnitBehaviorRemove(target, prefix + "Intensifying", c_unitBehaviorCountAll);
+    }
+    if (UnitHasBehavior2(target, prefix + "Unfair")) {
+        mult = mult * 1.6;
+        UnitBehaviorRemove(target, prefix + "Unfair", c_unitBehaviorCountAll);
+    }
+    if (UnitHasBehavior2(target, prefix + "Culling")) {
+        mult = mult * 2.25;
+        UnitBehaviorRemove(target, prefix + "Culling", c_unitBehaviorCountAll);
+    }
+    return mult;
+}
+// Ticks of poison the burst would pay out: a part second left is still a whole tick
+fixed libAffx_LunaraBurstTicks(unit target) {
+    fixed remaining = UnitBehaviorDuration(target, "DryadNaturesToxin");
+    if (remaining <= 0.0) {
+        remaining = DataTableGetFixed(true, libAffx_LunaraToxinKey(target)) - GameGetMissionTime();
+    }
+    return Ceiling(remaining - 0.05);
+}
+bool libAffx_LunaraToxinTick_Func (bool testConds, bool runActions) {
+    unit target = EventUnit();
+    fixed dealt = EventUnitDamageAmount() + EventUnitDamageBehaviorShield();
+    fixed perSecond = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "DryadNaturesToxinDamage", "Amount", libAffx_player));
+    fixed mult;
+    if (testConds) {
+        if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_LunaraHasQuest(libAffx_lunaraPoisoner)) {
+            return false;
+        }
+    }
+    mult = libAffx_LunaraTakeProbes(target, "DryadPoisonerTickProbe");
+    if (!runActions || dealt <= 0.0 || perSecond <= 0.0) {
+        return true;
+    }
+    DataTableSetFixed(true, libAffx_LunaraBurstFactorKey(target), dealt / (perSecond * mult));
+    return true;
+}
+void libAffx_LunaraShowLethal(unit target, bool show) {
+    string key = libAffx_LunaraLethalTagKey(target);
+    int stored = DataTableGetInt(true, key); // the tag + 1, 0 for none
+    if (show && stored == 0) {
+        TextTagCreate(StringToText("LETHAL"), 20, UnitGetPosition(target), libAffx_lunaraLethalHeight, true, true, PlayerGroupSingle(libAffx_player));
+        TextTagAttachToUnit(TextTagLastCreated(), target, libAffx_lunaraLethalHeight);
+        TextTagSetColor(TextTagLastCreated(), c_textTagColorText, Color(100, 25, 25));
+        DataTableSetInt(true, key, TextTagLastCreated() + 1);
+    } else if (!show && stored != 0) {
+        TextTagDestroy(stored - 1);
+        DataTableSetInt(true, key, 0);
+    }
+}
+bool libAffx_LunaraLethalTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_LunaraHero();
+    fixed perSecond = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "DryadNaturesToxinDamage", "Amount", libAffx_player));
+    bool heroReady = hero != null && UnitIsAlive(hero) && libAffx_LunaraHasQuest(libAffx_lunaraPoisoner);
+    int i;
+    unit target;
+    fixed factor;
+    fixed ticks;
+    fixed burst;
+    bool lethal;
+    for (i = UnitGroupCount(libAffx_lunaraPoisoned, c_unitCountAll); i >= 1; i -= 1) {
+        target = UnitGroupUnit(libAffx_lunaraPoisoned, i);
+        if (target == null) {
+            continue;
+        }
+        if (!UnitIsAlive(target) || !UnitHasBehavior2(target, "DryadNaturesToxin")) {
+            libAffx_LunaraShowLethal(target, false);
+            UnitGroupRemove(libAffx_lunaraPoisoned, target);
+            continue;
+        }
+        lethal = false;
+        factor = DataTableGetFixed(true, libAffx_LunaraBurstFactorKey(target));
+        ticks = libAffx_LunaraBurstTicks(target);
+        if (heroReady && factor > 0.0 && ticks > 0.0) {
+            UnitCreateEffectUnit(hero, "DryadPoisonerBurstProbeSet", target);
+            burst = perSecond * ticks * factor * libAffx_LunaraTakeProbes(target, "DryadPoisonerBurstProbe");
+            lethal = burst >= UnitGetPropertyFixed(target, c_unitPropLife, c_unitPropCurrent);
+        }
+        libAffx_LunaraShowLethal(target, lethal);
+    }
     return true;
 }
 
@@ -113,7 +218,6 @@ bool libAffx_LunaraToxinApplied_Func (bool testConds, bool runActions) {
 bool libAffx_LunaraSporesBurst_Func (bool testConds, bool runActions) {
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
     string key = libAffx_LunaraToxinKey(target);
-    fixed remaining = UnitBehaviorDuration(target, "DryadNaturesToxin");
     fixed perSecond = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "DryadNaturesToxinDamage", "Amount", libAffx_player));
     fixed ticks;
     bool dealt = false;
@@ -121,10 +225,7 @@ bool libAffx_LunaraSporesBurst_Func (bool testConds, bool runActions) {
     if (!runActions) {
         return true;
     }
-    if (remaining <= 0.0) {
-        remaining = DataTableGetFixed(true, key) - GameGetMissionTime();
-    }
-    ticks = Ceiling(remaining - 0.05);
+    ticks = libAffx_LunaraBurstTicks(target);
     if (ticks > 0.0 && hero != null && UnitIsAlive(target)) {
         CatalogFieldValueSet(c_gameCatalogEffect, "DryadPoisonerSporesDamage", "Amount", libAffx_player, FixedToString(perSecond * ticks, 2));
         UnitCreateEffectUnit(hero, "DryadPoisonerSporesDamage", target);
@@ -132,6 +233,7 @@ bool libAffx_LunaraSporesBurst_Func (bool testConds, bool runActions) {
     }
     UnitBehaviorRemove(target, "DryadNaturesToxin", c_unitBehaviorCountAll);
     DataTableSetFixed(true, key, 0.0);
+    libAffx_LunaraShowLethal(target, false);
     if (!dealt) {
         return true;
     }
@@ -200,6 +302,7 @@ bool libAffx_LunaraQuestStart (bool testConds, bool runActions) {
         return true;
     }
     libAffx_lunaraStarted = true;
+    libAffx_lunaraPoisoned = UnitGroupEmpty();
     for (quest = 1; quest <= libAffx_lunaraQuests; quest += 1) {
         libAffx_lunaraBanked[quest] = libAffx_BankLoadValueInt("Lunara_" + libAffx_LunaraQuestToken(quest));
     }
@@ -208,5 +311,7 @@ bool libAffx_LunaraQuestStart (bool testConds, bool runActions) {
     TriggerAddEventUnitBehaviorChange(t, null, "DryadNaturesToxin", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(t, null, "DryadNaturesToxin", c_unitBehaviorChangeRefresh);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_LunaraSporesBurst_Func"), libAffx_player, "DryadPoisonerSporesBurst");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_LunaraToxinTick_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DryadNaturesToxinDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_LunaraLethalTick_Func"), 0.25, c_timeGame);
     return true;
 }

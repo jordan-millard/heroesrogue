@@ -47,6 +47,74 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="TargetNotUnstoppable" />
     <CombineArray value="TargetIsHero" />
   </CValidatorCombine>
+  <!-- Poisoner lethal marker (script): hidden probes that mark which of Nature's Toxin's bonuses apply, so the script can
+       tell a tick's bonuses apart from what's left (Spell Power, armor, the quest). Tick probes run in each tick before
+       its damage, with the tick's own validators; burst probes run from script with the burst's (Unfair Advantage
+       counted against any Hero Spores can slow). -->
+  <CBehaviorBuff id="DryadPoisonerTickProbeIntensifying">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DryadPoisonerTickProbeIntensifyingApply">
+    <ValidatorArray value="DryadIntensifyingToxinCombine" />
+    <Behavior value="DryadPoisonerTickProbeIntensifying" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="DryadPoisonerTickProbeUnfair">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DryadPoisonerTickProbeUnfairApply">
+    <ValidatorArray value="DryadHasUnfairAdvantageandEnemyHeroisSlowedCombine" />
+    <Behavior value="DryadPoisonerTickProbeUnfair" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="DryadPoisonerTickProbeCulling">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DryadPoisonerTickProbeCullingApply">
+    <ValidatorArray value="DryadHasNaturesCullingandTargetisnotHero" />
+    <Behavior value="DryadPoisonerTickProbeCulling" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DryadPoisonerTickProbeSet">
+    <ValidatorArray value="DryadHasPoisoner" />
+    <EffectArray value="DryadPoisonerTickProbeIntensifyingApply" />
+    <EffectArray value="DryadPoisonerTickProbeUnfairApply" />
+    <EffectArray value="DryadPoisonerTickProbeCullingApply" />
+  </CEffectSet>
+  <CBehaviorBuff id="DryadPoisonerBurstProbeIntensifying">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DryadPoisonerBurstProbeIntensifyingApply">
+    <ValidatorArray value="DryadIntensifyingToxinCombine" />
+    <Behavior value="DryadPoisonerBurstProbeIntensifying" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="DryadPoisonerBurstProbeUnfair">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DryadPoisonerBurstProbeUnfairApply">
+    <ValidatorArray value="DryadPoisonerUnfairAdvantageOnBurst" />
+    <Behavior value="DryadPoisonerBurstProbeUnfair" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="DryadPoisonerBurstProbeCulling">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DryadPoisonerBurstProbeCullingApply">
+    <ValidatorArray value="DryadHasNaturesCullingandTargetisnotHero" />
+    <Behavior value="DryadPoisonerBurstProbeCulling" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DryadPoisonerBurstProbeSet">
+    <ValidatorArray value="DryadHasPoisoner" />
+    <EffectArray value="DryadPoisonerBurstProbeIntensifyingApply" />
+    <EffectArray value="DryadPoisonerBurstProbeUnfairApply" />
+    <EffectArray value="DryadPoisonerBurstProbeCullingApply" />
+  </CEffectSet>
+  <CEffectSet id="DryadNaturesToxinPeriodicSet">
+    <EffectArray index="0" value="DryadPoisonerTickProbeSet" />
+    <EffectArray value="DryadNaturesToxinDamage" />
+  </CEffectSet>
   <CEffectDamage id="DryadPoisonerToxinDisplayDamage" parent="StormSpellDot">
     <Amount value="33" />
     <MultiplicativeModifierArray index="IntensifyingToxinModifier" Validator="DryadIntensifyingToxinCombine" Modifier="0.4" Crit="1" />
