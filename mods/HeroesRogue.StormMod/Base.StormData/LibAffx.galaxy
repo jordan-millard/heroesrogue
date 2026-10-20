@@ -6064,10 +6064,41 @@ void libAffx_InitVariables () {
 
 bool libAffx_InitAffixes_completed = false;
 
+// The player's Hero for this game, known before hero selection runs: round 1 saves the picked Hero to the bank and
+// reloads into the chosen map, so every played game finds it there. Debug hero selection names it directly. 0 while
+// no Hero is picked yet (round 1's hero select, where nothing rolls).
+int libAffx_InitAffixesHero () {
+    if (libAffx_debug_disableHeroSelection && libAffx_debug_player1Hero != "") {
+        return libCore_gf_GetIndexFromHero(libAffx_debug_player1Hero);
+    }
+    BankLoad("PlayerSettings", libAffx_player);
+    if (!BankKeyExists(BankLastCreated(), libAffx_BankSection, "Hero")) {
+        return 0;
+    }
+    return BankValueGetAsInt(BankLastCreated(), libAffx_BankSection, "Hero");
+}
+// Whether an AffixData.xml instance is loaded this game: generic affixes always are, hero-specific ones only for the
+// player's Hero. Saves key affixes by name, so the ones left out keep their bank values.
+bool libAffx_AffixLoadsForHero (string affixInstance, int heroIndex) {
+    string heroSpecific = UserDataGetString("Affix", affixInstance, "HeroSpecific", 1);
+    int index;
+    if (heroSpecific == "" || heroSpecific == null) {
+        return true;
+    }
+    index = libCore_gf_GetIndexFromHero(heroSpecific);
+    if (index <= 0 || index > libAffx_maxHeroes) {
+        return true; // an unknown Hero name leaves the affix open to every Hero, as libAffx_AffixSetHeroSpecific does
+    }
+    return index == heroIndex;
+}
+
 void libAffx_InitAffixes () {
     int i;
     int i2;
     int affixCountLoaded;
+    int instanceIndex;
+    int heroIndex;
+    int skippedAffixes;
     string affixInstance;
     string cooldownLink;
     string heroTooltip;
@@ -6110,13 +6141,19 @@ void libAffx_InitAffixes () {
     libAffx_InitBlankAffix();
 
     affixCountLoaded = UserDataInstanceCount("Affix");
-    libAffx_DisplayDebugMessage("Total number of registered boons and curses: " + IntToString(affixCountLoaded));
-    if (affixCountLoaded > libAffx_maxAffixes) {
-        libAffx_DisplayDebugMessage("Registered affix count exceeds the maximum! Limitting to " + IntToString(libAffx_maxAffixes));
-        affixCountLoaded = libAffx_maxAffixes;
-    }
-    for (i = 1; i <= affixCountLoaded; i += 1) {
-        affixInstance = UserDataInstance("Affix", i);
+    heroIndex = libAffx_InitAffixesHero();
+    i = 0;
+    for (instanceIndex = 1; instanceIndex <= affixCountLoaded; instanceIndex += 1) {
+        affixInstance = UserDataInstance("Affix", instanceIndex);
+        if (!libAffx_AffixLoadsForHero(affixInstance, heroIndex)) {
+            skippedAffixes += 1;
+            continue;
+        }
+        if (i >= libAffx_maxAffixes) {
+            libAffx_DisplayDebugMessage("Loaded affix count exceeds the maximum! Limiting to " + IntToString(libAffx_maxAffixes));
+            break;
+        }
+        i += 1;
         libAffx_affixes[i].count = 0;
         libAffx_affixes[i].name = affixInstance;
         libAffx_affixes[i].rarity = libAffx_GetRarityID(UserDataGetString("Affix", affixInstance, "Rarity", 1));
@@ -6411,6 +6448,7 @@ void libAffx_InitAffixes () {
         }
         libAffx_registeredAffixes += 1;
     }
+    libAffx_DisplayDebugMessage("Boons and curses: " + IntToString(affixCountLoaded) + " registered, " + IntToString(libAffx_registeredAffixes) + " loaded, " + IntToString(skippedAffixes) + " for other Heroes");
     
     libAffx_InitAffixes_completed = true;
 }

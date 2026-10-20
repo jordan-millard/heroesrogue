@@ -25,10 +25,10 @@ const int libAffx_maxRequiredTalents = 4; // TalentsRequired per affix; most use
 const int libAffx_maxAffixBehaviorEntries = 6; // AffixBehavior per affix; most used: 5
 const int libAffx_maxRemoveBehaviors = 5; // RemoveBehavior per affix; most used: 3
 const int libAffx_maxFilters = 100;
-const int libAffx_maxAffixes = 600; // AffixData.xml instances past this are silently dropped. libAffx_affixes is the
-// biggest global: 700 with the old per-affix array sizes soft-locked the map (likely the script memory limit), so the
-// arrays below were trimmed to keep 560 no bigger than the old 500, and trimmed again (TalentsShow, TalentsRequired,
-// AffixBehavior, RemoveBehavior) to keep 600 no bigger than 560.
+const int libAffx_maxAffixes = 400; // Affixes loaded into one game. Only the generic ones and those for the player's
+// Hero are loaded (libAffx_InitAffixes), so AffixData.xml itself can grow without limit; this caps generic affixes plus
+// one Hero's set. Past it, the rest are dropped with a debug message. libAffx_affixes is the biggest global: 700 with
+// the old per-affix array sizes soft-locked the map (likely the script memory limit), so keep this low.
 const int libAffx_maxOwnedAffixesPerPage = 90;
 const int libAffx_maxQueue = 100;
 const int libAffx_maxRequirements = 5; // AffixesRequired/Excluded per affix; most used: 2
