@@ -1410,6 +1410,70 @@ Behavior/Name/KerriganSkeweredDebuff=Skewered
 Behavior/Tooltip/KerriganSkeweredDebuff=Armor reduced by Kerrigan's Impaling Blades.
 Behavior/Name/KerriganCorrosiveDebuff=Corrosive Swarm
 Behavior/Tooltip/KerriganCorrosiveDebuff=Armor reduced by Kerrigan's Ultralisk.
+Affix/Name/ZeratulVoidBlade=Void Blade
+Affix/Tooltip/ZeratulVoidBlade=Gain <c val="#TooltipNumbers">Greater Cleave</c> and <c val="#TooltipNumbers">Rending Cleave</c>. Cleave deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">20</c> less Mana, and has a <c val="#TooltipNumbers">4</c> second cooldown. Each enemy Hero hit heals Zeratul for <c val="#TooltipNumbers">3%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Cleave hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Cleave damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Cleave hit reduce Blink's cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">30%</c>), then add <c val="#TooltipNumbers">1%</c> Cleave damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/ZeratulPsionicEdge=Psionic Edge
+Affix/Tooltip/ZeratulPsionicEdge=Cleave deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/ZeratulSwiftCleave=Swift Cleave
+Affix/Tooltip/ZeratulSwiftCleave=Reduce Cleave's cooldown by <c val="#TooltipNumbers">0.5</c> seconds.
+Affix/Name/ZeratulVoidSlashBoon=Void Slash
+Affix/Tooltip/ZeratulVoidSlashBoon=Gain the talent <c val="#TooltipNumbers">Void Slash</c>: Cleave is empowered when it hits several Heroes.
+Affix/Name/ZeratulVoidStep=Void Step
+Affix/Tooltip/ZeratulVoidStep=Each Cleave hit on an enemy Hero takes <c val="#TooltipNumbers">1</c> second off Blink's cooldown.
+Affix/Name/ZeratulSunder=Sunder
+Affix/Tooltip/ZeratulSunder=Cleave hits on enemy Heroes remove <c val="#TooltipNumbers">10</c> Armor for <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/ZeratulVoidRift=Void Rift
+Affix/Tooltip/ZeratulVoidRift=Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Cleave hit reset Cleave and Blink.
+Button/Name/ZeratulVoidEdgeTokenCounter=Void Edge
+Button/Tooltip/ZeratulVoidEdgeTokenCounter=<c val="#TooltipQuest">Bonus Cleave damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZeratulVoidEdgeTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/ZeratulShadowWalkTokenCounter=Shadow Walk
+Button/Tooltip/ZeratulShadowWalkTokenCounter=<c val="#TooltipQuest">Shadow Walk stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZeratulShadowWalkTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Blink's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">30%</c> at <c val="#TooltipNumbers">30</c> stacks. Each stack past <c val="#TooltipNumbers">30</c> adds <c val="#TooltipNumbers">1%</c> Cleave damage.
+Affix/Name/ZeratulSingularity=Singularity
+Affix/Tooltip/ZeratulSingularity=Gain <c val="#TooltipNumbers">Seeker in the Dark</c> and <c val="#TooltipNumbers">Sentenced to Death</c>. Singularity Spike deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">35</c> less Mana, and recharges in <c val="#TooltipNumbers">7</c> seconds. Each enemy Hero hit heals Zeratul for <c val="#TooltipNumbers">4%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Singularity Spike hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Singularity Spike damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Singularity Spike hit: every <c val="#TooltipNumbers">15</c> grants <c val="#TooltipNumbers">1</c> more charge (up to <c val="#TooltipNumbers">2</c>), then each adds <c val="#TooltipNumbers">1%</c> damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/ZeratulDarkMatter=Dark Matter
+Affix/Tooltip/ZeratulDarkMatter=Singularity Spike deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/ZeratulQuickSpike=Quick Spike
+Affix/Tooltip/ZeratulQuickSpike=Singularity Spike recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/ZeratulWormholeBoon=Wormhole
+Affix/Tooltip/ZeratulWormholeBoon=Gain the talent <c val="#TooltipNumbers">Wormhole</c>: Zeratul can return to where he Blinked from.
+Affix/Name/ZeratulGravityWell=Gravity Well
+Affix/Tooltip/ZeratulGravityWell=Each Singularity Spike hit on an enemy Hero takes <c val="#TooltipNumbers">2</c> seconds off Cleave's cooldown.
+Affix/Name/ZeratulCollapse=Collapse
+Affix/Tooltip/ZeratulCollapse=Singularity Spike hits on enemy Heroes remove <c val="#TooltipNumbers">10</c> Armor for <c val="#TooltipNumbers">4</c> seconds.
+Affix/Name/ZeratulCollapsingStar=Collapsing Star
+Affix/Tooltip/ZeratulCollapsingStar=Each Singularity Spike is cast again <c val="#TooltipNumbers">0.4</c> seconds later, toward the same spot, at no cost.
+Button/Name/ZeratulGravityTokenCounter=Gravity
+Button/Tooltip/ZeratulGravityTokenCounter=<c val="#TooltipQuest">Bonus Singularity Spike damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZeratulGravityTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/ZeratulEventHorizonTokenCounter=Event Horizon
+Button/Tooltip/ZeratulEventHorizonTokenCounter=<c val="#TooltipQuest">Event Horizon stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZeratulEventHorizonTokenCounter$" precision="0"/></c></c><n/>Every <c val="#TooltipNumbers">15</c> stacks, Singularity Spike stores <c val="#TooltipNumbers">1</c> more charge (up to <c val="#TooltipNumbers">2</c>). Each stack past <c val="#TooltipNumbers">30</c> adds <c val="#TooltipNumbers">1%</c> Singularity Spike damage.
+Affix/Name/ZeratulDarkTemplar=Dark Templar
+Affix/Tooltip/ZeratulDarkTemplar=Gain <c val="#TooltipNumbers">Master Warp-Blade</c> and <c val="#TooltipNumbers">Mending Strikes</c>. Basic Attacks deal <c val="#TooltipNumbers">50%</c> more damage, and Blink costs <c val="#TooltipNumbers">25</c> less Mana and has a <c val="#TooltipNumbers">7</c> second cooldown. Each Basic Attack on an enemy Hero heals Zeratul for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Basic Attacks on enemy Heroes add <c val="#TooltipNumbers">0.1%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Basic Attack hit: every <c val="#TooltipNumbers">10</c> grants <c val="#TooltipNumbers">1</c> more Vorpal Blade charge (up to <c val="#TooltipNumbers">2</c>), then each adds <c val="#TooltipNumbers">1%</c> damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/ZeratulWarpBlades=Warp Blades
+Affix/Tooltip/ZeratulWarpBlades=Basic Attacks deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/ZeratulPhaseShift=Phase Shift
+Affix/Tooltip/ZeratulPhaseShift=Reduce Blink's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/ZeratulDarknessDescendsBoon=Darkness Descends
+Affix/Tooltip/ZeratulDarknessDescendsBoon=Gain the talent <c val="#TooltipNumbers">Darkness Descends</c>: activate to gain Attack Speed.
+Affix/Name/ZeratulShadowStrike=Shadow Strike
+Affix/Tooltip/ZeratulShadowStrike=Each Basic Attack on an enemy Hero takes <c val="#TooltipNumbers">0.25</c> seconds off Cleave's cooldown.
+Affix/Name/ZeratulRendingBlade=Rending Blade
+Affix/Tooltip/ZeratulRendingBlade=Each Basic Attack on an enemy Hero removes <c val="#TooltipNumbers">2</c> Armor for <c val="#TooltipNumbers">3</c> seconds, stacking up to <c val="#TooltipNumbers">5</c> times.
+Affix/Name/ZeratulTwilightStrikes=Twilight Strikes
+Affix/Tooltip/ZeratulTwilightStrikes=Basic Attacks on enemy Heroes also deal <c val="#TooltipNumbers">1.5%</c> of their maximum Health as damage.
+Button/Name/ZeratulWarpStrikeTokenCounter=Warp Strike
+Button/Tooltip/ZeratulWarpStrikeTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZeratulWarpStrikeTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/ZeratulNerazimTokenCounter=Nerazim
+Button/Tooltip/ZeratulNerazimTokenCounter=<c val="#TooltipQuest">Nerazim stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZeratulNerazimTokenCounter$" precision="0"/></c></c><n/>Every <c val="#TooltipNumbers">10</c> stacks, Vorpal Blade stores <c val="#TooltipNumbers">1</c> more charge (up to <c val="#TooltipNumbers">2</c>). Each stack past <c val="#TooltipNumbers">20</c> adds <c val="#TooltipNumbers">1%</c> Basic Attack damage.
+Affix/Name/ZeratulShadowStep=Shadow Step
+Affix/Tooltip/ZeratulShadowStep=Vorpal Blade recharges <c val="#TooltipNumbers">1</c> second faster.
+Affix/Name/ZeratulShroudOfAdunBoon=Shroud of Adun
+Affix/Tooltip/ZeratulShroudOfAdunBoon=Gain the talent <c val="#TooltipNumbers">Shroud of Adun</c>: gain a Shield while under Permanent Cloak.
+Behavior/Name/ZeratulSunderDebuff=Sunder
+Behavior/Tooltip/ZeratulSunderDebuff=Armor reduced by Zeratul's Cleave.
+Behavior/Name/ZeratulCollapseDebuff=Collapse
+Behavior/Tooltip/ZeratulCollapseDebuff=Armor reduced by Zeratul's Singularity Spike.
+Behavior/Name/ZeratulRendingBladeDebuff=Rending Blade
+Behavior/Tooltip/ZeratulRendingBladeDebuff=Armor reduced by Zeratul's Basic Attacks.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

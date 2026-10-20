@@ -16347,6 +16347,524 @@
             </String>
         </Instances>
 
+        <Instances Id="ZeratulVoidBlade">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZeratulMasteryGreaterCleaveCleave">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZeratulRendingCleave">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZeratulCleaveMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZeratulVoidEdgeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZeratulShadowWalkTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZeratulShadowWalkTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZeratulVoidEdgeTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulCleave,Cost.Cooldown.TimeUse 4">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,ZeratulCleave,Cost.Vital[Energy] -20">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ZeratulCleaveDamage,MultiplicativeModifierArray[ZeratulCleavePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,ZeratulCleaveRendingCleaveDamage,MultiplicativeModifierArray[ZeratulCleavePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_ZeratulStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZeratulTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulPsionicEdge">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulVoidBlade">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZeratulCleaveDamage,MultiplicativeModifierArray[ZeratulCleaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ZeratulCleaveRendingCleaveDamage,MultiplicativeModifierArray[ZeratulCleaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulSwiftCleave">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulVoidBlade">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZeratulCleave,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulVoidSlashBoon">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulVoidBlade">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZeratulVoidSlash">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulVoidStep">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulVoidBlade">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulVoidStepMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulSunder">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulVoidBlade">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulSunderMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulVoidRift">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulVoidBlade">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulVoidRiftMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulSingularity">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_singularityspike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZeratulSeekerInTheDark">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZeratulSentencedtoDeath">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZeratulSpikeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZeratulGravityTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZeratulEventHorizonTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZeratulEventHorizonTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZeratulGravityTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulSingularitySpike,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulSingularitySpike,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulSingularitySpike,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulSingularitySpike,Cost.Charge.TimeUse 7">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulSingularitySpike,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,ZeratulSingularitySpike,Cost.Vital[Energy] -35">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,ZeratulSingularitySpikeDamage,MultiplicativeModifierArray[ZeratulSpikePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_ZeratulStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZeratulTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulDarkMatter">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_singularityspike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulSingularity">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZeratulSingularitySpikeDamage,MultiplicativeModifierArray[ZeratulSpikeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulQuickSpike">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_singularityspike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulSingularity">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZeratulSingularitySpike,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulWormholeBoon">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulSingularity">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZeratulWormhole">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulGravityWell">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulSingularity">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulGravityWellMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulCollapse">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_singularityspike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulSingularity">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulCollapseMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulCollapsingStar">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_singularityspike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulSingularity">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulCollapsingStarMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulDarkTemplar">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_vorpalblade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZeratulMasterWarpBlade">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZeratulMendingStrikes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZeratulBladeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZeratulWarpStrikeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZeratulNerazimTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZeratulNerazimTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZeratulWarpStrikeTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZeratulBlinkStorm,Cost.Cooldown.TimeUse 7">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,ZeratulBlinkStorm,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,VorpalBladeBlink,Cost[0].Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,ZeratulHeroWeaponDamage,MultiplicativeModifierArray[ZeratulBladePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_ZeratulStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZeratulTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulWarpBlades">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_vorpalblade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulDarkTemplar">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZeratulHeroWeaponDamage,MultiplicativeModifierArray[ZeratulBladeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulPhaseShift">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulDarkTemplar">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZeratulBlinkStorm,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulDarknessDescendsBoon">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_vorpalblade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulDarkTemplar">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZeratulDarknessDescends">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulShadowStrike">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulDarkTemplar">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulShadowStrikeMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulRendingBlade">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_vorpalblade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulDarkTemplar">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulRendingBladeMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulTwilightStrikes">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_vorpalblade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZeratulDarkTemplar">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZeratulTwilightStrikesMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulShadowStep">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zeratul_vorpalblade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,VorpalBladeBlink,Cost[0].Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZeratulShroudOfAdunBoon">
+            <String String="Assets/Textures/storm_ui_icon_zeratul_cloak.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zeratul">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZeratulShroudofAdun">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

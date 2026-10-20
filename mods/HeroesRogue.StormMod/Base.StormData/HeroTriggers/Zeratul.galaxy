@@ -1,0 +1,239 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Zeratul. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token
+// and heal; takedowns in the window add the takedown token.
+// Void Blade, Shadow Walk quest: 1% of Blink's 10 second cooldown per stack, up to 30%; then 1% Cleave damage each.
+// Void Rift (Legendary): those takedowns reset Cleave and Blink.
+// Singularity, Event Horizon quest: every 15 stacks 1 more Singularity Spike charge, up to 2; past 30 stacks 1% damage.
+// Collapsing Star (Legendary): each Singularity Spike is cast again 0.4 seconds later.
+// Dark Templar, Nerazim quest: every 10 stacks 1 more Vorpal Blade charge, up to 2; past 20 stacks 1% Basic Attack
+// damage each.
+// ============================================================
+
+const fixed libAffx_ZeratulTakedownWindow = 3.0;
+const fixed libAffx_ZeratulPastCapDamagePerStack = 0.01;
+bool libAffx_ZeratulStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZeratulCleaveTime; // per enemy player, last Void Blade hit
+int libAffx_ZeratulCleaveAdded; // Void Blade: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZeratulSpikeTime; // per enemy player, last Singularity hit
+int libAffx_ZeratulSpikeAdded; // Singularity: charges added by the takedown quest this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZeratulBladeTime; // per enemy player, last Dark Templar hit
+int libAffx_ZeratulBladeAdded; // Dark Templar: charges added by the takedown quest this game
+
+unit libAffx_ZeratulHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ZeratulIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_ZeratulStacks(string tokenId) {
+    unit hero = libAffx_ZeratulHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_ZeratulQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_ZeratulInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_ZeratulTakedownWindow;
+}
+// ZeratulShadowWalkTokenCounter: 1% of Blink's 10 second cooldown per stack, up to 30%, then Cleave damage
+void libAffx_ZeratulSyncCleave () {
+    unit hero = libAffx_ZeratulHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZeratulCleaveMarker")) {
+        return;
+    }
+    stacks = libAffx_ZeratulStacks("ZeratulShadowWalkTokenCounter");
+    wanted = MinI(stacks, 30);
+    if (wanted != libAffx_ZeratulCleaveAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZeratulBlinkStorm,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZeratulCleaveAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZeratulCleaveAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_ZeratulPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZeratulCleaveDamage", "MultiplicativeModifierArray[ZeratulCleaveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZeratulCleaveRendingCleaveDamage", "MultiplicativeModifierArray[ZeratulCleaveLegacy].Modifier", libAffx_player, bonus);
+}
+// ZeratulEventHorizonTokenCounter: 1 more Singularity Spike charge per 15 stacks, up to 2, then damage
+void libAffx_ZeratulSyncSpike () {
+    unit hero = libAffx_ZeratulHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZeratulSpikeMarker")) {
+        return;
+    }
+    stacks = libAffx_ZeratulStacks("ZeratulEventHorizonTokenCounter");
+    wanted = MinI(2, stacks / 15);
+    if (wanted != libAffx_ZeratulSpikeAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZeratulSingularitySpike,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_ZeratulSpikeAdded), c_upgradeOperationAdd);
+        libAffx_ZeratulSpikeAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_ZeratulPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZeratulSingularitySpikeDamage", "MultiplicativeModifierArray[ZeratulSpikeLegacy].Modifier", libAffx_player, bonus);
+}
+// ZeratulNerazimTokenCounter: 1 more Vorpal Blade charge per 10 stacks, up to 2, then Basic Attack damage
+void libAffx_ZeratulSyncBlade () {
+    unit hero = libAffx_ZeratulHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZeratulBladeMarker")) {
+        return;
+    }
+    stacks = libAffx_ZeratulStacks("ZeratulNerazimTokenCounter");
+    wanted = MinI(2, stacks / 10);
+    if (wanted != libAffx_ZeratulBladeAdded) {
+        libAffx_CatalogReferenceModify("Abil,VorpalBladeBlink,Cost[0].Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_ZeratulBladeAdded), c_upgradeOperationAdd);
+        libAffx_ZeratulBladeAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 20)) * libAffx_ZeratulPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZeratulHeroWeaponDamage", "MultiplicativeModifierArray[ZeratulBladeLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_ZeratulSync_Func (bool testConds, bool runActions) {
+    libAffx_ZeratulSyncCleave();
+    libAffx_ZeratulSyncSpike();
+    libAffx_ZeratulSyncBlade();
+    return true;
+}
+fixed libAffx_ZeratulZeratulSingularitySpikeInitialSetLastEcho = -1.0;
+// ZeratulCollapsingStarMarker: ZeratulSingularitySpikeInitialSet is cast again toward the same point 0.4 seconds later. The echo is skipped by its own event.
+bool libAffx_ZeratulZeratulSingularitySpikeInitialSetEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ZeratulHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "ZeratulCollapsingStarMarker") || GameGetMissionTime() == libAffx_ZeratulZeratulSingularitySpikeInitialSetLastEcho) {
+        return false;
+    }
+    Wait(0.4, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_ZeratulZeratulSingularitySpikeInitialSetLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "ZeratulSingularitySpikeInitialSet", target);
+    return true;
+}
+// Void Blade hit on an enemy Hero: takedown window, ZeratulVoidEdgeTokenCounter, the heal, and on-hit boons
+bool libAffx_ZeratulCleaveHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZeratulHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZeratulIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZeratulCleaveMarker")) {
+        return false;
+    }
+    libAffx_ZeratulCleaveTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZeratulVoidEdgeTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "ZeratulCleaveHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulVoidStepMarker")) {
+        UnitCreateEffectUnit(hero, "ZeratulVoidStepModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulSunderMarker")) {
+        UnitCreateEffectUnit(hero, "ZeratulSunderApply", victim);
+    }
+    return true;
+}
+// Singularity hit on an enemy Hero: takedown window, ZeratulGravityTokenCounter, the heal, and on-hit boons
+bool libAffx_ZeratulSpikeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZeratulHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZeratulIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZeratulSpikeMarker")) {
+        return false;
+    }
+    libAffx_ZeratulSpikeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZeratulGravityTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "ZeratulSpikeHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulGravityWellMarker")) {
+        UnitCreateEffectUnit(hero, "ZeratulGravityWellModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulCollapseMarker")) {
+        UnitCreateEffectUnit(hero, "ZeratulCollapseApply", victim);
+    }
+    return true;
+}
+// Dark Templar hit on an enemy Hero: takedown window, ZeratulWarpStrikeTokenCounter, the heal, and on-hit boons
+bool libAffx_ZeratulBladeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZeratulHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZeratulIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZeratulBladeMarker")) {
+        return false;
+    }
+    libAffx_ZeratulBladeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZeratulWarpStrikeTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "ZeratulBladeHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulShadowStrikeMarker")) {
+        UnitCreateEffectUnit(hero, "ZeratulShadowStrikeModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulRendingBladeMarker")) {
+        UnitCreateEffectUnit(hero, "ZeratulRendingBladeApply", victim);
+    }
+    if (UnitHasBehavior2(hero, "ZeratulTwilightStrikesMarker") && UnitIsAlive(victim)) {
+        UnitDamage(hero, "ZeratulTwilightStrikesDamage", victim, UnitGetPropertyFixed(victim, c_unitPropLifeMax, c_unitPropCurrent) * 0.015);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_ZeratulTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_ZeratulHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "ZeratulCleaveMarker") && libAffx_ZeratulInWindow(libAffx_ZeratulCleaveTime[killedPlayer], now)) {
+        libAffx_ZeratulCleaveTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZeratulShadowWalkTokenCounter", hero);
+        libAffx_ZeratulSyncCleave();
+        libAffx_ZeratulQuestDing();
+        if (UnitHasBehavior2(hero, "ZeratulVoidRiftMarker")) {
+            UnitCreateEffectUnit(hero, "ZeratulVoidRiftReset", hero);
+        }
+    }
+    if (UnitHasBehavior2(hero, "ZeratulSpikeMarker") && libAffx_ZeratulInWindow(libAffx_ZeratulSpikeTime[killedPlayer], now)) {
+        libAffx_ZeratulSpikeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZeratulEventHorizonTokenCounter", hero);
+        libAffx_ZeratulSyncSpike();
+        libAffx_ZeratulQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "ZeratulBladeMarker") && libAffx_ZeratulInWindow(libAffx_ZeratulBladeTime[killedPlayer], now)) {
+        libAffx_ZeratulBladeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZeratulNerazimTokenCounter", hero);
+        libAffx_ZeratulSyncBlade();
+        libAffx_ZeratulQuestDing();
+    }
+    return true;
+}
+bool libAffx_ZeratulStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_ZeratulStarted) {
+        return true;
+    }
+    libAffx_ZeratulStarted = true;
+    trig = TriggerCreate("libAffx_ZeratulCleaveHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZeratulCleaveDamage");
+    trig = TriggerCreate("libAffx_ZeratulSpikeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZeratulSingularitySpikeDamage");
+    trig = TriggerCreate("libAffx_ZeratulBladeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZeratulHeroWeaponDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ZeratulZeratulSingularitySpikeInitialSetEcho_Func"), libAffx_player, "ZeratulSingularitySpikeInitialSet");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ZeratulSync_Func"), 1.0, c_timeGame);
+    return true;
+}

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Zeratul. Starters: Void Blade (Cleave), Singularity (Singularity Spike) and Dark Templar (Basic Attacks). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Zeratul.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ZeratulCleaveMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulSpikeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulBladeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulVoidStepMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulSunderMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulVoidRiftMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulGravityWellMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulCollapseMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulCollapsingStarMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulShadowStrikeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulRendingBladeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZeratulTwilightStrikesMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Void Blade ===== -->
+  <!-- Void Edge quest (50% kept): 0.5% Cleave damage per enemy Hero hit. Shadow Walk quest: takedowns within 3 seconds of a hit; 1% of Blink's cooldown each up to 30%, then 1% Cleave damage each (script). -->
+  <CBehaviorTokenCounter id="ZeratulVoidEdgeTokenCounter" parent="StormQuestToken">
+    <Face value="ZeratulVoidEdgeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZeratulShadowWalkTokenCounter" parent="StormQuestToken">
+    <Face value="ZeratulShadowWalkTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZeratulVoidEdgeTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZeratulVoidEdgeTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZeratulCleaveDamage">
+    <MultiplicativeModifierArray index="ZeratulCleavePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulCleaveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulCleaveHit" Accumulator="ZeratulVoidEdgeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZeratulCleaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZeratulCleaveRendingCleaveDamage">
+    <MultiplicativeModifierArray index="ZeratulCleavePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulCleaveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulCleaveHit" Accumulator="ZeratulVoidEdgeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZeratulCleaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="ZeratulCleaveHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.03" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="ZeratulVoidEdgeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zeratul_cleave.dds" />
+  </CButton>
+  <CButton id="ZeratulShadowWalkTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zeratul_cleave.dds" />
+  </CButton>
+
+  <!-- ===== Singularity ===== -->
+  <!-- Gravity quest (50% kept): 0.5% Singularity Spike damage per enemy Hero hit. Event Horizon quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
+  <CBehaviorTokenCounter id="ZeratulGravityTokenCounter" parent="StormQuestToken">
+    <Face value="ZeratulGravityTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZeratulEventHorizonTokenCounter" parent="StormQuestToken">
+    <Face value="ZeratulEventHorizonTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZeratulGravityTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZeratulGravityTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZeratulSingularitySpikeDamage">
+    <MultiplicativeModifierArray index="ZeratulSpikePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulSpikeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulSpikeHit" Accumulator="ZeratulGravityTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZeratulSpikeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="ZeratulSpikeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.04" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="ZeratulGravityTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zeratul_singularityspike.dds" />
+  </CButton>
+  <CButton id="ZeratulEventHorizonTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zeratul_singularityspike.dds" />
+  </CButton>
+
+  <!-- ===== Dark Templar ===== -->
+  <!-- Basic Attacks. Warp Strike quest (50% kept): 0.1% Basic Attack damage per Basic Attack on an enemy Hero. Nerazim quest: takedowns within 3 seconds of a Basic Attack hit; every 10 stacks 1 more Vorpal Blade charge (up to 2), past 20 stacks 1% damage each (script). -->
+  <CBehaviorTokenCounter id="ZeratulWarpStrikeTokenCounter" parent="StormQuestToken">
+    <Face value="ZeratulWarpStrikeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZeratulNerazimTokenCounter" parent="StormQuestToken">
+    <Face value="ZeratulNerazimTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZeratulWarpStrikeTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZeratulWarpStrikeTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZeratulHeroWeaponDamage">
+    <MultiplicativeModifierArray index="ZeratulBladePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulBladeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZeratulBladeHit" Accumulator="ZeratulWarpStrikeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZeratulBladeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="ZeratulBladeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="ZeratulWarpStrikeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zeratul_vorpalblade.dds" />
+  </CButton>
+  <CButton id="ZeratulNerazimTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zeratul_vorpalblade.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Void Step (Rare, Void Blade): Cleave hits on Heroes take 1 second off Blink -->
+  <CEffectModifyUnit id="ZeratulVoidStepModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ZeratulBlinkStorm,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Sunder (Epic): Cleave hits on Heroes take 10 Armor for 3 seconds -->
+  <CBehaviorBuff id="ZeratulSunderDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_zeratul_cleave.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-10" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZeratulSunderApply">
+    <Behavior value="ZeratulSunderDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Void Rift (Legendary): a takedown within 3 seconds of a Cleave hit resets Cleave and Blink -->
+  <CEffectModifyUnit id="ZeratulVoidRiftResetCleave">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ZeratulCleave,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="ZeratulVoidRiftResetBlink">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ZeratulBlinkStorm,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+  <CEffectSet id="ZeratulVoidRiftReset">
+    <EffectArray value="ZeratulVoidRiftResetCleave" />
+    <EffectArray value="ZeratulVoidRiftResetBlink" />
+  </CEffectSet>
+  <!-- Gravity Well (Rare, Singularity): Singularity Spike hits on Heroes take 2 seconds off Cleave -->
+  <CEffectModifyUnit id="ZeratulGravityWellModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ZeratulCleave,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <!-- Collapse (Epic): Singularity Spike hits on Heroes take 10 Armor for 4 seconds -->
+  <CBehaviorBuff id="ZeratulCollapseDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_zeratul_singularityspike.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="4" />
+    <ArmorModification>
+      <AllArmorBonus value="-10" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZeratulCollapseApply">
+    <Behavior value="ZeratulCollapseDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Shadow Strike (Rare, Dark Templar): Basic Attacks on Heroes take 0.25 seconds off Cleave -->
+  <CEffectModifyUnit id="ZeratulShadowStrikeModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ZeratulCleave,Execute" CooldownOperation="Add" CooldownTimeUse="-0.25" ChargeTimeUse="-0.25" />
+  </CEffectModifyUnit>
+  <!-- Rending Blade (Epic): Basic Attacks on Heroes take 2 Armor for 3 seconds, stacking up to 5 times -->
+  <CBehaviorBuff id="ZeratulRendingBladeDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_zeratul_vorpalblade.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="5" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-2" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZeratulRendingBladeApply">
+    <Behavior value="ZeratulRendingBladeDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Twilight Strikes (Legendary, Dark Templar): Basic Attacks on Heroes also deal 1.5% of their maximum Health (script) -->
+  <CEffectDamage id="ZeratulTwilightStrikesDamage" parent="StormSpell">
+    <Amount value="0" />
+  </CEffectDamage>
+</Catalog>
