@@ -21,7 +21,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Shuriken Storm ===== -->
   <!-- Hail of Steel quest (50% kept between games): each Shuriken hitting an enemy Hero, 0.5% Shuriken damage each.
        Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken hit, 1% Shuriken damage each, and
-       every 15 stacks 1 more Shuriken charge, up to 3 (script). -->
+       every 15 stacks 1 more Shuriken per throw, up to 3 (script). -->
   <CBehaviorTokenCounter id="GenjiHailOfSteelTokenCounter" parent="StormQuestToken">
     <Face value="GenjiHailOfSteelTokenCounter" />
     <Max value="100000" />
@@ -71,6 +71,32 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
     <MultiplicativeModifierArray index="GenjiThousandCuts" Accumulator="GenjiThousandCutsAccumulator" />
   </CEffectDamage>
+  <!-- Thousand Cuts milestones: up to 3 more Shuriken per throw, at 20 degrees left, 20 right and 30 left (base: 0 and 10
+       each side). The throw's persistent fires one periodic effect per period; the extra ones are Chance 0 sets the
+       script turns on per player, so every other Genji's throw is unchanged. -->
+  <CEffectSet id="GenjiShurikenExtra1">
+    <Chance value="0" />
+    <EffectArray value="GenjiShurikenLaunchMissileLeft" />
+  </CEffectSet>
+  <CEffectSet id="GenjiShurikenExtra2">
+    <Chance value="0" />
+    <EffectArray value="GenjiShurikenLaunchMissileRight" />
+  </CEffectSet>
+  <CEffectSet id="GenjiShurikenExtra3">
+    <Chance value="0" />
+    <EffectArray value="GenjiShurikenLaunchMissileLeft" />
+  </CEffectSet>
+  <CEffectCreatePersistent id="GenjiShurikenLaunchPersistent">
+    <PeriodCount value="8" />
+    <PeriodicEffectArray index="5" value="GenjiShurikenExtra1" />
+    <PeriodicEffectArray index="6" value="GenjiShurikenExtra2" />
+    <PeriodicEffectArray index="7" value="GenjiShurikenExtra3" />
+    <PeriodicOffsetArray index="3" Y="-11" />
+    <PeriodicOffsetArray index="4" Y="-11" />
+    <PeriodicOffsetArray index="5" X="3.762" Y="-10.337" />
+    <PeriodicOffsetArray index="6" X="-3.762" Y="-10.337" />
+    <PeriodicOffsetArray index="7" X="5.5" Y="-9.526" />
+  </CEffectCreatePersistent>
   <!-- Shuriken Storm: Hail of Steel also adds Deflect damage, and Thousand Cuts lengthens Deflect (script) -->
   <CEffectDamage id="GenjiDeflectDamage">
     <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />

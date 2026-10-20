@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Genji
 // Shuriken Storm, Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken or Deflect hit adds 1% Shuriken
-// damage (GenjiData.xml), every 15 stacks 1 more Shuriken charge, up to 3, and each stack 0.02 seconds of Deflect, up
+// damage (GenjiData.xml), every 15 stacks 1 more Shuriken per throw, up to 3, and each stack 0.02 seconds of Deflect, up
 // to 1.25 more seconds. Thousand Blades (Legendary): each Shuriken throw is thrown again 0.3 seconds later.
 // Blade of the Shimada, Shimada Legacy quest: an enemy Hero takedown within 3 seconds of a Swift Strike hit lowers Swift
 // Strike's cooldown by 1% of its 8 seconds, up to 25%; each stack past that adds 1% Swift Strike damage instead. Iaido
@@ -18,8 +18,8 @@ include "AffixTriggers"
 // ============================================================
 
 const fixed libAffx_genjiTakedownWindow = 3.0;
-const int libAffx_genjiStacksPerCharge = 15; // Thousand Cuts: stacks per extra Shuriken charge
-const int libAffx_genjiMaxBonusCharges = 3;
+const int libAffx_genjiStacksPerExtraShuriken = 15; // Thousand Cuts: stacks per extra Shuriken per throw
+const int libAffx_genjiMaxExtraShuriken = 3; // GenjiShurikenExtra1..3 in GenjiData.xml
 const fixed libAffx_genjiDeflectPerStack = 0.02; // Thousand Cuts: seconds of Deflect per stack
 const fixed libAffx_genjiDeflectMaxAdded = 1.25; // doubles Deflect's 1.25 seconds
 const fixed libAffx_genjiSwiftCooldownPerStack = 0.08; // Shimada Legacy: 1% of Swift Strike's 8 second cooldown
@@ -32,7 +32,7 @@ const fixed libAffx_genjiExecuteLifePercent = 30.0;
 const fixed libAffx_genjiThousandBladesDelay = 0.3;
 
 bool libAffx_genjiStarted;
-int libAffx_genjiChargesAdded; // Shuriken charges added by Thousand Cuts this game
+int libAffx_genjiExtraShuriken; // extra Shuriken per throw turned on by Thousand Cuts this game
 fixed libAffx_genjiDeflectAdded; // Deflect seconds added by Thousand Cuts this game
 fixed libAffx_genjiSwiftCooldownAdded; // Swift Strike cooldown taken off by Shimada Legacy this game
 fixed libAffx_genjiDragonCooldownAdded; // Dragonblade cooldown taken off by Dragon Soul this game
@@ -63,19 +63,26 @@ void libAffx_GenjiQuestDing() {
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
 }
 
-// Thousand Cuts: 1 more Shuriken charge per 15 stacks, up to 3, and a longer Deflect
+// Thousand Cuts: 1 more Shuriken per throw per 15 stacks, up to 3, and a longer Deflect
 void libAffx_GenjiSyncShuriken () {
     unit hero = libAffx_GenjiHero();
     int wanted;
+    int i;
     fixed deflect;
     string delta;
     if (hero == null || !UnitHasBehavior2(hero, "GenjiShurikenStormMarker")) {
         return;
     }
-    wanted = MinI(libAffx_genjiMaxBonusCharges, libAffx_GenjiStacks("GenjiThousandCutsTokenCounter") / libAffx_genjiStacksPerCharge);
-    if (wanted != libAffx_genjiChargesAdded) {
-        libAffx_CatalogReferenceModify("Abil,GenjiShuriken,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_genjiChargesAdded), c_upgradeOperationAdd);
-        libAffx_genjiChargesAdded = wanted;
+    wanted = MinI(libAffx_genjiMaxExtraShuriken, libAffx_GenjiStacks("GenjiThousandCutsTokenCounter") / libAffx_genjiStacksPerExtraShuriken);
+    if (wanted != libAffx_genjiExtraShuriken) {
+        for (i = 1; i <= libAffx_genjiMaxExtraShuriken; i += 1) {
+            if (i <= wanted) {
+                CatalogFieldValueSet(c_gameCatalogEffect, "GenjiShurikenExtra" + IntToString(i), "Chance", libAffx_player, "1");
+            } else {
+                CatalogFieldValueSet(c_gameCatalogEffect, "GenjiShurikenExtra" + IntToString(i), "Chance", libAffx_player, "0");
+            }
+        }
+        libAffx_genjiExtraShuriken = wanted;
     }
     // Deflect's protection behavior has its own duration, so both are lengthened
     deflect = MinF(libAffx_genjiDeflectMaxAdded, IntToFixed(libAffx_GenjiStacks("GenjiThousandCutsTokenCounter")) * libAffx_genjiDeflectPerStack);
