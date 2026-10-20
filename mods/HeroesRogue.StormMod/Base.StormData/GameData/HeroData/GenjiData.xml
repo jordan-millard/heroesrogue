@@ -39,6 +39,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <TokenId value="GenjiHailOfSteelTokenCounter" />
   </CEffectModifyTokenCount>
+  <!-- Shuriken Storm: each Shuriken hitting an enemy Hero heals Genji for 2% of his maximum Health -->
+  <CEffectModifyUnit id="GenjiShurikenStormHeal">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
   <CBehaviorTokenCounter id="GenjiThousandCutsTokenCounter" parent="StormQuestToken">
     <Face value="GenjiThousandCutsTokenCounter" />
     <Max value="100000" />
@@ -91,16 +100,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
   <CEffectSet id="GenjiShurikenImpactSetCenter">
     <EffectArray value="GenjiHailOfSteelAddToken" />
+    <EffectArray value="GenjiShurikenStormHeal" />
     <EffectArray value="GenjiRicochetModifyCooldown" />
     <EffectArray value="GenjiShredApply" />
   </CEffectSet>
   <CEffectSet id="GenjiShurikenImpactSetLeft">
     <EffectArray value="GenjiHailOfSteelAddToken" />
+    <EffectArray value="GenjiShurikenStormHeal" />
     <EffectArray value="GenjiRicochetModifyCooldown" />
     <EffectArray value="GenjiShredApply" />
   </CEffectSet>
   <CEffectSet id="GenjiShurikenImpactSetRight">
     <EffectArray value="GenjiHailOfSteelAddToken" />
+    <EffectArray value="GenjiShurikenStormHeal" />
     <EffectArray value="GenjiRicochetModifyCooldown" />
     <EffectArray value="GenjiShredApply" />
   </CEffectSet>

@@ -13591,7 +13591,7 @@
             <String String="GenjiShurikenShurikenMastery">
                 <Field Id="TalentsAdd" />
             </String>
-            <String String="GenjiShurikenShingan">
+            <String String="GenjiShurikenSharpenedStars">
                 <Field Id="TalentsAdd" Index="1" />
             </String>
             <String String="1 0 GenjiShurikenStormMarker">
@@ -13626,6 +13626,9 @@
             </String>
             <String String="1 1 Set Effect,GenjiShurikenShinganBonusDamage,MultiplicativeModifierArray[GenjiShurikenPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,GenjiShurikenStormHeal,Chance 1">
+                <Field Id="CatalogModification" Index="6" />
             </String>
             <String String="AffixAdded libAffx_GenjiStart">
                 <Field Id="Trigger" />
@@ -13690,7 +13693,7 @@
             <User Type="Affix" Instance="GenjiShurikenStorm">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="GenjiShurikenSharpenedStars">
+            <String String="GenjiShurikenShingan">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
