@@ -39,13 +39,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <TokenId value="GenjiHailOfSteelTokenCounter" />
   </CEffectModifyTokenCount>
-  <!-- Shuriken Storm: each Shuriken hitting an enemy Hero heals Genji for 2% of his maximum Health -->
+  <!-- Shuriken Storm: each Shuriken hitting an enemy Hero heals Genji for 4% of his maximum Health -->
   <CEffectModifyUnit id="GenjiShurikenStormHeal">
     <Chance value="0" />
     <ValidatorArray value="TargetIsHero" />
     <ImpactUnit Value="Caster" />
     <VitalArray index="Life">
-      <ChangeFraction value="0.02" />
+      <ChangeFraction value="0.04" />
     </VitalArray>
   </CEffectModifyUnit>
   <CBehaviorTokenCounter id="GenjiThousandCutsTokenCounter" parent="StormQuestToken">

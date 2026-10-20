@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Genji
-// Shuriken Storm, Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken hit adds 1% Shuriken
+// Shuriken Storm, Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken or Deflect hit adds 1% Shuriken
 // damage (GenjiData.xml), every 15 stacks 1 more Shuriken charge, up to 3, and each stack 0.02 seconds of Deflect, up
 // to 1.25 more seconds. Thousand Blades (Legendary): each Shuriken throw is thrown again 0.3 seconds later.
 // Blade of the Shimada, Shimada Legacy quest: an enemy Hero takedown within 3 seconds of a Swift Strike hit lowers Swift
@@ -141,7 +141,7 @@ bool libAffx_GenjiSync_Func (bool testConds, bool runActions) {
     return true;
 }
 
-// Shuriken hit on an enemy Hero: opens the Thousand Cuts takedown window
+// Shuriken or Deflect hit on an enemy Hero: opens the Thousand Cuts takedown window
 bool libAffx_GenjiShurikenHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GenjiIsEnemyHero(victim)) {
@@ -238,11 +238,15 @@ bool libAffx_GenjiTakedown (bool testConds, bool runActions) {
 
 // AffixAdded for all three starters
 bool libAffx_GenjiStart (bool testConds, bool runActions) {
+    trigger trig;
     if (libAffx_genjiStarted) {
         return true;
     }
     libAffx_genjiStarted = true;
-    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GenjiShurikenHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiShurikenDamage");
+    trig = TriggerCreate("libAffx_GenjiShurikenHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiShurikenDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiDeflectDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiDeflectDragonClawDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GenjiSwiftHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiSwiftStrikeDamage");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GenjiDragonHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GenjiDragonbladeAttackDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GenjiShurikenThrown_Func"), libAffx_player, "GenjiShurikenLaunchPersistent");
