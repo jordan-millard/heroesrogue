@@ -3,6 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Kael'thas. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token
 // and heal; takedowns in the window add the takedown token.
+// Sunfire: a Verdant Spheres Flamestrike lands at normal size, then sends out two rings of fire.
 // Sunfire, Sunwell quest: 1% Flamestrike radius per stack, up to 30%; then 1% Flamestrike damage
 // each. Twin Suns (Legendary): each Flamestrike is cast again 0.5 seconds later.
 // Bombardier, Chain Detonation quest: every 15 stacks 1 more Living Bomb charge, up to 2; past 30 stacks 1% damage.
@@ -21,6 +22,8 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasBombTime; // per enemy playe
 int libAffx_KaelthasBombAdded; // Bombardier: charges added by the takedown quest this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasPyroTime; // per enemy player, last Pyromancer hit
 int libAffx_KaelthasPyroAdded; // Pyromancer: takedown stacks already applied to the catalog this game
+const fixed libAffx_KaelthasSunfireRingDelay = 0.35; // between the Verdant Spheres Flamestrike and each ring
+bool libAffx_KaelthasSunfireRings; // the ring visuals upgrade was given
 int libAffx_KaelthasSunwellScale; // Sunwell scale upgrade levels given this game
 bool libAffx_KaelthasBombVerdant; // the Living Bomb being cast is empowered by Verdant Spheres
 string libAffx_KaelthasBombEnergy; // Living Bomb's real Mana cost and cooldown, outside Verdant Spheres
@@ -50,7 +53,7 @@ void libAffx_KaelthasQuestDing() {
 bool libAffx_KaelthasInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_KaelthasTakedownWindow;
 }
-// KaelthasSunwellTokenCounter: 1% Flamestrike radius per stack (of 2, or 3 with Verdant Spheres), up to 30%, then Flamestrike damage
+// KaelthasSunwellTokenCounter: 1% Flamestrike radius per stack (centre 2, rings 2-4 and 4-6), up to 30%, then Flamestrike damage
 void libAffx_KaelthasSyncFlamestrike () {
     unit hero = libAffx_KaelthasHero();
     int stacks;
@@ -64,10 +67,14 @@ void libAffx_KaelthasSyncFlamestrike () {
     if (wanted != libAffx_KaelthasFlamestrikeAdded) {
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeSearchAreaBurnedFlesh,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KaelthasFlameStrikeVerdantSpheresBurnedFleshSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlameStrikeVerdantSpheresBurnedFleshSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasSunfireRing1Search,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.04, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Validator,KaelthasSunfireRing1Outside,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasSunfireRing2Search,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Validator,KaelthasSunfireRing2Outside,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.04, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeIgniteSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresIgniteSearchAreaUnnamed,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresIgniteSearchAreaUnnamed,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasFlamestrikeAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KaelthasPastCapDamagePerStack, c_fixedPrecisionAny);
@@ -178,8 +185,13 @@ bool libAffx_KaelthasFlamestrikeCursor_Func (bool testConds, bool runActions) {
     if (hero == null || !UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker")) {
         return false;
     }
+    if (!libAffx_KaelthasSunfireRings) {
+        libAffx_KaelthasSunfireRings = true;
+        TechTreeUpgradeAddLevel(libAffx_player, "KaelthasSunfireRingsUpgrade", 1);
+    }
+    // with Verdant Spheres the circle shows how far the outer ring reaches
     if (UnitHasBehavior2(hero, "KaelthasVerdantSpheresActive")) {
-        radius = 3.0;
+        radius = 6.0;
     }
     stacks = MinI(libAffx_KaelthasStacks("KaelthasSunwellTokenCounter"), 30);
     radius = radius * (1.0 + 0.01 * IntToFixed(stacks));
@@ -187,6 +199,38 @@ bool libAffx_KaelthasFlamestrikeCursor_Func (bool testConds, bool runActions) {
     if (stacks / 5 > libAffx_KaelthasSunwellScale) {
         TechTreeUpgradeAddLevel(libAffx_player, "KaelthasSunwellScaleUpgrade", stacks / 5 - libAffx_KaelthasSunwellScale);
         libAffx_KaelthasSunwellScale = stacks / 5;
+    }
+    return true;
+}
+// Sunfire: after a Verdant Spheres Flamestrike lands, send out the two rings, with small fire blasts placed around each
+bool libAffx_KaelthasSunfireRings_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_KaelthasHero();
+    point center = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    fixed scale;
+    int i;
+    if (hero == null || center == null || !UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker")) {
+        return false;
+    }
+    scale = 1.0 + 0.01 * IntToFixed(MinI(libAffx_KaelthasStacks("KaelthasSunwellTokenCounter"), 30));
+    Wait(libAffx_KaelthasSunfireRingDelay, c_timeGame);
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    UnitCreateEffectPoint(hero, "KaelthasSunfireRing1Search", center);
+    i = 0;
+    while (i < 6) {
+        UnitCreateEffectPoint(hero, "KaelthasSunfireRingBlast", PointWithOffsetPolar(center, 3.0 * scale, IntToFixed(i) * 60.0));
+        i = i + 1;
+    }
+    Wait(libAffx_KaelthasSunfireRingDelay, c_timeGame);
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    UnitCreateEffectPoint(hero, "KaelthasSunfireRing2Search", center);
+    i = 0;
+    while (i < 10) {
+        UnitCreateEffectPoint(hero, "KaelthasSunfireRingBlast", PointWithOffsetPolar(center, 5.0 * scale, IntToFixed(i) * 36.0 + 18.0));
+        i = i + 1;
     }
     return true;
 }
@@ -319,6 +363,7 @@ bool libAffx_KaelthasStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasKaelthasFlamestrikeInitialSetEcho_Func"), libAffx_player, "KaelthasFlamestrikeInitialSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasVerdantRemember_Func"), 0.25, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasFlamestrikeCursor_Func"), 0.25, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasSunfireRings_Func"), libAffx_player, "KaelthasFlamestrikeVerdantSpheresSearchArea");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_KaelthasVerdantEnded_Func"), null, "KaelthasVerdantSpheresActive", c_unitBehaviorChangeDestroy);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasBombPrep_Func"), libAffx_player, "KaelthasLivingBombPrepSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasBombVerdantRefund_Func"), libAffx_player, "KaelthasLivingBombInitialSet");

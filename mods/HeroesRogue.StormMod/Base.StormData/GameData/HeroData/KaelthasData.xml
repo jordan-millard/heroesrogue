@@ -296,21 +296,95 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
   </CActorModel>
   <CActorModel id="KaelthasFlamestrikeVerdantSpheresWarning">
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 1.05" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 1.10" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 1.15" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 1.20" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 1.25" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunfireRings" Send="SetScale 0.67" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 0.70" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 0.74" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 0.77" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 0.80" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 0.84" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 0.87" />
   </CActorModel>
   <CActorModel id="KaelthasFlamestrikeVerdantSpheresGroundImpact">
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 1.05" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 1.10" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 1.15" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 1.20" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 1.25" />
-    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunfireRings" Send="SetScale 0.67" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 0.70" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 0.74" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 0.77" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 0.80" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 0.84" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 0.87" />
   </CActorModel>
+  <!-- Sunfire: a Verdant Spheres Flamestrike lands at normal size (radius 2), then the script sends out a ring of fire
+       from 2 to 4 and another from 4 to 6, 0.35 seconds apart. Each ring hits only what is past its inner edge, with the
+       Verdant Spheres Flamestrike impact. The Sunwell quest grows every radius (script). -->
+  <CUpgrade id="KaelthasSunfireRingsUpgrade" />
+  <CRequirementCountUpgrade id="KaelthasCountUpgradeSunfireRings">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="KaelthasSunfireRingsUpgrade" State="QueuedOrBetter" />
+  </CRequirementCountUpgrade>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunfireRings1">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunfireRings" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunfireRingsUpgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunfireRings1" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunfireRings1" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunfireRings">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunfireRingsUpgrade" />
+  </CValidatorPlayerRequirement>
+  <CValidatorLocationCompareRange id="KaelthasSunfireRing1Outside">
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="GT" />
+    <Range value="2" />
+    <Value Effect="KaelthasSunfireRing1Search" Value="TargetPoint" />
+  </CValidatorLocationCompareRange>
+  <CEffectSet id="KaelthasSunfireRing1Set">
+    <ValidatorArray value="KaelthasSunfireRing1Outside" />
+    <EffectArray value="KaelthasFlamestrikeVerdantSpheresImpactSet" />
+  </CEffectSet>
+  <CEffectEnumArea id="KaelthasSunfireRing1Search">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="KaelthasSunfireRing1Set">
+      <Radius value="4" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CValidatorLocationCompareRange id="KaelthasSunfireRing2Outside">
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="GT" />
+    <Range value="4" />
+    <Value Effect="KaelthasSunfireRing2Search" Value="TargetPoint" />
+  </CValidatorLocationCompareRange>
+  <CEffectSet id="KaelthasSunfireRing2Set">
+    <ValidatorArray value="KaelthasSunfireRing2Outside" />
+    <EffectArray value="KaelthasFlamestrikeVerdantSpheresImpactSet" />
+  </CEffectSet>
+  <CEffectEnumArea id="KaelthasSunfireRing2Search">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="KaelthasSunfireRing2Set">
+      <Radius value="6" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <!-- ring visuals: small copies of the Flamestrike ground fire placed around each ring (script) -->
+  <CEffectCreatePersistent id="KaelthasSunfireRingBlast">
+    <WhichLocation Value="TargetPoint" />
+  </CEffectCreatePersistent>
+  <CActorModel id="KaelthasSunfireRingBlast" parent="KaelthasFlamestrikeGroundImpact">
+    <Remove Terms="Effect.KaelthasFlamestrikeSearchArea.Start; At Effect" Send="Create" />
+    <On Terms="Effect.KaelthasSunfireRingBlast.Start; At Effect" Send="Create" />
+    <On Terms="ActorCreation" Send="SetScale 0.6" />
+  </CActorModel>
+  <CActorSound id="KaelthasSunfireRingSound" parent="SoundOneShot">
+    <On Terms="Effect.KaelthasSunfireRing1Search.Start; At Effect" Send="Create" />
+    <On Terms="Effect.KaelthasSunfireRing2Search.Start; At Effect" Send="Create" />
+    <Sound value="Kaelthas_Flamestrike_Impact" />
+    <SoundFlags index="UpdateVisibility" value="0" />
+  </CActorSound>
   <!-- Meteor Strike (Epic): Pyroblast hits on Heroes take 4 seconds off Gravity Lapse -->
   <CEffectModifyUnit id="KaelthasMeteorStrikeModifyCooldown">
     <ImpactUnit Value="Caster" />

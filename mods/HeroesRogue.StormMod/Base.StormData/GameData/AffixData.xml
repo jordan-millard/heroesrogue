@@ -16348,6 +16348,7 @@
 
 
 
+
         <Instances Id="KaelthasSunfire">
             <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
                 <Field Id="Icon" />
@@ -16385,20 +16386,29 @@
             <String String="1 1 Add Abil,KaelthasFlamestrike,Cost.Vital[Energy] -40">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,KaelthasFlamestrikeCreatePersistent,PeriodicPeriodArray[0] 0.7">
+            <String String="1 1 Set Effect,KaelthasFlamestrikeVerdantSpheresSearchArea,AreaArray[0].Radius 2">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,KaelthasFlamestrikeVerdantSpheresCreatePersistent,PeriodicPeriodArray[0] 0.7">
+            <String String="1 1 Set Effect,KaelthasFlameStrikeVerdantSpheresBurnedFleshSearchArea,AreaArray[0].Radius 2">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,KaelthasFlamestrikeFuryOfTheSunwellCreatePersistent,PeriodicPeriodArray[0] 0.7">
+            <String String="1 1 Set Effect,KaelthasFlamestrikeVerdantSpheresIgniteSearchAreaUnnamed,AreaArray[0].Radius 2">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,KaelthasFlamestrikeFuryOfTheSunwellVerdantSpheresCreatePersistent,PeriodicPeriodArray[0] 0.7">
+            <String String="1 1 Set Effect,KaelthasFlamestrikeCreatePersistent,PeriodicPeriodArray[0] 0.7">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,KaelthasFlamestrikeDamage,MultiplicativeModifierArray[KaelthasFlamestrikePower].Modifier 0.5">
+            <String String="1 1 Set Effect,KaelthasFlamestrikeVerdantSpheresCreatePersistent,PeriodicPeriodArray[0] 0.7">
                 <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasFlamestrikeFuryOfTheSunwellCreatePersistent,PeriodicPeriodArray[0] 0.7">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasFlamestrikeFuryOfTheSunwellVerdantSpheresCreatePersistent,PeriodicPeriodArray[0] 0.7">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasFlamestrikeDamage,MultiplicativeModifierArray[KaelthasFlamestrikePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
             </String>
             <String String="AffixAdded libAffx_KaelthasStart">
                 <Field Id="Trigger" />
