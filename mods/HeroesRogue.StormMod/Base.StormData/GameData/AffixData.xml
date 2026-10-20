@@ -15299,535 +15299,6 @@
             </String>
         </Instances>
 
-        <Instances Id="KaelthasSunfire">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KaelthasFlamestrikeConvection">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="KaelthasFlamestrikeFuryOfTheSunwell">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 KaelthasFlamestrikeMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 KaelthasEmberTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 KaelthasSunwellTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="KaelthasSunwellTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="KaelthasEmberTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasFlamestrike,Cost.Cooldown.TimeUse 5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,KaelthasFlamestrike,Cost.Vital[Energy] -35">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,KaelthasFlamestrikeDamage,MultiplicativeModifierArray[KaelthasFlamestrikePower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="AffixAdded libAffx_KaelthasStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_KaelthasTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasBlazingHeat">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasSunfire">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,KaelthasFlamestrikeDamage,MultiplicativeModifierArray[KaelthasFlamestrikeCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasQuickIgnition">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasSunfire">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,KaelthasFlamestrike,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasBurnedFleshBoon">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasSunfire">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KaelthasFlamestrikeBurnedFlesh">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasKindling">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasSunfire">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasKindlingMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasScorch">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasSunfire">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasScorchMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasTwinSuns">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasSunfire">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasTwinSunsMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasBombardier">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KaelthasLivingBombPyromaniac">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="KaelthasLivingBombFissionBomb">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 KaelthasBombMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 KaelthasFuseTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 KaelthasChainDetonationTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="KaelthasChainDetonationTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="KaelthasFuseTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountMax 1">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountStart 1">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.TimeUse 6">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Add Abil,KaelthasLivingBomb,Cost.Vital[Energy] -25">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Set Effect,KaelthasLivingBombImpactDamage,MultiplicativeModifierArray[KaelthasBombPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="6" />
-            </String>
-            <String String="1 1 Set Effect,KaelthasLivingBombDoTDamage,MultiplicativeModifierArray[KaelthasBombPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="1 1 Set Effect,KaelthasLivingBombExplosionDamage,MultiplicativeModifierArray[KaelthasBombPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="8" />
-            </String>
-            <String String="AffixAdded libAffx_KaelthasStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_KaelthasTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasVolatileCore">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasBombardier">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,KaelthasLivingBombImpactDamage,MultiplicativeModifierArray[KaelthasBombCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,KaelthasLivingBombDoTDamage,MultiplicativeModifierArray[KaelthasBombCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,KaelthasLivingBombExplosionDamage,MultiplicativeModifierArray[KaelthasBombCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasShortFuse">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasBombardier">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,KaelthasLivingBomb,Cost.Charge.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasBackdraftBoon">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasBombardier">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KaelthasLivingBombBackdraft">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasChainReaction">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasBombardier">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasChainReactionMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasSearingBomb">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasBombardier">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasSearingMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasIgniteBoon">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasBombardier">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KaelthasLivingBombIgnite">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasPyromancer">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KaelthasHeroicAbilityPyroblast">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="KaelthasPyroblastPresenceOfMind">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="KaelthasHeroicAbilityPhoenix">
-                <Field Id="TalentsDisable" />
-            </String>
-            <String String="1 0 KaelthasPyroMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 KaelthasFirestormTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 KaelthasPhoenixFireTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="KaelthasPhoenixFireTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="KaelthasFirestormTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse 20">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,KaelthasPyroblast,Cost.Vital[Energy] -40">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,KaelthasPyroblastDamage,MultiplicativeModifierArray[KaelthasPyroPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,KaelthasPyroblastSplashDamage,MultiplicativeModifierArray[KaelthasPyroPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="AffixAdded libAffx_KaelthasStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_KaelthasTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasSearingFlames">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasPyromancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,KaelthasPyroblastDamage,MultiplicativeModifierArray[KaelthasPyroCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,KaelthasPyroblastSplashDamage,MultiplicativeModifierArray[KaelthasPyroCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasHeatWave">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasPyromancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse -2">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasManaTapBoon">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_verdantspheres.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasPyromancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KaelthasFlamestrikeManaTap">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasPyroclasm">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasPyromancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasPyroclasmMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasMeteorStrike">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_gravitylapse.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasPyromancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasMeteorStrikeMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasInferno">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KaelthasPyromancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KaelthasInfernoMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasGravityWell">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_gravitylapse.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="1 3 Add Abil,KaelthasGravityLapse,Cost.Cooldown.TimeUse -1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KaelthasFelInfusionBoon">
-            <String String="Assets/Textures/storm_ui_icon_kaelthas_verdantspheres.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kaelthas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KaelthasVerdantSpheresFelInfusion">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
 
 
         <Instances Id="ZeratulVoidBlade">
@@ -16868,6 +16339,536 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="KerriganAssimilationMastery">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="KaelthasSunfire">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KaelthasFlamestrikeConvection">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KaelthasFlamestrikeFuryOfTheSunwell">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KaelthasFlamestrikeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KaelthasEmberTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KaelthasSunwellTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KaelthasSunwellTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KaelthasEmberTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasFlamestrike,Cost.Cooldown.TimeUse 5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,KaelthasFlamestrike,Cost.Vital[Energy] -35">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasFlamestrikeDamage,MultiplicativeModifierArray[KaelthasFlamestrikePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_KaelthasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KaelthasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasBlazingHeat">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasSunfire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KaelthasFlamestrikeDamage,MultiplicativeModifierArray[KaelthasFlamestrikeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasQuickIgnition">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasSunfire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KaelthasFlamestrike,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasBurnedFleshBoon">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasSunfire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KaelthasFlamestrikeBurnedFlesh">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasKindling">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasSunfire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasKindlingMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasScorch">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasSunfire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasScorchMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasTwinSuns">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasSunfire">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasTwinSunsMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasBombardier">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KaelthasLivingBombPyromaniac">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KaelthasLivingBombFissionBomb">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KaelthasBombMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KaelthasFuseTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KaelthasChainDetonationTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KaelthasChainDetonationTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KaelthasFuseTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,KaelthasLivingBomb,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasLivingBombImpactDamage,MultiplicativeModifierArray[KaelthasBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasLivingBombDoTDamage,MultiplicativeModifierArray[KaelthasBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasLivingBombExplosionDamage,MultiplicativeModifierArray[KaelthasBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_KaelthasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KaelthasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasVolatileCore">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasBombardier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KaelthasLivingBombImpactDamage,MultiplicativeModifierArray[KaelthasBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KaelthasLivingBombDoTDamage,MultiplicativeModifierArray[KaelthasBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,KaelthasLivingBombExplosionDamage,MultiplicativeModifierArray[KaelthasBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasShortFuse">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasBombardier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KaelthasLivingBomb,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasBackdraftBoon">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasBombardier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KaelthasLivingBombBackdraft">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasChainReaction">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_flamestrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasBombardier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasChainReactionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasSearingBomb">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasBombardier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasSearingMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasIgniteBoon">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_livingbomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasBombardier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KaelthasLivingBombIgnite">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasPyromancer">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KaelthasHeroicAbilityPyroblast">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KaelthasPyroblastPresenceOfMind">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="KaelthasHeroicAbilityPhoenix">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 KaelthasPyroMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KaelthasFirestormTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KaelthasPhoenixFireTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KaelthasPhoenixFireTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KaelthasFirestormTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse 20">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,KaelthasPyroblast,Cost.Vital[Energy] -40">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasPyroblastDamage,MultiplicativeModifierArray[KaelthasPyroPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,KaelthasPyroblastSplashDamage,MultiplicativeModifierArray[KaelthasPyroPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_KaelthasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KaelthasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasSearingFlames">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasPyromancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KaelthasPyroblastDamage,MultiplicativeModifierArray[KaelthasPyroCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KaelthasPyroblastSplashDamage,MultiplicativeModifierArray[KaelthasPyroCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasHeatWave">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasPyromancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse -2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasManaTapBoon">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_verdantspheres.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasPyromancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KaelthasFlamestrikeManaTap">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasPyroclasm">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasPyromancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasPyroclasmMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasMeteorStrike">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_gravitylapse.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasPyromancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasMeteorStrikeMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasInferno">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_pyroblast.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KaelthasPyromancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KaelthasInfernoMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasGravityWell">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_gravitylapse.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,KaelthasGravityLapse,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KaelthasFelInfusionBoon">
+            <String String="Assets/Textures/storm_ui_icon_kaelthas_verdantspheres.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kaelthas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KaelthasVerdantSpheresFelInfusion">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>

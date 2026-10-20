@@ -186,6 +186,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ImpactUnit Value="Caster" />
     <VitalArray index="Energy" Change="40" />
   </CEffectModifyUnit>
+  <!-- Bombardier: Verdant Spheres normally zeroes Living Bomb's cooldown for the empowered cast, which does nothing
+       once Living Bomb uses charges, so the script refunds the charge instead -->
+  <CEffectModifyUnit id="KaelthasBombVerdantRefund">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="KaelthasLivingBomb,Execute" ChargeCountUse="-1" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
   <!-- Meteor Strike (Epic): Pyroblast hits on Heroes take 4 seconds off Gravity Lapse -->
   <CEffectModifyUnit id="KaelthasMeteorStrikeModifyCooldown">
     <ImpactUnit Value="Caster" />

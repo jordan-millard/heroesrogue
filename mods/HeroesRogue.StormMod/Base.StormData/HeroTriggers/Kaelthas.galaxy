@@ -8,6 +8,8 @@ include "AffixTriggers"
 // Bombardier, Chain Detonation quest: every 15 stacks 1 more Living Bomb charge, up to 2; past 30 stacks 1% damage.
 // Pyromancer, Phoenix Fire quest: 1% of Pyroblast's 20 second cooldown per stack, up to 40%; then 1% damage each.
 // Inferno (Legendary): those takedowns reset Pyroblast.
+// Verdant Spheres: an empowered Living Bomb refunds its charge (Bombardier), and Verdant Spheres ending restores
+// Living Bomb's real Mana cost and cooldown instead of the base 50 Mana and 10 seconds.
 // ============================================================
 
 const fixed libAffx_KaelthasTakedownWindow = 3.0;
@@ -19,6 +21,7 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasBombTime; // per enemy playe
 int libAffx_KaelthasBombAdded; // Bombardier: charges added by the takedown quest this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasPyroTime; // per enemy player, last Pyromancer hit
 int libAffx_KaelthasPyroAdded; // Pyromancer: takedown stacks already applied to the catalog this game
+bool libAffx_KaelthasBombVerdant; // the Living Bomb being cast is empowered by Verdant Spheres
 
 unit libAffx_KaelthasHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -120,6 +123,33 @@ bool libAffx_KaelthasKaelthasFlamestrikeInitialSetEcho_Func (bool testConds, boo
     }
     libAffx_KaelthasKaelthasFlamestrikeInitialSetLastEcho = GameGetMissionTime();
     UnitCreateEffectPoint(hero, "KaelthasFlamestrikeInitialSet", target);
+    return true;
+}
+// Verdant Spheres ending sets Living Bomb to 50 Mana and a 10 second cooldown, undoing the starter and boons. While
+// Verdant Spheres is off, copy Living Bomb's current values into that effect so it restores them instead.
+bool libAffx_KaelthasVerdantRestore_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_KaelthasHero();
+    if (hero == null || UnitHasBehavior2(hero, "KaelthasVerdantSpheresActive")) {
+        return false;
+    }
+    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasVerdantSpheresDeactivateLivingBombModifyPlayer", "EffectArray[0].Value", libAffx_player, CatalogFieldValueGet(c_gameCatalogAbil, "KaelthasLivingBomb", "Cost[0].Vital[Energy]", libAffx_player));
+    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasVerdantSpheresDeactivateLivingBombModifyPlayer", "EffectArray[1].Value", libAffx_player, CatalogFieldValueGet(c_gameCatalogAbil, "KaelthasLivingBomb", "Cost[0].Cooldown.TimeUse", libAffx_player));
+    return true;
+}
+// Living Bomb cast start: remember whether Verdant Spheres empowers it
+bool libAffx_KaelthasBombPrep_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_KaelthasHero();
+    libAffx_KaelthasBombVerdant = hero != null && UnitHasBehavior2(hero, "KaelthasVerdantSpheresActive");
+    return true;
+}
+// Bombardier: an empowered Living Bomb gives its charge back once the cost is paid
+bool libAffx_KaelthasBombVerdantRefund_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_KaelthasHero();
+    if (!libAffx_KaelthasBombVerdant || hero == null || !UnitHasBehavior2(hero, "KaelthasBombMarker")) {
+        return false;
+    }
+    libAffx_KaelthasBombVerdant = false;
+    UnitCreateEffectUnit(hero, "KaelthasBombVerdantRefund", hero);
     return true;
 }
 // Sunfire hit on an enemy Hero: takedown window, KaelthasEmberTokenCounter, the heal, and on-hit boons
@@ -233,6 +263,9 @@ bool libAffx_KaelthasStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KaelthasPyroblastDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KaelthasPyroblastSplashDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasKaelthasFlamestrikeInitialSetEcho_Func"), libAffx_player, "KaelthasFlamestrikeInitialSet");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasVerdantRestore_Func"), 0.25, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasBombPrep_Func"), libAffx_player, "KaelthasLivingBombPrepSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasBombVerdantRefund_Func"), libAffx_player, "KaelthasLivingBombInitialSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasSync_Func"), 1.0, c_timeGame);
     return true;
