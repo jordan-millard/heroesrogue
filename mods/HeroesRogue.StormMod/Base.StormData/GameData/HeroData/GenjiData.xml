@@ -165,9 +165,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Dragon Master (affix GenjiDragonsFury) ===== -->
   <!-- Genji never leaves Dragonblade: the script keeps GenjiDragonbladeActive on him (no duration for this player), so
-       Shuriken and Basic Attacks are gone and Q is the slash, while R is Unleash (card layout below). Slashes deal half
-       damage, have a 2 second cooldown, and drop to 0.5 seconds when they hit an enemy Hero. Dragonblade's button
-       applies Unleash instead: 8 seconds of double slash damage and Unstoppable.
+       Shuriken and Basic Attacks are gone and Q and R both slash, while Unleash is an Active on key 1. Slashes deal half
+       damage, have a 2 second cooldown, and drop to 0.5 seconds when they hit an enemy Hero. Unleash (key 1, 60 second
+       cooldown): 8 seconds of double slash damage and Unstoppable.
        Dragon's Hunger quest (50% kept between games): each enemy Hero hit by a slash, 0.25% slash damage each.
        Dragon Soul quest: an enemy Hero takedown within 3 seconds of a slash hit, 1% of Unleash's 60 second cooldown
        each up to 40%, then 1% slash damage each (script). -->
@@ -216,7 +216,28 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <Behavior value="GenjiDragonbladeActive" />
   </CEffectApplyBehavior>
-  <!-- Unleash: Dragonblade's button applies this instead of GenjiDragonbladeActive (String catalog modification) -->
+  <!-- Unleash: an Active on key 1, granted by the GenjiDragonMasterUnleashButton behavior like an Active talent.
+       Dragonblade's own button also applies Unleash (String catalog modification), in case it's ever reachable. -->
+  <CAbilEffectInstant id="GenjiDragonMasterUnleash">
+    <PrepEffect value="DismountDecloakCasterSet" />
+    <Effect value="GenjiDragonMasterUnleashApply" />
+    <Flags index="Transient" value="1" />
+    <Cost>
+      <Cooldown TimeUse="60" />
+    </Cost>
+    <CmdButtonArray index="Execute" DefaultButtonFace="GenjiDragonMasterUnleash" Requirements="HeroHasNoDeadBehavior" />
+    <SharedFlags index="AllowQuickCastCustomization" value="0" />
+  </CAbilEffectInstant>
+  <CBehaviorAbility id="GenjiDragonMasterUnleashButton">
+    <Buttons Face="GenjiDragonMasterUnleash" Type="AbilCmd" AbilCmd="GenjiDragonMasterUnleash,Execute" />
+  </CBehaviorAbility>
+  <CButton id="GenjiDragonMasterUnleash" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
+  </CButton>
+  <CEffectApplyBehavior id="GenjiDragonMasterUnleashApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="GenjiDragonMasterUnleash" />
+  </CEffectApplyBehavior>
   <CBehaviorBuff id="GenjiDragonMasterUnleash">
     <Alignment value="Positive" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
@@ -233,25 +254,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GT" />
     <Behavior value="GenjiDragonMasterUnleash" />
   </CValidatorUnitCompareBehaviorCount>
-  <!-- The Heroic slot's first button (the slash while Dragonblade is active, in base) is Dragonblade's own button for
-       Dragon Master, so R is always Unleash. For every other Genji that button is hidden and the slot falls through to
-       Dragonblade's normal button, so their R shows Dragonblade during the form instead of a second slash (Q slashes). -->
-  <CRequirementCountBehavior id="GenjiCountBehaviorDragonMarkerCompleteOnlyAtUnit">
-    <Flags index="TechTreeCheat" value="0" />
-    <Count Link="GenjiDragonMarker" State="CompleteOnlyAtUnit" />
-  </CRequirementCountBehavior>
-  <CRequirementGTE id="GenjiGTECountBehaviorDragonMarker1">
-    <OperandArray index="0" value="GenjiCountBehaviorDragonMarkerCompleteOnlyAtUnit" />
-    <OperandArray index="1" value="1" />
-  </CRequirementGTE>
-  <CRequirement id="GenjiDragonMasterUnleashButton">
-    <NodeArray index="Show" Link="GenjiGTECountBehaviorDragonMarker1" />
-  </CRequirement>
-  <CUnit id="HeroGenji">
-    <CardLayouts index="0">
-      <LayoutButtons index="0" Face="GenjiDragonblade" Type="AbilCmd" AbilCmd="GenjiDragonblade,Execute" Requirements="GenjiDragonMasterUnleashButton" Slot="Heroic" />
-    </CardLayouts>
-  </CUnit>
   <!-- Dragon Scales (Epic): 25 Armor while Unleashed -->
   <CBehaviorBuff id="GenjiDragonScalesBuff" parent="StormArmor">
     <Alignment value="Positive" />

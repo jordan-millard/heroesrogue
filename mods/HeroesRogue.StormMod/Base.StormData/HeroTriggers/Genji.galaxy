@@ -106,7 +106,7 @@ void libAffx_GenjiSyncSwift () {
     CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeStrikeAtTheHeartDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeFinalCutDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
 }
-// Dragon Soul: Unleash's cooldown (Dragonblade's button), then damage past the cap
+// Dragon Soul: Unleash's cooldown, then damage past the cap
 void libAffx_GenjiSyncDragon () {
     unit hero = libAffx_GenjiHero();
     int stacks;
@@ -119,7 +119,7 @@ void libAffx_GenjiSyncDragon () {
     wanted = IntToFixed(MinI(stacks, libAffx_genjiDragonCooldownMaxStacks)) * libAffx_genjiDragonCooldownPerStack;
     if (wanted != libAffx_genjiDragonCooldownAdded) {
         delta = FixedToString(libAffx_genjiDragonCooldownAdded - wanted, c_fixedPrecisionAny);
-        libAffx_CatalogReferenceModify("Abil,GenjiDragonblade,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,GenjiDragonMasterUnleash,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
         libAffx_genjiDragonCooldownAdded = wanted;
     }
     CatalogFieldValueSet(c_gameCatalogEffect, "GenjiDragonbladeAttackDamage", "MultiplicativeModifierArray[GenjiDragonSoul].Modifier", libAffx_player,

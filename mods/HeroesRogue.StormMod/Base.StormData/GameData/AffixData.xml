@@ -13943,13 +13943,16 @@
             <String String="1 0 GenjiDragonSoulTokenCounter">
                 <Field Id="Behavior" Index="2" />
             </String>
+            <String String="1 0 GenjiDragonMasterUnleashButton">
+                <Field Id="Behavior" Index="3" />
+            </String>
             <String String="GenjiDragonSoulTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
             <String String="GenjiDragonHungerTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="1 1 Set Abil,GenjiDragonblade,Cost.Cooldown.TimeUse 60">
+            <String String="1 1 Set Abil,GenjiDragonMasterUnleash,Cost.Cooldown.TimeUse 60">
                 <Field Id="CatalogModification" />
             </String>
             <String String="1 1 Set Effect,GenjiDragonbladeSetCooldown,Chance 0">
@@ -14028,7 +14031,7 @@
             <User Type="Affix" Instance="GenjiDragonsFury">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 3 Add Abil,GenjiDragonblade,Cost.Cooldown.TimeUse -5">
+            <String String="1 3 Add Abil,GenjiDragonMasterUnleash,Cost.Cooldown.TimeUse -5">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
