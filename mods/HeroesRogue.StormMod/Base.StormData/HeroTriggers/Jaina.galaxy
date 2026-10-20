@@ -5,7 +5,7 @@ include "AffixTriggers"
 // heal; takedowns in the window add the takedown token.
 // Frost Mage, Cold Front quest: 1% off Blizzard's and Cone of Cold's cooldowns per stack, up to 25%; then 1% Frostbolt
 // damage each. Frost Volley (Legendary): each Frostbolt is cast again 0.3 seconds later.
-// Blizzard Caller, Endless Winter quest: 1% of Blizzard's 9 second cooldown per stack, up to 40%; then 1% damage each.
+// Blizzard Caller, Endless Winter quest: 1% of Blizzard's 10 second recharge per stack, up to 40%; then 1% damage each.
 // Eternal Winter (Legendary): each Blizzard is cast again 1 second later.
 // Elementalist, Tidecaller quest: 1% of Summon Water Elemental's 20 second cooldown per stack, up to 40%; then 1%
 // elemental damage each.
@@ -64,7 +64,7 @@ void libAffx_JainaSyncFrostbolt () {
     CatalogFieldValueSet(c_gameCatalogEffect, "JainaFrostboltDamage", "MultiplicativeModifierArray[JainaFrostboltLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "JainaFrostboltDamageChilled", "MultiplicativeModifierArray[JainaFrostboltLegacy].Modifier", libAffx_player, bonus);
 }
-// JainaEndlessWinterTokenCounter: 1% of the 9 second cooldown per stack, up to 40%, then damage
+// JainaEndlessWinterTokenCounter: 1% of the 10 second recharge per stack, up to 40%, then damage
 void libAffx_JainaSyncBlizzard () {
     unit hero = libAffx_JainaHero();
     int stacks;
@@ -76,7 +76,7 @@ void libAffx_JainaSyncBlizzard () {
     stacks = libAffx_JainaStacks("JainaEndlessWinterTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_JainaBlizzardAdded) {
-        libAffx_CatalogReferenceModify("Abil,JainaBlizzard,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaBlizzardAdded) * -0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,JainaBlizzard,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaBlizzardAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaBlizzardAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);

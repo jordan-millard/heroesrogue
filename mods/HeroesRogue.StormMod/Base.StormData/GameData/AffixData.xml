@@ -16337,6 +16337,7 @@
         </Instances>
 
 
+
         <Instances Id="JainaFrostMage">
             <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
                 <Field Id="Icon" />
@@ -16529,26 +16530,38 @@
             <String String="JainaSnowfallTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="1 1 Set Abil,JainaBlizzard,Cost.Cooldown.TimeUse 9">
+            <String String="1 1 Set Abil,JainaBlizzard,Cost.Charge.CountMax 2">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Add Abil,JainaBlizzard,Cost.Vital[Energy] -50">
+            <String String="1 1 Set Abil,JainaBlizzard,Cost.Charge.CountStart 2">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,JainaBlizzardBasePersistent,PeriodicPeriodArray[0] 0">
+            <String String="1 1 Set Abil,JainaBlizzard,Cost.Charge.CountUse 1">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,JainaBlizzardBasePersistent,PeriodicPeriodArray[1] 0.75">
+            <String String="1 1 Set Abil,JainaBlizzard,Cost.Charge.TimeUse 10">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,JainaBlizzardDamageDelayPersistent,PeriodicPeriodArray[0] 0">
+            <String String="1 1 Set Abil,JainaBlizzard,Cost.Cooldown.TimeUse 0.5">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,JainaBlizzardDamage,MultiplicativeModifierArray[JainaBlizzardPower].Modifier 0.5">
+            <String String="1 1 Add Abil,JainaBlizzard,Cost.Vital[Energy] -50">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,JainaBlizzardDamageChilled,MultiplicativeModifierArray[JainaBlizzardPower].Modifier 0.5">
+            <String String="1 1 Set Effect,JainaBlizzardBasePersistent,PeriodicPeriodArray[0] 0">
                 <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,JainaBlizzardBasePersistent,PeriodicPeriodArray[1] 0.75">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,JainaBlizzardDamageDelayPersistent,PeriodicPeriodArray[0] 0">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,JainaBlizzardDamage,MultiplicativeModifierArray[JainaBlizzardPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,JainaBlizzardDamageChilled,MultiplicativeModifierArray[JainaBlizzardPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="10" />
             </String>
             <String String="AffixAdded libAffx_JainaStart">
                 <Field Id="Trigger" />
@@ -16596,7 +16609,7 @@
             <User Type="Affix" Instance="JainaBlizzardCaller">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 3 Add Abil,JainaBlizzard,Cost.Cooldown.TimeUse -1">
+            <String String="1 3 Add Abil,JainaBlizzard,Cost.Charge.TimeUse -1">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>

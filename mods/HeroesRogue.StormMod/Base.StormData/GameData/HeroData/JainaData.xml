@@ -211,6 +211,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectApplyBehavior id="JainaBrittleApply">
     <Behavior value="JainaBrittleDebuff" />
   </CEffectApplyBehavior>
+  <!-- Blizzard Caller gives Blizzard charges: the base effects that cut its cooldown also cut the recharge -->
+  <CEffectModifyUnit id="JainaIcefuryWandModifyBlizzardCooldownNonHeroTarget">
+    <Cost index="0" Abil="JainaBlizzard,Execute" CooldownOperation="Add" CooldownTimeUse="-1.25" ChargeTimeUse="-1.25" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="JainaIcefuryWandModifyBlizzardCooldownHeroTarget">
+    <Cost index="0" Abil="JainaBlizzard,Execute" CooldownOperation="Add" CooldownTimeUse="-2.5" ChargeTimeUse="-2.5" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="JainaIcyVeinsModifyUnit">
+    <Cost index="0" Abil="JainaBlizzard,Execute" CooldownOperation="Add" CooldownTimeUse="-0.25" ChargeTimeUse="-0.25" />
+  </CEffectModifyUnit>
   <!-- Whiteout (Rare, Blizzard Caller): Blizzard hits on Heroes take 0.5 seconds off Frostbolt -->
   <CEffectModifyUnit id="JainaWhiteoutModifyCooldown">
     <ImpactUnit Value="Caster" />
