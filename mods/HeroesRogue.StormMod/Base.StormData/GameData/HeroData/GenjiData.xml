@@ -97,6 +97,107 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicOffsetArray index="6" X="-3.762" Y="-10.337" />
     <PeriodicOffsetArray index="7" X="5.5" Y="-9.526" />
   </CEffectCreatePersistent>
+  <!-- Targeting guide lines for the extra Shuriken, shown once Thousand Cuts reaches each milestone (copies of the base
+       GenjiShurikenGuideLeft/Right actors, rotated like their missiles) -->
+  <CValidatorUnitCompareTokenCount id="GenjiCasterHasThousandCuts15">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="15" />
+    <TokenId value="GenjiThousandCutsTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CActorSiteOpRotationExplicit id="SOpGenjiShurikenExtra1Rotate">
+    <Forward X="0.342000" Y="-0.940000" />
+    <IsLocal value="1" />
+  </CActorSiteOpRotationExplicit>
+  <CActorQuad id="GenjiShurikenGuideExtra1" parent="StormGuideVisualQuadDownFantasy" abil="GenjiShuriken">
+    <Aliases value="_GuideVisualExtra1" />
+    <Height value="11.000000" />
+    <Width value="0.250000" />
+    <On Terms="ActorCreation; IsActorLocalPlayer; ValidateUnit GenjiCasterHasThousandCuts15" Send="Create GenjiShurikenGuideRegionExtra1" />
+    <On Terms="ActorCreation; !ValidateUnit GenjiCasterHasThousandCuts15" Send="SetVisibility" />
+    <Remove Terms="ActorCreation" Send="Create StormGuideRegionQuadDown" />
+    <Host Subject="_GuideRegionExtra1" />
+  </CActorQuad>
+  <CActorRegionQuad id="GenjiShurikenGuideRegionExtra1" parent="StormGuideRegionClosest">
+    <Aliases value="_GuideRegionExtra1" />
+    <On Terms="ActorOrphan" Send="Destroy" />
+    <On Terms="RegionSubject.*.AddedFirst" Target="_GuideVisualExtra1" Send="ClearTintColor 0.100000 BaseTint" />
+    <On Terms="RegionSubject.*.AddedFirst" Target="_GuideVisualExtra1" Send="SetTintColor 0,255,0 0.100000 OneShot Active" />
+    <On Terms="RegionSubject.*.RemovedLast" Target="_GuideVisualExtra1" Send="SetTintColor 225,160,25 0.000000 OneShot BaseTint" />
+    <On Terms="RegionSubject.*.RemovedLast" Target="_GuideVisualExtra1" Send="ClearTintColor 0.100000 Active" />
+    <Remove Terms="RegionSubject.*.AddedFirst" Target="_GuideVisual" Send="ClearTintColor 0.100000 BaseTint" />
+    <Remove Terms="RegionSubject.*.AddedFirst" Target="_GuideVisual" Send="SetTintColor 0,255,0 0.100000 OneShot Active" />
+    <Remove Terms="RegionSubject.*.RemovedLast" Target="_GuideVisual" Send="SetTintColor 225,160,25 0.000000 OneShot BaseTint" />
+    <Remove Terms="RegionSubject.*.RemovedLast" Target="_GuideVisual" Send="ClearTintColor 0.100000 Active" />
+    <HostSiteOps Ops="SOpGenjiShurikenExtra1Rotate" />
+    <RegionFlags index="UseEffectRange" value="1" />
+  </CActorRegionQuad>
+  <CValidatorUnitCompareTokenCount id="GenjiCasterHasThousandCuts30">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="30" />
+    <TokenId value="GenjiThousandCutsTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CActorSiteOpRotationExplicit id="SOpGenjiShurikenExtra2Rotate">
+    <Forward X="-0.342000" Y="-0.940000" />
+    <IsLocal value="1" />
+  </CActorSiteOpRotationExplicit>
+  <CActorQuad id="GenjiShurikenGuideExtra2" parent="StormGuideVisualQuadDownFantasy" abil="GenjiShuriken">
+    <Aliases value="_GuideVisualExtra2" />
+    <Height value="11.000000" />
+    <Width value="0.250000" />
+    <On Terms="ActorCreation; IsActorLocalPlayer; ValidateUnit GenjiCasterHasThousandCuts30" Send="Create GenjiShurikenGuideRegionExtra2" />
+    <On Terms="ActorCreation; !ValidateUnit GenjiCasterHasThousandCuts30" Send="SetVisibility" />
+    <Remove Terms="ActorCreation" Send="Create StormGuideRegionQuadDown" />
+    <Host Subject="_GuideRegionExtra2" />
+  </CActorQuad>
+  <CActorRegionQuad id="GenjiShurikenGuideRegionExtra2" parent="StormGuideRegionClosest">
+    <Aliases value="_GuideRegionExtra2" />
+    <On Terms="ActorOrphan" Send="Destroy" />
+    <On Terms="RegionSubject.*.AddedFirst" Target="_GuideVisualExtra2" Send="ClearTintColor 0.100000 BaseTint" />
+    <On Terms="RegionSubject.*.AddedFirst" Target="_GuideVisualExtra2" Send="SetTintColor 0,255,0 0.100000 OneShot Active" />
+    <On Terms="RegionSubject.*.RemovedLast" Target="_GuideVisualExtra2" Send="SetTintColor 225,160,25 0.000000 OneShot BaseTint" />
+    <On Terms="RegionSubject.*.RemovedLast" Target="_GuideVisualExtra2" Send="ClearTintColor 0.100000 Active" />
+    <Remove Terms="RegionSubject.*.AddedFirst" Target="_GuideVisual" Send="ClearTintColor 0.100000 BaseTint" />
+    <Remove Terms="RegionSubject.*.AddedFirst" Target="_GuideVisual" Send="SetTintColor 0,255,0 0.100000 OneShot Active" />
+    <Remove Terms="RegionSubject.*.RemovedLast" Target="_GuideVisual" Send="SetTintColor 225,160,25 0.000000 OneShot BaseTint" />
+    <Remove Terms="RegionSubject.*.RemovedLast" Target="_GuideVisual" Send="ClearTintColor 0.100000 Active" />
+    <HostSiteOps Ops="SOpGenjiShurikenExtra2Rotate" />
+    <RegionFlags index="UseEffectRange" value="1" />
+  </CActorRegionQuad>
+  <CValidatorUnitCompareTokenCount id="GenjiCasterHasThousandCuts45">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="45" />
+    <TokenId value="GenjiThousandCutsTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CActorSiteOpRotationExplicit id="SOpGenjiShurikenExtra3Rotate">
+    <Forward X="0.500000" Y="-0.866000" />
+    <IsLocal value="1" />
+  </CActorSiteOpRotationExplicit>
+  <CActorQuad id="GenjiShurikenGuideExtra3" parent="StormGuideVisualQuadDownFantasy" abil="GenjiShuriken">
+    <Aliases value="_GuideVisualExtra3" />
+    <Height value="11.000000" />
+    <Width value="0.250000" />
+    <On Terms="ActorCreation; IsActorLocalPlayer; ValidateUnit GenjiCasterHasThousandCuts45" Send="Create GenjiShurikenGuideRegionExtra3" />
+    <On Terms="ActorCreation; !ValidateUnit GenjiCasterHasThousandCuts45" Send="SetVisibility" />
+    <Remove Terms="ActorCreation" Send="Create StormGuideRegionQuadDown" />
+    <Host Subject="_GuideRegionExtra3" />
+  </CActorQuad>
+  <CActorRegionQuad id="GenjiShurikenGuideRegionExtra3" parent="StormGuideRegionClosest">
+    <Aliases value="_GuideRegionExtra3" />
+    <On Terms="ActorOrphan" Send="Destroy" />
+    <On Terms="RegionSubject.*.AddedFirst" Target="_GuideVisualExtra3" Send="ClearTintColor 0.100000 BaseTint" />
+    <On Terms="RegionSubject.*.AddedFirst" Target="_GuideVisualExtra3" Send="SetTintColor 0,255,0 0.100000 OneShot Active" />
+    <On Terms="RegionSubject.*.RemovedLast" Target="_GuideVisualExtra3" Send="SetTintColor 225,160,25 0.000000 OneShot BaseTint" />
+    <On Terms="RegionSubject.*.RemovedLast" Target="_GuideVisualExtra3" Send="ClearTintColor 0.100000 Active" />
+    <Remove Terms="RegionSubject.*.AddedFirst" Target="_GuideVisual" Send="ClearTintColor 0.100000 BaseTint" />
+    <Remove Terms="RegionSubject.*.AddedFirst" Target="_GuideVisual" Send="SetTintColor 0,255,0 0.100000 OneShot Active" />
+    <Remove Terms="RegionSubject.*.RemovedLast" Target="_GuideVisual" Send="SetTintColor 225,160,25 0.000000 OneShot BaseTint" />
+    <Remove Terms="RegionSubject.*.RemovedLast" Target="_GuideVisual" Send="ClearTintColor 0.100000 Active" />
+    <HostSiteOps Ops="SOpGenjiShurikenExtra3Rotate" />
+    <RegionFlags index="UseEffectRange" value="1" />
+  </CActorRegionQuad>
   <!-- Shuriken Storm: Hail of Steel also adds Deflect damage, and Thousand Cuts lengthens Deflect (script) -->
   <CEffectDamage id="GenjiDeflectDamage">
     <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
