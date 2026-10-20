@@ -97,14 +97,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicOffsetArray index="6" X="-3.762" Y="-10.337" />
     <PeriodicOffsetArray index="7" X="5.5" Y="-9.526" />
   </CEffectCreatePersistent>
-  <!-- Targeting guide lines for the extra Shuriken, shown once Thousand Cuts reaches each milestone (copies of the base
-       GenjiShurikenGuideLeft/Right actors, rotated like their missiles) -->
-  <CValidatorUnitCompareTokenCount id="GenjiCasterHasThousandCuts15">
-    <WhichUnit Value="Caster" />
-    <Compare value="GE" />
-    <Value value="15" />
-    <TokenId value="GenjiThousandCutsTokenCounter" />
-  </CValidatorUnitCompareTokenCount>
+  <!-- Targeting guide lines for the extra Shuriken (copies of the base GenjiShurikenGuideLeft/Right actors, rotated like
+       their missiles). Guides can only check the player, so the script grants an empty upgrade at each Thousand Cuts
+       milestone and each guide's creation event checks it, like Lunara's For the Wildlands vine guides. -->
+  <CUpgrade id="GenjiShurikenExtra1Upgrade" />
+  <CRequirementCountUpgrade id="GenjiCountUpgradeShurikenExtra1">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="GenjiShurikenExtra1Upgrade" State="QueuedOrBetter" />
+  </CRequirementCountUpgrade>
+  <CRequirementGTE id="GenjiGTECountUpgradeShurikenExtra11">
+    <OperandArray index="0" value="GenjiCountUpgradeShurikenExtra1" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="GenjiHasShurikenExtra1Upgrade">
+    <NodeArray index="Use" Link="GenjiGTECountUpgradeShurikenExtra11" />
+    <NodeArray index="Show" Link="GenjiGTECountUpgradeShurikenExtra11" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="GenjiHasShurikenExtra1">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="GenjiHasShurikenExtra1Upgrade" />
+  </CValidatorPlayerRequirement>
   <CActorSiteOpRotationExplicit id="SOpGenjiShurikenExtra1Rotate">
     <Forward X="0.342000" Y="-0.940000" />
     <IsLocal value="1" />
@@ -113,8 +126,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Aliases value="_GuideVisualExtra1" />
     <Height value="11.000000" />
     <Width value="0.250000" />
-    <On Terms="ActorCreation; IsActorLocalPlayer; ValidateUnit GenjiCasterHasThousandCuts15" Send="Create GenjiShurikenGuideRegionExtra1" />
-    <On Terms="ActorCreation; !ValidateUnit GenjiCasterHasThousandCuts15" Send="SetVisibility" />
+    <On index="0" Terms="Abil.GenjiShuriken.Guide; ValidatePlayer GenjiHasShurikenExtra1" />
+    <On Terms="ActorCreation; IsActorLocalPlayer" Send="Create GenjiShurikenGuideRegionExtra1" />
     <Remove Terms="ActorCreation" Send="Create StormGuideRegionQuadDown" />
     <Host Subject="_GuideRegionExtra1" />
   </CActorQuad>
@@ -132,12 +145,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <HostSiteOps Ops="SOpGenjiShurikenExtra1Rotate" />
     <RegionFlags index="UseEffectRange" value="1" />
   </CActorRegionQuad>
-  <CValidatorUnitCompareTokenCount id="GenjiCasterHasThousandCuts30">
-    <WhichUnit Value="Caster" />
-    <Compare value="GE" />
-    <Value value="30" />
-    <TokenId value="GenjiThousandCutsTokenCounter" />
-  </CValidatorUnitCompareTokenCount>
+  <CUpgrade id="GenjiShurikenExtra2Upgrade" />
+  <CRequirementCountUpgrade id="GenjiCountUpgradeShurikenExtra2">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="GenjiShurikenExtra2Upgrade" State="QueuedOrBetter" />
+  </CRequirementCountUpgrade>
+  <CRequirementGTE id="GenjiGTECountUpgradeShurikenExtra21">
+    <OperandArray index="0" value="GenjiCountUpgradeShurikenExtra2" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="GenjiHasShurikenExtra2Upgrade">
+    <NodeArray index="Use" Link="GenjiGTECountUpgradeShurikenExtra21" />
+    <NodeArray index="Show" Link="GenjiGTECountUpgradeShurikenExtra21" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="GenjiHasShurikenExtra2">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="GenjiHasShurikenExtra2Upgrade" />
+  </CValidatorPlayerRequirement>
   <CActorSiteOpRotationExplicit id="SOpGenjiShurikenExtra2Rotate">
     <Forward X="-0.342000" Y="-0.940000" />
     <IsLocal value="1" />
@@ -146,8 +171,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Aliases value="_GuideVisualExtra2" />
     <Height value="11.000000" />
     <Width value="0.250000" />
-    <On Terms="ActorCreation; IsActorLocalPlayer; ValidateUnit GenjiCasterHasThousandCuts30" Send="Create GenjiShurikenGuideRegionExtra2" />
-    <On Terms="ActorCreation; !ValidateUnit GenjiCasterHasThousandCuts30" Send="SetVisibility" />
+    <On index="0" Terms="Abil.GenjiShuriken.Guide; ValidatePlayer GenjiHasShurikenExtra2" />
+    <On Terms="ActorCreation; IsActorLocalPlayer" Send="Create GenjiShurikenGuideRegionExtra2" />
     <Remove Terms="ActorCreation" Send="Create StormGuideRegionQuadDown" />
     <Host Subject="_GuideRegionExtra2" />
   </CActorQuad>
@@ -165,12 +190,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <HostSiteOps Ops="SOpGenjiShurikenExtra2Rotate" />
     <RegionFlags index="UseEffectRange" value="1" />
   </CActorRegionQuad>
-  <CValidatorUnitCompareTokenCount id="GenjiCasterHasThousandCuts45">
-    <WhichUnit Value="Caster" />
-    <Compare value="GE" />
-    <Value value="45" />
-    <TokenId value="GenjiThousandCutsTokenCounter" />
-  </CValidatorUnitCompareTokenCount>
+  <CUpgrade id="GenjiShurikenExtra3Upgrade" />
+  <CRequirementCountUpgrade id="GenjiCountUpgradeShurikenExtra3">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="GenjiShurikenExtra3Upgrade" State="QueuedOrBetter" />
+  </CRequirementCountUpgrade>
+  <CRequirementGTE id="GenjiGTECountUpgradeShurikenExtra31">
+    <OperandArray index="0" value="GenjiCountUpgradeShurikenExtra3" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="GenjiHasShurikenExtra3Upgrade">
+    <NodeArray index="Use" Link="GenjiGTECountUpgradeShurikenExtra31" />
+    <NodeArray index="Show" Link="GenjiGTECountUpgradeShurikenExtra31" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="GenjiHasShurikenExtra3">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="GenjiHasShurikenExtra3Upgrade" />
+  </CValidatorPlayerRequirement>
   <CActorSiteOpRotationExplicit id="SOpGenjiShurikenExtra3Rotate">
     <Forward X="0.500000" Y="-0.866000" />
     <IsLocal value="1" />
@@ -179,8 +216,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Aliases value="_GuideVisualExtra3" />
     <Height value="11.000000" />
     <Width value="0.250000" />
-    <On Terms="ActorCreation; IsActorLocalPlayer; ValidateUnit GenjiCasterHasThousandCuts45" Send="Create GenjiShurikenGuideRegionExtra3" />
-    <On Terms="ActorCreation; !ValidateUnit GenjiCasterHasThousandCuts45" Send="SetVisibility" />
+    <On index="0" Terms="Abil.GenjiShuriken.Guide; ValidatePlayer GenjiHasShurikenExtra3" />
+    <On Terms="ActorCreation; IsActorLocalPlayer" Send="Create GenjiShurikenGuideRegionExtra3" />
     <Remove Terms="ActorCreation" Send="Create StormGuideRegionQuadDown" />
     <Host Subject="_GuideRegionExtra3" />
   </CActorQuad>

@@ -75,6 +75,10 @@ void libAffx_GenjiSyncShuriken () {
     }
     wanted = MinI(libAffx_genjiMaxExtraShuriken, libAffx_GenjiStacks("GenjiThousandCutsTokenCounter") / libAffx_genjiStacksPerExtraShuriken);
     if (wanted != libAffx_genjiExtraShuriken) {
+        // the targeting guide's extra lines check these upgrades (stacks never go down within a game)
+        for (i = libAffx_genjiExtraShuriken + 1; i <= wanted; i += 1) {
+            TechTreeUpgradeAddLevel(libAffx_player, "GenjiShurikenExtra" + IntToString(i) + "Upgrade", 1);
+        }
         for (i = 1; i <= libAffx_genjiMaxExtraShuriken; i += 1) {
             if (i <= wanted) {
                 CatalogFieldValueSet(c_gameCatalogEffect, "GenjiShurikenExtra" + IntToString(i), "Chance", libAffx_player, "1");
