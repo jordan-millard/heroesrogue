@@ -3,8 +3,8 @@ include "AffixTriggers"
 // ============================================================
 // Golden Kael'thas. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token
 // and heal; takedowns in the window add the takedown token.
-// Sunfire, Sunwell quest: 1% of Gravity Lapse's 12 second cooldown per stack, up to 30%; then 1% Flamestrike damage
-// each. Twin Suns (Legendary): each Flamestrike is cast again 0.75 seconds later.
+// Sunfire, Sunwell quest: 1% Flamestrike radius per stack, up to 30%; then 1% Flamestrike damage
+// each. Twin Suns (Legendary): each Flamestrike is cast again 0.5 seconds later.
 // Bombardier, Chain Detonation quest: every 15 stacks 1 more Living Bomb charge, up to 2; past 30 stacks 1% damage.
 // Pyromancer, Phoenix Fire quest: 1% of Pyroblast's 20 second cooldown per stack, up to 40%; then 1% damage each.
 // Inferno (Legendary): those takedowns reset Pyroblast.
@@ -49,7 +49,7 @@ void libAffx_KaelthasQuestDing() {
 bool libAffx_KaelthasInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_KaelthasTakedownWindow;
 }
-// KaelthasSunwellTokenCounter: 1% of Gravity Lapse's 12 second cooldown per stack, up to 30%, then Flamestrike damage
+// KaelthasSunwellTokenCounter: 1% Flamestrike radius per stack (of 2, or 3 with Verdant Spheres), up to 30%, then Flamestrike damage
 void libAffx_KaelthasSyncFlamestrike () {
     unit hero = libAffx_KaelthasHero();
     int stacks;
@@ -61,7 +61,10 @@ void libAffx_KaelthasSyncFlamestrike () {
     stacks = libAffx_KaelthasStacks("KaelthasSunwellTokenCounter");
     wanted = MinI(stacks, 30);
     if (wanted != libAffx_KaelthasFlamestrikeAdded) {
-        libAffx_CatalogReferenceModify("Abil,KaelthasGravityLapse,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * -0.12, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeSearchAreaBurnedFlesh,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelThasFlamestrikeVerdantSpheresBurnedFleshSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasFlamestrikeAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KaelthasPastCapDamagePerStack, c_fixedPrecisionAny);
@@ -113,14 +116,14 @@ bool libAffx_KaelthasSync_Func (bool testConds, bool runActions) {
     return true;
 }
 fixed libAffx_KaelthasKaelthasFlamestrikeInitialSetLastEcho = -1.0;
-// KaelthasTwinSunsMarker: KaelthasFlamestrikeInitialSet is cast again toward the same point 0.75 seconds later. The echo is skipped by its own event.
+// KaelthasTwinSunsMarker: KaelthasFlamestrikeInitialSet is cast again toward the same point 0.5 seconds later. The echo is skipped by its own event.
 bool libAffx_KaelthasKaelthasFlamestrikeInitialSetEcho_Func (bool testConds, bool runActions) {
     unit hero = libAffx_KaelthasHero();
     point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
     if (hero == null || !UnitHasBehavior2(hero, "KaelthasTwinSunsMarker") || GameGetMissionTime() == libAffx_KaelthasKaelthasFlamestrikeInitialSetLastEcho) {
         return false;
     }
-    Wait(0.75, c_timeGame);
+    Wait(0.5, c_timeGame);
     if (!UnitIsAlive(hero) || target == null) {
         return true;
     }
@@ -161,6 +164,20 @@ bool libAffx_KaelthasVerdantEnded_Func (bool testConds, bool runActions) {
     libAffx_KaelthasVerdantPutBack(hero);
     Wait(0.5, c_timeGame);
     libAffx_KaelthasVerdantPutBack(hero);
+    return true;
+}
+// Sunfire: the Flamestrike targeting circle follows the Sunwell radius (Verdant Spheres sets it to 3 or 2 when it starts and ends)
+bool libAffx_KaelthasFlamestrikeCursor_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_KaelthasHero();
+    fixed radius = 2.0;
+    if (hero == null || !UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker")) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "KaelthasVerdantSpheresActive")) {
+        radius = 3.0;
+    }
+    radius = radius * (1.0 + 0.01 * IntToFixed(MinI(libAffx_KaelthasStacks("KaelthasSunwellTokenCounter"), 30)));
+    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasFlamestrikeDummySearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(radius, 3));
     return true;
 }
 // Living Bomb cast start: remember whether Verdant Spheres empowers it
@@ -291,6 +308,7 @@ bool libAffx_KaelthasStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KaelthasPyroblastSplashDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasKaelthasFlamestrikeInitialSetEcho_Func"), libAffx_player, "KaelthasFlamestrikeInitialSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasVerdantRemember_Func"), 0.25, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasFlamestrikeCursor_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_KaelthasVerdantEnded_Func"), null, "KaelthasVerdantSpheresActive", c_unitBehaviorChangeDestroy);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasBombPrep_Func"), libAffx_player, "KaelthasLivingBombPrepSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasBombVerdantRefund_Func"), libAffx_player, "KaelthasLivingBombInitialSet");

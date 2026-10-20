@@ -18,7 +18,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="KaelthasInfernoMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Sunfire ===== -->
-  <!-- Ember quest (50% kept): 0.5% Flamestrike damage per enemy Hero hit. Sunwell quest: takedowns within 3 seconds of a hit; 1% of Gravity Lapse's cooldown each up to 30%, then 1% Flamestrike damage each (script). -->
+  <!-- Ember quest (50% kept): 0.5% Flamestrike damage per enemy Hero hit. Sunwell quest: takedowns within 3 seconds of a hit; 1% Flamestrike radius each up to 30%, then 1% Flamestrike damage each (script). -->
   <CBehaviorTokenCounter id="KaelthasEmberTokenCounter" parent="StormQuestToken">
     <Face value="KaelthasEmberTokenCounter" />
     <Max value="100000" />
