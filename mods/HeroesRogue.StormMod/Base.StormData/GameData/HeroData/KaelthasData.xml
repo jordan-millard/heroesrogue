@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Kael'thas. Starters: Sunfire (Flamestrike), Bombardier (Living Bomb) and Pyromancer (Pyroblast from level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Kaelthas.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="KaelthasFlamestrikeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasBombMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasPyroMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasKindlingMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasScorchMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasTwinSunsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasChainReactionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasSearingMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasPyroclasmMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasMeteorStrikeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="KaelthasInfernoMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Sunfire ===== -->
+  <!-- Ember quest (50% kept): 0.5% Flamestrike damage per enemy Hero hit. Sunwell quest: takedowns within 3 seconds of a hit; 1% of Gravity Lapse's cooldown each up to 30%, then 1% Flamestrike damage each (script). -->
+  <CBehaviorTokenCounter id="KaelthasEmberTokenCounter" parent="StormQuestToken">
+    <Face value="KaelthasEmberTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="KaelthasSunwellTokenCounter" parent="StormQuestToken">
+    <Face value="KaelthasSunwellTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="KaelthasEmberTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="KaelthasEmberTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="KaelthasFlamestrikeDamage">
+    <MultiplicativeModifierArray index="KaelthasFlamestrikePower" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasFlamestrikeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasFlamestrikeHit" Accumulator="KaelthasEmberTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="KaelthasFlamestrikeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="KaelthasFlamestrikeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="KaelthasEmberTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_kaelthas_flamestrike.dds" />
+  </CButton>
+  <CButton id="KaelthasSunwellTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_kaelthas_flamestrike.dds" />
+  </CButton>
+
+  <!-- ===== Bombardier ===== -->
+  <!-- Fuse quest (50% kept): 0.25% Living Bomb damage per enemy Hero hit. Chain Detonation quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
+  <CBehaviorTokenCounter id="KaelthasFuseTokenCounter" parent="StormQuestToken">
+    <Face value="KaelthasFuseTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="KaelthasChainDetonationTokenCounter" parent="StormQuestToken">
+    <Face value="KaelthasChainDetonationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="KaelthasFuseTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="KaelthasFuseTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="KaelthasLivingBombImpactDamage">
+    <MultiplicativeModifierArray index="KaelthasBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasBombHit" Accumulator="KaelthasFuseTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="KaelthasBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="KaelthasLivingBombDoTDamage">
+    <MultiplicativeModifierArray index="KaelthasBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasBombHit" Accumulator="KaelthasFuseTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="KaelthasBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="KaelthasLivingBombExplosionDamage">
+    <MultiplicativeModifierArray index="KaelthasBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasBombHit" Accumulator="KaelthasFuseTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="KaelthasBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="KaelthasBombHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.015" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="KaelthasFuseTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_kaelthas_livingbomb.dds" />
+  </CButton>
+  <CButton id="KaelthasChainDetonationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_kaelthas_livingbomb.dds" />
+  </CButton>
+
+  <!-- ===== Pyromancer ===== -->
+  <!-- Pyroblast from level 1. Firestorm quest (50% kept): 1% Pyroblast damage per enemy Hero hit. Phoenix Fire quest: takedowns within 3 seconds of a hit; 1% of the 20 second cooldown each up to 40%, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="KaelthasFirestormTokenCounter" parent="StormQuestToken">
+    <Face value="KaelthasFirestormTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="KaelthasPhoenixFireTokenCounter" parent="StormQuestToken">
+    <Face value="KaelthasPhoenixFireTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="KaelthasFirestormTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="KaelthasFirestormTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="KaelthasPyroblastDamage">
+    <MultiplicativeModifierArray index="KaelthasPyroPower" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasPyroCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasPyroHit" Accumulator="KaelthasFirestormTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="KaelthasPyroLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="KaelthasPyroblastSplashDamage">
+    <MultiplicativeModifierArray index="KaelthasPyroPower" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasPyroCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasPyroHit" Accumulator="KaelthasFirestormTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="KaelthasPyroLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="KaelthasPyroHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.05" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="KaelthasFirestormTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_kaelthas_pyroblast.dds" />
+  </CButton>
+  <CButton id="KaelthasPhoenixFireTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_kaelthas_pyroblast.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Kindling (Rare, Sunfire): Flamestrike hits on Heroes take 1 second off Living Bomb -->
+  <CEffectModifyUnit id="KaelthasKindlingModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="KaelthasLivingBomb,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Scorch (Epic): Flamestrike hits on Heroes take 10 Armor for 3 seconds -->
+  <CBehaviorBuff id="KaelthasScorchDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_kaelthas_flamestrike.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-10" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="KaelthasScorchApply">
+    <Behavior value="KaelthasScorchDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Chain Reaction (Rare, Bombardier): Living Bomb explosion hits on Heroes take 1 second off Flamestrike -->
+  <CEffectModifyUnit id="KaelthasChainReactionModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="KaelthasFlamestrike,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Searing Bomb (Epic): Living Bomb hits on Heroes take 5 Armor for 4 seconds, stacking up to 3 times -->
+  <CBehaviorBuff id="KaelthasSearingDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_kaelthas_livingbomb.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="3" />
+    <Duration value="4" />
+    <ArmorModification>
+      <AllArmorBonus value="-5" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="KaelthasSearingApply">
+    <Behavior value="KaelthasSearingDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Pyroclasm (Rare, Pyromancer): Pyroblast hits on Heroes restore 40 Mana -->
+  <CEffectModifyUnit id="KaelthasPyroclasmMana">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Energy" Change="40" />
+  </CEffectModifyUnit>
+  <!-- Meteor Strike (Epic): Pyroblast hits on Heroes take 4 seconds off Gravity Lapse -->
+  <CEffectModifyUnit id="KaelthasMeteorStrikeModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="KaelthasGravityLapse,Execute" CooldownOperation="Add" CooldownTimeUse="-4" ChargeTimeUse="-4" />
+  </CEffectModifyUnit>
+  <!-- Inferno (Legendary): a takedown within 3 seconds of a Pyroblast hit resets Pyroblast -->
+  <CEffectModifyUnit id="KaelthasInfernoReset">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="KaelthasPyroblast,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+</Catalog>
