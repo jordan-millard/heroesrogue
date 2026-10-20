@@ -163,10 +163,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Amount value="0" />
   </CEffectDamage>
 
-  <!-- ===== Dragon's Fury ===== -->
-  <!-- Dragon's Hunger quest (50% kept between games): each enemy Hero hit by Dragonblade, 1% Dragonblade damage each.
-       Dragon Soul quest: an enemy Hero takedown within 3 seconds of a Dragonblade hit, 1% of Dragonblade's
-       60 second cooldown each up to 40%, then 1% Dragonblade damage each (script). -->
+  <!-- ===== Dragon Master (affix GenjiDragonsFury) ===== -->
+  <!-- Genji never leaves Dragonblade: the script keeps GenjiDragonbladeActive on him (no duration for this player), so
+       Shuriken and Basic Attacks are gone and Q is the slash, while R stays Unleash (card layout below). Slashes deal half
+       damage, have a 2 second cooldown, and drop to 0.5 seconds when they hit an enemy Hero. Dragonblade's button
+       applies Unleash instead: 8 seconds of double slash damage and Unstoppable.
+       Dragon's Hunger quest (50% kept between games): each enemy Hero hit by a slash, 0.25% slash damage each.
+       Dragon Soul quest: an enemy Hero takedown within 3 seconds of a slash hit, 1% of Unleash's 60 second cooldown
+       each up to 40%, then 1% slash damage each (script). -->
   <CBehaviorTokenCounter id="GenjiDragonHungerTokenCounter" parent="StormQuestToken">
     <Face value="GenjiDragonHungerTokenCounter" />
     <Max value="100000" />
@@ -176,7 +180,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="GenjiDragonHungerTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.0025" />
   </CAccumulatorToken>
   <CEffectModifyTokenCount id="GenjiDragonHungerAddToken" parent="BaseEffectModifyTokenCount">
     <Chance value="0" />
@@ -193,15 +197,69 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="GenjiDragonCommon" Modifier="0" />
     <MultiplicativeModifierArray index="GenjiDragonHunger" Accumulator="GenjiDragonHungerAccumulator" />
     <MultiplicativeModifierArray index="GenjiDragonSoul" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiDragonMaster" Modifier="0" />
+    <MultiplicativeModifierArray index="GenjiDragonUnleash" Validator="GenjiCasterHasDragonMasterUnleash" Modifier="0" />
   </CEffectDamage>
+  <!-- A slash that hits an enemy Hero is ready again after 0.5 seconds (its cooldown is set when the slash starts) -->
+  <CEffectModifyUnit id="GenjiDragonMasterChain">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="GenjiDragonbladeAttack,Execute" CooldownOperation="Set" CooldownTimeUse="0.5" />
+  </CEffectModifyUnit>
   <CEffectSet id="GenjiDragonbladeAttackImpactSet">
     <EffectArray value="GenjiDragonHungerAddToken" />
+    <EffectArray value="GenjiDragonMasterChain" />
   </CEffectSet>
-  <!-- Dragon Scales (Epic): 25 Armor while Dragonblade is active -->
+  <!-- The permanent form, applied by the script -->
+  <CEffectApplyBehavior id="GenjiDragonMasterFormApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="GenjiDragonbladeActive" />
+  </CEffectApplyBehavior>
+  <!-- Unleash: Dragonblade's button applies this instead of GenjiDragonbladeActive (String catalog modification) -->
+  <CBehaviorBuff id="GenjiDragonMasterUnleash">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
+    <Duration value="8" />
+    <InitialEffect value="GenjiDragonMasterUnleashInitialSet" />
+  </CBehaviorBuff>
+  <CEffectSet id="GenjiDragonMasterUnleashInitialSet">
+    <EffectArray value="GenjiDragonbladeAttackSetCooldown" />
+    <EffectArray value="GenjiDragonScalesApply" />
+    <EffectArray value="GenjiDragonFuryUnstoppableApply" />
+  </CEffectSet>
+  <CValidatorUnitCompareBehaviorCount id="GenjiCasterHasDragonMasterUnleash">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="GenjiDragonMasterUnleash" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- In Dragonblade the slash takes the Heroic slot too; for Dragon Master that slot keeps Dragonblade's button
+       (Unleash). Unchanged for every other Genji. -->
+  <CRequirementCountBehavior id="GenjiCountBehaviorDragonMarkerCompleteOnlyAtUnit">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="GenjiDragonMarker" State="CompleteOnlyAtUnit" />
+  </CRequirementCountBehavior>
+  <CRequirementEq id="GenjiEqCountBehaviorDragonMarker0">
+    <OperandArray index="0" value="GenjiCountBehaviorDragonMarkerCompleteOnlyAtUnit" />
+    <OperandArray index="1" value="0" />
+  </CRequirementEq>
+  <CRequirementAnd id="GenjiAndDragonbladeActiveNotDragonMaster">
+    <OperandArray value="CountBehaviorGenjiDragonbladeActiveInProgressOrBetterAtUnit" />
+    <OperandArray value="GenjiEqCountBehaviorDragonMarker0" />
+  </CRequirementAnd>
+  <CRequirement id="GenjiDragonbladeSlashOnHeroic">
+    <NodeArray index="Show" Link="GenjiAndDragonbladeActiveNotDragonMaster" />
+  </CRequirement>
+  <CUnit id="HeroGenji">
+    <CardLayouts index="0">
+      <LayoutButtons index="0" Requirements="GenjiDragonbladeSlashOnHeroic" />
+    </CardLayouts>
+  </CUnit>
+  <!-- Dragon Scales (Epic): 25 Armor while Unleashed -->
   <CBehaviorBuff id="GenjiDragonScalesBuff" parent="StormArmor">
     <Alignment value="Positive" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
-    <RemoveValidatorArray value="GenjiCasterHasDragonbladeActive" />
+    <RemoveValidatorArray value="GenjiCasterHasDragonMasterUnleash" />
     <ArmorModification>
       <AllArmorBonus value="25" />
     </ArmorModification>
@@ -210,19 +268,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Chance value="0" />
     <Behavior value="GenjiDragonScalesBuff" />
   </CEffectApplyBehavior>
-  <!-- Dragon's Fury: Unstoppable while Dragonblade is active -->
+  <!-- Dragon Master: Unstoppable while Unleashed -->
   <CBehaviorBuff id="GenjiDragonFuryUnstoppable" parent="StormUnstoppableParent">
     <InfoIcon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
-    <RemoveValidatorArray value="GenjiCasterHasDragonbladeActive" />
+    <RemoveValidatorArray value="GenjiCasterHasDragonMasterUnleash" />
   </CBehaviorBuff>
   <CEffectApplyBehavior id="GenjiDragonFuryUnstoppableApply">
     <Chance value="0" />
     <Behavior value="GenjiDragonFuryUnstoppable" />
   </CEffectApplyBehavior>
-  <CEffectSet id="GenjiDragonbladeActiveInitialSet">
-    <EffectArray value="GenjiDragonScalesApply" />
-    <EffectArray value="GenjiDragonFuryUnstoppableApply" />
-  </CEffectSet>
 
   <CButton id="GenjiHailOfSteelTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_genji_Shurikens.dds" />

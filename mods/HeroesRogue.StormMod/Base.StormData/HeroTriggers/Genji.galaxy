@@ -9,9 +9,10 @@ include "AffixTriggers"
 // Strike's cooldown by 1% of its 8 seconds, up to 25%; each stack past that adds 1% Swift Strike damage instead. Iaido
 // (Epic): Swift Strike also deals 8% of enemy Heroes' maximum Health. Shadow Execution (Legendary): a Swift Strike
 // that leaves an enemy Hero below 30% Health (or kills them) resets Swift Strike, once per dash.
-// Dragon's Fury, Dragon Soul quest: an enemy Hero takedown within 3 seconds of a Dragonblade hit lowers Dragonblade's
-// cooldown by 1% of its 60 seconds, up to 40%; each stack past that adds 1% Dragonblade damage instead. Endless Dragon
-// (Legendary): a takedown while Dragonblade is active restores its full duration.
+// Dragon Master (affix GenjiDragonsFury): Genji never leaves Dragonblade; the form is put back whenever it's missing
+// (respawn). Dragon Soul quest: an enemy Hero takedown within 3 seconds of a slash hit lowers Unleash's (Dragonblade's
+// button) cooldown by 1% of its 60 seconds, up to 40%; each stack past that adds 1% slash damage instead. Endless
+// Dragon (Legendary): a takedown while Unleashed restores Unleash's full duration.
 // The Hail of Steel, Precision and Dragon's Hunger quests are in GenjiData.xml. Stacks carry over between games through
 // QuestRetain.
 // ============================================================
@@ -105,7 +106,7 @@ void libAffx_GenjiSyncSwift () {
     CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeStrikeAtTheHeartDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeFinalCutDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
 }
-// Dragon Soul: Dragonblade's cooldown (the ability's and the one set when Dragonblade ends), then damage past the cap
+// Dragon Soul: Unleash's cooldown (Dragonblade's button), then damage past the cap
 void libAffx_GenjiSyncDragon () {
     unit hero = libAffx_GenjiHero();
     int stacks;
@@ -119,11 +120,19 @@ void libAffx_GenjiSyncDragon () {
     if (wanted != libAffx_genjiDragonCooldownAdded) {
         delta = FixedToString(libAffx_genjiDragonCooldownAdded - wanted, c_fixedPrecisionAny);
         libAffx_CatalogReferenceModify("Abil,GenjiDragonblade,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,GenjiDragonbladeSetCooldown,Cost[0].CooldownTimeUse", libAffx_player, delta, c_upgradeOperationAdd);
         libAffx_genjiDragonCooldownAdded = wanted;
     }
     CatalogFieldValueSet(c_gameCatalogEffect, "GenjiDragonbladeAttackDamage", "MultiplicativeModifierArray[GenjiDragonSoul].Modifier", libAffx_player,
         FixedToString(IntToFixed(MaxI(0, stacks - libAffx_genjiDragonCooldownMaxStacks)) * libAffx_genjiPastCapDamagePerStack, c_fixedPrecisionAny));
+}
+// Dragon Master: puts the permanent Dragonblade form back when it's missing (after a respawn)
+bool libAffx_GenjiDragonForm_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GenjiHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "GenjiDragonMarker") || UnitHasBehavior2(hero, "GenjiDragonbladeActive")) {
+        return true;
+    }
+    UnitCreateEffectUnit(hero, "GenjiDragonMasterFormApply", hero);
+    return true;
 }
 bool libAffx_GenjiSync_Func (bool testConds, bool runActions) {
     libAffx_GenjiSyncShuriken();
@@ -221,8 +230,8 @@ bool libAffx_GenjiTakedown (bool testConds, bool runActions) {
         libAffx_GenjiSyncDragon();
         libAffx_GenjiQuestDing();
     }
-    if (UnitHasBehavior2(hero, "GenjiEndlessDragonMarker") && UnitHasBehavior2(hero, "GenjiDragonbladeActive")) {
-        UnitBehaviorSetDurationRemaining(hero, "GenjiDragonbladeActive", CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "GenjiDragonbladeActive", "Duration", libAffx_player));
+    if (UnitHasBehavior2(hero, "GenjiEndlessDragonMarker") && UnitHasBehavior2(hero, "GenjiDragonMasterUnleash")) {
+        UnitBehaviorSetDurationRemaining(hero, "GenjiDragonMasterUnleash", CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "GenjiDragonMasterUnleash", "Duration", libAffx_player));
     }
     return true;
 }
@@ -239,5 +248,6 @@ bool libAffx_GenjiStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GenjiShurikenThrown_Func"), libAffx_player, "GenjiShurikenLaunchPersistent");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GenjiSync_Func"), 1.0, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GenjiDragonForm_Func"), 0.25, c_timeGame);
     return true;
 }
