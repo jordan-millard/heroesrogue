@@ -62,6 +62,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
     <MultiplicativeModifierArray index="GenjiThousandCuts" Accumulator="GenjiThousandCutsAccumulator" />
   </CEffectDamage>
+  <!-- Shuriken Storm: Hail of Steel also adds Deflect damage, and Thousand Cuts lengthens Deflect (script) -->
+  <CEffectDamage id="GenjiDeflectDamage">
+    <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
+  </CEffectDamage>
   <!-- Ricochet (Rare): each Shuriken hitting an enemy Hero speeds up Shuriken's recharge by 0.5 seconds -->
   <CEffectModifyUnit id="GenjiRicochetModifyCooldown">
     <Chance value="0" />
@@ -144,8 +148,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="GenjiPrecision" Accumulator="GenjiPrecisionAccumulator" />
     <MultiplicativeModifierArray index="GenjiShimadaLegacy" Modifier="0" />
   </CEffectDamage>
+  <!-- Blade of the Shimada: Swift Strike kills lane minions outright -->
+  <CEffectDamage id="GenjiSwiftStrikeMinionKill" parent="StormSpell">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsMinionAndNotMercLaner" />
+    <Flags index="Kill" value="1" />
+  </CEffectDamage>
   <CEffectSet id="GenjiSwiftStrikeImpactSet">
     <EffectArray value="GenjiPrecisionAddToken" />
+    <EffectArray value="GenjiSwiftStrikeMinionKill" />
   </CEffectSet>
   <!-- Iaido (Epic): Swift Strike also deals 8% of enemy Heroes' maximum Health (script) -->
   <CEffectDamage id="GenjiIaidoDamage" parent="StormSpell">
@@ -199,8 +210,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Chance value="0" />
     <Behavior value="GenjiDragonScalesBuff" />
   </CEffectApplyBehavior>
+  <!-- Dragon's Fury: Unstoppable while Dragonblade is active -->
+  <CBehaviorBuff id="GenjiDragonFuryUnstoppable" parent="StormUnstoppableParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_genji_dragonblade.dds" />
+    <RemoveValidatorArray value="GenjiCasterHasDragonbladeActive" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="GenjiDragonFuryUnstoppableApply">
+    <Chance value="0" />
+    <Behavior value="GenjiDragonFuryUnstoppable" />
+  </CEffectApplyBehavior>
   <CEffectSet id="GenjiDragonbladeActiveInitialSet">
     <EffectArray value="GenjiDragonScalesApply" />
+    <EffectArray value="GenjiDragonFuryUnstoppableApply" />
   </CEffectSet>
 
   <CButton id="GenjiHailOfSteelTokenCounter" parent="StormButtonParent">
