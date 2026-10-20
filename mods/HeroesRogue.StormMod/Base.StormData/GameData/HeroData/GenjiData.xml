@@ -198,6 +198,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <HostSiteOps Ops="SOpGenjiShurikenExtra3Rotate" />
     <RegionFlags index="UseEffectRange" value="1" />
   </CActorRegionQuad>
+  <!-- Unbreakable Guard (Legendary, any Genji): Unstoppable while Deflect is active -->
+  <CValidatorUnitCompareBehaviorCount id="GenjiCasterHasDeflect">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="GenjiDeflect" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="GenjiUnbreakableGuardUnstoppable" parent="StormUnstoppableParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_genji_deflect.dds" />
+    <RemoveValidatorArray value="GenjiCasterHasDeflect" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="GenjiUnbreakableGuardApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="GenjiUnbreakableGuardUnstoppable" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="GenjiDeflectInitialSet">
+    <EffectArray value="GenjiUnbreakableGuardApply" />
+  </CEffectSet>
   <!-- Shuriken Storm: Hail of Steel also adds Deflect damage, and Thousand Cuts lengthens Deflect (script) -->
   <CEffectDamage id="GenjiDeflectDamage">
     <MultiplicativeModifierArray index="GenjiHailOfSteel" Accumulator="GenjiHailOfSteelAccumulator" />
