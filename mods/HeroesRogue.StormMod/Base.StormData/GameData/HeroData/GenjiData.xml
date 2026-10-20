@@ -165,7 +165,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Dragon Master (affix GenjiDragonsFury) ===== -->
   <!-- Genji never leaves Dragonblade: the script keeps GenjiDragonbladeActive on him (no duration for this player), so
-       Shuriken and Basic Attacks are gone and Q is the slash, while R stays Unleash (card layout below). Slashes deal half
+       Shuriken and Basic Attacks are gone and Q is the slash, while R is Unleash (card layout below). Slashes deal half
        damage, have a 2 second cooldown, and drop to 0.5 seconds when they hit an enemy Hero. Dragonblade's button
        applies Unleash instead: 8 seconds of double slash damage and Unstoppable.
        Dragon's Hunger quest (50% kept between games): each enemy Hero hit by a slash, 0.25% slash damage each.
@@ -233,26 +233,23 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GT" />
     <Behavior value="GenjiDragonMasterUnleash" />
   </CValidatorUnitCompareBehaviorCount>
-  <!-- In Dragonblade the slash takes the Heroic slot too; for Dragon Master that slot keeps Dragonblade's button
-       (Unleash). Unchanged for every other Genji. -->
+  <!-- The Heroic slot's first button (the slash while Dragonblade is active, in base) is Dragonblade's own button for
+       Dragon Master, so R is always Unleash. For every other Genji that button is hidden and the slot falls through to
+       Dragonblade's normal button, so their R shows Dragonblade during the form instead of a second slash (Q slashes). -->
   <CRequirementCountBehavior id="GenjiCountBehaviorDragonMarkerCompleteOnlyAtUnit">
     <Flags index="TechTreeCheat" value="0" />
     <Count Link="GenjiDragonMarker" State="CompleteOnlyAtUnit" />
   </CRequirementCountBehavior>
-  <CRequirementEq id="GenjiEqCountBehaviorDragonMarker0">
+  <CRequirementGTE id="GenjiGTECountBehaviorDragonMarker1">
     <OperandArray index="0" value="GenjiCountBehaviorDragonMarkerCompleteOnlyAtUnit" />
-    <OperandArray index="1" value="0" />
-  </CRequirementEq>
-  <CRequirementAnd id="GenjiAndDragonbladeActiveNotDragonMaster">
-    <OperandArray value="CountBehaviorGenjiDragonbladeActiveInProgressOrBetterAtUnit" />
-    <OperandArray value="GenjiEqCountBehaviorDragonMarker0" />
-  </CRequirementAnd>
-  <CRequirement id="GenjiDragonbladeSlashOnHeroic">
-    <NodeArray index="Show" Link="GenjiAndDragonbladeActiveNotDragonMaster" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="GenjiDragonMasterUnleashButton">
+    <NodeArray index="Show" Link="GenjiGTECountBehaviorDragonMarker1" />
   </CRequirement>
   <CUnit id="HeroGenji">
     <CardLayouts index="0">
-      <LayoutButtons index="0" Requirements="GenjiDragonbladeSlashOnHeroic" />
+      <LayoutButtons index="0" Face="GenjiDragonblade" Type="AbilCmd" AbilCmd="GenjiDragonblade,Execute" Requirements="GenjiDragonMasterUnleashButton" Slot="Heroic" />
     </CardLayouts>
   </CUnit>
   <!-- Dragon Scales (Epic): 25 Armor while Unleashed -->
