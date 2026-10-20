@@ -1158,6 +1158,70 @@ Affix/Name/GenjiUnbreakableGuard=Unbreakable Guard
 Affix/Tooltip/GenjiUnbreakableGuard=Genji is <c val="#TooltipNumbers">Unstoppable</c> while Deflect is active.
 Behavior/Name/GenjiUnbreakableGuardUnstoppable=Unbreakable Guard
 Behavior/Tooltip/GenjiUnbreakableGuardUnstoppable=Unstoppable while Deflecting.
+Affix/Name/VallaHungeringHunter=Hungering Hunter
+Affix/Tooltip/VallaHungeringHunter=Gain <c val="#TooltipNumbers">Puncturing Arrow</c> and <c val="#TooltipNumbers">Siphoning Arrows</c>. Hungering Arrow deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">30</c> less Mana, and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">8</c> second recharge). Each enemy Hero hit heals Valla for <c val="#TooltipNumbers">2%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Hungering Arrow hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Hungering Arrow damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Hungering Arrow hit: every <c val="#TooltipNumbers">15</c> grants <c val="#TooltipNumbers">1</c> more charge (up to <c val="#TooltipNumbers">2</c>), then each adds <c val="#TooltipNumbers">1%</c> damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/VallaSharpenedArrows=Sharpened Arrows
+Affix/Tooltip/VallaSharpenedArrows=Hungering Arrow deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/VallaQuickNock=Quick Nock
+Affix/Tooltip/VallaQuickNock=Hungering Arrow recharges <c val="#TooltipNumbers">1</c> second faster.
+Affix/Name/VallaMonsterHunterBoon=Monster Hunter
+Affix/Tooltip/VallaMonsterHunterBoon=Gain the talent <c val="#TooltipNumbers">Monster Hunter</c>: Hungering Arrow deals more damage to non-Heroes.
+Affix/Name/VallaBloodhound=Bloodhound
+Affix/Tooltip/VallaBloodhound=Each Hungering Arrow hit on an enemy Hero takes <c val="#TooltipNumbers">2</c> seconds off Vault's recharge.
+Affix/Name/VallaBarbedArrows=Barbed Arrows
+Affix/Tooltip/VallaBarbedArrows=Each Hungering Arrow hit on an enemy Hero removes <c val="#TooltipNumbers">5</c> Armor for <c val="#TooltipNumbers">4</c> seconds, stacking up to <c val="#TooltipNumbers">4</c> times.
+Affix/Name/VallaInsatiable=Insatiable
+Affix/Tooltip/VallaInsatiable=Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Hungering Arrow hit refill all Hungering Arrow charges.
+Button/Name/VallaHungerTokenCounter=Hunger
+Button/Tooltip/VallaHungerTokenCounter=<c val="#TooltipQuest">Bonus Hungering Arrow damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:VallaHungerTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/VallaTrophyHunterTokenCounter=Trophy Hunter
+Button/Tooltip/VallaTrophyHunterTokenCounter=<c val="#TooltipQuest">Trophy Hunter stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:VallaTrophyHunterTokenCounter$" precision="0"/></c></c><n/>Every <c val="#TooltipNumbers">15</c> stacks, Hungering Arrow stores <c val="#TooltipNumbers">1</c> more charge (up to <c val="#TooltipNumbers">2</c>). Each stack past <c val="#TooltipNumbers">30</c> adds <c val="#TooltipNumbers">1%</c> Hungering Arrow damage.
+Affix/Name/VallaMultishotMarksman=Multishot Marksman
+Affix/Tooltip/VallaMultishotMarksman=Gain <c val="#TooltipNumbers">Arsenal</c> and <c val="#TooltipNumbers">Frost Shot</c>. Multishot deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">35</c> less Mana, and has an <c val="#TooltipNumbers">8</c> second cooldown. Each enemy Hero hit heals Valla for <c val="#TooltipNumbers">2.5%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Multishot hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Multishot damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Multishot hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">30%</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/VallaPiercingVolley=Piercing Volley
+Affix/Tooltip/VallaPiercingVolley=Multishot deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/VallaSteadyAim=Steady Aim
+Affix/Tooltip/VallaSteadyAim=Reduce Multishot's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/VallaPunishmentBoon=Punishment
+Affix/Tooltip/VallaPunishmentBoon=Gain the talent <c val="#TooltipNumbers">Punishment</c>: at maximum Hatred, Basic Attacks reduce Multishot's cooldown.
+Affix/Name/VallaHailOfArrows=Hail of Arrows
+Affix/Tooltip/VallaHailOfArrows=Each Multishot hit on an enemy Hero takes <c val="#TooltipNumbers">1.5</c> seconds off Hungering Arrow.
+Affix/Name/VallaMarkedForDeath=Marked for Death
+Affix/Tooltip/VallaMarkedForDeath=Multishot hits on enemy Heroes remove <c val="#TooltipNumbers">10</c> Armor for <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/VallaVolleyOfHatred=Volley of Hatred
+Affix/Tooltip/VallaVolleyOfHatred=Each Multishot is fired again <c val="#TooltipNumbers">0.3</c> seconds later, toward the same spot, at no cost.
+Button/Name/VallaVolleyTokenCounter=Volley
+Button/Tooltip/VallaVolleyTokenCounter=<c val="#TooltipQuest">Bonus Multishot damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:VallaVolleyTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/VallaBountyTokenCounter=Bounty
+Button/Tooltip/VallaBountyTokenCounter=<c val="#TooltipQuest">Bounty stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:VallaBountyTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Multishot's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">30%</c> at <c val="#TooltipNumbers">30</c> stacks. Each stack past <c val="#TooltipNumbers">30</c> adds <c val="#TooltipNumbers">1%</c> Multishot damage.
+Affix/Name/VallaStrafeQueen=Strafe Queen
+Affix/Tooltip/VallaStrafeQueen=Gain <c val="#TooltipNumbers">Strafe</c>, usable from level <c val="#TooltipNumbers">1</c>, and <c val="#TooltipNumbers">Death Siphon</c>. Rain of Vengeance can't be taken. Strafe deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">40</c> less Mana, and has a <c val="#TooltipNumbers">25</c> second cooldown. Each Strafe hit on an enemy Hero heals Valla for <c val="#TooltipNumbers">0.5%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Strafe hits on enemy Heroes add <c val="#TooltipNumbers">0.1%</c> Strafe damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Strafe hit lengthen Strafe by <c val="#TooltipNumbers">0.1</c> seconds (up to <c val="#TooltipNumbers">2</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/VallaDemonBolts=Demon Bolts
+Affix/Tooltip/VallaDemonBolts=Strafe deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/VallaRestlessHunt=Restless Hunt
+Affix/Tooltip/VallaRestlessHunt=Reduce Strafe's cooldown by <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/VallaHotPursuitBoon=Hot Pursuit
+Affix/Tooltip/VallaHotPursuitBoon=Gain the talent <c val="#TooltipNumbers">Hot Pursuit</c>: more Movement Speed from Hatred.
+Affix/Name/VallaTumble=Tumble
+Affix/Tooltip/VallaTumble=Each Strafe hit on an enemy Hero takes <c val="#TooltipNumbers">0.5</c> seconds off Vault's recharge.
+Affix/Name/VallaShadowCloak=Shadow Cloak
+Affix/Tooltip/VallaShadowCloak=Gain <c val="#TooltipNumbers">25</c> Armor while Strafing.
+Affix/Name/VallaRelentless=Relentless
+Affix/Tooltip/VallaRelentless=Each enemy Hero takedown while Strafing restores Strafe's full duration.
+Button/Name/VallaRapidFireTokenCounter=Rapid Fire
+Button/Tooltip/VallaRapidFireTokenCounter=<c val="#TooltipQuest">Bonus Strafe damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:VallaRapidFireTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/VallaEndlessHuntTokenCounter=Endless Hunt
+Button/Tooltip/VallaEndlessHuntTokenCounter=<c val="#TooltipQuest">Endless Hunt stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:VallaEndlessHuntTokenCounter$" precision="0"/></c></c><n/>Each stack lengthens Strafe by <c val="#TooltipNumbers">0.1</c> seconds, up to <c val="#TooltipNumbers">2</c> seconds at <c val="#TooltipNumbers">20</c> stacks. Each stack past <c val="#TooltipNumbers">20</c> adds <c val="#TooltipNumbers">1%</c> Strafe damage.
+Affix/Name/VallaNimble=Nimble
+Affix/Tooltip/VallaNimble=Vault recharges <c val="#TooltipNumbers">1</c> second faster.
+Affix/Name/VallaTemperedBoon=Tempered by Discipline
+Affix/Tooltip/VallaTemperedBoon=Gain the talent <c val="#TooltipNumbers">Tempered by Discipline</c>: Basic Attacks heal Valla, more with Hatred.
+Behavior/Name/VallaBarbedArrowsDebuff=Barbed Arrows
+Behavior/Tooltip/VallaBarbedArrowsDebuff=Armor reduced by Valla's Hungering Arrow.
+Behavior/Name/VallaMarkedForDeathDebuff=Marked for Death
+Behavior/Tooltip/VallaMarkedForDeathDebuff=Armor reduced by Valla's Multishot.
+Behavior/Name/VallaShadowCloakBuff=Shadow Cloak
+Behavior/Tooltip/VallaShadowCloakBuff=Gaining Armor while Strafing.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

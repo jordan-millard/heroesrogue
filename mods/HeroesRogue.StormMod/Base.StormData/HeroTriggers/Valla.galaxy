@@ -1,0 +1,263 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Valla (DemonHunter). Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit
+// quest token and heal; takedowns in the window add the takedown token.
+// Hungering Hunter, Trophy Hunter quest: every 15 stacks 1 more Hungering Arrow charge, up to 2; past 30 stacks 1%
+// damage each. Insatiable (Legendary): those takedowns refill Hungering Arrow.
+// Multishot Marksman, Bounty quest: 1% of Multishot's 8 second cooldown per stack, up to 30%; then 1% damage each.
+// Volley of Hatred (Legendary): each Multishot is fired again 0.3 seconds later.
+// Strafe Queen, Endless Hunt quest: 0.1 seconds of Strafe per stack, up to 2 seconds; then 1% damage each.
+// Relentless (Legendary): a takedown while Strafing restores Strafe's full duration.
+// ============================================================
+
+const fixed libAffx_VallaTakedownWindow = 3.0;
+const fixed libAffx_VallaPastCapDamagePerStack = 0.01;
+bool libAffx_VallaStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaHungerTime; // per enemy player, last Hungering Hunter hit
+int libAffx_VallaHungerAdded; // Hungering Hunter: charges added by the takedown quest this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaVolleyTime; // per enemy player, last Multishot Marksman hit
+fixed libAffx_VallaVolleyAdded; // Multishot Marksman: amount the takedown quest has changed this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaStrafeTime; // per enemy player, last Strafe Queen hit
+fixed libAffx_VallaStrafeAdded; // Strafe Queen: amount the takedown quest has changed this game
+fixed libAffx_VallaLastEcho = -1.0; // Volley of Hatred: when the last echo was fired
+const fixed libAffx_VallaEchoDelay = 0.3;
+
+unit libAffx_VallaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_VallaIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_VallaStacks(string tokenId) {
+    unit hero = libAffx_VallaHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_VallaQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_VallaInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_VallaTakedownWindow;
+}
+// VallaTrophyHunterTokenCounter: 1 more Hungering Arrow charge per 15 stacks, up to 2, then damage
+void libAffx_VallaSyncHunger () {
+    unit hero = libAffx_VallaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "VallaHungerMarker")) {
+        return;
+    }
+    stacks = libAffx_VallaStacks("VallaTrophyHunterTokenCounter");
+    wanted = MinI(2, stacks / 15);
+    if (wanted != libAffx_VallaHungerAdded) {
+        libAffx_CatalogReferenceModify("Abil,DemonHunterHungeringArrow,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_VallaHungerAdded), c_upgradeOperationAdd);
+        libAffx_VallaHungerAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage1", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage2", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage3", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage4", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage5", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage1", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage2", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage3", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage4", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage5", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+}
+// VallaBountyTokenCounter: 1% of the 8 second cooldown per stack, up to 30%, then damage
+void libAffx_VallaSyncVolley () {
+    unit hero = libAffx_VallaHero();
+    int stacks;
+    fixed wanted;
+    string delta;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "VallaVolleyMarker")) {
+        return;
+    }
+    stacks = libAffx_VallaStacks("VallaBountyTokenCounter");
+    wanted = IntToFixed(MinI(stacks, 30)) * 0.08;
+    if (wanted != libAffx_VallaVolleyAdded) {
+        delta = FixedToString(libAffx_VallaVolleyAdded - wanted, c_fixedPrecisionAny);
+        libAffx_CatalogReferenceModify("Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_VallaVolleyAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "MultishotDamage", "MultiplicativeModifierArray[VallaVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "MultishotArsenalGrenadeDamage", "MultiplicativeModifierArray[VallaVolleyLegacy].Modifier", libAffx_player, bonus);
+}
+// VallaEndlessHuntTokenCounter: 0.1 seconds of Strafe per stack, up to 2 seconds, then damage
+void libAffx_VallaSyncStrafe () {
+    unit hero = libAffx_VallaHero();
+    int stacks;
+    fixed wanted;
+    string delta;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "VallaStrafeMarker")) {
+        return;
+    }
+    stacks = libAffx_VallaStacks("VallaEndlessHuntTokenCounter");
+    wanted = IntToFixed(MinI(stacks, 20)) * 0.1;
+    if (wanted != libAffx_VallaStrafeAdded) {
+        delta = FixedToString(wanted - libAffx_VallaStrafeAdded, c_fixedPrecisionAny);
+        libAffx_CatalogReferenceModify("Behavior,Strafe,Duration", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_VallaStrafeAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 20)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterStrafeBasicWeaponDamage", "MultiplicativeModifierArray[VallaStrafeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterStrafeDeathSiphonDamage", "MultiplicativeModifierArray[VallaStrafeLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_VallaSync_Func (bool testConds, bool runActions) {
+    libAffx_VallaSyncHunger();
+    libAffx_VallaSyncVolley();
+    libAffx_VallaSyncStrafe();
+    return true;
+}
+// Volley of Hatred: each Multishot is fired again toward the same point. The echo is skipped by its own event.
+bool libAffx_VallaMultishotCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_VallaHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "VallaVolleyOfHatredMarker") || GameGetMissionTime() == libAffx_VallaLastEcho) {
+        return false;
+    }
+    Wait(libAffx_VallaEchoDelay, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_VallaLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "MultishotSet", target);
+    return true;
+}
+// Hungering Hunter hit on an enemy Hero: takedown window, VallaHungerTokenCounter, the heal, and on-hit boons
+bool libAffx_VallaHungerHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_VallaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_VallaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "VallaHungerMarker")) {
+        return false;
+    }
+    libAffx_VallaHungerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "VallaHungerTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "VallaHungerHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "VallaBarbedArrowsMarker")) {
+        UnitCreateEffectUnit(hero, "VallaBarbedArrowsApply", victim);
+    }
+    if (UnitHasBehavior2(hero, "VallaBloodhoundMarker")) {
+        UnitCreateEffectUnit(hero, "VallaBloodhoundModifyCooldown", hero);
+    }
+    return true;
+}
+// Multishot Marksman hit on an enemy Hero: takedown window, VallaVolleyTokenCounter, the heal, and on-hit boons
+bool libAffx_VallaVolleyHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_VallaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_VallaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "VallaVolleyMarker")) {
+        return false;
+    }
+    libAffx_VallaVolleyTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "VallaVolleyTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "VallaVolleyHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "VallaHailOfArrowsMarker")) {
+        UnitCreateEffectUnit(hero, "VallaHailOfArrowsModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "VallaMarkedForDeathMarker")) {
+        UnitCreateEffectUnit(hero, "VallaMarkedForDeathApply", victim);
+    }
+    return true;
+}
+// Strafe Queen hit on an enemy Hero: takedown window, VallaRapidFireTokenCounter, the heal, and on-hit boons
+bool libAffx_VallaStrafeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_VallaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_VallaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "VallaStrafeMarker")) {
+        return false;
+    }
+    libAffx_VallaStrafeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "VallaRapidFireTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "VallaStrafeHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "VallaTumbleMarker")) {
+        UnitCreateEffectUnit(hero, "VallaTumbleModifyCooldown", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_VallaTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_VallaHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    // Relentless: a takedown while Strafing restores Strafe's full duration
+    if (UnitHasBehavior2(hero, "VallaRelentlessMarker") && UnitHasBehavior2(hero, "Strafe")) {
+        UnitBehaviorSetDurationRemaining(hero, "Strafe", StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "Strafe", "Duration", libAffx_player)));
+    }
+    if (UnitHasBehavior2(hero, "VallaHungerMarker") && libAffx_VallaInWindow(libAffx_VallaHungerTime[killedPlayer], now)) {
+        libAffx_VallaHungerTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "VallaTrophyHunterTokenCounter", hero);
+        libAffx_VallaSyncHunger();
+        libAffx_VallaQuestDing();
+        if (UnitHasBehavior2(hero, "VallaInsatiableMarker")) {
+            UnitCreateEffectUnit(hero, "VallaInsatiableRefill", hero);
+        }
+    }
+    if (UnitHasBehavior2(hero, "VallaVolleyMarker") && libAffx_VallaInWindow(libAffx_VallaVolleyTime[killedPlayer], now)) {
+        libAffx_VallaVolleyTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "VallaBountyTokenCounter", hero);
+        libAffx_VallaSyncVolley();
+        libAffx_VallaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "VallaStrafeMarker") && libAffx_VallaInWindow(libAffx_VallaStrafeTime[killedPlayer], now)) {
+        libAffx_VallaStrafeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "VallaEndlessHuntTokenCounter", hero);
+        libAffx_VallaSyncStrafe();
+        libAffx_VallaQuestDing();
+    }
+    return true;
+}
+bool libAffx_VallaStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_VallaStarted) {
+        return true;
+    }
+    libAffx_VallaStarted = true;
+    trig = TriggerCreate("libAffx_VallaHungerHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HungeringArrowDamage1");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HungeringArrowDamage2");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HungeringArrowDamage3");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HungeringArrowDamage4");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HungeringArrowDamage5");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterHungeringArrowHeroDamage1");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterHungeringArrowHeroDamage2");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterHungeringArrowHeroDamage3");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterHungeringArrowHeroDamage4");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterHungeringArrowHeroDamage5");
+    trig = TriggerCreate("libAffx_VallaVolleyHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MultishotDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MultishotArsenalGrenadeDamage");
+    trig = TriggerCreate("libAffx_VallaStrafeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterStrafeBasicWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterStrafeDeathSiphonDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_VallaMultishotCast_Func"), libAffx_player, "MultishotSet");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_VallaSync_Func"), 1.0, c_timeGame);
+    return true;
+}

@@ -14155,6 +14155,584 @@
             </String>
         </Instances>
 
+        <Instances Id="VallaHungeringHunter">
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DemonHunterMasteryPuncturingArrow">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DemonHunterMasterySiphoningArrow">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 VallaHungerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 VallaHungerTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 VallaTrophyHunterTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="VallaTrophyHunterTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="VallaHungerTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterHungeringArrow,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterHungeringArrow,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterHungeringArrow,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterHungeringArrow,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterHungeringArrow,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,DemonHunterHungeringArrow,Cost.Vital[Energy] -30">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,HungeringArrowDamage1,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,HungeringArrowDamage2,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,HungeringArrowDamage3,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,HungeringArrowDamage4,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,HungeringArrowDamage5,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterHungeringArrowHeroDamage1,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterHungeringArrowHeroDamage2,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterHungeringArrowHeroDamage3,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="13" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterHungeringArrowHeroDamage4,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="14" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterHungeringArrowHeroDamage5,MultiplicativeModifierArray[VallaHungerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="15" />
+            </String>
+            <String String="AffixAdded libAffx_VallaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_VallaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="VallaSharpenedArrows">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaHungeringHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,HungeringArrowDamage1,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,HungeringArrowDamage2,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,HungeringArrowDamage3,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,HungeringArrowDamage4,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,HungeringArrowDamage5,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,DemonHunterHungeringArrowHeroDamage1,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,DemonHunterHungeringArrowHeroDamage2,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 2 Set Effect,DemonHunterHungeringArrowHeroDamage3,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 2 Set Effect,DemonHunterHungeringArrowHeroDamage4,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 2 Set Effect,DemonHunterHungeringArrowHeroDamage5,MultiplicativeModifierArray[VallaHungerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+        </Instances>
+        <Instances Id="VallaQuickNock">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaHungeringHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,DemonHunterHungeringArrow,Cost.Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="VallaMonsterHunterBoon">
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaHungeringHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DemonHunterMasteryMonsterHunterHungeringArrow">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="VallaBloodhound">
+            <String String="Assets/Textures/storm_ui_icon_valla_vault.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaHungeringHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaBloodhoundMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaBarbedArrows">
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaHungeringHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaBarbedArrowsMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaInsatiable">
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaHungeringHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaInsatiableMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaMultishotMarksman">
+            <String String="Assets/Textures/storm_ui_icon_valla_multishot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DemonHunterMasteryArsenal">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DemonHunterMasteryFrostShot">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 VallaVolleyMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 VallaVolleyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 VallaBountyTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="VallaBountyTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="VallaVolleyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse 8">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,DemonHunterMultishot,Cost.Vital[Energy] -35">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,MultishotDamage,MultiplicativeModifierArray[VallaVolleyPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,MultishotArsenalGrenadeDamage,MultiplicativeModifierArray[VallaVolleyPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_VallaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_VallaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="VallaPiercingVolley">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_multishot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaMultishotMarksman">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MultishotDamage,MultiplicativeModifierArray[VallaVolleyCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MultishotArsenalGrenadeDamage,MultiplicativeModifierArray[VallaVolleyCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="VallaSteadyAim">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_multishot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaMultishotMarksman">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="VallaPunishmentBoon">
+            <String String="Assets/Textures/storm_ui_icon_valla_multishot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaMultishotMarksman">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DemonHunterPunishment">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="VallaHailOfArrows">
+            <String String="Assets/Textures/storm_ui_icon_valla_hungeringarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaMultishotMarksman">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaHailOfArrowsMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaMarkedForDeath">
+            <String String="Assets/Textures/storm_ui_icon_valla_multishot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaMultishotMarksman">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaMarkedForDeathMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaVolleyOfHatred">
+            <String String="Assets/Textures/storm_ui_icon_valla_multishot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaMultishotMarksman">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaVolleyOfHatredMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaStrafeQueen">
+            <String String="Assets/Textures/storm_ui_icon_valla_strafe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DemonHunterHeroicAbilityStrafe">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DemonHunterMasteryDeathSiphon">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="DemonHunterHeroicAbilityRainofVengeance">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 VallaStrafeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 VallaRapidFireTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 VallaEndlessHuntTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="VallaEndlessHuntTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="VallaRapidFireTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DemonHunterStrafe,Cost.Cooldown.TimeUse 25">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,DemonHunterStrafe,Cost.Vital[Energy] -40">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterStrafeBasicWeaponDamage,MultiplicativeModifierArray[VallaStrafePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,DemonHunterStrafeDeathSiphonDamage,MultiplicativeModifierArray[VallaStrafePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_VallaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_VallaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="VallaDemonBolts">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_strafe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaStrafeQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DemonHunterStrafeBasicWeaponDamage,MultiplicativeModifierArray[VallaStrafeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,DemonHunterStrafeDeathSiphonDamage,MultiplicativeModifierArray[VallaStrafeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="VallaRestlessHunt">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_strafe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaStrafeQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,DemonHunterStrafe,Cost.Cooldown.TimeUse -3">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="VallaHotPursuitBoon">
+            <String String="Assets/Textures/storm_ui_icon_valla_strafe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaStrafeQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DemonHunterCombatStyleHotPursuit">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="VallaTumble">
+            <String String="Assets/Textures/storm_ui_icon_valla_vault.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaStrafeQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaTumbleMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaShadowCloak">
+            <String String="Assets/Textures/storm_ui_icon_valla_strafe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaStrafeQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,VallaShadowCloakApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="VallaRelentless">
+            <String String="Assets/Textures/storm_ui_icon_valla_strafe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="VallaStrafeQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 VallaRelentlessMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="VallaNimble">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valla_vault.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,DemonHunterVault,Cost.Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="VallaTemperedBoon">
+            <String String="Assets/Textures/storm_ui_icon_valla_hatred.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DemonHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DemonHunterCombatStyleTemperedByDiscipline">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

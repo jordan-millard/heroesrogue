@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Valla. Starters: Hungering Hunter (Hungering Arrow), Multishot Marksman (Multishot) and Strafe Queen (Strafe from level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Valla.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="VallaHungerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaVolleyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaStrafeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaBarbedArrowsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaBloodhoundMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaInsatiableMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaHailOfArrowsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaMarkedForDeathMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaVolleyOfHatredMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaTumbleMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="VallaRelentlessMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Hungering Hunter ===== -->
+  <!-- Hunger quest (50% kept): 0.5% Hungering Arrow damage per enemy Hero hit. Trophy Hunter quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
+  <CBehaviorTokenCounter id="VallaHungerTokenCounter" parent="StormQuestToken">
+    <Face value="VallaHungerTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="VallaTrophyHunterTokenCounter" parent="StormQuestToken">
+    <Face value="VallaTrophyHunterTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="VallaHungerTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="VallaHungerTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HungeringArrowDamage1">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HungeringArrowDamage2">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HungeringArrowDamage3">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HungeringArrowDamage4">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HungeringArrowDamage5">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DemonHunterHungeringArrowHeroDamage1">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DemonHunterHungeringArrowHeroDamage2">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DemonHunterHungeringArrowHeroDamage3">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DemonHunterHungeringArrowHeroDamage4">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DemonHunterHungeringArrowHeroDamage5">
+    <MultiplicativeModifierArray index="VallaHungerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaHungerHit" Accumulator="VallaHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaHungerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="VallaHungerHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="VallaHungerTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valla_hungeringarrow.dds" />
+  </CButton>
+  <CButton id="VallaTrophyHunterTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valla_hungeringarrow.dds" />
+  </CButton>
+
+  <!-- ===== Multishot Marksman ===== -->
+  <!-- Volley quest (50% kept): 0.5% Multishot damage per enemy Hero hit. Bounty quest: takedowns within 3 seconds of a hit; 1% of the 8 second cooldown each up to 30%, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="VallaVolleyTokenCounter" parent="StormQuestToken">
+    <Face value="VallaVolleyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="VallaBountyTokenCounter" parent="StormQuestToken">
+    <Face value="VallaBountyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="VallaVolleyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="VallaVolleyTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MultishotDamage">
+    <MultiplicativeModifierArray index="VallaVolleyPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaVolleyCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaVolleyHit" Accumulator="VallaVolleyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaVolleyLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MultishotArsenalGrenadeDamage">
+    <MultiplicativeModifierArray index="VallaVolleyPower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaVolleyCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaVolleyHit" Accumulator="VallaVolleyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaVolleyLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="VallaVolleyHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.025" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="VallaVolleyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valla_multishot.dds" />
+  </CButton>
+  <CButton id="VallaBountyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valla_multishot.dds" />
+  </CButton>
+
+  <!-- ===== Strafe Queen ===== -->
+  <!-- Strafe from level 1. Rapid Fire quest (50% kept): 0.1% Strafe damage per enemy Hero hit. Endless Hunt quest: takedowns within 3 seconds of a hit; 0.1 seconds of Strafe each up to 2 seconds, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="VallaRapidFireTokenCounter" parent="StormQuestToken">
+    <Face value="VallaRapidFireTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="VallaEndlessHuntTokenCounter" parent="StormQuestToken">
+    <Face value="VallaEndlessHuntTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="VallaRapidFireTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="VallaRapidFireTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DemonHunterStrafeBasicWeaponDamage">
+    <MultiplicativeModifierArray index="VallaStrafePower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaStrafeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaStrafeHit" Accumulator="VallaRapidFireTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaStrafeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DemonHunterStrafeDeathSiphonDamage">
+    <MultiplicativeModifierArray index="VallaStrafePower" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaStrafeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="VallaStrafeHit" Accumulator="VallaRapidFireTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="VallaStrafeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="VallaStrafeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.005" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="VallaRapidFireTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valla_strafe.dds" />
+  </CButton>
+  <CButton id="VallaEndlessHuntTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valla_strafe.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Barbed Arrows (Epic, Hungering Hunter): Hungering Arrow hits on Heroes take 5 Armor for 4 seconds, up to 4 times -->
+  <CBehaviorBuff id="VallaBarbedArrowsDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valla_hungeringarrow.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="4" />
+    <Duration value="4" />
+    <ArmorModification>
+      <AllArmorBonus value="-5" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="VallaBarbedArrowsApply">
+    <Behavior value="VallaBarbedArrowsDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Bloodhound (Rare): Hungering Arrow hits on Heroes take 2 seconds off Vault's recharge -->
+  <CEffectModifyUnit id="VallaBloodhoundModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="DemonHunterVault,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <!-- Insatiable (Legendary): a takedown within 3 seconds of a Hungering Arrow hit refills Hungering Arrow's charges -->
+  <CEffectModifyUnit id="VallaInsatiableRefill">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="DemonHunterHungeringArrow,Execute" ChargeCountUse="-5" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+  <!-- Hail of Arrows (Rare, Multishot Marksman): Multishot hits on Heroes take 1.5 seconds off Hungering Arrow -->
+  <CEffectModifyUnit id="VallaHailOfArrowsModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="DemonHunterHungeringArrow,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" ChargeTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <!-- Marked for Death (Epic): Multishot hits on Heroes take 10 Armor for 3 seconds -->
+  <CBehaviorBuff id="VallaMarkedForDeathDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valla_multishot.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-10" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="VallaMarkedForDeathApply">
+    <Behavior value="VallaMarkedForDeathDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Tumble (Rare, Strafe Queen): Strafe hits on Heroes take 0.5 seconds off Vault's recharge -->
+  <CEffectModifyUnit id="VallaTumbleModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="DemonHunterVault,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <!-- Shadow Cloak (Epic): 25 Armor while Strafing (Strafe's initial set applies it; the boon turns it on) -->
+  <CBehaviorBuff id="VallaShadowCloakBuff" parent="StormArmor">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valla_strafe.dds" />
+    <RemoveValidatorArray value="DemonHunterHasStrafeBuff" />
+    <ArmorModification>
+      <AllArmorBonus value="25" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="VallaShadowCloakApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="VallaShadowCloakBuff" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="StrafeInitialSet">
+    <EffectArray value="VallaShadowCloakApply" />
+  </CEffectSet>
+</Catalog>
