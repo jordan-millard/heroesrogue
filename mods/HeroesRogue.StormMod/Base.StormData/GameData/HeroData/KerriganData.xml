@@ -19,7 +19,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="KerriganBroodExpansionMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Queen of Blades ===== -->
-  <!-- Bloodlust quest (50% kept): 0.5% Ravage damage per enemy Hero hit. Swarm Queen quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
+  <!-- Ravage hits on enemy Heroes heal 10% maximum Health over 5 seconds. Bloodlust quest (50% kept): 1% Ravage damage per enemy Hero hit. Swarm Queen quest: takedowns within 3 seconds of a hit; 1% Ravage range and 1% more Ravage healing each, up to 50 stacks, then 1% damage each (script). -->
   <CBehaviorTokenCounter id="KerriganBloodlustTokenCounter" parent="StormQuestToken">
     <Face value="KerriganBloodlustTokenCounter" />
     <Max value="100000" />
@@ -33,7 +33,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="KerriganBloodlustTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="KerriganRavageDamage">
     <MultiplicativeModifierArray index="KerriganRavagePower" Modifier="0" />
@@ -41,12 +41,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KerriganRavageHit" Accumulator="KerriganBloodlustTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="KerriganRavageLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="KerriganRavageHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.03" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="KerriganBloodlustTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kerrigan_ravage.dds" />
   </CButton>
@@ -55,7 +49,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Impaler ===== -->
-  <!-- Spikes quest (50% kept): 0.5% Impaling Blades damage per enemy Hero hit. Kinetic Storm quest: takedowns within 3 seconds of a hit; 1% off Impaling Blades and Primal Grasp cooldowns each up to 30%, then 1% damage each (script). -->
+  <!-- Impaling Blades: radius 2.5 (from 1.65), erupts after 0.5 seconds (from 1); hitting 2 or more enemy Heroes at once refunds it (script). Spikes quest (50% kept): 0.5% Impaling Blades damage per enemy Hero hit. Kinetic Storm quest: takedowns within 3 seconds of a hit; 1% off Impaling Blades and Primal Grasp cooldowns each up to 30%, then 1% damage each (script). -->
   <CBehaviorTokenCounter id="KerriganSpikesTokenCounter" parent="StormQuestToken">
     <Face value="KerriganSpikesTokenCounter" />
     <Max value="100000" />
@@ -83,12 +77,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KerriganBladesHit" Accumulator="KerriganSpikesTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="KerriganBladesLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="KerriganBladesHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.025" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="KerriganSpikesTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kerrigan_impalingblades.dds" />
   </CButton>
@@ -97,7 +85,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Brood Mother ===== -->
-  <!-- Summon Ultralisk from level 1. Brood quest (50% kept): 0.25% Ultralisk damage per enemy Hero hit. Hive Mind quest: takedowns within 3 seconds of an Ultralisk hit; 1% of the 20 second cooldown each up to 40%, then 1% damage each (script). -->
+  <!-- Summon Ultralisk from level 1. Ultralisk hits on enemy Heroes grant Shields for 40% of the damage (script). Brood quest (50% kept): 0.25% Ultralisk damage per enemy Hero hit. Hive Mind quest: takedowns within 3 seconds of an Ultralisk hit; 1% of the 20 second cooldown each up to 40%, then 1% damage each (script). -->
   <CBehaviorTokenCounter id="KerriganBroodTokenCounter" parent="StormQuestToken">
     <Face value="KerriganBroodTokenCounter" />
     <Max value="100000" />
@@ -131,12 +119,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KerriganUltraHit" Accumulator="KerriganBroodTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="KerriganUltraLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="KerriganUltraHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.015" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="KerriganBroodTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kerrigan_ultralisk.dds" />
   </CButton>
@@ -206,6 +188,60 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectApplyBehavior id="KerriganCorrosiveApply">
     <Behavior value="KerriganCorrosiveDebuff" />
   </CEffectApplyBehavior>
+  <!-- Queen of Blades: each Ravage hit on an enemy Hero heals 10% of maximum Health over 5 seconds; hits stack. The
+       Swarm Queen quest raises the heal by 1% per stack, up to 50% (script sets ChangeFraction and adds the buff) -->
+  <CEffectModifyUnit id="KerriganQueenOfBladesRegenHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="KerriganQueenOfBladesRegen">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_kerrigan_ravage.dds" />
+    <MaxStackCount value="4" />
+    <Duration value="5" />
+    <Period value="1" />
+    <PeriodicEffect value="KerriganQueenOfBladesRegenHeal" />
+  </CBehaviorBuff>
+  <!-- Impaler: hitting 2 or more enemy Heroes with one Impaling Blades refunds it (script) -->
+  <CEffectModifyUnit id="KerriganImpalerRefund">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="KerriganImpalingBlades,Execute" CooldownOperation="Set" CooldownTimeUse="0" ChargeCountUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Impaler: the starter sets Impaling Blades' radius to 2.5 (from 1.65); the script grants this upgrade so the
+       warning and eruption models scale to match (1.5x) for that player only -->
+  <CUpgrade id="KerriganImpalerUpgrade" />
+  <CRequirementCountUpgrade id="KerriganCountUpgradeImpaler">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="KerriganImpalerUpgrade" State="QueuedOrBetter" />
+  </CRequirementCountUpgrade>
+  <CRequirementGTE id="KerriganGTECountUpgradeImpaler1">
+    <OperandArray index="0" value="KerriganCountUpgradeImpaler" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="KerriganHasImpalerUpgrade">
+    <NodeArray index="Use" Link="KerriganGTECountUpgradeImpaler1" />
+    <NodeArray index="Show" Link="KerriganGTECountUpgradeImpaler1" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KerriganHasImpaler">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KerriganHasImpalerUpgrade" />
+  </CValidatorPlayerRequirement>
+  <CActorModel id="KerriganImpalingBladesWarningModel">
+    <On Terms="ActorCreation; ValidatePlayer KerriganHasImpaler" Send="SetScale 1.5" />
+  </CActorModel>
+  <CActorModel id="KerriganImpalingBladesExplode">
+    <On Terms="ActorCreation; ValidatePlayer KerriganHasImpaler" Send="SetScale 1.5" />
+  </CActorModel>
+  <!-- Brood Mother: Ultralisk hits on enemy Heroes grant Kerrigan Shields for 40% of the damage (double Assimilation's
+       20% against Heroes) for 6 seconds, added to what is left (script sets ModifyLimit, as Jaina's Ice Barrier) -->
+  <CBehaviorBuff id="KerriganBroodShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_kerrigan_assimilation.dds" />
+    <Duration value="6" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Brood Expansion (Legendary, Brood Mother): Ultralisk hits on Heroes also deal 1% of their maximum Health (script) -->
   <CEffectDamage id="KerriganBroodExpansionDamage" parent="StormSpell">
     <Amount value="0" />

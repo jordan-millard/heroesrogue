@@ -15829,523 +15829,6 @@
             </String>
         </Instances>
 
-        <Instances Id="KerriganQueenOfBlades">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KerriganRavageSiphoningImpact">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="KerriganRavageBoundlessFury">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 KerriganRavageMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 KerriganBloodlustTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 KerriganSwarmQueenTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="KerriganSwarmQueenTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="KerriganBloodlustTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KerriganRavage,Cost.Charge.TimeUse 5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,KerriganRavage,Cost.Vital[Energy] -10">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,KerriganRavageDamage,MultiplicativeModifierArray[KerriganRavagePower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="AffixAdded libAffx_KerriganStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_KerriganTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganSharpenedClaws">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganQueenOfBlades">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,KerriganRavageDamage,MultiplicativeModifierArray[KerriganRavageCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganPredator">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganQueenOfBlades">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,KerriganRavage,Cost.Charge.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganRavagingFerocityBoon">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganQueenOfBlades">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KerriganRavageRavagingFerocity">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganBladedFury">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganQueenOfBlades">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganBladedFuryMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganRend">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganQueenOfBlades">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganRendMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganEndlessHunger">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganQueenOfBlades">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganEndlessHungerMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganImpaler">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KerriganImpalingBladesKineticFulmination">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="KerriganImpalingBladesPainfulSpikes">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 KerriganBladesMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 KerriganSpikesTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 KerriganKineticStormTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="KerriganKineticStormTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="KerriganSpikesTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KerriganImpalingBlades,Cost.Cooldown.TimeUse 6">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,KerriganImpalingBlades,Cost.Vital[Energy] -40">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,KerriganImpalingBladesDamage,MultiplicativeModifierArray[KerriganBladesPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,KerriganImpalingBladesPainfulSpikesDamage,MultiplicativeModifierArray[KerriganBladesPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="AffixAdded libAffx_KerriganStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_KerriganTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganSerratedSpines">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganImpaler">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,KerriganImpalingBladesDamage,MultiplicativeModifierArray[KerriganBladesCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,KerriganImpalingBladesPainfulSpikesDamage,MultiplicativeModifierArray[KerriganBladesCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganQuickSpines">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganImpaler">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,KerriganImpalingBlades,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganPsionicPulseBoon">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_primalgrasp.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganImpaler">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KerriganPrimalGraspPsionicPulse">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganImpale">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganImpaler">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganImpaleMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganSkewered">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganImpaler">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganSkeweredMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganTwinBlades">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganImpaler">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganTwinBladesMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganBroodMother">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KerriganHeroicAbilitySummonUltralisk">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="KerriganTorrasqueSummonUltralisk">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="KerriganHeroicAbilityMaelstrom">
-                <Field Id="TalentsDisable" />
-            </String>
-            <String String="1 0 KerriganUltraMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 KerriganBroodTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 KerriganHiveMindTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="KerriganHiveMindTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="KerriganBroodTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,KerriganSummonUltralisk,Cost.Cooldown.TimeUse 20">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,KerriganSummonUltralisk,Cost.Vital[Energy] -35">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,KerriganUltraliskWeaponDamage,MultiplicativeModifierArray[KerriganUltraPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,KerriganUltraliskWeaponSplashDamage,MultiplicativeModifierArray[KerriganUltraPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Effect,KerriganUltraliskChargeDamage,MultiplicativeModifierArray[KerriganUltraPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="AffixAdded libAffx_KerriganStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_KerriganTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganChitinousPlating">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganBroodMother">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,KerriganUltraliskWeaponDamage,MultiplicativeModifierArray[KerriganUltraCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,KerriganUltraliskWeaponSplashDamage,MultiplicativeModifierArray[KerriganUltraCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,KerriganUltraliskChargeDamage,MultiplicativeModifierArray[KerriganUltraCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganSpawningPool">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganBroodMother">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,KerriganSummonUltralisk,Cost.Cooldown.TimeUse -2">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganChrysalisBoon">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_assimilation.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganBroodMother">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="KerriganChrysalis">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganPrimalRage">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganBroodMother">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganPrimalRageMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganCorrosiveSwarm">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganBroodMother">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganCorrosiveMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganBroodExpansion">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="KerriganBroodMother">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 KerriganBroodExpansionMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganPrimalReach">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_primalgrasp.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="1 3 Add Abil,KerriganPrimalGrasp,Cost.Cooldown.TimeUse -1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="KerriganAssimilationMasteryBoon">
-            <String String="Assets/Textures/storm_ui_icon_kerrigan_assimilation.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Kerrigan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="KerriganAssimilationMastery">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
 
         <Instances Id="ZeratulVoidBlade">
             <String String="Assets/Textures/storm_ui_icon_zeratul_cleave.dds">
@@ -16861,6 +16344,530 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="ZeratulShroudofAdun">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="KerriganQueenOfBlades">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KerriganRavageSiphoningImpact">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KerriganRavageBoundlessFury">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KerriganRavageMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KerriganBloodlustTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KerriganSwarmQueenTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KerriganSwarmQueenTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KerriganBloodlustTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KerriganRavage,Cost.Charge.TimeUse 5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,KerriganRavage,Cost.Vital[Energy] -10">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KerriganRavageDamage,MultiplicativeModifierArray[KerriganRavagePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_KerriganStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KerriganTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganSharpenedClaws">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganQueenOfBlades">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KerriganRavageDamage,MultiplicativeModifierArray[KerriganRavageCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganPredator">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganQueenOfBlades">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KerriganRavage,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganRavagingFerocityBoon">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganQueenOfBlades">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KerriganRavageRavagingFerocity">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganBladedFury">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganQueenOfBlades">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganBladedFuryMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganRend">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganQueenOfBlades">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganRendMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganEndlessHunger">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganQueenOfBlades">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganEndlessHungerMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganImpaler">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KerriganImpalingBladesKineticFulmination">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KerriganImpalingBladesPainfulSpikes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KerriganBladesMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KerriganSpikesTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KerriganKineticStormTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KerriganKineticStormTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KerriganSpikesTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KerriganImpalingBlades,Cost.Cooldown.TimeUse 6">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,KerriganImpalingBlades,Cost.Vital[Energy] -40">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KerriganImpalingBladesSearch,AreaArray[0].Radius 2.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,KerriganImpalingBladesInitialCreatePersistent,PeriodCount 2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,KerriganImpalingBladesDamage,MultiplicativeModifierArray[KerriganBladesPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,KerriganImpalingBladesPainfulSpikesDamage,MultiplicativeModifierArray[KerriganBladesPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_KerriganStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KerriganTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganSerratedSpines">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganImpaler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KerriganImpalingBladesDamage,MultiplicativeModifierArray[KerriganBladesCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KerriganImpalingBladesPainfulSpikesDamage,MultiplicativeModifierArray[KerriganBladesCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganQuickSpines">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganImpaler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KerriganImpalingBlades,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganPsionicPulseBoon">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_primalgrasp.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganImpaler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KerriganPrimalGraspPsionicPulse">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganImpale">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganImpaler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganImpaleMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganSkewered">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganImpaler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganSkeweredMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganTwinBlades">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_impalingblades.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganImpaler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganTwinBladesMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganBroodMother">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KerriganHeroicAbilitySummonUltralisk">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KerriganTorrasqueSummonUltralisk">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="KerriganHeroicAbilityMaelstrom">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 KerriganUltraMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KerriganBroodTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KerriganHiveMindTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KerriganHiveMindTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KerriganBroodTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,KerriganSummonUltralisk,Cost.Cooldown.TimeUse 20">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,KerriganSummonUltralisk,Cost.Vital[Energy] -35">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KerriganUltraliskWeaponDamage,MultiplicativeModifierArray[KerriganUltraPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,KerriganUltraliskWeaponSplashDamage,MultiplicativeModifierArray[KerriganUltraPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,KerriganUltraliskChargeDamage,MultiplicativeModifierArray[KerriganUltraPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_KerriganStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KerriganTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganChitinousPlating">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganBroodMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KerriganUltraliskWeaponDamage,MultiplicativeModifierArray[KerriganUltraCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KerriganUltraliskWeaponSplashDamage,MultiplicativeModifierArray[KerriganUltraCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,KerriganUltraliskChargeDamage,MultiplicativeModifierArray[KerriganUltraCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganSpawningPool">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganBroodMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KerriganSummonUltralisk,Cost.Cooldown.TimeUse -2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganChrysalisBoon">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_assimilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganBroodMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KerriganChrysalis">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganPrimalRage">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ravage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganBroodMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganPrimalRageMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganCorrosiveSwarm">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganBroodMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganCorrosiveMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganBroodExpansion">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_ultralisk.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KerriganBroodMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KerriganBroodExpansionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganPrimalReach">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_primalgrasp.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,KerriganPrimalGrasp,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KerriganAssimilationMasteryBoon">
+            <String String="Assets/Textures/storm_ui_icon_kerrigan_assimilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Kerrigan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KerriganAssimilationMastery">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>

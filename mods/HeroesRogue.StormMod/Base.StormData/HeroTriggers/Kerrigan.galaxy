@@ -3,22 +3,28 @@ include "AffixTriggers"
 // ============================================================
 // Golden Kerrigan. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token
 // and heal; takedowns in the window add the takedown token.
-// Queen of Blades, Swarm Queen quest: every 15 stacks 1 more Ravage charge, up to 2; past 30 stacks 1% damage each.
+// Queen of Blades: Ravage hits on Heroes heal 10% maximum Health over 5 seconds. Swarm Queen quest: 1% Ravage
+// range and 1% more of that healing per stack, up to 50; past 50 stacks 1% damage each.
 // Endless Hunger (Legendary): those takedowns refill Ravage.
-// Impaler, Kinetic Storm quest: 1% off Impaling Blades' and Primal Grasp's cooldowns per stack, up to 30%; then 1%
+// Impaler: wider, faster Impaling Blades; hitting 2+ Heroes at once refunds it.
+// Kinetic Storm quest: 1% off Impaling Blades' and Primal Grasp's cooldowns per stack, up to 30%; then 1%
 // Impaling Blades damage each. Twin Blades (Legendary): each Impaling Blades is cast again 0.5 seconds later.
-// Brood Mother, Hive Mind quest: 1% of Summon Ultralisk's 20 second cooldown per stack, up to 40%; then 1% damage.
+// Brood Mother: Ultralisk hits on Heroes grant Shields for 40% of the damage. Hive Mind quest: 1% of Summon Ultralisk's 20 second cooldown per stack, up to 40%; then 1% damage.
 // ============================================================
 
 const fixed libAffx_KerriganTakedownWindow = 3.0;
 const fixed libAffx_KerriganPastCapDamagePerStack = 0.01;
 bool libAffx_KerriganStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KerriganRavageTime; // per enemy player, last Queen of Blades hit
-int libAffx_KerriganRavageAdded; // Queen of Blades: charges added by the takedown quest this game
+int libAffx_KerriganRavageAdded; // Queen of Blades: takedown stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KerriganBladesTime; // per enemy player, last Impaler hit
 int libAffx_KerriganBladesAdded; // Impaler: takedown stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KerriganUltraTime; // per enemy player, last Brood Mother hit
 int libAffx_KerriganUltraAdded; // Brood Mother: takedown stacks already applied to the catalog this game
+const fixed libAffx_KerriganBroodShieldFraction = 0.4; // double Assimilation against Heroes
+fixed libAffx_KerriganBladesCastTime = -1.0; // game time of the Impaling Blades eruption being counted
+int libAffx_KerriganBladesCastHits; // enemy Heroes hit by that eruption
+bool libAffx_KerriganImpalerVisual;
 
 unit libAffx_KerriganHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -43,7 +49,7 @@ void libAffx_KerriganQuestDing() {
 bool libAffx_KerriganInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_KerriganTakedownWindow;
 }
-// KerriganSwarmQueenTokenCounter: 1 more Ravage charge per 15 stacks, up to 2, then damage
+// KerriganSwarmQueenTokenCounter: 1% Ravage range (of 5.5) and 1% more Ravage healing (of 2% per second) per stack, up to 50, then damage
 void libAffx_KerriganSyncRavage () {
     unit hero = libAffx_KerriganHero();
     int stacks;
@@ -53,12 +59,13 @@ void libAffx_KerriganSyncRavage () {
         return;
     }
     stacks = libAffx_KerriganStacks("KerriganSwarmQueenTokenCounter");
-    wanted = MinI(2, stacks / 15);
+    wanted = MinI(stacks, 50);
     if (wanted != libAffx_KerriganRavageAdded) {
-        libAffx_CatalogReferenceModify("Abil,KerriganRavage,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_KerriganRavageAdded), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,KerriganRavage,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganRavageAdded) * 0.055, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KerriganQueenOfBladesRegenHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganRavageAdded) * 0.0002, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganRavageAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KerriganPastCapDamagePerStack, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 50)) * libAffx_KerriganPastCapDamagePerStack, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "KerriganRavageDamage", "MultiplicativeModifierArray[KerriganRavageLegacy].Modifier", libAffx_player, bonus);
 }
 // KerriganKineticStormTokenCounter: 1% off Impaling Blades and Primal Grasp cooldowns per stack, up to 30%, then Impaling Blades damage
@@ -123,6 +130,28 @@ bool libAffx_KerriganKerriganImpalingBladesInitialCreatePersistentEcho_Func (boo
     UnitCreateEffectPoint(hero, "KerriganImpalingBladesInitialCreatePersistent", target);
     return true;
 }
+// Brood Mother: Shields for part of an Ultralisk hit, added to what Kerrigan has left, refreshed to 6 seconds
+void libAffx_KerriganBroodShieldAdd (unit hero, fixed amount) {
+    fixed current = 0.0;
+    if (!UnitIsAlive(hero) || amount <= 0.0) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "KerriganBroodShield")) {
+        current = UnitBehaviorDamageModifyRemaining(hero, "KerriganBroodShield");
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBroodShield", "DamageResponse.ModifyLimit", libAffx_player, current + amount * libAffx_KerriganBroodShieldFraction);
+    UnitBehaviorAdd(hero, "KerriganBroodShield", hero, 1);
+}
+// Impaler: grants the upgrade that scales the Impaling Blades models once the starter is on
+bool libAffx_KerriganImpalerVisual_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_KerriganHero();
+    if (libAffx_KerriganImpalerVisual || hero == null || !UnitHasBehavior2(hero, "KerriganBladesMarker")) {
+        return false;
+    }
+    libAffx_KerriganImpalerVisual = true;
+    TechTreeUpgradeAddLevel(libAffx_player, "KerriganImpalerUpgrade", 1);
+    return true;
+}
 // Queen of Blades hit on an enemy Hero: takedown window, KerriganBloodlustTokenCounter, the heal, and on-hit boons
 bool libAffx_KerriganRavageHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -132,14 +161,14 @@ bool libAffx_KerriganRavageHit_Func (bool testConds, bool runActions) {
     }
     libAffx_KerriganRavageTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "KerriganBloodlustTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "KerriganRavageHeal", hero);
-    }
     if (UnitHasBehavior2(hero, "KerriganBladedFuryMarker")) {
         UnitCreateEffectUnit(hero, "KerriganBladedFuryModifyCooldown", hero);
     }
     if (UnitHasBehavior2(hero, "KerriganRendMarker")) {
         UnitCreateEffectUnit(hero, "KerriganRendApply", victim);
+    }
+    if (UnitIsAlive(hero)) {
+        UnitBehaviorAdd(hero, "KerriganQueenOfBladesRegen", hero, 1);
     }
     return true;
 }
@@ -152,14 +181,20 @@ bool libAffx_KerriganBladesHit_Func (bool testConds, bool runActions) {
     }
     libAffx_KerriganBladesTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "KerriganSpikesTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "KerriganBladesHeal", hero);
-    }
     if (UnitHasBehavior2(hero, "KerriganImpaleMarker")) {
         UnitCreateEffectUnit(hero, "KerriganImpaleModifyCooldown", hero);
     }
     if (UnitHasBehavior2(hero, "KerriganSkeweredMarker")) {
         UnitCreateEffectUnit(hero, "KerriganSkeweredApply", victim);
+    }
+    // the 2nd enemy Hero hit by the same eruption refunds Impaling Blades
+    if (GameGetMissionTime() != libAffx_KerriganBladesCastTime) {
+        libAffx_KerriganBladesCastTime = GameGetMissionTime();
+        libAffx_KerriganBladesCastHits = 0;
+    }
+    libAffx_KerriganBladesCastHits = libAffx_KerriganBladesCastHits + 1;
+    if (libAffx_KerriganBladesCastHits == 2) {
+        UnitCreateEffectUnit(hero, "KerriganImpalerRefund", hero);
     }
     return true;
 }
@@ -172,15 +207,13 @@ bool libAffx_KerriganUltraHit_Func (bool testConds, bool runActions) {
     }
     libAffx_KerriganUltraTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "KerriganBroodTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "KerriganUltraHeal", hero);
-    }
     if (UnitHasBehavior2(hero, "KerriganPrimalRageMarker")) {
         UnitCreateEffectUnit(hero, "KerriganPrimalRageModifyCooldown", hero);
     }
     if (UnitHasBehavior2(hero, "KerriganCorrosiveMarker")) {
         UnitCreateEffectUnit(hero, "KerriganCorrosiveApply", victim);
     }
+    libAffx_KerriganBroodShieldAdd(hero, EventUnitDamageAmount() + EventUnitDamageBehaviorShield());
     if (UnitHasBehavior2(hero, "KerriganBroodExpansionMarker") && UnitIsAlive(victim)) {
         UnitDamage(hero, "KerriganBroodExpansionDamage", victim, UnitGetPropertyFixed(victim, c_unitPropLifeMax, c_unitPropCurrent) * 0.01);
     }
@@ -236,6 +269,7 @@ bool libAffx_KerriganStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KerriganUltraliskWeaponDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KerriganUltraliskChargeDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KerriganKerriganImpalingBladesInitialCreatePersistentEcho_Func"), libAffx_player, "KerriganImpalingBladesInitialCreatePersistent");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KerriganImpalerVisual_Func"), 0.5, c_timeGame);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KerriganSync_Func"), 1.0, c_timeGame);
     return true;
