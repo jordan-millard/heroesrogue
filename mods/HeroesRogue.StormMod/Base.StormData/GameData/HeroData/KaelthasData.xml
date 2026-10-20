@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Bombardier ===== -->
-  <!-- Fuse quest (50% kept): 0.25% Living Bomb damage per enemy Hero hit. Chain Detonation quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
+  <!-- Fuse quest (50% kept): 0.5% Living Bomb damage per enemy Hero hit. Chain Detonation quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
   <CBehaviorTokenCounter id="KaelthasFuseTokenCounter" parent="StormQuestToken">
     <Face value="KaelthasFuseTokenCounter" />
     <Max value="100000" />
@@ -68,7 +68,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="KaelthasFuseTokenCounter" />
-    <Scale value="0.0025" />
+    <Scale value="0.005" />
   </CAccumulatorToken>
   <CEffectDamage id="KaelthasLivingBombImpactDamage">
     <MultiplicativeModifierArray index="KaelthasBombPower" Modifier="0" />
