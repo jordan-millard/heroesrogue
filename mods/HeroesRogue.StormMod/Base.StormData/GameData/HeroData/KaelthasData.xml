@@ -39,6 +39,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KaelthasFlamestrikeCommon" Modifier="0" />
     <MultiplicativeModifierArray index="KaelthasFlamestrikeHit" Accumulator="KaelthasEmberTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="KaelthasFlamestrikeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="KaelthasSunfireRing1" Validator="KaelthasSunfireTargetRing1" Modifier="-0.25" />
+    <MultiplicativeModifierArray index="KaelthasSunfireRing2" Validator="KaelthasSunfireTargetRing2" Modifier="-0.5" />
   </CEffectDamage>
   <CEffectModifyUnit id="KaelthasFlamestrikeHeal">
     <ImpactUnit Value="Caster" />
@@ -340,8 +342,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Range value="2" />
     <Value Effect="KaelthasSunfireRing1Search" Value="TargetPoint" />
   </CValidatorLocationCompareRange>
+  <!-- ring 1 deals 75% damage: it marks what it hits for a moment, and Flamestrike damage checks the mark -->
+  <CBehaviorBuff id="KaelthasSunfireRing1Hit">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.0625" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="KaelthasSunfireRing1Mark">
+    <Behavior value="KaelthasSunfireRing1Hit" />
+  </CEffectApplyBehavior>
+  <CValidatorUnitCompareBehaviorCount id="KaelthasSunfireTargetRing1">
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="KaelthasSunfireRing1Hit" />
+  </CValidatorUnitCompareBehaviorCount>
   <CEffectSet id="KaelthasSunfireRing1Set">
     <ValidatorArray value="KaelthasSunfireRing1Outside" />
+    <EffectArray value="KaelthasSunfireRing1Mark" />
     <EffectArray value="KaelthasFlamestrikeVerdantSpheresImpactSet" />
   </CEffectSet>
   <CEffectEnumArea id="KaelthasSunfireRing1Search">
@@ -358,8 +374,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Range value="4" />
     <Value Effect="KaelthasSunfireRing2Search" Value="TargetPoint" />
   </CValidatorLocationCompareRange>
+  <!-- ring 2 deals 50% damage: it marks what it hits for a moment, and Flamestrike damage checks the mark -->
+  <CBehaviorBuff id="KaelthasSunfireRing2Hit">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.0625" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="KaelthasSunfireRing2Mark">
+    <Behavior value="KaelthasSunfireRing2Hit" />
+  </CEffectApplyBehavior>
+  <CValidatorUnitCompareBehaviorCount id="KaelthasSunfireTargetRing2">
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="KaelthasSunfireRing2Hit" />
+  </CValidatorUnitCompareBehaviorCount>
   <CEffectSet id="KaelthasSunfireRing2Set">
     <ValidatorArray value="KaelthasSunfireRing2Outside" />
+    <EffectArray value="KaelthasSunfireRing2Mark" />
     <EffectArray value="KaelthasFlamestrikeVerdantSpheresImpactSet" />
   </CEffectSet>
   <CEffectEnumArea id="KaelthasSunfireRing2Search">
