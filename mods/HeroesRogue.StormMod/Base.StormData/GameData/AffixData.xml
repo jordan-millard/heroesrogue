@@ -14733,6 +14733,572 @@
             </String>
         </Instances>
 
+        <Instances Id="JainaFrostMage">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JainaFrostboltFrostShards">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="JainaFrostboltIceLance">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 JainaFrostboltMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 JainaIceShardsTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 JainaColdFrontTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="JainaColdFrontTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="JainaIceShardsTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,JainaFrostbolt,Cost.Cooldown.TimeUse 3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,JainaFrostbolt,Cost.Vital[Energy] -15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,JainaFrostboltDamage,MultiplicativeModifierArray[JainaFrostboltPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,JainaFrostboltDamageChilled,MultiplicativeModifierArray[JainaFrostboltPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_JainaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_JainaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JainaBitingCold">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaFrostMage">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,JainaFrostboltDamage,MultiplicativeModifierArray[JainaFrostboltCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,JainaFrostboltDamageChilled,MultiplicativeModifierArray[JainaFrostboltCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JainaQuickFrost">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaFrostMage">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,JainaFrostbolt,Cost.Cooldown.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JainaWintersReachBoon">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaFrostMage">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="JainaFrostboltWintersReach">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="JainaShatter">
+            <String String="Assets/Textures/storm_ui_icon_jaina_coneofcold.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaFrostMage">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaShatterMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaBrittle">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaFrostMage">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaBrittleMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaFrostVolley">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaFrostMage">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaFrostVolleyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaBlizzardCaller">
+            <String String="Assets/Textures/storm_ui_icon_jaina_blizzard.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JainaBlizzardStormFront">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="JainaBlizzardSnowstorm">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 JainaBlizzardMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 JainaSnowfallTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 JainaEndlessWinterTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="JainaEndlessWinterTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="JainaSnowfallTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,JainaBlizzard,Cost.Cooldown.TimeUse 9">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,JainaBlizzard,Cost.Vital[Energy] -45">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,JainaBlizzardDamage,MultiplicativeModifierArray[JainaBlizzardPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,JainaBlizzardDamageChilled,MultiplicativeModifierArray[JainaBlizzardPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_JainaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_JainaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JainaHailstorm">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_blizzard.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaBlizzardCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,JainaBlizzardDamage,MultiplicativeModifierArray[JainaBlizzardCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,JainaBlizzardDamageChilled,MultiplicativeModifierArray[JainaBlizzardCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JainaGatheringStorm">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_blizzard.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaBlizzardCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,JainaBlizzard,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JainaLingeringChillBoon">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbite.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaBlizzardCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="JainaFrostbiteLingeringChill">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="JainaWhiteout">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostbolt.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaBlizzardCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaWhiteoutMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaDeepFreeze">
+            <String String="Assets/Textures/storm_ui_icon_jaina_blizzard.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaBlizzardCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaDeepFreezeMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaEternalWinter">
+            <String String="Assets/Textures/storm_ui_icon_jaina_blizzard.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaBlizzardCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaEternalWinterMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaElementalist">
+            <String String="Assets/Textures/storm_ui_icon_jaina_summonwaterelemental.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JainaHeroicSummonWaterElemental">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="JainaSummonWaterElementalWintermute">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="JainaHeroicRingOfFrost">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 JainaElementalMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 JainaUndertowTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 JainaTidecallerTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="JainaTidecallerTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="JainaUndertowTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,JainaSummonWaterElemental,Cost.Cooldown.TimeUse 20">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,JainaSummonWaterElemental,Cost.Vital[Energy] -30">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalWeaponDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalWeaponSplashDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalWeaponFrostbiteDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalWeaponFrostbiteSplashDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalFrostboltDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalFrostboltDamageChilled,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalBlizzardDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalBlizzardDamageChilled,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalConeOfColdDamage,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,JainaWaterElementalConeOfColdDamageChilled,MultiplicativeModifierArray[JainaElementalPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="AffixAdded libAffx_JainaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_JainaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="JainaRisingTide">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_summonwaterelemental.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaElementalist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,JainaWaterElementalWeaponDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalWeaponSplashDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalWeaponFrostbiteDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalWeaponFrostbiteSplashDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalFrostboltDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalFrostboltDamageChilled,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalBlizzardDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalBlizzardDamageChilled,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalConeOfColdDamage,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 2 Set Effect,JainaWaterElementalConeOfColdDamageChilled,MultiplicativeModifierArray[JainaElementalCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+        </Instances>
+        <Instances Id="JainaWellspring">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_summonwaterelemental.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaElementalist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,JainaSummonWaterElemental,Cost.Cooldown.TimeUse -2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JainaFrostArmorBoon">
+            <String String="Assets/Textures/storm_ui_icon_jaina_frostarmor.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaElementalist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="JainaFrostbiteFrostArmor">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="JainaTidalBond">
+            <String String="Assets/Textures/storm_ui_icon_jaina_summonwaterelemental.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaElementalist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaTidalBondMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaIcyVeinsBoon">
+            <String String="Assets/Textures/storm_ui_icon_jaina_icyveins.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaElementalist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="JainaIcyVeins">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="JainaGlacialSpike">
+            <String String="Assets/Textures/storm_ui_icon_jaina_summonwaterelemental.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="JainaElementalist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 JainaGlacialSpikeMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="JainaColdSnap">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_jaina_coneofcold.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,JainaConeOfCold,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="JainaArcaneIntellectBoon">
+            <String String="Assets/Textures/storm_ui_icon_jaina_arcaneintellect.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Jaina">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="JainaFrostbiteArcaneIntellect">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

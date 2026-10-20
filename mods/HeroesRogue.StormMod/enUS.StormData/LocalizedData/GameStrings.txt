@@ -1222,6 +1222,68 @@ Behavior/Name/VallaMarkedForDeathDebuff=Marked for Death
 Behavior/Tooltip/VallaMarkedForDeathDebuff=Armor reduced by Valla's Multishot.
 Behavior/Name/VallaShadowCloakBuff=Shadow Cloak
 Behavior/Tooltip/VallaShadowCloakBuff=Gaining Armor while Strafing.
+Affix/Name/JainaFrostMage=Frost Mage
+Affix/Tooltip/JainaFrostMage=Gain <c val="#TooltipNumbers">Frost Shards</c> and <c val="#TooltipNumbers">Ice Lance</c>. Frostbolt deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">15</c> less Mana, and has a <c val="#TooltipNumbers">3</c> second cooldown. Each enemy Hero hit heals Jaina for <c val="#TooltipNumbers">2%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Frostbolt hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Frostbolt damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Frostbolt hit reduce Blizzard's and Cone of Cold's cooldowns by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">25%</c>), then add <c val="#TooltipNumbers">1%</c> Frostbolt damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/JainaBitingCold=Biting Cold
+Affix/Tooltip/JainaBitingCold=Frostbolt deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/JainaQuickFrost=Quick Frost
+Affix/Tooltip/JainaQuickFrost=Reduce Frostbolt's cooldown by <c val="#TooltipNumbers">0.25</c> seconds.
+Affix/Name/JainaWintersReachBoon=Winter's Reach
+Affix/Tooltip/JainaWintersReachBoon=Gain the talent <c val="#TooltipNumbers">Winter's Reach</c>: Frostbolt has more range and travels faster.
+Affix/Name/JainaShatter=Shatter
+Affix/Tooltip/JainaShatter=Each Frostbolt hit on an enemy Hero takes <c val="#TooltipNumbers">1</c> second off Cone of Cold's cooldown.
+Affix/Name/JainaBrittle=Brittle
+Affix/Tooltip/JainaBrittle=Each Frostbolt hit on an enemy Hero removes <c val="#TooltipNumbers">5</c> Armor for <c val="#TooltipNumbers">4</c> seconds, stacking up to <c val="#TooltipNumbers">4</c> times.
+Affix/Name/JainaFrostVolley=Frost Volley
+Affix/Tooltip/JainaFrostVolley=Each Frostbolt is cast again <c val="#TooltipNumbers">0.3</c> seconds later, toward the same spot, at no cost.
+Button/Name/JainaIceShardsTokenCounter=Ice Shards
+Button/Tooltip/JainaIceShardsTokenCounter=<c val="#TooltipQuest">Bonus Frostbolt damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:JainaIceShardsTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/JainaColdFrontTokenCounter=Cold Front
+Button/Tooltip/JainaColdFrontTokenCounter=<c val="#TooltipQuest">Cold Front stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:JainaColdFrontTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Blizzard's and Cone of Cold's cooldowns by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">25%</c> at <c val="#TooltipNumbers">25</c> stacks. Each stack past <c val="#TooltipNumbers">25</c> adds <c val="#TooltipNumbers">1%</c> Frostbolt damage.
+Affix/Name/JainaBlizzardCaller=Blizzard Caller
+Affix/Tooltip/JainaBlizzardCaller=Gain <c val="#TooltipNumbers">Storm Front</c> and <c val="#TooltipNumbers">Snowstorm</c>. Blizzard deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">45</c> less Mana, and has a <c val="#TooltipNumbers">9</c> second cooldown. Each Blizzard hit on an enemy Hero heals Jaina for <c val="#TooltipNumbers">1.5%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Blizzard hits on enemy Heroes add <c val="#TooltipNumbers">0.25%</c> Blizzard damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Blizzard hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/JainaHailstorm=Hailstorm
+Affix/Tooltip/JainaHailstorm=Blizzard deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/JainaGatheringStorm=Gathering Storm
+Affix/Tooltip/JainaGatheringStorm=Reduce Blizzard's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/JainaLingeringChillBoon=Lingering Chill
+Affix/Tooltip/JainaLingeringChillBoon=Gain the talent <c val="#TooltipNumbers">Lingering Chill</c>: Chill lasts longer.
+Affix/Name/JainaWhiteout=Whiteout
+Affix/Tooltip/JainaWhiteout=Each Blizzard hit on an enemy Hero takes <c val="#TooltipNumbers">0.5</c> seconds off Frostbolt's cooldown.
+Affix/Name/JainaDeepFreeze=Deep Freeze
+Affix/Tooltip/JainaDeepFreeze=Each Blizzard hit on an enemy Hero removes <c val="#TooltipNumbers">4</c> Armor for <c val="#TooltipNumbers">3</c> seconds, stacking up to <c val="#TooltipNumbers">3</c> times.
+Affix/Name/JainaEternalWinter=Eternal Winter
+Affix/Tooltip/JainaEternalWinter=Each Blizzard is cast again <c val="#TooltipNumbers">1</c> second later, on the same spot, at no cost.
+Button/Name/JainaSnowfallTokenCounter=Snowfall
+Button/Tooltip/JainaSnowfallTokenCounter=<c val="#TooltipQuest">Bonus Blizzard damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:JainaSnowfallTokenCounter$*0.25" precision="1"/>%</c></c>
+Button/Name/JainaEndlessWinterTokenCounter=Endless Winter
+Button/Tooltip/JainaEndlessWinterTokenCounter=<c val="#TooltipQuest">Endless Winter stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:JainaEndlessWinterTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Blizzard's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">40%</c> at <c val="#TooltipNumbers">40</c> stacks. Each stack past <c val="#TooltipNumbers">40</c> adds <c val="#TooltipNumbers">1%</c> Blizzard damage.
+Affix/Name/JainaElementalist=Elementalist
+Affix/Tooltip/JainaElementalist=Gain <c val="#TooltipNumbers">Summon Water Elemental</c>, usable from level <c val="#TooltipNumbers">1</c>, and <c val="#TooltipNumbers">Wintermute</c>. Ring of Frost can't be taken. The Water Elemental deals <c val="#TooltipNumbers">50%</c> more damage, and Summon Water Elemental costs <c val="#TooltipNumbers">30</c> less Mana and has a <c val="#TooltipNumbers">20</c> second cooldown. Each elemental hit on an enemy Hero heals Jaina for <c val="#TooltipNumbers">1%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Water Elemental hits on enemy Heroes add <c val="#TooltipNumbers">0.25%</c> Water Elemental damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of an elemental hit reduce Summon Water Elemental's cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/JainaRisingTide=Rising Tide
+Affix/Tooltip/JainaRisingTide=The Water Elemental deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/JainaWellspring=Wellspring
+Affix/Tooltip/JainaWellspring=Reduce Summon Water Elemental's cooldown by <c val="#TooltipNumbers">2</c> seconds.
+Affix/Name/JainaFrostArmorBoon=Frost Armor
+Affix/Tooltip/JainaFrostArmorBoon=Gain the talent <c val="#TooltipNumbers">Frost Armor</c>: Basic Attacks against Jaina Chill the attacker, and she gains Physical Armor.
+Affix/Name/JainaTidalBond=Tidal Bond
+Affix/Tooltip/JainaTidalBond=Each Water Elemental hit on an enemy Hero takes <c val="#TooltipNumbers">0.5</c> seconds off Summon Water Elemental's cooldown.
+Affix/Name/JainaIcyVeinsBoon=Icy Veins
+Affix/Tooltip/JainaIcyVeinsBoon=Gain the talent <c val="#TooltipNumbers">Icy Veins</c>: activate to reduce cooldowns and Mana costs.
+Affix/Name/JainaGlacialSpike=Glacial Spike
+Affix/Tooltip/JainaGlacialSpike=Water Elemental hits on enemy Heroes also deal <c val="#TooltipNumbers">1.5%</c> of their maximum Health as damage.
+Button/Name/JainaUndertowTokenCounter=Undertow
+Button/Tooltip/JainaUndertowTokenCounter=<c val="#TooltipQuest">Bonus Water Elemental damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:JainaUndertowTokenCounter$*0.25" precision="1"/>%</c></c>
+Button/Name/JainaTidecallerTokenCounter=Tidecaller
+Button/Tooltip/JainaTidecallerTokenCounter=<c val="#TooltipQuest">Tidecaller stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:JainaTidecallerTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Summon Water Elemental's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">40%</c> at <c val="#TooltipNumbers">40</c> stacks. Each stack past <c val="#TooltipNumbers">40</c> adds <c val="#TooltipNumbers">1%</c> Water Elemental damage.
+Affix/Name/JainaColdSnap=Cold Snap
+Affix/Tooltip/JainaColdSnap=Reduce Cone of Cold's cooldown by <c val="#TooltipNumbers">1</c> second.
+Affix/Name/JainaArcaneIntellectBoon=Arcane Intellect
+Affix/Tooltip/JainaArcaneIntellectBoon=Gain the talent <c val="#TooltipNumbers">Arcane Intellect</c>: damage to Chilled targets restores Mana.
+Behavior/Name/JainaBrittleDebuff=Brittle
+Behavior/Tooltip/JainaBrittleDebuff=Armor reduced by Jaina's Frostbolt.
+Behavior/Name/JainaDeepFreezeDebuff=Deep Freeze
+Behavior/Tooltip/JainaDeepFreezeDebuff=Armor reduced by Jaina's Blizzard.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

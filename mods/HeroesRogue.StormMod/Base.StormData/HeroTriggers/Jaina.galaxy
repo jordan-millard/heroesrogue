@@ -1,0 +1,272 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Jaina. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token and
+// heal; takedowns in the window add the takedown token.
+// Frost Mage, Cold Front quest: 1% off Blizzard's and Cone of Cold's cooldowns per stack, up to 25%; then 1% Frostbolt
+// damage each. Frost Volley (Legendary): each Frostbolt is cast again 0.3 seconds later.
+// Blizzard Caller, Endless Winter quest: 1% of Blizzard's 9 second cooldown per stack, up to 40%; then 1% damage each.
+// Eternal Winter (Legendary): each Blizzard is cast again 1 second later.
+// Elementalist, Tidecaller quest: 1% of Summon Water Elemental's 20 second cooldown per stack, up to 40%; then 1%
+// elemental damage each.
+// ============================================================
+
+const fixed libAffx_JainaTakedownWindow = 3.0;
+const fixed libAffx_JainaPastCapDamagePerStack = 0.01;
+bool libAffx_JainaStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_JainaFrostboltTime; // per enemy player, last Frost Mage hit
+int libAffx_JainaFrostboltAdded; // Frost Mage: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_JainaBlizzardTime; // per enemy player, last Blizzard Caller hit
+int libAffx_JainaBlizzardAdded; // Blizzard Caller: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_JainaElementalTime; // per enemy player, last Elementalist hit
+int libAffx_JainaElementalAdded; // Elementalist: takedown stacks already applied to the catalog this game
+
+unit libAffx_JainaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_JainaIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_JainaStacks(string tokenId) {
+    unit hero = libAffx_JainaHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_JainaQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_JainaInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_JainaTakedownWindow;
+}
+// JainaColdFrontTokenCounter: 1% off Blizzard and Cone of Cold cooldowns per stack, up to 25%, then Frostbolt damage
+void libAffx_JainaSyncFrostbolt () {
+    unit hero = libAffx_JainaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "JainaFrostboltMarker")) {
+        return;
+    }
+    stacks = libAffx_JainaStacks("JainaColdFrontTokenCounter");
+    wanted = MinI(stacks, 25);
+    if (wanted != libAffx_JainaFrostboltAdded) {
+        libAffx_CatalogReferenceModify("Abil,JainaBlizzard,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaFrostboltAdded) * -0.15, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,JainaConeOfCold,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaFrostboltAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_JainaFrostboltAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 25)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaFrostboltDamage", "MultiplicativeModifierArray[JainaFrostboltLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaFrostboltDamageChilled", "MultiplicativeModifierArray[JainaFrostboltLegacy].Modifier", libAffx_player, bonus);
+}
+// JainaEndlessWinterTokenCounter: 1% of the 9 second cooldown per stack, up to 40%, then damage
+void libAffx_JainaSyncBlizzard () {
+    unit hero = libAffx_JainaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "JainaBlizzardMarker")) {
+        return;
+    }
+    stacks = libAffx_JainaStacks("JainaEndlessWinterTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_JainaBlizzardAdded) {
+        libAffx_CatalogReferenceModify("Abil,JainaBlizzard,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaBlizzardAdded) * -0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_JainaBlizzardAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaBlizzardDamage", "MultiplicativeModifierArray[JainaBlizzardLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaBlizzardDamageChilled", "MultiplicativeModifierArray[JainaBlizzardLegacy].Modifier", libAffx_player, bonus);
+}
+// JainaTidecallerTokenCounter: 1% of the 20 second cooldown per stack, up to 40%, then damage
+void libAffx_JainaSyncElemental () {
+    unit hero = libAffx_JainaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "JainaElementalMarker")) {
+        return;
+    }
+    stacks = libAffx_JainaStacks("JainaTidecallerTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_JainaElementalAdded) {
+        libAffx_CatalogReferenceModify("Abil,JainaSummonWaterElemental,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaElementalAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_JainaElementalAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponSplashDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponFrostbiteDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponFrostbiteSplashDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalFrostboltDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalFrostboltDamageChilled", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalBlizzardDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalBlizzardDamageChilled", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalConeOfColdDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalConeOfColdDamageChilled", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_JainaSync_Func (bool testConds, bool runActions) {
+    libAffx_JainaSyncFrostbolt();
+    libAffx_JainaSyncBlizzard();
+    libAffx_JainaSyncElemental();
+    return true;
+}
+fixed libAffx_JainaJainaFrostboltInitialSetLastEcho = -1.0;
+// JainaFrostVolleyMarker: JainaFrostboltInitialSet is cast again toward the same point 0.3 seconds later. The echo is skipped by its own event.
+bool libAffx_JainaJainaFrostboltInitialSetEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_JainaHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "JainaFrostVolleyMarker") || GameGetMissionTime() == libAffx_JainaJainaFrostboltInitialSetLastEcho) {
+        return false;
+    }
+    Wait(0.3, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_JainaJainaFrostboltInitialSetLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "JainaFrostboltInitialSet", target);
+    return true;
+}
+fixed libAffx_JainaJainaBlizzardBasePersistentSetLastEcho = -1.0;
+// JainaEternalWinterMarker: JainaBlizzardBasePersistentSet is cast again toward the same point 1.0 seconds later. The echo is skipped by its own event.
+bool libAffx_JainaJainaBlizzardBasePersistentSetEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_JainaHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "JainaEternalWinterMarker") || GameGetMissionTime() == libAffx_JainaJainaBlizzardBasePersistentSetLastEcho) {
+        return false;
+    }
+    Wait(1.0, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_JainaJainaBlizzardBasePersistentSetLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "JainaBlizzardBasePersistentSet", target);
+    return true;
+}
+// Frost Mage hit on an enemy Hero: takedown window, JainaIceShardsTokenCounter, the heal, and on-hit boons
+bool libAffx_JainaFrostboltHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_JainaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_JainaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "JainaFrostboltMarker")) {
+        return false;
+    }
+    libAffx_JainaFrostboltTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "JainaIceShardsTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "JainaFrostboltHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "JainaShatterMarker")) {
+        UnitCreateEffectUnit(hero, "JainaShatterModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "JainaBrittleMarker")) {
+        UnitCreateEffectUnit(hero, "JainaBrittleApply", victim);
+    }
+    return true;
+}
+// Blizzard Caller hit on an enemy Hero: takedown window, JainaSnowfallTokenCounter, the heal, and on-hit boons
+bool libAffx_JainaBlizzardHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_JainaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_JainaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "JainaBlizzardMarker")) {
+        return false;
+    }
+    libAffx_JainaBlizzardTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "JainaSnowfallTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "JainaBlizzardHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "JainaWhiteoutMarker")) {
+        UnitCreateEffectUnit(hero, "JainaWhiteoutModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "JainaDeepFreezeMarker")) {
+        UnitCreateEffectUnit(hero, "JainaDeepFreezeApply", victim);
+    }
+    return true;
+}
+// Elementalist hit on an enemy Hero: takedown window, JainaUndertowTokenCounter, the heal, and on-hit boons
+bool libAffx_JainaElementalHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_JainaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_JainaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "JainaElementalMarker")) {
+        return false;
+    }
+    libAffx_JainaElementalTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "JainaUndertowTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "JainaElementalHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "JainaTidalBondMarker")) {
+        UnitCreateEffectUnit(hero, "JainaTidalBondModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "JainaGlacialSpikeMarker") && UnitIsAlive(victim)) {
+        UnitDamage(hero, "JainaGlacialSpikeDamage", victim, UnitGetPropertyFixed(victim, c_unitPropLifeMax, c_unitPropCurrent) * 0.015);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_JainaTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_JainaHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "JainaFrostboltMarker") && libAffx_JainaInWindow(libAffx_JainaFrostboltTime[killedPlayer], now)) {
+        libAffx_JainaFrostboltTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "JainaColdFrontTokenCounter", hero);
+        libAffx_JainaSyncFrostbolt();
+        libAffx_JainaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "JainaBlizzardMarker") && libAffx_JainaInWindow(libAffx_JainaBlizzardTime[killedPlayer], now)) {
+        libAffx_JainaBlizzardTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "JainaEndlessWinterTokenCounter", hero);
+        libAffx_JainaSyncBlizzard();
+        libAffx_JainaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "JainaElementalMarker") && libAffx_JainaInWindow(libAffx_JainaElementalTime[killedPlayer], now)) {
+        libAffx_JainaElementalTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "JainaTidecallerTokenCounter", hero);
+        libAffx_JainaSyncElemental();
+        libAffx_JainaQuestDing();
+    }
+    return true;
+}
+bool libAffx_JainaStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_JainaStarted) {
+        return true;
+    }
+    libAffx_JainaStarted = true;
+    trig = TriggerCreate("libAffx_JainaFrostboltHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaFrostboltDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaFrostboltDamageChilled");
+    trig = TriggerCreate("libAffx_JainaBlizzardHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaBlizzardDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaBlizzardDamageChilled");
+    trig = TriggerCreate("libAffx_JainaElementalHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalWeaponSplashDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalWeaponFrostbiteDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalWeaponFrostbiteSplashDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalFrostboltDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalFrostboltDamageChilled");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalBlizzardDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalBlizzardDamageChilled");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalConeOfColdDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "JainaWaterElementalConeOfColdDamageChilled");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_JainaJainaFrostboltInitialSetEcho_Func"), libAffx_player, "JainaFrostboltInitialSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_JainaJainaBlizzardBasePersistentSetEcho_Func"), libAffx_player, "JainaBlizzardBasePersistentSet");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_JainaSync_Func"), 1.0, c_timeGame);
+    return true;
+}

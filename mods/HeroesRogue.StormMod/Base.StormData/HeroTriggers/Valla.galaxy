@@ -17,11 +17,9 @@ bool libAffx_VallaStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaHungerTime; // per enemy player, last Hungering Hunter hit
 int libAffx_VallaHungerAdded; // Hungering Hunter: charges added by the takedown quest this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaVolleyTime; // per enemy player, last Multishot Marksman hit
-fixed libAffx_VallaVolleyAdded; // Multishot Marksman: amount the takedown quest has changed this game
+int libAffx_VallaVolleyAdded; // Multishot Marksman: takedown stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaStrafeTime; // per enemy player, last Strafe Queen hit
-fixed libAffx_VallaStrafeAdded; // Strafe Queen: amount the takedown quest has changed this game
-fixed libAffx_VallaLastEcho = -1.0; // Volley of Hatred: when the last echo was fired
-const fixed libAffx_VallaEchoDelay = 0.3;
+int libAffx_VallaStrafeAdded; // Strafe Queen: takedown stacks already applied to the catalog this game
 
 unit libAffx_VallaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -77,17 +75,15 @@ void libAffx_VallaSyncHunger () {
 void libAffx_VallaSyncVolley () {
     unit hero = libAffx_VallaHero();
     int stacks;
-    fixed wanted;
-    string delta;
+    int wanted;
     string bonus;
     if (hero == null || !UnitHasBehavior2(hero, "VallaVolleyMarker")) {
         return;
     }
     stacks = libAffx_VallaStacks("VallaBountyTokenCounter");
-    wanted = IntToFixed(MinI(stacks, 30)) * 0.08;
+    wanted = MinI(stacks, 30);
     if (wanted != libAffx_VallaVolleyAdded) {
-        delta = FixedToString(libAffx_VallaVolleyAdded - wanted, c_fixedPrecisionAny);
-        libAffx_CatalogReferenceModify("Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_VallaVolleyAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_VallaVolleyAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
@@ -98,17 +94,15 @@ void libAffx_VallaSyncVolley () {
 void libAffx_VallaSyncStrafe () {
     unit hero = libAffx_VallaHero();
     int stacks;
-    fixed wanted;
-    string delta;
+    int wanted;
     string bonus;
     if (hero == null || !UnitHasBehavior2(hero, "VallaStrafeMarker")) {
         return;
     }
     stacks = libAffx_VallaStacks("VallaEndlessHuntTokenCounter");
-    wanted = IntToFixed(MinI(stacks, 20)) * 0.1;
+    wanted = MinI(stacks, 20);
     if (wanted != libAffx_VallaStrafeAdded) {
-        delta = FixedToString(wanted - libAffx_VallaStrafeAdded, c_fixedPrecisionAny);
-        libAffx_CatalogReferenceModify("Behavior,Strafe,Duration", libAffx_player, delta, c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,Strafe,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_VallaStrafeAdded) * 0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_VallaStrafeAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 20)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
@@ -121,18 +115,19 @@ bool libAffx_VallaSync_Func (bool testConds, bool runActions) {
     libAffx_VallaSyncStrafe();
     return true;
 }
-// Volley of Hatred: each Multishot is fired again toward the same point. The echo is skipped by its own event.
-bool libAffx_VallaMultishotCast_Func (bool testConds, bool runActions) {
+fixed libAffx_VallaMultishotSetLastEcho = -1.0;
+// VallaVolleyOfHatredMarker: MultishotSet is cast again toward the same point 0.3 seconds later. The echo is skipped by its own event.
+bool libAffx_VallaMultishotSetEcho_Func (bool testConds, bool runActions) {
     unit hero = libAffx_VallaHero();
     point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
-    if (hero == null || !UnitHasBehavior2(hero, "VallaVolleyOfHatredMarker") || GameGetMissionTime() == libAffx_VallaLastEcho) {
+    if (hero == null || !UnitHasBehavior2(hero, "VallaVolleyOfHatredMarker") || GameGetMissionTime() == libAffx_VallaMultishotSetLastEcho) {
         return false;
     }
-    Wait(libAffx_VallaEchoDelay, c_timeGame);
+    Wait(0.3, c_timeGame);
     if (!UnitIsAlive(hero) || target == null) {
         return true;
     }
-    libAffx_VallaLastEcho = GameGetMissionTime();
+    libAffx_VallaMultishotSetLastEcho = GameGetMissionTime();
     UnitCreateEffectPoint(hero, "MultishotSet", target);
     return true;
 }
@@ -256,7 +251,7 @@ bool libAffx_VallaStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_VallaStrafeHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterStrafeBasicWeaponDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DemonHunterStrafeDeathSiphonDamage");
-    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_VallaMultishotCast_Func"), libAffx_player, "MultishotSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_VallaMultishotSetEcho_Func"), libAffx_player, "MultishotSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_VallaSync_Func"), 1.0, c_timeGame);
     return true;

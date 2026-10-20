@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Jaina. Starters: Frost Mage (Frostbolt), Blizzard Caller (Blizzard) and Elementalist (Summon Water Elemental from level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Jaina.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="JainaFrostboltMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaBlizzardMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaElementalMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaShatterMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaBrittleMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaFrostVolleyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaWhiteoutMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaDeepFreezeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaEternalWinterMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaTidalBondMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="JainaGlacialSpikeMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Frost Mage ===== -->
+  <!-- Ice Shards quest (50% kept): 0.5% Frostbolt damage per enemy Hero hit. Cold Front quest: takedowns within 3 seconds of a hit; 1% off Blizzard and Cone of Cold cooldowns each up to 25%, then 1% Frostbolt damage each (script). -->
+  <CBehaviorTokenCounter id="JainaIceShardsTokenCounter" parent="StormQuestToken">
+    <Face value="JainaIceShardsTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="JainaColdFrontTokenCounter" parent="StormQuestToken">
+    <Face value="JainaColdFrontTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="JainaIceShardsTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="JainaIceShardsTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="JainaFrostboltDamage">
+    <MultiplicativeModifierArray index="JainaFrostboltPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaFrostboltCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaFrostboltHit" Accumulator="JainaIceShardsTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaFrostboltLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaFrostboltDamageChilled">
+    <MultiplicativeModifierArray index="JainaFrostboltPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaFrostboltCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaFrostboltHit" Accumulator="JainaIceShardsTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaFrostboltLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="JainaFrostboltHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="JainaIceShardsTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_jaina_frostbolt.dds" />
+  </CButton>
+  <CButton id="JainaColdFrontTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_jaina_frostbolt.dds" />
+  </CButton>
+
+  <!-- ===== Blizzard Caller ===== -->
+  <!-- Whiteout quest (50% kept): 0.25% Blizzard damage per enemy Hero hit. Endless Winter quest: takedowns within 3 seconds of a hit; 1% of the 9 second cooldown each up to 40%, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="JainaSnowfallTokenCounter" parent="StormQuestToken">
+    <Face value="JainaSnowfallTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="JainaEndlessWinterTokenCounter" parent="StormQuestToken">
+    <Face value="JainaEndlessWinterTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="JainaSnowfallTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="JainaSnowfallTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="JainaBlizzardDamage">
+    <MultiplicativeModifierArray index="JainaBlizzardPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaBlizzardCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaBlizzardHit" Accumulator="JainaSnowfallTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaBlizzardLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaBlizzardDamageChilled">
+    <MultiplicativeModifierArray index="JainaBlizzardPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaBlizzardCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaBlizzardHit" Accumulator="JainaSnowfallTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaBlizzardLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="JainaBlizzardHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.015" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="JainaSnowfallTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_jaina_blizzard.dds" />
+  </CButton>
+  <CButton id="JainaEndlessWinterTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_jaina_blizzard.dds" />
+  </CButton>
+
+  <!-- ===== Elementalist ===== -->
+  <!-- Summon Water Elemental from level 1. Undertow quest (50% kept): 0.25% elemental damage per enemy Hero hit. Tidecaller quest: takedowns within 3 seconds of an elemental hit; 1% of the 20 second cooldown each up to 40%, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="JainaUndertowTokenCounter" parent="StormQuestToken">
+    <Face value="JainaUndertowTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="JainaTidecallerTokenCounter" parent="StormQuestToken">
+    <Face value="JainaTidecallerTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="JainaUndertowTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="JainaUndertowTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="JainaWaterElementalWeaponDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalWeaponSplashDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalWeaponFrostbiteDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalWeaponFrostbiteSplashDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalFrostboltDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalFrostboltDamageChilled">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalBlizzardDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalBlizzardDamageChilled">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalConeOfColdDamage">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="JainaWaterElementalConeOfColdDamageChilled">
+    <MultiplicativeModifierArray index="JainaElementalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="JainaElementalHit" Accumulator="JainaUndertowTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="JainaElementalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="JainaElementalHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="JainaUndertowTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_jaina_summonwaterelemental.dds" />
+  </CButton>
+  <CButton id="JainaTidecallerTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_jaina_summonwaterelemental.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Shatter (Rare, Frost Mage): Frostbolt hits on Heroes take 1 second off Cone of Cold -->
+  <CEffectModifyUnit id="JainaShatterModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="JainaConeOfCold,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Brittle (Epic): Frostbolt hits on Heroes take 5 Armor for 4 seconds, stacking up to 4 times -->
+  <CBehaviorBuff id="JainaBrittleDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_jaina_frostbolt.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="4" />
+    <Duration value="4" />
+    <ArmorModification>
+      <AllArmorBonus value="-5" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="JainaBrittleApply">
+    <Behavior value="JainaBrittleDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Whiteout (Rare, Blizzard Caller): Blizzard hits on Heroes take 0.5 seconds off Frostbolt -->
+  <CEffectModifyUnit id="JainaWhiteoutModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="JainaFrostbolt,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <!-- Deep Freeze (Epic): Blizzard hits on Heroes take 4 Armor for 3 seconds, stacking up to 3 times -->
+  <CBehaviorBuff id="JainaDeepFreezeDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_jaina_blizzard.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="3" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-4" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="JainaDeepFreezeApply">
+    <Behavior value="JainaDeepFreezeDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Tidal Bond (Rare, Elementalist): Water Elemental hits on Heroes take 0.5 seconds off Summon Water Elemental -->
+  <CEffectModifyUnit id="JainaTidalBondModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="JainaSummonWaterElemental,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <!-- Glacial Spike (Legendary, Elementalist): Water Elemental hits on Heroes also deal 1.5% of their maximum Health (script) -->
+  <CEffectDamage id="JainaGlacialSpikeDamage" parent="StormSpell">
+    <Amount value="0" />
+  </CEffectDamage>
+</Catalog>
