@@ -21,6 +21,7 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasBombTime; // per enemy playe
 int libAffx_KaelthasBombAdded; // Bombardier: charges added by the takedown quest this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasPyroTime; // per enemy player, last Pyromancer hit
 int libAffx_KaelthasPyroAdded; // Pyromancer: takedown stacks already applied to the catalog this game
+int libAffx_KaelthasSunwellScale; // Sunwell scale upgrade levels given this game
 bool libAffx_KaelthasBombVerdant; // the Living Bomb being cast is empowered by Verdant Spheres
 string libAffx_KaelthasBombEnergy; // Living Bomb's real Mana cost and cooldown, outside Verdant Spheres
 string libAffx_KaelthasBombCooldown;
@@ -64,7 +65,9 @@ void libAffx_KaelthasSyncFlamestrike () {
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeSearchAreaBurnedFlesh,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KaelThasFlamestrikeVerdantSpheresBurnedFleshSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlameStrikeVerdantSpheresBurnedFleshSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeIgniteSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresIgniteSearchAreaUnnamed,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasFlamestrikeAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KaelthasPastCapDamagePerStack, c_fixedPrecisionAny);
@@ -166,18 +169,25 @@ bool libAffx_KaelthasVerdantEnded_Func (bool testConds, bool runActions) {
     libAffx_KaelthasVerdantPutBack(hero);
     return true;
 }
-// Sunfire: the Flamestrike targeting circle follows the Sunwell radius (Verdant Spheres sets it to 3 or 2 when it starts and ends)
+// Sunfire: the Flamestrike targeting circle follows the Sunwell radius (Verdant Spheres sets it to 3 or 2 when it starts and
+// ends), and the scale upgrade grows the Flamestrike models 5% per 5 stacks
 bool libAffx_KaelthasFlamestrikeCursor_Func (bool testConds, bool runActions) {
     unit hero = libAffx_KaelthasHero();
     fixed radius = 2.0;
+    int stacks;
     if (hero == null || !UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker")) {
         return false;
     }
     if (UnitHasBehavior2(hero, "KaelthasVerdantSpheresActive")) {
         radius = 3.0;
     }
-    radius = radius * (1.0 + 0.01 * IntToFixed(MinI(libAffx_KaelthasStacks("KaelthasSunwellTokenCounter"), 30)));
+    stacks = MinI(libAffx_KaelthasStacks("KaelthasSunwellTokenCounter"), 30);
+    radius = radius * (1.0 + 0.01 * IntToFixed(stacks));
     CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasFlamestrikeDummySearchArea", "AreaArray[0].Radius", libAffx_player, FixedToString(radius, 3));
+    if (stacks / 5 > libAffx_KaelthasSunwellScale) {
+        TechTreeUpgradeAddLevel(libAffx_player, "KaelthasSunwellScaleUpgrade", stacks / 5 - libAffx_KaelthasSunwellScale);
+        libAffx_KaelthasSunwellScale = stacks / 5;
+    }
     return true;
 }
 // Living Bomb cast start: remember whether Verdant Spheres empowers it

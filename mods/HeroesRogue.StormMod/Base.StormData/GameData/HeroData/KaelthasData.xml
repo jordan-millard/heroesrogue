@@ -192,6 +192,125 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ImpactUnit Value="Caster" />
     <Cost Abil="KaelthasLivingBomb,Execute" ChargeCountUse="-1" CooldownOperation="Set" CooldownTimeUse="0" />
   </CEffectModifyUnit>
+  <!-- Sunfire, Sunwell quest: the script gives one level of this upgrade per 5 stacks (up to 6 at 30), and each level
+       scales the Flamestrike warning and ground fire models 5% more for that player, to match the bigger radius -->
+  <CUpgrade id="KaelthasSunwellScaleUpgrade">
+    <MaxLevel value="6" />
+  </CUpgrade>
+  <CRequirementCountUpgrade id="KaelthasCountUpgradeSunwellScale">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="KaelthasSunwellScaleUpgrade" State="QueuedOrBetter" />
+  </CRequirementCountUpgrade>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunwellScale1">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunwellScale" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunwellScale1Upgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunwellScale1" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunwellScale1" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunwellScale1">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunwellScale1Upgrade" />
+  </CValidatorPlayerRequirement>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunwellScale2">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunwellScale" />
+    <OperandArray index="1" value="2" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunwellScale2Upgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunwellScale2" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunwellScale2" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunwellScale2">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunwellScale2Upgrade" />
+  </CValidatorPlayerRequirement>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunwellScale3">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunwellScale" />
+    <OperandArray index="1" value="3" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunwellScale3Upgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunwellScale3" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunwellScale3" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunwellScale3">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunwellScale3Upgrade" />
+  </CValidatorPlayerRequirement>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunwellScale4">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunwellScale" />
+    <OperandArray index="1" value="4" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunwellScale4Upgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunwellScale4" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunwellScale4" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunwellScale4">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunwellScale4Upgrade" />
+  </CValidatorPlayerRequirement>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunwellScale5">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunwellScale" />
+    <OperandArray index="1" value="5" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunwellScale5Upgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunwellScale5" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunwellScale5" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunwellScale5">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunwellScale5Upgrade" />
+  </CValidatorPlayerRequirement>
+  <CRequirementGTE id="KaelthasGTECountUpgradeSunwellScale6">
+    <OperandArray index="0" value="KaelthasCountUpgradeSunwellScale" />
+    <OperandArray index="1" value="6" />
+  </CRequirementGTE>
+  <CRequirement id="KaelthasHasSunwellScale6Upgrade">
+    <NodeArray index="Use" Link="KaelthasGTECountUpgradeSunwellScale6" />
+    <NodeArray index="Show" Link="KaelthasGTECountUpgradeSunwellScale6" />
+  </CRequirement>
+  <CValidatorPlayerRequirement id="KaelthasHasSunwellScale6">
+    <WhichPlayer Value="Caster" />
+    <Find value="1" />
+    <Value value="KaelthasHasSunwellScale6Upgrade" />
+  </CValidatorPlayerRequirement>
+  <CActorModel id="KaelthasFlamestrikeWarning">
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 1.05" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 1.10" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 1.15" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 1.20" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 1.25" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
+  </CActorModel>
+  <CActorModel id="KaelthasFlamestrikeGroundImpact">
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 1.05" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 1.10" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 1.15" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 1.20" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 1.25" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
+  </CActorModel>
+  <CActorModel id="KaelthasFlamestrikeVerdantSpheresWarning">
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 1.05" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 1.10" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 1.15" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 1.20" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 1.25" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
+  </CActorModel>
+  <CActorModel id="KaelthasFlamestrikeVerdantSpheresGroundImpact">
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale1" Send="SetScale 1.05" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale2" Send="SetScale 1.10" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale3" Send="SetScale 1.15" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale4" Send="SetScale 1.20" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale5" Send="SetScale 1.25" />
+    <On Terms="ActorCreation; ValidatePlayer KaelthasHasSunwellScale6" Send="SetScale 1.30" />
+  </CActorModel>
   <!-- Meteor Strike (Epic): Pyroblast hits on Heroes take 4 seconds off Gravity Lapse -->
   <CEffectModifyUnit id="KaelthasMeteorStrikeModifyCooldown">
     <ImpactUnit Value="Caster" />
