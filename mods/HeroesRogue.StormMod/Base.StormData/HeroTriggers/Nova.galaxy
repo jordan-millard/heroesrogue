@@ -154,9 +154,9 @@ bool libAffx_NovaPinHit_Func (bool testConds, bool runActions) {
 // ---------- Holo Corps ----------
 
 // Decoys are their own units, so Nova's general boons (on her as behaviors) don't reach them. Copy the ones that fit a
-// Decoy: attack speed and range, damage, leech, on-hit procs, armor and dodge. Health boons are left out (a Decoy spawns
-// with Nova's current Health).
-const int libAffx_NovaDecoyBoonCount = 23;
+// Decoy: attack speed and range, damage, leech, on-hit procs, healing taken, armor and dodge. Health boons are left out:
+// a Decoy spawns with Nova's current Health, which already includes them.
+const int libAffx_NovaDecoyBoonCount = 26;
 string[libAffx_NovaDecoyBoonCount] libAffx_NovaDecoyBoons;
 void libAffx_NovaDecoyBoonsInit () {
     libAffx_NovaDecoyBoons[0] = "AffixNexusRangeBuff";
@@ -182,6 +182,9 @@ void libAffx_NovaDecoyBoonsInit () {
     libAffx_NovaDecoyBoons[20] = "AffixDodgeController";
     libAffx_NovaDecoyBoons[21] = "NimbleBehavior";
     libAffx_NovaDecoyBoons[22] = "NimbleStructureBehavior";
+    libAffx_NovaDecoyBoons[23] = "AffixAncientBlessingsController";
+    libAffx_NovaDecoyBoons[24] = "AffixRevealingTouchController";
+    libAffx_NovaDecoyBoons[25] = "AffixAmplifiedHealingBehavior";
 }
 void libAffx_NovaCopyBoons (unit hero, unit decoy) {
     int i;
