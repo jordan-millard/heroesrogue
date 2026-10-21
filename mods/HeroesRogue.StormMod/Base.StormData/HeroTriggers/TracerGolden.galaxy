@@ -221,21 +221,24 @@ fixed libAffx_TracerPulseRate () {
     return rate + 0.01 * IntToFixed(MinI(libAffx_TracerStacks("TracerOverchargeTokenCounter"), 40));
 }
 // Bomber: Pulse Bomb charge is "charge used" counting down from 100. Each drop since the last check is charge gained;
-// add that much again times the rate.
+// add that much again times the rate. The result is rounded down to a whole number: a fraction left over (e.g. 0.4 used,
+// shown as 99%) can't be cleared by the game's own -1 charge per hit, so the bomb never reached 100%.
 bool libAffx_TracerPulseCharge_Func (bool testConds, bool runActions) {
     unit hero = libAffx_TracerHero();
     fixed used;
-    fixed extra;
+    fixed wanted;
     if (hero == null || !UnitHasBehavior2(hero, "TracerBomberMarker")) {
         return false;
     }
     used = UnitGetChargeUsed(hero, "Abil/TracerPulseBomb");
+    wanted = used;
     if (libAffx_TracerPulseUsed >= 0.0 && used < libAffx_TracerPulseUsed) {
-        extra = MinF((libAffx_TracerPulseUsed - used) * libAffx_TracerPulseRate(), used);
-        if (extra > 0.0) {
-            UnitAddChargeUsed(hero, "Abil/TracerPulseBomb", -extra);
-            used = used - extra;
-        }
+        wanted = used - (libAffx_TracerPulseUsed - used) * libAffx_TracerPulseRate();
+    }
+    wanted = IntToFixed(FixedToInt(MaxF(wanted, 0.0)));
+    if (wanted < used) {
+        UnitAddChargeUsed(hero, "Abil/TracerPulseBomb", wanted - used);
+        used = UnitGetChargeUsed(hero, "Abil/TracerPulseBomb");
     }
     libAffx_TracerPulseUsed = used;
     return true;
