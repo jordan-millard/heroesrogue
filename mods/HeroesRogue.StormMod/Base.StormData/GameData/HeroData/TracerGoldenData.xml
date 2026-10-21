@@ -14,6 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="TracerComboMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="TracerRefillMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="TracerClusterBombMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerGiantSlayerMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Gunslinger ===== -->
   <!-- Hot Lead quest (50% kept): 0.1% basic attack damage per hit on an enemy Hero. Bigger Magazine quest: takedowns within 3 seconds of a hit; 1 ammo each up to 10, then 1% damage each (script). Focus Fire damage gets an extra multiplier for the Focus Fire boon. -->
@@ -192,6 +193,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Boons ===== -->
+  <!-- Giant Slayer (Epic, any Tracer): basic attacks on enemy Heroes deal 2% of their maximum Health, Melee 10% (script) -->
+  <CEffectDamage id="TracerGiantSlayerGunDamage" parent="StormSpellPercentDamage">
+    <Visibility value="Hidden" />
+    <VitalFractionMax index="Life" value="0.02" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerGiantSlayerMeleeDamage" parent="StormSpellPercentDamage">
+    <Visibility value="Hidden" />
+    <VitalFractionMax index="Life" value="0.1" />
+  </CEffectDamage>
   <!-- Gunslinger, Bigger Magazine quest: the script sets this behavior's ammo to the stacks (up to 10) and re-adds it -->
   <CBehaviorBuff id="TracerBigMagazineCarry" parent="CarryBehaviorParent">
     <Modification>

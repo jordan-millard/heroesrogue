@@ -120,6 +120,20 @@ bool libAffx_TracerSync_Func (bool testConds, bool runActions) {
     libAffx_TracerSyncBomb();
     return true;
 }
+// Giant Slayer: any starter. Basic attack and Melee hits on enemy Heroes also deal a share of their maximum Health.
+bool libAffx_TracerGiantSlayer_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_TracerHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "TracerGiantSlayerMarker") || !libAffx_TracerIsEnemyHero(victim) || !UnitIsAlive(victim)) {
+        return false;
+    }
+    if (EventUnitDamageEffect() == "TracerMeleeDamage") {
+        UnitCreateEffectUnit(hero, "TracerGiantSlayerMeleeDamage", victim);
+    } else {
+        UnitCreateEffectUnit(hero, "TracerGiantSlayerGunDamage", victim);
+    }
+    return true;
+}
 // Gunslinger, Bigger Magazine quest: 1 ammo per stack, up to 10. A changed value only reaches Tracer when the behavior is re-added.
 void libAffx_TracerMagazineSync () {
     unit hero = libAffx_TracerHero();
@@ -334,6 +348,11 @@ bool libAffx_TracerStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombGroundExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryUnitExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryGroundExplosionSearch");
+    trig = TriggerCreate("libAffx_TracerGiantSlayer_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponDamageHero");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponRicochetDamageHero");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponFocusFireMasteryDamageHero");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerMeleeDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_TracerCombo_Func"), libAffx_player, "TracerMeleeInitialSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerSync_Func"), 1.0, c_timeGame);
