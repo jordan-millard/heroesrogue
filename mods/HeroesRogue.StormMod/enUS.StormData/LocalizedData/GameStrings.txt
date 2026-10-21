@@ -1544,6 +1544,70 @@ Affix/Name/TracerGiantSlayer=Giant Slayer
 Affix/Tooltip/TracerGiantSlayer=Basic attacks on enemy Heroes also deal <c val="#TooltipNumbers">2%</c> of their maximum Health as damage, and Melee hits on enemy Heroes deal <c val="#TooltipNumbers">10%</c>.
 Behavior/Name/TracerArmorPiercingDebuff=Armor-Piercing
 Behavior/Tooltip/TracerArmorPiercingDebuff=Armor reduced by Tracer's basic attacks.
+Affix/Name/ZuljinAxeThrower=Axe Thrower
+Affix/Tooltip/ZuljinAxeThrower=Gain <c val="#TooltipNumbers">Ferocity</c> and <c val="#TooltipNumbers">Let the Killing Begin</c>. Basic attacks deal <c val="#TooltipNumbers">50%</c> more damage. Each basic attack on an enemy Hero heals Zul'jin for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Basic attacks on enemy Heroes add <c val="#TooltipNumbers">0.1%</c> basic attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a basic attack hit add <c val="#TooltipNumbers">1%</c> attack speed (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/ZuljinSharpenedAxes=Sharpened Axes
+Affix/Tooltip/ZuljinSharpenedAxes=Basic attacks deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/ZuljinBloodFrenzy=Blood Frenzy
+Affix/Tooltip/ZuljinBloodFrenzy=Gain <c val="#TooltipNumbers">5%</c> attack speed.
+Affix/Name/ZuljinASurpriseForYaBoon=A Surprise For Ya
+Affix/Tooltip/ZuljinASurpriseForYaBoon=Gain the talent <c val="#TooltipNumbers">A Surprise For Ya</c>: basic attacks bounce to a nearby enemy for <c val="#TooltipNumbers">50%</c> damage, Heroes first.
+Affix/Name/ZuljinEyeOfZuljinBoon=Eye of Zul'jin
+Affix/Tooltip/ZuljinEyeOfZuljinBoon=Gain the talent <c val="#TooltipNumbers">Eye of Zul'jin</c>: basic attacks on enemy Heroes stack Movement Speed.
+Affix/Name/ZuljinBloodlust=Bloodlust
+Affix/Tooltip/ZuljinBloodlust=While below <c val="#TooltipNumbers">50%</c> Health, basic attacks on enemy Heroes heal for <c val="#TooltipNumbers">3%</c> of maximum Health instead of <c val="#TooltipNumbers">1%</c>.
+Affix/Name/ZuljinBloodRage=Blood Rage
+Affix/Tooltip/ZuljinBloodRage=Berserker's attack speed for missing Health is doubled.
+Button/Name/ZuljinHackAndSlashTokenCounter=Hack and Slash
+Button/Tooltip/ZuljinHackAndSlashTokenCounter=<c val="#TooltipQuest">Bonus basic attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZuljinHackAndSlashTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/ZuljinTrophiesTokenCounter=Trophies
+Button/Tooltip/ZuljinTrophiesTokenCounter=<c val="#TooltipQuest">Trophies stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZuljinTrophiesTokenCounter$" precision="0"/></c></c><n/>Each stack adds <c val="#TooltipNumbers">1%</c> attack speed, up to <c val="#TooltipNumbers">40%</c> at <c val="#TooltipNumbers">40</c> stacks. Each stack past <c val="#TooltipNumbers">40</c> adds <c val="#TooltipNumbers">1%</c> basic attack damage.
+Affix/Name/ZuljinWhirlingAxes=Whirling Axes
+Affix/Tooltip/ZuljinWhirlingAxes=Gain <c val="#TooltipNumbers">Arcanite Axes</c> and <c val="#TooltipNumbers">Lacerate</c>. Twin Cleave deals <c val="#TooltipNumbers">50%</c> more damage, costs <c val="#TooltipNumbers">40</c> Mana and has an <c val="#TooltipNumbers">8</c> second cooldown. Each Twin Cleave hit on an enemy Hero heals Zul'jin for <c val="#TooltipNumbers">2%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Twin Cleave hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Twin Cleave damage. At <c val="#TooltipNumbers">100</c> stacks, Twin Cleave is thrown again from where its axes cross.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Twin Cleave hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/ZuljinHonedEdges=Honed Edges
+Affix/Tooltip/ZuljinHonedEdges=Twin Cleave deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/ZuljinQuickRelease=Quick Release
+Affix/Tooltip/ZuljinQuickRelease=Twin Cleave's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/ZuljinWrongPlaceBoon=Wrong Place Wrong Time
+Affix/Tooltip/ZuljinWrongPlaceBoon=Gain the talent <c val="#TooltipNumbers">Wrong Place Wrong Time</c>: enemies hit by both axes at once take <c val="#TooltipNumbers">100</c> extra damage.
+Affix/Name/ZuljinSwirlingDeathBoon=Swirling Death
+Affix/Tooltip/ZuljinSwirlingDeathBoon=Gain the talent <c val="#TooltipNumbers">Swirling Death</c>: Twin Cleave's axes go around twice and can hit on each pass, without the longer cooldown.
+Affix/Name/ZuljinAxeStorm=Axe Storm
+Affix/Tooltip/ZuljinAxeStorm=Twin Cleave has <c val="#TooltipNumbers">2</c> charges.
+Affix/Name/ZuljinEndlessCleave=Endless Cleave
+Affix/Tooltip/ZuljinEndlessCleave=The second Twin Cleave from <c val="#TooltipNumbers">Cleaver</c> also throws one from where its axes cross, for <c val="#TooltipNumbers">3</c> in a line.
+Button/Name/ZuljinCleaverTokenCounter=Cleaver
+Button/Tooltip/ZuljinCleaverTokenCounter=<c val="#TooltipQuest">Bonus Twin Cleave damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZuljinCleaverTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/ZuljinSpinningDeathTokenCounter=Spinning Death
+Button/Tooltip/ZuljinSpinningDeathTokenCounter=<c val="#TooltipQuest">Spinning Death stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZuljinSpinningDeathTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Twin Cleave's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">40%</c> at <c val="#TooltipNumbers">40</c> stacks. Each stack past <c val="#TooltipNumbers">40</c> adds <c val="#TooltipNumbers">1%</c> Twin Cleave damage.
+Affix/Name/ZuljinHeadhunterStarter=Headhunter
+Affix/Tooltip/ZuljinHeadhunterStarter=Gain <c val="#TooltipNumbers">Boneslicer</c> and <c val="#TooltipNumbers">Vicious Assault</c>. Grievous Throw deals <c val="#TooltipNumbers">50%</c> more damage and has a <c val="#TooltipNumbers">6</c> second cooldown. Each Grievous Throw hit on an enemy Hero heals Zul'jin for <c val="#TooltipNumbers">3%</c> of his maximum Health.<n/><n/>The <c val="#TooltipNumbers">3rd</c> basic attack on a marked enemy Hero Stuns them for <c val="#TooltipNumbers">0.5</c> seconds, once per mark.<n/><n/><c val="#TooltipQuest">Quest:</c> Grievous Throw hits on enemy Heroes add <c val="#TooltipNumbers">1%</c> Grievous Throw damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Grievous Throw hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> damage instead.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/ZuljinSerratedAxes=Serrated Axes
+Affix/Tooltip/ZuljinSerratedAxes=Grievous Throw deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/ZuljinQuickThrow=Quick Throw
+Affix/Tooltip/ZuljinQuickThrow=Grievous Throw's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/ZuljinNoMercyBoon=No Mercy
+Affix/Tooltip/ZuljinNoMercyBoon=Gain the talent <c val="#TooltipNumbers">No Mercy</c>: basic attacks on marked enemy Heroes ignore Armor and deal extra damage based on their maximum Health.
+Affix/Name/ZuljinEnsnareBoon=Ensnare
+Affix/Tooltip/ZuljinEnsnareBoon=Gain the talent <c val="#TooltipNumbers">Ensnare</c>: throw a net that Roots the first enemy Hero hit.
+Affix/Name/ZuljinTwinThrow=Twin Throw
+Affix/Tooltip/ZuljinTwinThrow=Grievous Throw has <c val="#TooltipNumbers">2</c> charges.
+Affix/Name/ZuljinExecutioner=Executioner
+Affix/Tooltip/ZuljinExecutioner=Grievous Throw deals <c val="#TooltipNumbers">1%</c> more damage for every <c val="#TooltipNumbers">1%</c> of Health the target is missing.
+Button/Name/ZuljinMarkedTokenCounter=Marked for Death
+Button/Tooltip/ZuljinMarkedTokenCounter=<c val="#TooltipQuest">Bonus Grievous Throw damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZuljinMarkedTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/ZuljinHuntTokenCounter=Hunt
+Button/Tooltip/ZuljinHuntTokenCounter=<c val="#TooltipQuest">Hunt stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ZuljinHuntTokenCounter$" precision="0"/></c></c><n/>Each stack reduces Grievous Throw's cooldown by <c val="#TooltipNumbers">1%</c>, up to <c val="#TooltipNumbers">40%</c> at <c val="#TooltipNumbers">40</c> stacks. Each stack past <c val="#TooltipNumbers">40</c> adds <c val="#TooltipNumbers">1%</c> Grievous Throw damage.
+Affix/Name/ZuljinTrollsBloodBoon=Troll's Blood
+Affix/Tooltip/ZuljinTrollsBloodBoon=Regeneration heals <c val="#TooltipNumbers">10%</c> more.
+Affix/Name/ZuljinForestMedicineBoon=Forest Medicine
+Affix/Tooltip/ZuljinForestMedicineBoon=Gain the talent <c val="#TooltipNumbers">Forest Medicine</c>: Regeneration is no longer channeled and can't be interrupted.
+Affix/Name/ZuljinAmaniHideBoon=Amani Hide
+Affix/Tooltip/ZuljinAmaniHideBoon=Gain the talent <c val="#TooltipNumbers">Amani Hide</c>: Amani Rage's cooldown is shorter, and Zul'jin gains Armor while it heals him.
+Affix/Name/ZuljinRecklessnessBoon=Recklessness
+Affix/Tooltip/ZuljinRecklessnessBoon=Gain the talent <c val="#TooltipNumbers">Recklessness</c>: Spell Power below <c val="#TooltipNumbers">75%</c> Health; below <c val="#TooltipNumbers">50%</c>, more basic attack damage and double You Want Axe? stacks.
+Behavior/Name/ZuljinExecutionStun=Execution
+Behavior/Tooltip/ZuljinExecutionStun=Stunned by Zul'jin.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

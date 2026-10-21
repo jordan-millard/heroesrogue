@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Zul'jin. Starters: Axe Thrower (basic attacks), Whirling Axes (Twin Cleave) and Headhunter (Grievous Throw). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Zuljin.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ZuljinAxeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZuljinCleaveMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZuljinHeadMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZuljinBloodlustMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZuljinSwirlingDeathMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZuljinEndlessCleaveMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZuljinExecutionerMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Axe Thrower ===== -->
+  <!-- Hack and Slash quest (50% kept): 0.1% basic attack damage per hit on an enemy Hero. Trophies quest: takedowns within 3 seconds of a hit; 1% attack speed each up to 40%, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="ZuljinHackAndSlashTokenCounter" parent="StormQuestToken">
+    <Face value="ZuljinHackAndSlashTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZuljinTrophiesTokenCounter" parent="StormQuestToken">
+    <Face value="ZuljinTrophiesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZuljinHackAndSlashTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZuljinHackAndSlashTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZuljinWeaponDamage">
+    <MultiplicativeModifierArray index="ZuljinAxePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinAxeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinAxeHit" Accumulator="ZuljinHackAndSlashTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinAxeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZuljinNoMercyWeaponDamage">
+    <MultiplicativeModifierArray index="ZuljinAxePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinAxeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinAxeHit" Accumulator="ZuljinHackAndSlashTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinAxeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZuljinASurpriseForYaWeaponDamage">
+    <MultiplicativeModifierArray index="ZuljinAxePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinAxeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinAxeHit" Accumulator="ZuljinHackAndSlashTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinAxeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="ZuljinAxeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="ZuljinHackAndSlashTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zuljin_berzerker.dds" />
+  </CButton>
+  <CButton id="ZuljinTrophiesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zuljin_berzerker.dds" />
+  </CButton>
+
+  <!-- ===== Whirling Axes ===== -->
+  <!-- Cleaver quest (50% kept): 0.5% Twin Cleave damage per enemy Hero hit; at 100 stacks a second Twin Cleave is thrown from where the axes cross (script). Spinning Death quest: takedowns within 3 seconds of a hit; 1% of the 8 second recharge each up to 40%, then 1% damage each. -->
+  <CBehaviorTokenCounter id="ZuljinCleaverTokenCounter" parent="StormQuestToken">
+    <Face value="ZuljinCleaverTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZuljinSpinningDeathTokenCounter" parent="StormQuestToken">
+    <Face value="ZuljinSpinningDeathTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZuljinCleaverTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZuljinCleaverTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZuljinTwinCleaveLeftDamage">
+    <MultiplicativeModifierArray index="ZuljinCleavePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinCleaveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinCleaveHit" Accumulator="ZuljinCleaverTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinCleaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZuljinTwinCleaveRightDamage">
+    <MultiplicativeModifierArray index="ZuljinCleavePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinCleaveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinCleaveHit" Accumulator="ZuljinCleaverTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinCleaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZuljinTwinCleaveWrongPlaceWrongTimeDamage">
+    <MultiplicativeModifierArray index="ZuljinCleavePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinCleaveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinCleaveHit" Accumulator="ZuljinCleaverTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinCleaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="ZuljinCleaveHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="ZuljinCleaverTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zuljin_twincleave.dds" />
+  </CButton>
+  <CButton id="ZuljinSpinningDeathTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zuljin_twincleave.dds" />
+  </CButton>
+
+  <!-- ===== Headhunter ===== -->
+  <!-- Marked for Death quest (50% kept): 1% Grievous Throw damage per enemy Hero hit. Hunt quest: takedowns within 3 seconds of a hit; 1% of the 6 second recharge each up to 40%, then 1% damage each. Execution: 3rd basic attack on a marked Hero Stuns 0.5 seconds (script). -->
+  <CBehaviorTokenCounter id="ZuljinMarkedTokenCounter" parent="StormQuestToken">
+    <Face value="ZuljinMarkedTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZuljinHuntTokenCounter" parent="StormQuestToken">
+    <Face value="ZuljinHuntTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZuljinMarkedTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZuljinMarkedTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZuljinGrievousThrowDamage">
+    <MultiplicativeModifierArray index="ZuljinHeadPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinHeadCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZuljinHeadHit" Accumulator="ZuljinMarkedTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZuljinHeadLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="ZuljinHeadHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.03" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="ZuljinMarkedTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zuljin_grievousthrow.dds" />
+  </CButton>
+  <CButton id="ZuljinHuntTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zuljin_grievousthrow.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Axe Thrower, Trophies quest: 1% attack speed per stack, up to 40 (the script keeps the stacks equal to the quest) -->
+  <CBehaviorBuff id="ZuljinTrophiesCarry" parent="CarryBehaviorParent">
+    <MaxStackCount value="40" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.01" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Blood Frenzy (Common, Axe Thrower, up to 3): 5% attack speed per copy -->
+  <CBehaviorBuff id="ZuljinBloodFrenzyCarry" parent="CarryBehaviorParent">
+    <MaxStackCount value="3" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.05" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bloodlust (Epic, Axe Thrower): below 50% Health the basic attack heal is 3% instead of 1% (script adds this 2%) -->
+  <CEffectModifyUnit id="ZuljinBloodlustHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <!-- Whirling Axes, 100 Cleaver stacks: an invisible helper at the point where the axes cross throws another Twin Cleave
+       (the script creates it, casts ZuljinTwinCleaveInitialSet from it, and removes it) -->
+  <CUnit id="ZuljinCleaveCaster" parent="PLACEHOLDER">
+    <FlagArray index="Turnable" value="1" />
+    <PlaneArray index="Air" value="1" />
+    <Radius value="0" />
+  </CUnit>
+  <!-- Headhunter, Execution: the 3rd basic attack on a Hero marked by Grievous Throw Stuns them (once per mark, script) -->
+  <CBehaviorBuff id="ZuljinExecutionStun" parent="StormStun">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_zuljin_grievousthrow.dds" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZuljinExecutionStunApply">
+    <Behavior value="ZuljinExecutionStun" />
+  </CEffectApplyBehavior>
+  <!-- Executioner (Legendary, Headhunter): Grievous Throw deals 1% more per 1% of the target's missing Health (script) -->
+  <CEffectDamage id="ZuljinExecutionerDamage" parent="StormSpell">
+    <Visibility value="Hidden" />
+    <Amount value="0" />
+    <SourceButtonFace value="ZuljinGrievousThrow" />
+  </CEffectDamage>
+</Catalog>

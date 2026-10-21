@@ -17535,6 +17535,588 @@
             </String>
         </Instances>
 
+        <Instances Id="ZuljinAxeThrower">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZuljinFerocity">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZuljinLetTheKillingBegin">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZuljinAxeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZuljinHackAndSlashTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZuljinTrophiesTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZuljinTrophiesTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZuljinHackAndSlashTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinWeaponDamage,MultiplicativeModifierArray[ZuljinAxePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinNoMercyWeaponDamage,MultiplicativeModifierArray[ZuljinAxePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinASurpriseForYaWeaponDamage,MultiplicativeModifierArray[ZuljinAxePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_ZuljinStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZuljinTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinSharpenedAxes">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinAxeThrower">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZuljinWeaponDamage,MultiplicativeModifierArray[ZuljinAxeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ZuljinNoMercyWeaponDamage,MultiplicativeModifierArray[ZuljinAxeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,ZuljinASurpriseForYaWeaponDamage,MultiplicativeModifierArray[ZuljinAxeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinBloodFrenzy">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinAxeThrower">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 ZuljinBloodFrenzyCarry">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinASurpriseForYaBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinAxeThrower">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZuljinPassiveASurpriseForYa">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinEyeOfZuljinBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinAxeThrower">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZuljinEyeOfZuljin">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinBloodlust">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinAxeThrower">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZuljinBloodlustMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinBloodRage">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinAxeThrower">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Accumulator,ZuljinBerserkerHealthToAttackSpeed,Ratio 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Accumulator,ZuljinBerserkerFerocityHealthToAttackSpeed,Ratio 2.8">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinWhirlingAxes">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZuljinArcaniteAxes">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZuljinLacerate">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZuljinCleaveMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZuljinCleaverTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZuljinSpinningDeathTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZuljinSpinningDeathTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZuljinCleaverTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinTwinCleave,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinTwinCleave,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinTwinCleave,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinTwinCleave,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinTwinCleave,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,ZuljinTwinCleave,Cost.Vital[Energy] -20">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinTwinCleaveLeftDamage,MultiplicativeModifierArray[ZuljinCleavePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinTwinCleaveRightDamage,MultiplicativeModifierArray[ZuljinCleavePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinTwinCleaveWrongPlaceWrongTimeDamage,MultiplicativeModifierArray[ZuljinCleavePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_ZuljinStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZuljinTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinHonedEdges">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinWhirlingAxes">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZuljinTwinCleaveLeftDamage,MultiplicativeModifierArray[ZuljinCleaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ZuljinTwinCleaveRightDamage,MultiplicativeModifierArray[ZuljinCleaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,ZuljinTwinCleaveWrongPlaceWrongTimeDamage,MultiplicativeModifierArray[ZuljinCleaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinQuickRelease">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinWhirlingAxes">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZuljinTwinCleave,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinWrongPlaceBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinWhirlingAxes">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZuljinWrongPlaceWrongTime">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinSwirlingDeathBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinWhirlingAxes">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZuljinSwirlingDeath">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 0 ZuljinSwirlingDeathMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Add Abil,ZuljinTwinCleave,Cost.Cooldown.TimeUse -4">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 String Validator,ZuljinYouWantAxeCasterHasQuestCompleteCarry,Behavior ZuljinSwirlingDeathMarker">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinAxeStorm">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinWhirlingAxes">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,ZuljinTwinCleave,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,ZuljinTwinCleave,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinEndlessCleave">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_twincleave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinWhirlingAxes">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZuljinEndlessCleaveMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinHeadhunterStarter">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_grievousthrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZuljinBoneslicer">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZuljinViciousAssault">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZuljinHeadMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZuljinMarkedTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZuljinHuntTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZuljinHuntTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZuljinMarkedTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinGrievousThrow,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinGrievousThrow,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinGrievousThrow,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinGrievousThrow,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ZuljinGrievousThrow,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,ZuljinGrievousThrowDamage,MultiplicativeModifierArray[ZuljinHeadPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_ZuljinStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZuljinTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinSerratedAxes">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_grievousthrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinHeadhunterStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZuljinGrievousThrowDamage,MultiplicativeModifierArray[ZuljinHeadCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinQuickThrow">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_grievousthrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinHeadhunterStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZuljinGrievousThrow,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinNoMercyBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_grievousthrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinHeadhunterStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZuljinNoMercyTalent">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinEnsnareBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_trollnet.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinHeadhunterStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZuljinEnsnare">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinTwinThrow">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_grievousthrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinHeadhunterStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,ZuljinGrievousThrow,Cost.Charge.CountMax 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,ZuljinGrievousThrow,Cost.Charge.CountStart 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinExecutioner">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_headhunter.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZuljinHeadhunterStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZuljinExecutionerMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinTrollsBloodBoon">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zuljin_regeneration.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Effect,ZuljinRegenerationCreateHealer,RechargeVitalFraction 0.006">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinForestMedicineBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_regeneration.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZuljinForestMedicine">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinAmaniHideBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_davoodooshuffle.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="Zul'jinAmaniRageAmaniHide">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZuljinRecklessnessBoon">
+            <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker_off.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zuljin">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZuljinRecklessness">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

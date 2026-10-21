@@ -1,0 +1,330 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Zul'jin. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token (capped part, then 1% damage per stack past the cap).
+// Axe Thrower: Trophies quest gives 1% attack speed per stack up to 40 (ZuljinTrophiesCarry stacks).
+// Whirling Axes: at 100 Cleaver stacks, a second Twin Cleave is thrown from where the axes cross (10 range ahead,
+// 0.625 seconds in) by an invisible helper unit. Endless Cleave (Legendary) chains a third.
+// Headhunter: the 3rd basic attack on a Hero marked by Grievous Throw Stuns for 0.5 seconds, once per mark.
+// Swirling Death (Rare): the talent, plus its Twin Cleave quest-completion validator pointed at the boon marker.
+// ============================================================
+
+const fixed libAffx_ZuljinTakedownWindow = 3.0;
+const fixed libAffx_ZuljinPastCapDamagePerStack = 0.01;
+bool libAffx_ZuljinStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinAxeTime; // per enemy player, last Axe Thrower hit
+int libAffx_ZuljinAxeAdded; // Axe Thrower: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinCleaveTime; // per enemy player, last Whirling Axes hit
+int libAffx_ZuljinCleaveAdded; // Whirling Axes: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinHeadTime; // per enemy player, last Headhunter hit
+int libAffx_ZuljinHeadAdded; // Headhunter: takedown stacks already applied to the catalog this game
+const int libAffx_ZuljinTrophiesMax = 40;
+const int libAffx_ZuljinCleaveStacksNeeded = 100; // Cleaver stacks for the second Twin Cleave
+const fixed libAffx_ZuljinCleaveCross = 10.0; // the axes cross this far ahead of where Twin Cleave was thrown
+const fixed libAffx_ZuljinCleaveCrossTime = 0.625;
+const int libAffx_ZuljinExecutionHits = 3;
+int[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinMarkHits; // per enemy player: basic attacks on them since their last Grievous Throw hit (-1: Stun used)
+
+unit libAffx_ZuljinHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ZuljinIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_ZuljinStacks(string tokenId) {
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_ZuljinQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_ZuljinInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_ZuljinTakedownWindow;
+}
+// ZuljinTrophiesTokenCounter: 1% attack speed per stack up to 40% (ZuljinTrophiesCarry stacks), then damage
+void libAffx_ZuljinSyncAxe () {
+    unit hero = libAffx_ZuljinHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZuljinAxeMarker")) {
+        return;
+    }
+    stacks = libAffx_ZuljinStacks("ZuljinTrophiesTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ZuljinAxeAdded) {
+        libAffx_ZuljinAxeAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_ZuljinPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinNoMercyWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinASurpriseForYaWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
+}
+// ZuljinSpinningDeathTokenCounter: 1% of the 8 second recharge per stack, up to 40%, then damage
+void libAffx_ZuljinSyncCleave () {
+    unit hero = libAffx_ZuljinHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZuljinCleaveMarker")) {
+        return;
+    }
+    stacks = libAffx_ZuljinStacks("ZuljinSpinningDeathTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ZuljinCleaveAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZuljinTwinCleave,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinCleaveAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZuljinCleaveAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_ZuljinPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveLeftDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveRightDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveWrongPlaceWrongTimeDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
+}
+// ZuljinHuntTokenCounter: 1% of the 6 second recharge per stack, up to 40%, then damage
+void libAffx_ZuljinSyncHead () {
+    unit hero = libAffx_ZuljinHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZuljinHeadMarker")) {
+        return;
+    }
+    stacks = libAffx_ZuljinStacks("ZuljinHuntTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ZuljinHeadAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZuljinGrievousThrow,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinHeadAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZuljinHeadAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_ZuljinPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinGrievousThrowDamage", "MultiplicativeModifierArray[ZuljinHeadLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_ZuljinSync_Func (bool testConds, bool runActions) {
+    libAffx_ZuljinSyncAxe();
+    libAffx_ZuljinSyncCleave();
+    libAffx_ZuljinSyncHead();
+    return true;
+}
+// Trophies: keeps ZuljinTrophiesCarry's stacks equal to the quest (up to 40). Also picks up stacks loaded from the bank.
+void libAffx_ZuljinTrophiesSync () {
+    unit hero = libAffx_ZuljinHero();
+    int wanted;
+    int have;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "ZuljinAxeMarker")) {
+        return;
+    }
+    wanted = MinI(libAffx_ZuljinStacks("ZuljinTrophiesTokenCounter"), libAffx_ZuljinTrophiesMax);
+    have = UnitBehaviorCount(hero, "ZuljinTrophiesCarry");
+    if (wanted > have) {
+        UnitBehaviorAdd(hero, "ZuljinTrophiesCarry", hero, wanted - have);
+    } else if (wanted < have) {
+        UnitBehaviorRemove(hero, "ZuljinTrophiesCarry", have - wanted);
+    }
+}
+// Swirling Death: Zul'jin's quest reward can reset the second revolution when its stacks drop; keep it on
+void libAffx_ZuljinSwirlSync () {
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null || !UnitHasBehavior2(hero, "ZuljinSwirlingDeathMarker")) {
+        return;
+    }
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveSwirlingDeathLeftDamagePersistent", "Chance", libAffx_player, "1");
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveSwirlingDeathRightDamagePersistent", "Chance", libAffx_player, "1");
+    CatalogFieldValueSet(c_gameCatalogBehavior, "ZuljinTwinCleaveLeftAxeRotating", "Duration", libAffx_player, "2.5");
+    CatalogFieldValueSet(c_gameCatalogBehavior, "ZuljinTwinCleaveRightAxeRotating", "Duration", libAffx_player, "2.5");
+}
+bool libAffx_ZuljinPeriodic_Func (bool testConds, bool runActions) {
+    libAffx_ZuljinTrophiesSync();
+    libAffx_ZuljinSwirlSync();
+    return true;
+}
+// Whirling Axes: at 100 Cleaver stacks, each Twin Cleave Zul'jin throws is thrown again from where its axes cross, in the
+// same direction (Endless Cleave: once more from there). The helper unit casts it, so the casts it makes are skipped here.
+bool libAffx_ZuljinCleaveAgain_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ZuljinHero();
+    point origin = EventPlayerEffectUsedPoint(c_effectLocationCasterPoint);
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    fixed angle;
+    int count = 1;
+    int i;
+    unit helper;
+    unitgroup helpers = UnitGroupEmpty();
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "ZuljinCleaveMarker")) {
+        return false;
+    }
+    if (libAffx_ZuljinStacks("ZuljinCleaverTokenCounter") < libAffx_ZuljinCleaveStacksNeeded || origin == null || target == null) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "ZuljinEndlessCleaveMarker")) {
+        count = 2;
+    }
+    angle = AngleBetweenPoints(origin, target);
+    for (i = 1; i <= count; i += 1) {
+        Wait(libAffx_ZuljinCleaveCrossTime, c_timeGame);
+        origin = PointWithOffsetPolar(origin, libAffx_ZuljinCleaveCross, angle);
+        UnitCreate(1, "ZuljinCleaveCaster", c_unitCreateIgnorePlacement, libAffx_player, origin, angle, null);
+        helper = UnitLastCreated();
+        if (helper == null) {
+            break;
+        }
+        UnitGroupAdd(helpers, helper);
+        if (UnitHasBehavior2(hero, "ZuljinSwirlingDeathMarker")) {
+            UnitBehaviorAdd(helper, "ZuljinSwirlingDeathMarker", helper, 1);
+        }
+        UnitCreateEffectPoint(helper, "ZuljinTwinCleaveInitialSet", PointWithOffsetPolar(origin, 5.0, angle));
+    }
+    // the axes take 1.25 seconds (2.5 with Swirling Death)
+    Wait(3.0, c_timeGame);
+    for (i = 1; i <= UnitGroupCount(helpers, c_unitCountAll); i += 1) {
+        UnitRemove(UnitGroupUnit(helpers, i));
+    }
+    return true;
+}
+// Headhunter, Execution: the 3rd basic attack on an enemy Hero marked by Grievous Throw Stuns them, once per mark
+bool libAffx_ZuljinExecution_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZuljinHero();
+    int owner;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "ZuljinHeadMarker") || !libAffx_ZuljinIsEnemyHero(victim)) {
+        return false;
+    }
+    if (!UnitHasBehavior2(victim, "ZuljinGrievousThrowAttackStacks") || !UnitIsAlive(victim)) {
+        return false;
+    }
+    owner = UnitGetOwner(victim);
+    if (libAffx_ZuljinMarkHits[owner] < 0) {
+        return false;
+    }
+    libAffx_ZuljinMarkHits[owner] += 1;
+    if (libAffx_ZuljinMarkHits[owner] >= libAffx_ZuljinExecutionHits) {
+        libAffx_ZuljinMarkHits[owner] = -1;
+        UnitCreateEffectUnit(hero, "ZuljinExecutionStunApply", victim);
+    }
+    return true;
+}
+// Executioner: Grievous Throw deals 1% more per 1% of the target's missing Health
+bool libAffx_ZuljinExecutioner_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZuljinHero();
+    fixed amount = EventUnitDamageAmount();
+    fixed missing;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "ZuljinExecutionerMarker") || !UnitIsAlive(victim) || amount <= 0.0) {
+        return false;
+    }
+    missing = 1.0 - UnitGetPropertyFixed(victim, c_unitPropLifePercent, c_unitPropCurrent) / 100.0;
+    if (missing <= 0.0) {
+        return false;
+    }
+    UnitDamage(hero, "ZuljinExecutionerDamage", victim, amount * missing);
+    return true;
+}
+// Axe Thrower hit on an enemy Hero: takedown window, ZuljinHackAndSlashTokenCounter, the heal, and on-hit boons
+bool libAffx_ZuljinAxeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZuljinIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZuljinAxeMarker")) {
+        return false;
+    }
+    libAffx_ZuljinAxeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZuljinHackAndSlashTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "ZuljinAxeHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "ZuljinBloodlustMarker") && UnitIsAlive(hero) && UnitGetPropertyFixed(hero, c_unitPropLifePercent, c_unitPropCurrent) < 50.0) {
+        UnitCreateEffectUnit(hero, "ZuljinBloodlustHeal", hero);
+    }
+    return true;
+}
+// Whirling Axes hit on an enemy Hero: takedown window, ZuljinCleaverTokenCounter, the heal, and on-hit boons
+bool libAffx_ZuljinCleaveHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZuljinIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZuljinCleaveMarker")) {
+        return false;
+    }
+    libAffx_ZuljinCleaveTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZuljinCleaverTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "ZuljinCleaveHeal", hero);
+    }
+    return true;
+}
+// Headhunter hit on an enemy Hero: takedown window, ZuljinMarkedTokenCounter, the heal, and on-hit boons
+bool libAffx_ZuljinHeadHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZuljinIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZuljinHeadMarker")) {
+        return false;
+    }
+    libAffx_ZuljinHeadTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZuljinMarkedTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "ZuljinHeadHeal", hero);
+    }
+    libAffx_ZuljinMarkHits[UnitGetOwner(victim)] = 0;
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_ZuljinTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_ZuljinHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "ZuljinAxeMarker") && libAffx_ZuljinInWindow(libAffx_ZuljinAxeTime[killedPlayer], now)) {
+        libAffx_ZuljinAxeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZuljinTrophiesTokenCounter", hero);
+        libAffx_ZuljinSyncAxe();
+        libAffx_ZuljinQuestDing();
+        libAffx_ZuljinTrophiesSync();
+    }
+    if (UnitHasBehavior2(hero, "ZuljinCleaveMarker") && libAffx_ZuljinInWindow(libAffx_ZuljinCleaveTime[killedPlayer], now)) {
+        libAffx_ZuljinCleaveTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZuljinSpinningDeathTokenCounter", hero);
+        libAffx_ZuljinSyncCleave();
+        libAffx_ZuljinQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "ZuljinHeadMarker") && libAffx_ZuljinInWindow(libAffx_ZuljinHeadTime[killedPlayer], now)) {
+        libAffx_ZuljinHeadTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZuljinHuntTokenCounter", hero);
+        libAffx_ZuljinSyncHead();
+        libAffx_ZuljinQuestDing();
+    }
+    return true;
+}
+bool libAffx_ZuljinStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_ZuljinStarted) {
+        return true;
+    }
+    libAffx_ZuljinStarted = true;
+    trig = TriggerCreate("libAffx_ZuljinAxeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinNoMercyWeaponDamage");
+    trig = TriggerCreate("libAffx_ZuljinCleaveHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinTwinCleaveLeftDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinTwinCleaveRightDamage");
+    trig = TriggerCreate("libAffx_ZuljinHeadHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinGrievousThrowDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ZuljinPeriodic_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ZuljinCleaveAgain_Func"), libAffx_player, "ZuljinTwinCleaveInitialSet");
+    trig = TriggerCreate("libAffx_ZuljinExecution_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinNoMercyWeaponDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ZuljinExecutioner_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "ZuljinGrievousThrowDamage");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ZuljinSync_Func"), 1.0, c_timeGame);
+    return true;
+}
