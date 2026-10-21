@@ -1,0 +1,217 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Xal'atath. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token (capped part, then 1% damage per stack past the cap).
+// Second Volley (Epic): Void Volley's barrage fires again at the same spot 0.75 seconds later.
+// ============================================================
+
+const fixed libAffx_XalatathTakedownWindow = 3.0;
+const fixed libAffx_XalatathPastCapDamagePerStack = 0.01;
+bool libAffx_XalatathStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_XalatathVolleyTime; // per enemy player, last Void Herald hit
+int libAffx_XalatathVolleyAdded; // Void Herald: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_XalatathMarkTime; // per enemy player, last Shadow Seer hit
+int libAffx_XalatathMarkAdded; // Shadow Seer: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_XalatathHeartTime; // per enemy player, last Heart of Darkness hit
+int libAffx_XalatathHeartAdded; // Heart of Darkness: takedown stacks already applied to the catalog this game
+
+unit libAffx_XalatathHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_XalatathIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_XalatathStacks(string tokenId) {
+    unit hero = libAffx_XalatathHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_XalatathQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_XalatathInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_XalatathTakedownWindow;
+}
+// XalatathProphecyTokenCounter: 1% of the 1.5 explosion radius per stack, up to 40%, then damage
+void libAffx_XalatathSyncVolley () {
+    unit hero = libAffx_XalatathHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathVolleyMarker")) {
+        return;
+    }
+    stacks = libAffx_XalatathStacks("XalatathProphecyTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_XalatathVolleyAdded) {
+        libAffx_CatalogReferenceModify("Effect,XalatathVoidVolley2AoESearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathVolleyAdded) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_XalatathVolleyAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_XalatathPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidVolleyDamage", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathFracturedRealityFireDamage", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+}
+// XalatathDoomTokenCounter: 1% of the 7 second recharge per stack, up to 40%, then damage
+void libAffx_XalatathSyncMark () {
+    unit hero = libAffx_XalatathHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathMarkMarker")) {
+        return;
+    }
+    stacks = libAffx_XalatathStacks("XalatathDoomTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_XalatathMarkAdded) {
+        libAffx_CatalogReferenceModify("Abil,XalatathShadowMark,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathMarkAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_XalatathMarkAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_XalatathPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathShadowMarkOuterDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathShadowMarkInnerDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathShadowMarkToxicMarkDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+}
+// XalatathSacrificeTokenCounter: 1% of the 15 second cooldown per stack, up to 40%, then damage
+void libAffx_XalatathSyncHeart () {
+    unit hero = libAffx_XalatathHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathHeartMarker")) {
+        return;
+    }
+    stacks = libAffx_XalatathStacks("XalatathSacrificeTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_XalatathHeartAdded) {
+        libAffx_CatalogReferenceModify("Abil,XalatathDarkHeartRitual,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathHeartAdded) * -0.15, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_XalatathHeartAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_XalatathPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathDarkHeartRitualChainDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathDarkHeartRitualDamageLinkChainTargetDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathDarkHeartRitualDetonationDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathUnstableCoreFireDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_XalatathSync_Func (bool testConds, bool runActions) {
+    libAffx_XalatathSyncVolley();
+    libAffx_XalatathSyncMark();
+    libAffx_XalatathSyncHeart();
+    return true;
+}
+fixed libAffx_XalatathXalatathVoidVolleyCreatePersistentsLastEcho = -1.0;
+// XalatathSecondVolleyMarker: XalatathVoidVolleyCreatePersistents is cast again toward the same point 0.75 seconds later. The echo is skipped by its own event.
+bool libAffx_XalatathXalatathVoidVolleyCreatePersistentsEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_XalatathHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathSecondVolleyMarker") || GameGetMissionTime() == libAffx_XalatathXalatathVoidVolleyCreatePersistentsLastEcho) {
+        return false;
+    }
+    Wait(0.75, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_XalatathXalatathVoidVolleyCreatePersistentsLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "XalatathVoidVolleyCreatePersistents", target);
+    return true;
+}
+// Void Herald hit on an enemy Hero: takedown window, XalatathEchoingWhispersTokenCounter, the heal, and on-hit boons
+bool libAffx_XalatathVolleyHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_XalatathHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_XalatathIsEnemyHero(victim) || !UnitHasBehavior2(hero, "XalatathVolleyMarker")) {
+        return false;
+    }
+    libAffx_XalatathVolleyTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "XalatathEchoingWhispersTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "XalatathVolleyHeal", hero);
+    }
+    return true;
+}
+// Shadow Seer hit on an enemy Hero: takedown window, XalatathOmenTokenCounter, the heal, and on-hit boons
+bool libAffx_XalatathMarkHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_XalatathHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_XalatathIsEnemyHero(victim) || !UnitHasBehavior2(hero, "XalatathMarkMarker")) {
+        return false;
+    }
+    libAffx_XalatathMarkTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "XalatathOmenTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "XalatathMarkHeal", hero);
+    }
+    return true;
+}
+// Heart of Darkness hit on an enemy Hero: takedown window, XalatathRitualTokenCounter, the heal, and on-hit boons
+bool libAffx_XalatathHeartHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_XalatathHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_XalatathIsEnemyHero(victim) || !UnitHasBehavior2(hero, "XalatathHeartMarker")) {
+        return false;
+    }
+    libAffx_XalatathHeartTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "XalatathRitualTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "XalatathHeartHeal", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_XalatathTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_XalatathHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "XalatathVolleyMarker") && libAffx_XalatathInWindow(libAffx_XalatathVolleyTime[killedPlayer], now)) {
+        libAffx_XalatathVolleyTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "XalatathProphecyTokenCounter", hero);
+        libAffx_XalatathSyncVolley();
+        libAffx_XalatathQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "XalatathMarkMarker") && libAffx_XalatathInWindow(libAffx_XalatathMarkTime[killedPlayer], now)) {
+        libAffx_XalatathMarkTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "XalatathDoomTokenCounter", hero);
+        libAffx_XalatathSyncMark();
+        libAffx_XalatathQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "XalatathHeartMarker") && libAffx_XalatathInWindow(libAffx_XalatathHeartTime[killedPlayer], now)) {
+        libAffx_XalatathHeartTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "XalatathSacrificeTokenCounter", hero);
+        libAffx_XalatathSyncHeart();
+        libAffx_XalatathQuestDing();
+    }
+    return true;
+}
+bool libAffx_XalatathStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_XalatathStarted) {
+        return true;
+    }
+    libAffx_XalatathStarted = true;
+    trig = TriggerCreate("libAffx_XalatathVolleyHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathVoidVolleyDamage");
+    trig = TriggerCreate("libAffx_XalatathMarkHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathShadowMarkOuterDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathShadowMarkInnerDamage");
+    trig = TriggerCreate("libAffx_XalatathHeartHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathDarkHeartRitualChainDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathDarkHeartRitualDetonationDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_XalatathXalatathVoidVolleyCreatePersistentsEcho_Func"), libAffx_player, "XalatathVoidVolleyCreatePersistents");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_XalatathSync_Func"), 1.0, c_timeGame);
+    return true;
+}

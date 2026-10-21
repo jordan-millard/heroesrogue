@@ -18129,6 +18129,558 @@
             </String>
         </Instances>
 
+        <Instances Id="XalatathVoidHerald">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="XalatathCrushingCascade">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="XalatathVoidAcolyte">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 XalatathVolleyMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 XalatathEchoingWhispersTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 XalatathProphecyTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="XalatathProphecyTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="XalatathEchoingWhispersTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="XalatathVoidVolleyQuestTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,XalatathVoidVolleyDamage,MultiplicativeModifierArray[XalatathVolleyPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,XalatathFracturedRealityFireDamage,MultiplicativeModifierArray[XalatathVolleyPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_XalatathStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_XalatathTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathDarkWhispers">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathVoidHerald">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,XalatathVoidVolleyDamage,MultiplicativeModifierArray[XalatathVolleyCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,XalatathFracturedRealityFireDamage,MultiplicativeModifierArray[XalatathVolleyCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathLingeringCharge">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathVoidHerald">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,XalatathVoidVolleyChargeDurationController,Duration 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathFracturedRealityBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathVoidHerald">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathFracturedReality">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathRelentlessWhispersBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_w_voidstep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathVoidHerald">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathPummelingStep">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathSecondVolley">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathVoidHerald">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 XalatathSecondVolleyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathHeraldOfTheVoid">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathVoidHerald">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Validator,XalatathCompletedVoidVolleyQuest,Value 0">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathShadowSeer">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="XalatathFrozenMark">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="XalatathToxicMark">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 XalatathMarkMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 XalatathOmenTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 XalatathDoomTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="XalatathDoomTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="XalatathOmenTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="XalatathVoidVolleyQuestTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,XalatathShadowMarkOuterDamage,MultiplicativeModifierArray[XalatathMarkPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,XalatathShadowMarkInnerDamage,MultiplicativeModifierArray[XalatathMarkPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,XalatathShadowMarkToxicMarkDamage,MultiplicativeModifierArray[XalatathMarkPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_XalatathStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_XalatathTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathDeepeningShadows">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathShadowSeer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,XalatathShadowMarkOuterDamage,MultiplicativeModifierArray[XalatathMarkCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,XalatathShadowMarkInnerDamage,MultiplicativeModifierArray[XalatathMarkCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,XalatathShadowMarkToxicMarkDamage,MultiplicativeModifierArray[XalatathMarkCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathQuickMark">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathShadowSeer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,XalatathShadowMark,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathMarkedResilienceBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathShadowSeer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathMarkedResilience">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathLingeringMark">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathShadowSeer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,XalatathShadowMarkDebuff,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathDuelingOrbsBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathShadowSeer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathDuelingOrbs">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathMarkedByTheVoidBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_q_shadowmark.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathShadowSeer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 XalatathMarkedByTheVoid">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathHeartOfDarkness">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="XalatathAnchoredCore">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="XalatathPullOfTheDarkHeart">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 XalatathHeartMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 XalatathRitualTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 XalatathSacrificeTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="XalatathSacrificeTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="XalatathRitualTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="XalatathVoidVolleyQuestTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,XalatathDarkHeartRitualChainDamage,MultiplicativeModifierArray[XalatathHeartPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,XalatathDarkHeartRitualDamageLinkChainTargetDamage,MultiplicativeModifierArray[XalatathHeartPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,XalatathDarkHeartRitualDetonationDamage,MultiplicativeModifierArray[XalatathHeartPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,XalatathUnstableCoreFireDamage,MultiplicativeModifierArray[XalatathHeartPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_XalatathStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_XalatathTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathBlackBlood">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathHeartOfDarkness">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,XalatathDarkHeartRitualChainDamage,MultiplicativeModifierArray[XalatathHeartCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,XalatathDarkHeartRitualDamageLinkChainTargetDamage,MultiplicativeModifierArray[XalatathHeartCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,XalatathDarkHeartRitualDetonationDamage,MultiplicativeModifierArray[XalatathHeartCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,XalatathUnstableCoreFireDamage,MultiplicativeModifierArray[XalatathHeartCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathQuickRitual">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathHeartOfDarkness">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,XalatathDarkHeartRitual,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathDarkBarrierBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathHeartOfDarkness">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathDarkBarrier">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathUnstableCoreBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathHeartOfDarkness">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathUnstableCore">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathDarkHeartsProtectionBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathHeartOfDarkness">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="XalatathDarkHeartsProtection">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathEverlastingHeart">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_e_darkheartritual.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="XalatathHeartOfDarkness">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Multiply Behavior,XalatathDarkHeartRitualTimedLife,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathShadowstep">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_xalatath_w_voidstep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,XalatathVoidStep,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathCloakOfShadowsBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_w_voidstep_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="XalatathCloakOfShadows">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathSilenceOfTheLambBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_w_voidstep_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="XalatathSilenceOfTheLamb">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="XalatathVoidSummonerBoon">
+            <String String="Assets/Textures/storm_ui_icon_xalatath_w_voidstep_c.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Xalatath">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="XalatathVoidSummoner">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Xal'atath. Starters: Void Herald (Void Volley), Shadow Seer (Shadow Mark) and Heart of Darkness (Dark Heart Ritual). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Xalatath.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="XalatathVolleyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="XalatathMarkMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="XalatathHeartMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="XalatathSecondVolleyMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Void Herald ===== -->
+  <!-- Echoing Whispers quest (50% kept): 0.25% Void Volley damage per orb hit on an enemy Hero. Prophecy quest: takedowns within 3 seconds of a hit; 1% larger Void Volley explosions each up to 40%, then 1% damage each. -->
+  <CBehaviorTokenCounter id="XalatathEchoingWhispersTokenCounter" parent="StormQuestToken">
+    <Face value="XalatathEchoingWhispersTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="XalatathProphecyTokenCounter" parent="StormQuestToken">
+    <Face value="XalatathProphecyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="XalatathEchoingWhispersTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="XalatathEchoingWhispersTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="XalatathVoidVolleyDamage">
+    <MultiplicativeModifierArray index="XalatathVolleyPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathVolleyCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathVolleyHit" Accumulator="XalatathEchoingWhispersTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathFracturedRealityFireDamage">
+    <MultiplicativeModifierArray index="XalatathVolleyPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathVolleyCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathVolleyHit" Accumulator="XalatathEchoingWhispersTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="XalatathVolleyHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.005" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="XalatathEchoingWhispersTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_xalatath_trait.dds" />
+  </CButton>
+  <CButton id="XalatathProphecyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_xalatath_trait.dds" />
+  </CButton>
+
+  <!-- ===== Shadow Seer ===== -->
+  <!-- Omen quest (50% kept): 1% Shadow Mark damage per enemy Hero hit. Doom quest: takedowns within 3 seconds of a hit; 1% of the 7 second recharge each up to 40%, then 1% damage each. -->
+  <CBehaviorTokenCounter id="XalatathOmenTokenCounter" parent="StormQuestToken">
+    <Face value="XalatathOmenTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="XalatathDoomTokenCounter" parent="StormQuestToken">
+    <Face value="XalatathDoomTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="XalatathOmenTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="XalatathOmenTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="XalatathShadowMarkOuterDamage">
+    <MultiplicativeModifierArray index="XalatathMarkPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkHit" Accumulator="XalatathOmenTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathShadowMarkInnerDamage">
+    <MultiplicativeModifierArray index="XalatathMarkPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkHit" Accumulator="XalatathOmenTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathShadowMarkToxicMarkDamage">
+    <MultiplicativeModifierArray index="XalatathMarkPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkHit" Accumulator="XalatathOmenTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="XalatathMarkHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="XalatathOmenTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_xalatath_q_shadowmark.dds" />
+  </CButton>
+  <CButton id="XalatathDoomTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_xalatath_q_shadowmark.dds" />
+  </CButton>
+
+  <!-- ===== Heart of Darkness ===== -->
+  <!-- Ritual quest (50% kept): 0.5% Dark Heart damage per enemy Hero hit (pulses and detonations). Sacrifice quest: takedowns within 3 seconds of a hit; 1% of the 15 second cooldown each up to 40%, then 1% damage each. -->
+  <CBehaviorTokenCounter id="XalatathRitualTokenCounter" parent="StormQuestToken">
+    <Face value="XalatathRitualTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="XalatathSacrificeTokenCounter" parent="StormQuestToken">
+    <Face value="XalatathSacrificeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="XalatathRitualTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="XalatathRitualTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="XalatathDarkHeartRitualChainDamage">
+    <MultiplicativeModifierArray index="XalatathHeartPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartHit" Accumulator="XalatathRitualTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathDarkHeartRitualDamageLinkChainTargetDamage">
+    <MultiplicativeModifierArray index="XalatathHeartPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartHit" Accumulator="XalatathRitualTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathDarkHeartRitualDetonationDamage">
+    <MultiplicativeModifierArray index="XalatathHeartPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartHit" Accumulator="XalatathRitualTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathUnstableCoreFireDamage">
+    <MultiplicativeModifierArray index="XalatathHeartPower" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartHit" Accumulator="XalatathRitualTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="XalatathHeartHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="XalatathRitualTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_xalatath_e_darkheartritual.dds" />
+  </CButton>
+  <CButton id="XalatathSacrificeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_xalatath_e_darkheartritual.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Marked by the Void (Legendary, Shadow Seer): Xal'atath deals 25% more damage to enemies afflicted by Shadow Mark -->
+  <CBehaviorBuff id="XalatathMarkedByTheVoid" parent="CarryBehaviorParent">
+    <DamageResponse>
+      <Chance value="1" />
+      <Location value="Attacker" />
+      <ModifyFraction value="1.25" />
+      <ValidatorArray value="ValidatorTargetHasShadowMark" />
+    </DamageResponse>
+  </CBehaviorBuff>
+</Catalog>
