@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Golden Zul'jin. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token and heal;
 // takedowns in the window add the takedown token (capped part, then 1% damage per stack past the cap).
 // Axe Thrower: Trophies quest gives 1% attack speed per stack up to 40 (ZuljinTrophiesCarry stacks).
-// Whirling Axes: at 100 Cleaver stacks, a second Twin Cleave is thrown from where the axes cross (10 range ahead,
+// Whirling Axes: at 50 Cleaver stacks, a second Twin Cleave is thrown from where the axes cross (10 range ahead,
 // 0.625 seconds in) by an invisible helper unit. Endless Cleave (Legendary) chains a third.
 // Headhunter: the 3rd basic attack on a Hero marked by Grievous Throw Stuns for 0.5 seconds, once per mark.
 // Swirling Death (Rare): the talent, plus its Twin Cleave quest-completion validator pointed at the boon marker.
@@ -20,10 +20,11 @@ int libAffx_ZuljinCleaveAdded; // Whirling Axes: takedown stacks already applied
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinHeadTime; // per enemy player, last Headhunter hit
 int libAffx_ZuljinHeadAdded; // Headhunter: takedown stacks already applied to the catalog this game
 const int libAffx_ZuljinTrophiesMax = 40;
-const int libAffx_ZuljinCleaveStacksNeeded = 100; // Cleaver stacks for the second Twin Cleave
+const int libAffx_ZuljinCleaveStacksNeeded = 50; // Cleaver stacks for the second Twin Cleave
 const fixed libAffx_ZuljinCleaveCross = 10.0; // the axes cross this far ahead of where Twin Cleave was thrown
 const fixed libAffx_ZuljinCleaveCrossTime = 0.625;
 const int libAffx_ZuljinExecutionHits = 3;
+int libAffx_ZuljinSlowAdded; // Spinning Death stage 2: slow stacks given so far
 int[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinMarkHits; // per enemy player: basic attacks on them since their last Grievous Throw hit (-1: Stun used)
 
 unit libAffx_ZuljinHero() {
@@ -68,7 +69,7 @@ void libAffx_ZuljinSyncAxe () {
     CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinNoMercyWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinASurpriseForYaWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
 }
-// ZuljinSpinningDeathTokenCounter: 1% of the 8 second recharge per stack, up to 40%, then damage
+// ZuljinSpinningDeathTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80: 0.5% slow per axe each (libAffx_ZuljinSlowSync); then 3% damage each
 void libAffx_ZuljinSyncCleave () {
     unit hero = libAffx_ZuljinHero();
     int stacks;
@@ -83,7 +84,7 @@ void libAffx_ZuljinSyncCleave () {
         libAffx_CatalogReferenceModify("Abil,ZuljinTwinCleave,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinCleaveAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZuljinCleaveAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_ZuljinPastCapDamagePerStack, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveLeftDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveRightDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveWrongPlaceWrongTimeDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
@@ -139,12 +140,32 @@ void libAffx_ZuljinSwirlSync () {
     CatalogFieldValueSet(c_gameCatalogBehavior, "ZuljinTwinCleaveLeftAxeRotating", "Duration", libAffx_player, "2.5");
     CatalogFieldValueSet(c_gameCatalogBehavior, "ZuljinTwinCleaveRightAxeRotating", "Duration", libAffx_player, "2.5");
 }
+// Spinning Death stage 2: stacks 41 to 80 each make every Twin Cleave axe slow 0.5% more (stacks past 80 add damage)
+void libAffx_ZuljinSlowSync () {
+    unit hero = libAffx_ZuljinHero();
+    int wanted;
+    int delta;
+    if (hero == null || !UnitHasBehavior2(hero, "ZuljinCleaveMarker")) {
+        return;
+    }
+    wanted = MaxI(0, MinI(libAffx_ZuljinStacks("ZuljinSpinningDeathTokenCounter") - 40, 40));
+    delta = wanted - libAffx_ZuljinSlowAdded;
+    if (delta == 0) {
+        return;
+    }
+    libAffx_ZuljinSlowAdded = wanted;
+    libAffx_CatalogReferenceModify("Behavior,ZuljinTwinCleaveFirstHitSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(delta) * -0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Behavior,ZuljinTwinCleaveFullSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(delta) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Behavior,ZuljinTwinCleaveLacerateFirstHitSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(delta) * -0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Behavior,ZuljinTwinCleaveLacerateFullSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(delta) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+}
 bool libAffx_ZuljinPeriodic_Func (bool testConds, bool runActions) {
     libAffx_ZuljinTrophiesSync();
+    libAffx_ZuljinSlowSync();
     libAffx_ZuljinSwirlSync();
     return true;
 }
-// Whirling Axes: at 100 Cleaver stacks, each Twin Cleave Zul'jin throws is thrown again from where its axes cross, in the
+// Whirling Axes: at 50 Cleaver stacks, each Twin Cleave Zul'jin throws is thrown again from where its axes cross, in the
 // same direction (Endless Cleave: once more from there). The helper unit casts it, so the casts it makes are skipped here.
 bool libAffx_ZuljinCleaveAgain_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ZuljinHero();
@@ -290,7 +311,7 @@ bool libAffx_ZuljinTakedown (bool testConds, bool runActions) {
         libAffx_ZuljinQuestDing();
         libAffx_ZuljinTrophiesSync();
     }
-    if (UnitHasBehavior2(hero, "ZuljinCleaveMarker") && libAffx_ZuljinInWindow(libAffx_ZuljinCleaveTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "ZuljinCleaveMarker") && libAffx_ZuljinCleaveTime[killedPlayer] > 0.0 && now - libAffx_ZuljinCleaveTime[killedPlayer] <= 5.0) {
         libAffx_ZuljinCleaveTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ZuljinSpinningDeathTokenCounter", hero);
         libAffx_ZuljinSyncCleave();

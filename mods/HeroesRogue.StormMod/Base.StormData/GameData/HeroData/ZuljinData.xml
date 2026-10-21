@@ -62,7 +62,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Whirling Axes ===== -->
-  <!-- Cleaver quest (50% kept): 0.5% Twin Cleave damage per enemy Hero hit; at 100 stacks a second Twin Cleave is thrown from where the axes cross (script). Spinning Death quest: takedowns within 3 seconds of a hit; 1% of the 8 second recharge each up to 40%, then 1% damage each. -->
+  <!-- Cleaver quest (50% kept): 0.75% Twin Cleave damage per enemy Hero hit; at 50 stacks a second Twin Cleave is thrown from where the axes cross (script). Spinning Death quest: takedowns within 5 seconds of a hit; stacks 1-40 cut 1% of the 8 second recharge each, 41-80 add 0.5% slow per axe each (script), then 3% damage each. -->
   <CBehaviorTokenCounter id="ZuljinCleaverTokenCounter" parent="StormQuestToken">
     <Face value="ZuljinCleaverTokenCounter" />
     <Max value="100000" />
@@ -76,7 +76,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ZuljinCleaverTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.0075" />
   </CAccumulatorToken>
   <CEffectDamage id="ZuljinTwinCleaveLeftDamage">
     <MultiplicativeModifierArray index="ZuljinCleavePower" Modifier="0" />
@@ -167,7 +167,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <ChangeFraction value="0.02" />
     </VitalArray>
   </CEffectModifyUnit>
-  <!-- Whirling Axes, 100 Cleaver stacks: an invisible helper at the point where the axes cross throws another Twin Cleave
+  <!-- Whirling Axes, 50 Cleaver stacks: an invisible helper at the point where the axes cross throws another Twin Cleave
        (the script creates it, casts ZuljinTwinCleaveInitialSet from it, and removes it) -->
   <CUnit id="ZuljinCleaveCaster" parent="PLACEHOLDER">
     <FlagArray index="Turnable" value="1" />
