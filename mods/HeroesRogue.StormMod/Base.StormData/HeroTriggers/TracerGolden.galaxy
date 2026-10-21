@@ -24,6 +24,10 @@ const int libAffx_TracerMagazineMax = 10; // Bigger Magazine: most ammo the ques
 int libAffx_TracerMagazine; // Bigger Magazine: ammo given to TracerBigMagazineCarry this game
 fixed libAffx_TracerPulseUsed = -1.0; // Pulse Bomb charge used at the last check (-1: not checked yet)
 const fixed libAffx_TracerClusterRadius = 4.0;
+const fixed libAffx_TracerShieldFraction = 0.5; // Bomber Shield: share of maximum Health
+const fixed libAffx_TracerShieldSteps = 16.0; // Bomber Shield: shrinks this many times, every 0.25 seconds (4 seconds)
+fixed libAffx_TracerShieldStep; // Bomber Shield: amount lost each step
+int libAffx_TracerBlastAdded; // Overcharge stage 2: radius stacks given so far
 const fixed libAffx_TracerComboDelay = 0.4;
 fixed libAffx_TracerComboLast = -1.0; // when the last Combo repeat was cast, so it is not repeated itself
 
@@ -90,7 +94,7 @@ void libAffx_TracerSyncMelee () {
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "TracerMeleeDamage", "MultiplicativeModifierArray[TracerMeleeLegacy].Modifier", libAffx_player, bonus);
 }
-// TracerOverchargeTokenCounter: Pulse Bomb charges 1% faster per stack up to 40% (libAffx_TracerPulseRate), then damage
+// TracerOverchargeTokenCounter: stacks 1-40: Pulse Bomb charges 1% faster each (libAffx_TracerPulseRate); 41-80: explosions 1% larger each (libAffx_TracerBlastSync_Func); then 3% damage each
 void libAffx_TracerSyncBomb () {
     unit hero = libAffx_TracerHero();
     int stacks;
@@ -100,11 +104,11 @@ void libAffx_TracerSyncBomb () {
         return;
     }
     stacks = libAffx_TracerStacks("TracerOverchargeTokenCounter");
-    wanted = MinI(stacks, 40);
+    wanted = MinI(stacks, 80);
     if (wanted != libAffx_TracerBombAdded) {
         libAffx_TracerBombAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBPulseBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
@@ -118,6 +122,80 @@ bool libAffx_TracerSync_Func (bool testConds, bool runActions) {
     libAffx_TracerSyncGun();
     libAffx_TracerSyncMelee();
     libAffx_TracerSyncBomb();
+    return true;
+}
+// Bomber Shield: sets the amount and re-adds the behavior so the new amount applies
+void libAffx_TracerBomberShieldSet (unit hero, fixed amount) {
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBomberShield", "DamageResponse.ModifyLimit", libAffx_player, amount);
+    UnitBehaviorRemove(hero, "TracerBomberShield", 1);
+    UnitBehaviorAdd(hero, "TracerBomberShield", hero, 1);
+}
+// Bomber Shield: a Pulse Bomb hit on an enemy Hero refills it to 50% of maximum Health
+void libAffx_TracerBomberShield (unit hero) {
+    fixed full;
+    if (!UnitIsAlive(hero)) {
+        return;
+    }
+    full = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent) * libAffx_TracerShieldFraction;
+    libAffx_TracerShieldStep = full / libAffx_TracerShieldSteps;
+    libAffx_TracerBomberShieldSet(hero, full);
+}
+// Bomber Shield: every 0.25 seconds it loses 1/16 of its full amount
+bool libAffx_TracerShieldDecay_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TracerHero();
+    fixed left;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "TracerBomberShield")) {
+        return false;
+    }
+    left = UnitBehaviorDamageModifyRemaining(hero, "TracerBomberShield") - libAffx_TracerShieldStep;
+    if (left < 1.0) {
+        UnitBehaviorRemove(hero, "TracerBomberShield", 1);
+        return true;
+    }
+    libAffx_TracerBomberShieldSet(hero, left);
+    return true;
+}
+// Overcharge stage 2: stacks 41 to 80 each grow Pulse Bomb's explosions by 1% (stacks past 80 add damage, in the sync)
+bool libAffx_TracerBlastSync_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TracerHero();
+    int wanted;
+    int delta;
+    if (hero == null || !UnitHasBehavior2(hero, "TracerBomberMarker")) {
+        return false;
+    }
+    wanted = MaxI(0, MinI(libAffx_TracerStacks("TracerOverchargeTokenCounter") - 40, 40));
+    delta = wanted - libAffx_TracerBlastAdded;
+    if (delta == 0) {
+        return true;
+    }
+    libAffx_TracerBlastAdded = wanted;
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombGroundExplosionSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.01125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombGroundExplosionSearch,AreaArray[1].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombUnitExplosionSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombQuantumSpikeMasteryGroundExplosionSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.01125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombQuantumSpikeMasteryGroundExplosionSearch,AreaArray[1].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombQuantumSpikeMasteryUnitExplosionSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombCompositionBPulseBombGroundSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.01125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombCompositionBPulseBombGroundSearch,AreaArray[1].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombCompositionBQuantumSpikeGroundSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.01125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,TracerPulseBombCompositionBQuantumSpikeGroundSearch,AreaArray[1].Radius", libAffx_player, FixedToString(IntToFixed(delta) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Actor,TracerPulseBombExplosionUnitWarningModel,Scale", libAffx_player, FixedToString(IntToFixed(delta) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Actor,TracerPulseBombExplosionGroundWarningModel,Scale", libAffx_player, FixedToString(IntToFixed(delta) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Actor,TracerPulseBombCompositionBExplosionGroundWarningModel,Scale", libAffx_player, FixedToString(IntToFixed(delta) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    return true;
+}
+// Siege Breaker: Pulse Bomb hits on non-Heroes deal 4 times more on top
+bool libAffx_TracerSiegeBreaker_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_TracerHero();
+    fixed amount = EventUnitDamageAmount();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "TracerSiegeBreakerMarker") || !UnitIsAlive(victim) || amount <= 0.0) {
+        return false;
+    }
+    if (UnitTypeTestAttribute(UnitGetType(victim), c_unitAttributeHeroic)) {
+        return false;
+    }
+    UnitDamage(hero, "TracerSiegeBreakerDamage", victim, amount * 4.0);
     return true;
 }
 // Giant Slayer: any starter. Basic attack and Melee hits on enemy Heroes also deal a share of their maximum Health.
@@ -278,9 +356,7 @@ bool libAffx_TracerBombHit_Func (bool testConds, bool runActions) {
     }
     libAffx_TracerBombTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "TracerDemolitionTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "TracerBombHeal", hero);
-    }
+    libAffx_TracerBomberShield(hero);
     return true;
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -348,6 +424,17 @@ bool libAffx_TracerStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombGroundExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryUnitExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryGroundExplosionSearch");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerShieldDecay_Func"), 0.25, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerBlastSync_Func"), 1.0, c_timeGame);
+    trig = TriggerCreate("libAffx_TracerSiegeBreaker_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombAoEDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombCompositionBPulseBombDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombCompositionBPulseBombAoEDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombCompositionBQuantumSpikeDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombQuantumSpikeMasteryDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombQuantumSpikeMasteryAoEDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerClusterBombDamage");
     trig = TriggerCreate("libAffx_TracerGiantSlayer_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponDamageHero");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponRicochetDamageHero");
