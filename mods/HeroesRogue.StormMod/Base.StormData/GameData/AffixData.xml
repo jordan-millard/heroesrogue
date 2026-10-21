@@ -16925,6 +16925,7 @@
             </String>
         </Instances>
 
+
         <Instances Id="TracerGunslinger">
             <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
                 <Field Id="Icon" />
@@ -17484,6 +17485,23 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="1 1 Add Abil,TracerRecall,Cost.Cooldown.TimeUse -5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TracerJumperBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TracerJumper">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 1 Set Behavior,TracerBlinkJumperTalentShield,Duration 0">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
