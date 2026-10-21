@@ -153,7 +153,7 @@ bool libAffx_NovaPinHit_Func (bool testConds, bool runActions) {
 
 // ---------- Holo Corps ----------
 
-// A Decoy spawned: copy the Decoy damage quest counts onto it
+// A Decoy spawned: it takes half damage instead of double, and gets copies of the Decoy damage quest counts
 bool libAffx_NovaDecoySpawned_Func (bool testConds, bool runActions) {
     unit decoy = EventUnitCreatedUnit();
     unit hero = libAffx_NovaHero();
@@ -161,6 +161,7 @@ bool libAffx_NovaDecoySpawned_Func (bool testConds, bool runActions) {
     if (hero == null || UnitGetType(decoy) != "NovaHoloClone" || UnitGetOwner(decoy) != libAffx_player || !UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
         return false;
     }
+    UnitBehaviorAdd(decoy, "NovaHoloCorpsDecoyGuard", decoy, 1);
     UnitBehaviorAdd(decoy, "NovaIllusionistTokenCounter", decoy, 1);
     UnitBehaviorAdd(decoy, "NovaPhantomStrikeTokenCounter", decoy, 1);
     count = FixedToInt(UnitGetTokenCount(hero, "NovaIllusionistTokenCounter"));

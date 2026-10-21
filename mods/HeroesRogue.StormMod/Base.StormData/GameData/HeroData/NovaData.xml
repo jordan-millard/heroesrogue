@@ -261,6 +261,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
     <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
   </CEffectDamage>
+  <!-- Holo Corps: Decoys take a quarter of the damage dealt to them. The base Decoy (Hallucination state) takes double
+       damage, so this nets half damage. -->
+  <CBehaviorBuff id="NovaHoloCorpsDecoyGuard" parent="CarryBehaviorParent">
+    <DamageResponse Chance="1" TargetFilters="-;-" ModifyFraction="0.25" />
+  </CBehaviorBuff>
   <!-- Twin Projection (Rare): a second Decoy 1.5 to the side -->
   <CEffectCreateUnit id="NovaTwinProjectionCreateUnit">
     <WhichLocation Value="TargetPoint" />
