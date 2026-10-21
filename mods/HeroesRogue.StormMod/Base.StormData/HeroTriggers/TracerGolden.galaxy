@@ -25,8 +25,6 @@ int libAffx_TracerMagazine; // Bigger Magazine: ammo given to TracerBigMagazineC
 fixed libAffx_TracerPulseUsed = -1.0; // Pulse Bomb charge used at the last check (-1: not checked yet)
 const fixed libAffx_TracerClusterRadius = 4.0;
 const fixed libAffx_TracerShieldFraction = 0.5; // Bomber Shield: share of maximum Health
-const fixed libAffx_TracerShieldSteps = 16.0; // Bomber Shield: shrinks this many times, every 0.25 seconds (4 seconds)
-fixed libAffx_TracerShieldStep; // Bomber Shield: amount lost each step
 int libAffx_TracerBlastAdded; // Overcharge stage 2: radius stacks given so far
 const fixed libAffx_TracerComboDelay = 0.4;
 fixed libAffx_TracerComboLast = -1.0; // when the last Combo repeat was cast, so it is not repeated itself
@@ -137,23 +135,7 @@ void libAffx_TracerBomberShield (unit hero) {
         return;
     }
     full = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent) * libAffx_TracerShieldFraction;
-    libAffx_TracerShieldStep = full / libAffx_TracerShieldSteps;
     libAffx_TracerBomberShieldSet(hero, full);
-}
-// Bomber Shield: every 0.25 seconds it loses 1/16 of its full amount
-bool libAffx_TracerShieldDecay_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_TracerHero();
-    fixed left;
-    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "TracerBomberShield")) {
-        return false;
-    }
-    left = UnitBehaviorDamageModifyRemaining(hero, "TracerBomberShield") - libAffx_TracerShieldStep;
-    if (left < 1.0) {
-        UnitBehaviorRemove(hero, "TracerBomberShield", 1);
-        return true;
-    }
-    libAffx_TracerBomberShieldSet(hero, left);
-    return true;
 }
 // Overcharge stage 2: stacks 41 to 80 each grow Pulse Bomb's explosions by 1% (stacks past 80 add damage, in the sync)
 bool libAffx_TracerBlastSync_Func (bool testConds, bool runActions) {
@@ -424,7 +406,6 @@ bool libAffx_TracerStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombGroundExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryUnitExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryGroundExplosionSearch");
-    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerShieldDecay_Func"), 0.25, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerBlastSync_Func"), 1.0, c_timeGame);
     trig = TriggerCreate("libAffx_TracerSiegeBreaker_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombDamage");
