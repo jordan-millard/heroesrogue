@@ -201,7 +201,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
 
   <!-- ===== Holo Corps ===== -->
-  <!-- Illusionist quest (this game only): each Decoy hit on an enemy Hero, 0.5% Decoy damage. Phantom Strike quest: an
+  <!-- Illusionist quest (50% kept): each Decoy hit on an enemy Hero, 0.75% Decoy damage. Phantom Strike quest: an
        enemy Hero takedown while a Decoy is alive, 2% Decoy damage. Decoys deal the damage, so the script copies both
        counts onto each Decoy when it spawns. Both also boost Nova's Heroics (Triple Tap, Precision Strike, above). -->
   <CBehaviorTokenCounter id="NovaIllusionistTokenCounter" parent="StormQuestToken">
@@ -214,7 +214,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="NovaIllusionistTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.0075" />
   </CAccumulatorToken>
   <CBehaviorTokenCounter id="NovaPhantomStrikeTokenCounter" parent="StormQuestToken">
     <Face value="NovaPhantomStrikeTokenCounter" />
