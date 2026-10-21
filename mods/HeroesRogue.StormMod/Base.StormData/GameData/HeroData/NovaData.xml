@@ -172,10 +172,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="TripleTapMissileDamage">
     <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
     <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="PrecisionStrikeDamage">
     <MultiplicativeModifierArray index="NovaMarkedTargets" Validator="NovaTargetPinned" Accumulator="NovaMarkedTargetsAccumulator" />
     <MultiplicativeModifierArray index="NovaHuntersMark" Validator="NovaTargetPinned" Accumulator="NovaHuntersMarkAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
   </CEffectDamage>
   <!-- Pinned Down (Epic): Pinning Shot also Roots for 0.5 seconds -->
   <CBehaviorBuff id="NovaPinnedDownRoot" parent="StormRoot">
@@ -199,7 +203,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Holo Corps ===== -->
   <!-- Illusionist quest (this game only): each Decoy hit on an enemy Hero, 0.5% Decoy damage. Phantom Strike quest: an
        enemy Hero takedown while a Decoy is alive, 2% Decoy damage. Decoys deal the damage, so the script copies both
-       counts onto each Decoy when it spawns. -->
+       counts onto each Decoy when it spawns. Both also boost Nova's Heroics (Triple Tap, Precision Strike, above). -->
   <CBehaviorTokenCounter id="NovaIllusionistTokenCounter" parent="StormQuestToken">
     <Face value="NovaIllusionistTokenCounter" />
     <Max value="100000" />
