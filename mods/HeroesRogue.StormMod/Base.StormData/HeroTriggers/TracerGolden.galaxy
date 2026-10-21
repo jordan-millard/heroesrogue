@@ -1,0 +1,341 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Tracer. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token.
+// Gunslinger, Bigger Magazine quest: 1 ammo per stack, up to 10 (TracerBigMagazineCarry); then 1% damage each.
+// Brawler, Brawl quest: 1% of Melee's 7 second recharge per stack, up to 40%; then 1% damage each.
+// Combo (Legendary): each Melee hits again 0.4 seconds later.
+// Bomber: Pulse Bomb charges 50% faster (the script tops up each charge gained). Overcharge quest: 1% faster
+// per stack, up to 40%; then 1% damage each. Refill (Epic): takedowns refill 50% of the charge.
+// Cluster Bomb (Legendary): each Pulse Bomb explosion hits up to 4 nearby enemies for 25% of its damage.
+// ============================================================
+
+const fixed libAffx_TracerTakedownWindow = 3.0;
+const fixed libAffx_TracerPastCapDamagePerStack = 0.01;
+bool libAffx_TracerStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TracerGunTime; // per enemy player, last Gunslinger hit
+int libAffx_TracerGunAdded; // Gunslinger: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TracerMeleeTime; // per enemy player, last Brawler hit
+int libAffx_TracerMeleeAdded; // Brawler: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TracerBombTime; // per enemy player, last Bomber hit
+int libAffx_TracerBombAdded; // Bomber: takedown stacks already applied to the catalog this game
+const int libAffx_TracerMagazineMax = 10; // Bigger Magazine: most ammo the quest adds
+int libAffx_TracerMagazine; // Bigger Magazine: ammo given to TracerBigMagazineCarry this game
+fixed libAffx_TracerPulseUsed = -1.0; // Pulse Bomb charge used at the last check (-1: not checked yet)
+const fixed libAffx_TracerClusterRadius = 4.0;
+const fixed libAffx_TracerComboDelay = 0.4;
+fixed libAffx_TracerComboLast = -1.0; // when the last Combo repeat was cast, so it is not repeated itself
+
+unit libAffx_TracerHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_TracerIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_TracerStacks(string tokenId) {
+    unit hero = libAffx_TracerHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_TracerQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_TracerInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_TracerTakedownWindow;
+}
+// TracerBiggerMagazineTokenCounter: 1 ammo per stack up to 10 (libAffx_TracerMagazineSync), then damage
+void libAffx_TracerSyncGun () {
+    unit hero = libAffx_TracerHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "TracerGunslingerMarker")) {
+        return;
+    }
+    stacks = libAffx_TracerStacks("TracerBiggerMagazineTokenCounter");
+    wanted = MinI(stacks, 10);
+    if (wanted != libAffx_TracerGunAdded) {
+        libAffx_TracerGunAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 10)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponDamage", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponDamageHero", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponRicochetDamage", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponRicochetDamageHero", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponFocusFireMasteryDamage", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponFocusFireMasteryDamageHero", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+}
+// TracerBrawlTokenCounter: 1% of the 7 second recharge per stack, up to 40%, then damage
+void libAffx_TracerSyncMelee () {
+    unit hero = libAffx_TracerHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "TracerBrawlerMarker")) {
+        return;
+    }
+    stacks = libAffx_TracerStacks("TracerBrawlTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_TracerMeleeAdded) {
+        libAffx_CatalogReferenceModify("Abil,TracerMelee,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TracerMeleeAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_TracerMeleeAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerMeleeDamage", "MultiplicativeModifierArray[TracerMeleeLegacy].Modifier", libAffx_player, bonus);
+}
+// TracerOverchargeTokenCounter: Pulse Bomb charges 1% faster per stack up to 40% (libAffx_TracerPulseRate), then damage
+void libAffx_TracerSyncBomb () {
+    unit hero = libAffx_TracerHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "TracerBomberMarker")) {
+        return;
+    }
+    stacks = libAffx_TracerStacks("TracerOverchargeTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_TracerBombAdded) {
+        libAffx_TracerBombAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBPulseBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBPulseBombAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBQuantumSpikeDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombQuantumSpikeMasteryDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombQuantumSpikeMasteryAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerClusterBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_TracerSync_Func (bool testConds, bool runActions) {
+    libAffx_TracerSyncGun();
+    libAffx_TracerSyncMelee();
+    libAffx_TracerSyncBomb();
+    return true;
+}
+// Gunslinger, Bigger Magazine quest: 1 ammo per stack, up to 10. A changed value only reaches Tracer when the behavior is re-added.
+void libAffx_TracerMagazineSync () {
+    unit hero = libAffx_TracerHero();
+    int wanted;
+    if (hero == null || !UnitHasBehavior2(hero, "TracerGunslingerMarker")) {
+        return;
+    }
+    wanted = MinI(libAffx_TracerStacks("TracerBiggerMagazineTokenCounter"), libAffx_TracerMagazineMax);
+    if (wanted != libAffx_TracerMagazine) {
+        libAffx_TracerMagazine = wanted;
+        CatalogFieldValueSet(c_gameCatalogBehavior, "TracerBigMagazineCarry", "Modification.VitalMaxArray[Energy]", libAffx_player, IntToString(wanted));
+        UnitBehaviorRemove(hero, "TracerBigMagazineCarry", 1);
+    }
+    if (wanted > 0 && !UnitHasBehavior2(hero, "TracerBigMagazineCarry")) {
+        UnitBehaviorAdd(hero, "TracerBigMagazineCarry", hero, 1);
+    }
+}
+bool libAffx_TracerMagazine_Func (bool testConds, bool runActions) {
+    libAffx_TracerMagazineSync();
+    return true;
+}
+// Bomber: how much faster Pulse Bomb charges (starter and Charged Up, plus 1% per Overcharge stack up to 40)
+fixed libAffx_TracerPulseRate () {
+    fixed rate = StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "TracerPulseChargeRate", "Duration", libAffx_player));
+    return rate + 0.01 * IntToFixed(MinI(libAffx_TracerStacks("TracerOverchargeTokenCounter"), 40));
+}
+// Bomber: Pulse Bomb charge is "charge used" counting down from 100. Each drop since the last check is charge gained;
+// add that much again times the rate.
+bool libAffx_TracerPulseCharge_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TracerHero();
+    fixed used;
+    fixed extra;
+    if (hero == null || !UnitHasBehavior2(hero, "TracerBomberMarker")) {
+        return false;
+    }
+    used = UnitGetChargeUsed(hero, "Abil/TracerPulseBomb");
+    if (libAffx_TracerPulseUsed >= 0.0 && used < libAffx_TracerPulseUsed) {
+        extra = MinF((libAffx_TracerPulseUsed - used) * libAffx_TracerPulseRate(), used);
+        if (extra > 0.0) {
+            UnitAddChargeUsed(hero, "Abil/TracerPulseBomb", -extra);
+            used = used - extra;
+        }
+    }
+    libAffx_TracerPulseUsed = used;
+    return true;
+}
+// Refill (Epic, Bomber): takedowns refill 50% of Pulse Bomb's charge (not topped up again by the rate)
+void libAffx_TracerRefill (unit hero) {
+    fixed used = UnitGetChargeUsed(hero, "Abil/TracerPulseBomb");
+    UnitAddChargeUsed(hero, "Abil/TracerPulseBomb", -MinF(50.0, used));
+    libAffx_TracerPulseUsed = UnitGetChargeUsed(hero, "Abil/TracerPulseBomb");
+}
+// Cluster Bomb (Legendary, Bomber): when a Pulse Bomb explodes, hit up to 4 nearby enemies (Heroes first) for 25% of its damage
+bool libAffx_TracerClusterBomb_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TracerHero();
+    point center = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    unitgroup nearby;
+    unitgroup targets = UnitGroupEmpty();
+    unit other;
+    int i;
+    if (hero == null || center == null || !UnitHasBehavior2(hero, "TracerClusterBombMarker")) {
+        return false;
+    }
+    nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(center, libAffx_TracerClusterRadius), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32)) | (1 << (c_targetFilterStasis - 32))), 0);
+    for (i = 1; i <= UnitGroupCount(nearby, c_unitCountAll); i += 1) {
+        other = UnitGroupUnit(nearby, i);
+        if (other != null && UnitGroupCount(targets, c_unitCountAll) < 4 && libAffx_TracerIsEnemyHero(other)) {
+            UnitGroupAdd(targets, other);
+        }
+    }
+    for (i = 1; i <= UnitGroupCount(nearby, c_unitCountAll); i += 1) {
+        other = UnitGroupUnit(nearby, i);
+        if (other != null && UnitGroupCount(targets, c_unitCountAll) < 4 && !UnitGroupHasUnit(targets, other)) {
+            UnitGroupAdd(targets, other);
+        }
+    }
+    CatalogFieldValueSet(c_gameCatalogEffect, "TracerClusterBombDamage", "Amount", libAffx_player, FixedToString(0.25 * StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "TracerPulseBombDamage", "Amount", libAffx_player)), 2));
+    Wait(0.25, c_timeGame);
+    for (i = 1; i <= UnitGroupCount(targets, c_unitCountAll); i += 1) {
+        other = UnitGroupUnit(targets, i);
+        if (other != null && UnitIsAlive(other) && UnitIsAlive(hero)) {
+            UnitCreateEffectUnit(hero, "TracerClusterBombImpactSet", other);
+        }
+        Wait(0.0625, c_timeGame);
+    }
+    return true;
+}
+// Combo (Legendary, Brawler): each Melee hits again 0.4 seconds later. The repeat is skipped by its own event.
+bool libAffx_TracerCombo_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TracerHero();
+    if (hero == null || !UnitHasBehavior2(hero, "TracerComboMarker") || GameGetMissionTime() == libAffx_TracerComboLast) {
+        return false;
+    }
+    Wait(libAffx_TracerComboDelay, c_timeGame);
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    libAffx_TracerComboLast = GameGetMissionTime();
+    UnitCreateEffectUnit(hero, "TracerMeleeInitialSet", hero);
+    return true;
+}
+// Gunslinger hit on an enemy Hero: takedown window, TracerHotLeadTokenCounter, the heal, and on-hit boons
+bool libAffx_TracerGunHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_TracerHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_TracerIsEnemyHero(victim) || !UnitHasBehavior2(hero, "TracerGunslingerMarker")) {
+        return false;
+    }
+    libAffx_TracerGunTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "TracerHotLeadTokenCounter", hero);
+    if (UnitHasBehavior2(hero, "TracerBulletTimeMarker")) {
+        UnitCreateEffectUnit(hero, "TracerBulletTimeModifyCooldown", hero);
+    }
+    if (UnitHasBehavior2(hero, "TracerArmorPiercingMarker")) {
+        UnitCreateEffectUnit(hero, "TracerArmorPiercingApply", victim);
+    }
+    return true;
+}
+// Brawler hit on an enemy Hero: takedown window, TracerKnucklesTokenCounter, the heal, and on-hit boons
+bool libAffx_TracerMeleeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_TracerHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_TracerIsEnemyHero(victim) || !UnitHasBehavior2(hero, "TracerBrawlerMarker")) {
+        return false;
+    }
+    libAffx_TracerMeleeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "TracerKnucklesTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "TracerMeleeHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "TracerMomentumMarker")) {
+        UnitCreateEffectUnit(hero, "TracerMomentumRefund", hero);
+    }
+    return true;
+}
+// Bomber hit on an enemy Hero: takedown window, TracerDemolitionTokenCounter, the heal, and on-hit boons
+bool libAffx_TracerBombHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_TracerHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_TracerIsEnemyHero(victim) || !UnitHasBehavior2(hero, "TracerBomberMarker")) {
+        return false;
+    }
+    libAffx_TracerBombTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "TracerDemolitionTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "TracerBombHeal", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_TracerTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_TracerHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    // Refill: any enemy Hero takedown refills 50% of Pulse Bomb
+    if (UnitHasBehavior2(hero, "TracerRefillMarker") && UnitHasBehavior2(hero, "TracerBomberMarker")) {
+        libAffx_TracerRefill(hero);
+    }
+    if (UnitHasBehavior2(hero, "TracerGunslingerMarker") && libAffx_TracerInWindow(libAffx_TracerGunTime[killedPlayer], now)) {
+        libAffx_TracerGunTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "TracerBiggerMagazineTokenCounter", hero);
+        libAffx_TracerSyncGun();
+        libAffx_TracerQuestDing();
+        libAffx_TracerMagazineSync();
+    }
+    if (UnitHasBehavior2(hero, "TracerBrawlerMarker") && libAffx_TracerInWindow(libAffx_TracerMeleeTime[killedPlayer], now)) {
+        libAffx_TracerMeleeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "TracerBrawlTokenCounter", hero);
+        libAffx_TracerSyncMelee();
+        libAffx_TracerQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "TracerBomberMarker") && libAffx_TracerInWindow(libAffx_TracerBombTime[killedPlayer], now)) {
+        libAffx_TracerBombTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "TracerOverchargeTokenCounter", hero);
+        libAffx_TracerSyncBomb();
+        libAffx_TracerQuestDing();
+    }
+    return true;
+}
+bool libAffx_TracerStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_TracerStarted) {
+        return true;
+    }
+    libAffx_TracerStarted = true;
+    trig = TriggerCreate("libAffx_TracerGunHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponDamageHero");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponRicochetDamageHero");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerHeroWeaponFocusFireMasteryDamageHero");
+    trig = TriggerCreate("libAffx_TracerMeleeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerMeleeDamage");
+    trig = TriggerCreate("libAffx_TracerBombHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombAoEDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombCompositionBPulseBombDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombCompositionBPulseBombAoEDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombCompositionBQuantumSpikeDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombQuantumSpikeMasteryDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombQuantumSpikeMasteryAoEDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerMagazine_Func"), 1.0, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerPulseCharge_Func"), 0.125, c_timeGame);
+    trig = TriggerCreate("libAffx_TracerClusterBomb_Func");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombUnitExplosionSearch");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombGroundExplosionSearch");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryUnitExplosionSearch");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombQuantumSpikeMasteryGroundExplosionSearch");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_TracerCombo_Func"), libAffx_player, "TracerMeleeInitialSet");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerSync_Func"), 1.0, c_timeGame);
+    return true;
+}

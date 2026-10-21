@@ -16925,6 +16925,569 @@
             </String>
         </Instances>
 
+        <Instances Id="TracerGunslinger">
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TracerSleightofHand">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TracerRicochetHeroWeapon">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TracerGunslingerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TracerHotLeadTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TracerBiggerMagazineTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TracerBiggerMagazineTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="TracerHotLeadTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponDamage,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponDamageHero,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponRicochetDamage,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponRicochetDamageHero,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponFocusFireMasteryDamage,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponFocusFireMasteryDamageHero,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_TracerStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TracerTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TracerHollowPoints">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerGunslinger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TracerHeroWeaponDamage,MultiplicativeModifierArray[TracerGunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,TracerHeroWeaponDamageHero,MultiplicativeModifierArray[TracerGunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,TracerHeroWeaponRicochetDamage,MultiplicativeModifierArray[TracerGunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,TracerHeroWeaponRicochetDamageHero,MultiplicativeModifierArray[TracerGunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,TracerHeroWeaponFocusFireMasteryDamage,MultiplicativeModifierArray[TracerGunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,TracerHeroWeaponFocusFireMasteryDamageHero,MultiplicativeModifierArray[TracerGunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+        </Instances>
+        <Instances Id="TracerQuickHands">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerGunslinger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,TracerReload,Duration -0.05">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 3 Add Effect,TracerReloadModifyWeaponCooldown,Weapon[0].CooldownAmount -0.06">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TracerBulletTimeBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerGunslinger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TracerBulletTimeMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TracerArmorPiercing">
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerGunslinger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TracerArmorPiercingMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TracerFocusFireBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerGunslinger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TracerFocusFire">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponFocusFireMasteryDamage,MultiplicativeModifierArray[TracerFocusFireBoon].Modifier 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,TracerHeroWeaponFocusFireMasteryDamageHero,MultiplicativeModifierArray[TracerFocusFireBoon].Modifier 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TracerTwinPistols">
+            <String String="Assets/Textures/storm_ui_icon_tracer_reload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerGunslinger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TracerHeroWeaponRicochetInitialSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TracerBrawler">
+            <String String="Assets/Textures/storm_ui_icon_tracer_melee.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TracerOneTwoPunch">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TracerBulletSprayMelee">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TracerBrawlerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TracerKnucklesTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TracerBrawlTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TracerBrawlTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="TracerKnucklesTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,TracerMeleeDamage,MultiplicativeModifierArray[TracerMeleePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_TracerStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TracerTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TracerIronFist">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_melee.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBrawler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TracerMeleeDamage,MultiplicativeModifierArray[TracerMeleeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TracerJab">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_melee.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBrawler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,TracerMelee,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TracerHeavyHandedBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_melee.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBrawler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TracerHeavyHanded">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TracerMomentum">
+            <String String="Assets/Textures/storm_ui_icon_tracer_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBrawler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TracerMomentumMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TracerGetStuffedBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_melee.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBrawler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TracerGetStuffedMelee">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TracerCombo">
+            <String String="Assets/Textures/storm_ui_icon_tracer_melee.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBrawler">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TracerComboMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TracerBomber">
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TracerStickyBomb">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TracerCompositionBPulseBomb">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TracerBomberMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TracerDemolitionTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TracerOverchargeTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TracerOverchargeTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="TracerDemolitionTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Behavior,TracerPulseChargeRate,Duration 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombAoEDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombCompositionBPulseBombDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombCompositionBPulseBombAoEDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombCompositionBQuantumSpikeDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombQuantumSpikeMasteryDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,TracerPulseBombQuantumSpikeMasteryAoEDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,TracerClusterBombDamage,MultiplicativeModifierArray[TracerBombPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_TracerStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TracerTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TracerPayload">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBomber">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TracerPulseBombDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,TracerPulseBombAoEDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,TracerPulseBombCompositionBPulseBombDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,TracerPulseBombCompositionBPulseBombAoEDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,TracerPulseBombCompositionBQuantumSpikeDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,TracerPulseBombQuantumSpikeMasteryDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,TracerPulseBombQuantumSpikeMasteryAoEDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 2 Set Effect,TracerClusterBombDamage,MultiplicativeModifierArray[TracerBombCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+        </Instances>
+        <Instances Id="TracerChargedUp">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBomber">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,TracerPulseChargeRate,Duration 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TracerPulseGeneratorBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBomber">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TracerPulseGenerator">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TracerQuantumSpikeBoon">
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBomber">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TracerQuantumSpike">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TracerRefill">
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBomber">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TracerRefillMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TracerClusterBomb">
+            <String String="Assets/Textures/storm_ui_icon_tracer_pulsebomb.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TracerBomber">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TracerClusterBombMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="TracerTimeSkip">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tracer_blink.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,TracerBlink,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TracerRewind">
+            <String String="Assets/Textures/storm_ui_icon_tracer_recall.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tracer">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 1 Add Abil,TracerRecall,Cost.Cooldown.TimeUse -5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

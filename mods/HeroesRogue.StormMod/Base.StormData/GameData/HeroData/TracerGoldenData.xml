@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Tracer. Starters: Gunslinger (basic attacks), Brawler (Melee) and Bomber (Pulse Bomb). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/TracerGolden.galaxy. Extended Magazine stays in TracerData.xml. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="TracerGunslingerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerBrawlerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerBomberMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerBulletTimeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerArmorPiercingMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerMomentumMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerComboMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerRefillMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TracerClusterBombMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Gunslinger ===== -->
+  <!-- Hot Lead quest (50% kept): 0.1% basic attack damage per hit on an enemy Hero. Bigger Magazine quest: takedowns within 3 seconds of a hit; 1 ammo each up to 10, then 1% damage each (script). Focus Fire damage gets an extra multiplier for the Focus Fire boon. -->
+  <CBehaviorTokenCounter id="TracerHotLeadTokenCounter" parent="StormQuestToken">
+    <Face value="TracerHotLeadTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="TracerBiggerMagazineTokenCounter" parent="StormQuestToken">
+    <Face value="TracerBiggerMagazineTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TracerHotLeadTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TracerHotLeadTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TracerHeroWeaponDamage">
+    <MultiplicativeModifierArray index="TracerGunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunHit" Accumulator="TracerHotLeadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerGunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerHeroWeaponDamageHero">
+    <MultiplicativeModifierArray index="TracerGunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunHit" Accumulator="TracerHotLeadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerGunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerHeroWeaponRicochetDamage">
+    <MultiplicativeModifierArray index="TracerGunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunHit" Accumulator="TracerHotLeadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerGunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerHeroWeaponRicochetDamageHero">
+    <MultiplicativeModifierArray index="TracerGunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunHit" Accumulator="TracerHotLeadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerGunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerHeroWeaponFocusFireMasteryDamage">
+    <MultiplicativeModifierArray index="TracerGunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunHit" Accumulator="TracerHotLeadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerGunLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerFocusFireBoon" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerHeroWeaponFocusFireMasteryDamageHero">
+    <MultiplicativeModifierArray index="TracerGunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerGunHit" Accumulator="TracerHotLeadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerGunLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerFocusFireBoon" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="TracerHotLeadTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tracer_reload.dds" />
+  </CButton>
+  <CButton id="TracerBiggerMagazineTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tracer_reload.dds" />
+  </CButton>
+
+  <!-- ===== Brawler ===== -->
+  <!-- Knuckles quest (50% kept): 0.5% Melee damage per enemy Hero hit. Brawl quest: takedowns within 3 seconds of a hit; 1% of the 7 second recharge each up to 40%, then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="TracerKnucklesTokenCounter" parent="StormQuestToken">
+    <Face value="TracerKnucklesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="TracerBrawlTokenCounter" parent="StormQuestToken">
+    <Face value="TracerBrawlTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TracerKnucklesTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TracerKnucklesTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TracerMeleeDamage">
+    <MultiplicativeModifierArray index="TracerMeleePower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerMeleeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerMeleeHit" Accumulator="TracerKnucklesTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerMeleeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="TracerMeleeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.03" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="TracerKnucklesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tracer_melee.dds" />
+  </CButton>
+  <CButton id="TracerBrawlTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tracer_melee.dds" />
+  </CButton>
+
+  <!-- ===== Bomber ===== -->
+  <!-- Demolition quest (50% kept): 1% Pulse Bomb damage per enemy Hero hit. Overcharge quest: takedowns within 3 seconds of a hit; Pulse Bomb charges 1% faster each up to 40%, then 1% damage each (script). Cluster Bomb damage is a Pulse Bomb effect too. -->
+  <CBehaviorTokenCounter id="TracerDemolitionTokenCounter" parent="StormQuestToken">
+    <Face value="TracerDemolitionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="TracerOverchargeTokenCounter" parent="StormQuestToken">
+    <Face value="TracerOverchargeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TracerDemolitionTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TracerDemolitionTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TracerPulseBombDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerPulseBombAoEDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerPulseBombCompositionBPulseBombDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerPulseBombCompositionBPulseBombAoEDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerPulseBombCompositionBQuantumSpikeDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerPulseBombQuantumSpikeMasteryDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerPulseBombQuantumSpikeMasteryAoEDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TracerClusterBombDamage">
+    <MultiplicativeModifierArray index="TracerBombPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TracerBombHit" Accumulator="TracerDemolitionTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TracerBombLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="TracerBombHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.05" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="TracerDemolitionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tracer_pulsebomb.dds" />
+  </CButton>
+  <CButton id="TracerOverchargeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tracer_pulsebomb.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Gunslinger, Bigger Magazine quest: the script sets this behavior's ammo to the stacks (up to 10) and re-adds it -->
+  <CBehaviorBuff id="TracerBigMagazineCarry" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxArray index="Energy" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bullet Time (Uncommon, Gunslinger): basic attacks on Heroes take 0.25 seconds off Blink's recharge -->
+  <CEffectModifyUnit id="TracerBulletTimeModifyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="TracerBlink,Execute" CooldownOperation="Add" CooldownTimeUse="-0.25" ChargeTimeUse="-0.25" />
+  </CEffectModifyUnit>
+  <!-- Armor-Piercing (Rare, Gunslinger): basic attacks on Heroes take 1 Armor for 3 seconds, stacking up to 10 times -->
+  <CBehaviorBuff id="TracerArmorPiercingDebuff" parent="StormArmor">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_tracer_reload.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <MaxStackCount value="10" />
+    <Duration value="3" />
+    <ArmorModification>
+      <AllArmorBonus value="-1" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="TracerArmorPiercingApply">
+    <Behavior value="TracerArmorPiercingDebuff" />
+  </CEffectApplyBehavior>
+  <!-- Momentum (Rare, Brawler): Melee hits on Heroes refund a Blink charge -->
+  <CEffectModifyUnit id="TracerMomentumRefund">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="TracerBlink,Execute" ChargeCountUse="-1" CooldownOperation="Add" />
+  </CEffectModifyUnit>
+  <!-- Bomber: how much faster Pulse Bomb charges (0.5 = 50%). Only a store for the starter and Charged Up; the behavior is
+       never applied. The script reads it, adds the Overcharge quest, and tops up each charge Tracer gains by that much. -->
+  <CBehaviorBuff id="TracerPulseChargeRate">
+    <Duration value="0" />
+  </CBehaviorBuff>
+  <!-- Cluster Bomb (Legendary, Bomber): when a Pulse Bomb explodes, up to 4 nearby enemies (Heroes first) are hit for 25%
+       of Pulse Bomb's damage (the script sets the amount and picks the targets), with the Parting Gift explosion -->
+  <CEffectDamage id="TracerClusterBombDamage" parent="StormSpell">
+    <Amount value="75" />
+    <SourceButtonFace value="TracerPulseBomb" />
+  </CEffectDamage>
+  <CEffectSet id="TracerClusterBombImpactSet">
+    <EffectArray value="TracerClusterBombDamage" />
+  </CEffectSet>
+  <CActorModel id="TracerClusterBombImpactModel" parent="StormModelAnimationStyleOneShotUnit">
+    <Model value="TracerRecallPartingGiftClusterImpactModel" />
+    <On Terms="Effect.TracerClusterBombImpactSet.Start; At Target" Send="Create" />
+    <HostSiteOps Ops="SOpAttachCenter" />
+  </CActorModel>
+  <CActorSound id="TracerClusterBombImpactSound" parent="SoundOneShot">
+    <On Terms="Effect.TracerClusterBombImpactSet.Start" Send="Create" />
+    <Sound value="Tracer_Recall_PartingGiftCluster_Impact" />
+  </CActorSound>
+</Catalog>
