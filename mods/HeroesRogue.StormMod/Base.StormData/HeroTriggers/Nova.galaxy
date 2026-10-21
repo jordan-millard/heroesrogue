@@ -153,13 +153,59 @@ bool libAffx_NovaPinHit_Func (bool testConds, bool runActions) {
 
 // ---------- Holo Corps ----------
 
-// A Decoy spawned: it takes half damage instead of double, and gets copies of the Decoy damage quest counts
+// Decoys are their own units, so Nova's general boons (on her as behaviors) don't reach them. Copy the ones that fit a
+// Decoy: attack speed and range, damage, leech, on-hit procs, armor and dodge. Health boons are left out (a Decoy spawns
+// with Nova's current Health).
+const int libAffx_NovaDecoyBoonCount = 23;
+string[libAffx_NovaDecoyBoonCount] libAffx_NovaDecoyBoons;
+void libAffx_NovaDecoyBoonsInit () {
+    libAffx_NovaDecoyBoons[0] = "AffixNexusRangeBuff";
+    libAffx_NovaDecoyBoons[1] = "AffixNexusFrenzyBehavior";
+    libAffx_NovaDecoyBoons[2] = "AffixBloodlust";
+    libAffx_NovaDecoyBoons[3] = "AffixNanoBoost";
+    libAffx_NovaDecoyBoons[4] = "AffixAmplificationBehavior";
+    libAffx_NovaDecoyBoons[5] = "AffixSearingAttacksBehavior";
+    libAffx_NovaDecoyBoons[6] = "AffixPathoftheAssassinBehavior";
+    libAffx_NovaDecoyBoons[7] = "AffixAllRounderBehavior";
+    libAffx_NovaDecoyBoons[8] = "AffixGatheringPowerBehavior";
+    libAffx_NovaDecoyBoons[9] = "AffixDemolitionistBehavior";
+    libAffx_NovaDecoyBoons[10] = "AffixMinionKillerBehavior";
+    libAffx_NovaDecoyBoons[11] = "AffixPhysicalLeechBehavior";
+    libAffx_NovaDecoyBoons[12] = "AffixSpellLeechBehavior";
+    libAffx_NovaDecoyBoons[13] = "AffixStrength";
+    libAffx_NovaDecoyBoons[14] = "PreparedDamageBehavior";
+    libAffx_NovaDecoyBoons[15] = "AffixGiantKiller";
+    libAffx_NovaDecoyBoons[16] = "AffixCleaverController";
+    libAffx_NovaDecoyBoons[17] = "AffixSuperiorityBehavior";
+    libAffx_NovaDecoyBoons[18] = "AffixSpellArmorBehavior";
+    libAffx_NovaDecoyBoons[19] = "AffixPhysicalArmorBehavior";
+    libAffx_NovaDecoyBoons[20] = "AffixDodgeController";
+    libAffx_NovaDecoyBoons[21] = "NimbleBehavior";
+    libAffx_NovaDecoyBoons[22] = "NimbleStructureBehavior";
+}
+void libAffx_NovaCopyBoons (unit hero, unit decoy) {
+    int i;
+    int stacks;
+    for (i = 0; i < libAffx_NovaDecoyBoonCount; i += 1) {
+        stacks = UnitBehaviorCount(hero, libAffx_NovaDecoyBoons[i]);
+        if (stacks > 0 && !UnitHasBehavior2(decoy, libAffx_NovaDecoyBoons[i])) {
+            UnitBehaviorAdd(decoy, libAffx_NovaDecoyBoons[i], decoy, stacks);
+        }
+    }
+}
+
+// A Decoy spawned: it gets Nova's general boons. With Holo Corps it also takes half damage instead of double, and gets
+// copies of the Decoy damage quest counts.
 bool libAffx_NovaDecoySpawned_Func (bool testConds, bool runActions) {
     unit decoy = EventUnitCreatedUnit();
     unit hero = libAffx_NovaHero();
     int count;
-    if (hero == null || UnitGetType(decoy) != "NovaHoloClone" || UnitGetOwner(decoy) != libAffx_player || !UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
+    if (hero == null || UnitGetType(decoy) != "NovaHoloClone" || UnitGetOwner(decoy) != libAffx_player) {
         return false;
+    }
+    libAffx_NovaCopyBoons(hero, decoy);
+    if (!UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
+        return true;
     }
     UnitBehaviorAdd(decoy, "NovaHoloCorpsDecoyGuard", decoy, 1);
     UnitBehaviorAdd(decoy, "NovaIllusionistTokenCounter", decoy, 1);
@@ -269,6 +315,7 @@ bool libAffx_NovaStart (bool testConds, bool runActions) {
         return true;
     }
     libAffx_novaStarted = true;
+    libAffx_NovaDecoyBoonsInit();
     snipeHit = TriggerCreate("libAffx_NovaSnipeHit_Func");
     TriggerAddEventUnitDamaged(snipeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "StormSnipeDamage");
     TriggerAddEventUnitDamaged(snipeHit, null, c_unitDamageTypeAny, c_unitDamageEither, "SnipeExplosiveDamage");
