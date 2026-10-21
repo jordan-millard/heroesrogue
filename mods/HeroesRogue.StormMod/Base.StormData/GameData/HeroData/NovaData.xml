@@ -261,13 +261,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
     <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
   </CEffectDamage>
-  <!-- Holo Corps: casting Holo Decoy resets Permanent Cloak's cooldown. Twin Projection (Rare): a second Decoy 1.5 to the
-       side. -->
-  <CEffectModifyUnit id="NovaHoloCorpsCloakReset">
-    <Chance value="0" />
-    <ImpactUnit Value="Caster" />
-    <Cost Abil="NovaCloakCooldownDisplay,Execute" CooldownOperation="Set" />
-  </CEffectModifyUnit>
+  <!-- Twin Projection (Rare): a second Decoy 1.5 to the side -->
   <CEffectCreateUnit id="NovaTwinProjectionCreateUnit">
     <WhichLocation Value="TargetPoint" />
     <CreateFlags index="PlacementIgnoreBlockers" value="1" />
@@ -283,7 +277,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicEffectArray value="NovaTwinProjectionCreateUnit" />
   </CEffectCreatePersistent>
   <CEffectSet id="NovaHoloDecoyInitialSet">
-    <EffectArray value="NovaHoloCorpsCloakReset" />
     <EffectArray value="NovaTwinProjectionPersistent" />
   </CEffectSet>
   <!-- Decoy Detonation (Legendary): the base expire explosion (HoloDecoySearch, Chance 0) plus a 0.75 second Stun -->
