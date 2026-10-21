@@ -123,6 +123,25 @@ bool libAffx_TracerSync_Func (bool testConds, bool runActions) {
     libAffx_TracerSyncBomb();
     return true;
 }
+// Ammo is Energy. Changing maximum ammo (Bigger Magazine re-adding its behavior, Extended Magazine) rescales the
+// current ammo and can leave a fraction (e.g. 0.5): it shows as 1 but can't fire, and Tracer only reloads by herself at
+// 0, so she swings at nothing. Keep ammo a whole number.
+void libAffx_TracerAmmoSnap (unit hero) {
+    fixed ammo;
+    fixed whole;
+    if (hero == null || !UnitIsAlive(hero)) {
+        return;
+    }
+    ammo = UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent);
+    whole = IntToFixed(FixedToInt(ammo + 0.5));
+    if (AbsF(ammo - whole) > 0.01) {
+        UnitSetPropertyFixed(hero, c_unitPropEnergy, whole);
+    }
+}
+bool libAffx_TracerAmmoSnap_Func (bool testConds, bool runActions) {
+    libAffx_TracerAmmoSnap(libAffx_TracerHero());
+    return true;
+}
 // Bomber Shield: sets the amount and re-adds the behavior so the new amount applies
 void libAffx_TracerBomberShieldSet (unit hero, fixed amount) {
     CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBomberShield", "DamageResponse.ModifyLimit", libAffx_player, amount);
@@ -214,6 +233,7 @@ void libAffx_TracerMagazineSync () {
     }
     if (wanted > 0 && !UnitHasBehavior2(hero, "TracerBigMagazineCarry")) {
         UnitBehaviorAdd(hero, "TracerBigMagazineCarry", hero, 1);
+        libAffx_TracerAmmoSnap(hero);
     }
 }
 bool libAffx_TracerMagazine_Func (bool testConds, bool runActions) {
@@ -409,6 +429,7 @@ bool libAffx_TracerStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TracerPulseBombQuantumSpikeMasteryAoEDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerMagazine_Func"), 1.0, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerPulseCharge_Func"), 0.125, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TracerAmmoSnap_Func"), 0.125, c_timeGame);
     trig = TriggerCreate("libAffx_TracerClusterBomb_Func");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombUnitExplosionSearch");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "TracerPulseBombGroundExplosionSearch");
