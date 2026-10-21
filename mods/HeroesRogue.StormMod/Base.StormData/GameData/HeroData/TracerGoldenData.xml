@@ -116,7 +116,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Bomber ===== -->
-  <!-- Demolition quest (50% kept): 5% Pulse Bomb damage per enemy Hero hit. Overcharge quest: takedowns within 3 seconds of a hit; stacks 1-40 make Pulse Bomb charge 1% faster each, 41-80 grow its explosions 1% each, then 3% damage each (script). Hits on Heroes refill a Shield that lasts until broken, instead of a heal (script). Cluster Bomb damage is a Pulse Bomb effect too. -->
+  <!-- Demolition quest (75% kept): 5% Pulse Bomb damage per enemy Hero hit. Overcharge quest: takedowns within 3 seconds of a hit; stacks 1-40 make Pulse Bomb charge 1% faster each, 41-80 grow its explosions 1% each, then 3% damage each (script). Hits on Heroes refill a Shield that lasts until broken, instead of a heal (script). Cluster Bomb damage is a Pulse Bomb effect too. -->
   <CBehaviorTokenCounter id="TracerDemolitionTokenCounter" parent="StormQuestToken">
     <Face value="TracerDemolitionTokenCounter" />
     <Max value="100000" />
@@ -188,7 +188,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Boons ===== -->
-  <!-- Bomber: Pulse Bomb hits on enemy Heroes refill a Shield of 50% of maximum Health that lasts until broken.
+  <!-- Bomber: Pulse Bomb hits on enemy Heroes refill a Shield of 35% of maximum Health that lasts until broken.
        The script sets the amount. -->
   <CBehaviorBuff id="TracerBomberShield" parent="StormShield">
     <InfoIcon value="Assets\Textures\storm_ui_icon_tracer_pulsebomb.dds" />

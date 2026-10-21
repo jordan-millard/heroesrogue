@@ -24,7 +24,7 @@ const int libAffx_TracerMagazineMax = 10; // Bigger Magazine: most ammo the ques
 int libAffx_TracerMagazine; // Bigger Magazine: ammo given to TracerBigMagazineCarry this game
 fixed libAffx_TracerPulseUsed = -1.0; // Pulse Bomb charge used at the last check (-1: not checked yet)
 const fixed libAffx_TracerClusterRadius = 4.0;
-const fixed libAffx_TracerShieldFraction = 0.5; // Bomber Shield: share of maximum Health
+const fixed libAffx_TracerShieldFraction = 0.35; // Bomber Shield: share of maximum Health
 int libAffx_TracerBlastAdded; // Overcharge stage 2: radius stacks given so far
 const fixed libAffx_TracerComboDelay = 0.4;
 fixed libAffx_TracerComboLast = -1.0; // when the last Combo repeat was cast, so it is not repeated itself
@@ -128,7 +128,7 @@ void libAffx_TracerBomberShieldSet (unit hero, fixed amount) {
     UnitBehaviorRemove(hero, "TracerBomberShield", 1);
     UnitBehaviorAdd(hero, "TracerBomberShield", hero, 1);
 }
-// Bomber Shield: a Pulse Bomb hit on an enemy Hero refills it to 50% of maximum Health
+// Bomber Shield: a Pulse Bomb hit on an enemy Hero refills it to 35% of maximum Health
 void libAffx_TracerBomberShield (unit hero) {
     fixed full;
     if (!UnitIsAlive(hero)) {
