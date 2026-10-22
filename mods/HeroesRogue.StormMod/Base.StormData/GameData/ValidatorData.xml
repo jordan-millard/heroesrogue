@@ -305,6 +305,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Behavior value="HealingFountainRestoreL2" />
   </CValidatorUnitCompareBehaviorCount>
   
+  <CValidatorUnitCompareBehaviorCount id="CasterHasAffixSappersPossessed">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="AffixSappersPossessed" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="AffixSappersPossessedVsStructure">
+    <Type value="And" />
+    <CombineArray value="CasterHasAffixSappersPossessed" />
+    <CombineArray value="IsStructureTarget" />
+  </CValidatorCombine>
+
   <CValidatorUnitCompareBehaviorCount id="TargetHasAffixRevealingTouchBehavior">
     <Compare value="GE" />
     <Value value="1" />

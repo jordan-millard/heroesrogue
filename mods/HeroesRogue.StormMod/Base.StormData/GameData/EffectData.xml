@@ -1134,4 +1134,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="DismountTarget" />
   </CEffectSet>
 
+  <!-- Sappers sets the enemy's Structure factor to 20 (base 2): 17 x 21 instead of 17 x 3, so 7 times the damage. A
+       possessed Sappers leader keeps that with +600%. -->
+  <CEffectDamage id="WizardMinionWeaponDamage">
+    <MultiplicativeModifierArray index="AffixSappersPossessed" Validator="AffixSappersPossessedVsStructure" Modifier="6" />
+  </CEffectDamage>
+
 </Catalog>

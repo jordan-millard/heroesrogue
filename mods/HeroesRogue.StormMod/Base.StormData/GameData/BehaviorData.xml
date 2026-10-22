@@ -1243,6 +1243,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </DamageResponse>
   </CBehaviorBuff>
 
+  <!-- A Sappers leader possessed for the player's team: its Structure damage came from the enemy's catalog, so this marker
+       gives it back (WizardMinionWeaponDamage, MultiplicativeModifierArray AffixSappersPossessed) -->
+  <CBehaviorBuff id="AffixSappersPossessed" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AffixSappersBehavior" parent="StormArmor">
     <DamageResponse>
       <Chance value="1" />

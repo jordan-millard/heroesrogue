@@ -23235,12 +23235,39 @@ void libGDHL_gt_HeroSylvanasWitheringFireHeroKillAddCharge_Init () {
 //--------------------------------------------------------------------------------------------------
 // Trigger: Hero - Sylvanas - Possession Rewire
 //--------------------------------------------------------------------------------------------------
+// Heroes Rogue: a minion possessed for the player's team keeps its enemy stats. Its buffs stay through
+// libAffx_UpdateUnitBehaviorFilter; this puts back what the old owner's catalog gave it: maximum Health (Sappers doubles
+// the leader's) and, for a Sappers leader, its damage to Structures (AffixSappersPossessed, see WizardMinionWeaponDamage).
+void libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats (unit lp_unit, fixed lp_lifeMax, bool lp_sapper) {
+    fixed lv_now;
+    fixed lv_base;
+    if (UnitGetOwner(lp_unit) != libCore_gv_cOMPUTER_TeamOrder || !UnitIsAlive(lp_unit)) {
+        return;
+    }
+    if (lp_sapper && !UnitHasBehavior2(lp_unit, "AffixSappersPossessed")) {
+        UnitBehaviorAdd(lp_unit, "AffixSappersPossessed", lp_unit, 1);
+    }
+    lv_now = UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent);
+    if (lv_now > 0.0 && lv_now < lp_lifeMax - 0.5) {
+        // scale the base so buffs on top land on the old maximum; if setting it moved the total another way, set it directly
+        lv_base = UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropNormal);
+        UnitSetPropertyFixed(lp_unit, c_unitPropLifeMax, lv_base * lp_lifeMax / lv_now);
+        if (AbsF(UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent) - lp_lifeMax) > 1.0) {
+            UnitSetPropertyFixed(lp_unit, c_unitPropLifeMax, lp_lifeMax);
+        }
+    }
+    // Possession fully heals
+    UnitSetPropertyFixed(lp_unit, c_unitPropLife, UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent));
+}
+
 bool libGDHL_gt_HeroSylvanasPossessionRewire_Func (bool testConds, bool runActions) {
     // Variable Declarations
     unit lv_bribedUnit;
     unit lv_greedUnit;
     int lv_regenGlobeOwner;
     fixed lv_xPGrantedFromUnit;
+    fixed lv_keepLifeMax;
+    bool lv_keepSapper;
 
     // Automatic Variable Declarations
     // Variable Initialization
@@ -23274,9 +23301,12 @@ bool libGDHL_gt_HeroSylvanasPossessionRewire_Func (bool testConds, bool runActio
         }
     }
     libGame_gf_SendEventHeroMindControlsNPC(lv_bribedUnit, UnitGetOwner(lv_bribedUnit));
+    lv_keepLifeMax = UnitGetPropertyFixed(lv_bribedUnit, c_unitPropLifeMax, c_unitPropCurrent);
+    lv_keepSapper = UnitHasBehavior2(lv_bribedUnit, "AffixSappersBehavior");
     UnitSetOwner(lv_bribedUnit, lv_regenGlobeOwner, true);
     UnitStatusBarClearOverride(lv_bribedUnit);
     Wait(0.25, c_timeGame);
+    libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats(lv_bribedUnit, lv_keepLifeMax, lv_keepSapper);
     UnitStatusBarOverride(lv_bribedUnit, c_unitStatusGroupAll);
     UnitIssueOrder(lv_bribedUnit, Order(libAIAI_gv_aIStopAbil), c_orderQueueReplace);
     libGame_gf_CalculateSpawnedMinionGoalPoints(UnitGetOwner(lv_bribedUnit), UnitGetPosition(lv_bribedUnit));
