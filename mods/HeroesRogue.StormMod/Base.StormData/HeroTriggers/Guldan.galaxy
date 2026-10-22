@@ -42,7 +42,7 @@ void libAffx_GuldanQuestDing() {
 bool libAffx_GuldanInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_GuldanTakedownWindow;
 }
-// GuldanPyreTokenCounter: stacks 1-40: 1% of the 75 Mana cost each; 60 and 80: side flames (libAffx_GuldanFelSides_Func); then 3% damage each, Heroics too
+// GuldanPyreTokenCounter: stacks 1-40: 1% of the 75 Mana cost each; 80: Fel Flame echoes (libAffx_GuldanFelEcho_Func); then 3% damage each, Heroics too
 void libAffx_GuldanSyncFel () {
     unit hero = libAffx_GuldanHero();
     int stacks;
@@ -141,32 +141,31 @@ bool libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func (bool testConds, boo
     UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
     return true;
 }
-fixed libAffx_GuldanFelSidesLast = -1.0;
-// Fel Lord, Pyre at 60 stacks: each Fel Flame also fires one 25 degrees to the left; at 80, one to the right too.
-// Skips the side flames' own events and Twin Flames echoes (the echo repeats each flame, sides included).
-bool libAffx_GuldanFelSides_Func (bool testConds, bool runActions) {
+fixed libAffx_GuldanFelEchoLast = -1.0;
+// Fel Lord, Pyre at 80 stacks: each Fel Flame is cast again toward the same point 0.5 seconds later (1 second with
+// Twin Flames, so it is a third flame). Echo casts mark the Twin Flames guard too, so neither echo repeats the other.
+bool libAffx_GuldanFelEcho_Func (bool testConds, bool runActions) {
     unit hero = libAffx_GuldanHero();
     point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
-    point origin;
-    fixed angle;
-    fixed range;
-    fixed stacks;
     fixed now = GameGetMissionTime();
-    if (hero == null || target == null || !UnitHasBehavior2(hero, "GuldanFelMarker") || now == libAffx_GuldanFelSidesLast || now == libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho) {
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "GuldanFelMarker") || now == libAffx_GuldanFelEchoLast || now == libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho) {
         return false;
     }
-    stacks = UnitGetTokenCount(hero, "GuldanPyreTokenCounter");
-    if (stacks < 60.0) {
+    if (UnitGetTokenCount(hero, "GuldanPyreTokenCounter") < 80.0) {
         return false;
     }
-    origin = UnitGetPosition(hero);
-    angle = AngleBetweenPoints(origin, target);
-    range = MaxF(DistanceBetweenPoints(origin, target), 1.0);
-    libAffx_GuldanFelSidesLast = now;
-    UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", PointWithOffsetPolar(origin, range, angle + 25.0));
-    if (stacks >= 80.0) {
-        UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", PointWithOffsetPolar(origin, range, angle - 25.0));
+    if (UnitHasBehavior2(hero, "GuldanTwinFlamesMarker")) {
+        Wait(1.0, c_timeGame);
     }
+    else {
+        Wait(0.5, c_timeGame);
+    }
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    libAffx_GuldanFelEchoLast = GameGetMissionTime();
+    libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho = libAffx_GuldanFelEchoLast;
+    UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
     return true;
 }
 // Fel Lord hit on an enemy Hero: takedown window, GuldanFelfireTokenCounter, the heal, and on-hit boons
@@ -258,7 +257,7 @@ bool libAffx_GuldanStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionThreeHitDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
-    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanFelSides_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanFelEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GuldanSync_Func"), 1.0, c_timeGame);
     return true;

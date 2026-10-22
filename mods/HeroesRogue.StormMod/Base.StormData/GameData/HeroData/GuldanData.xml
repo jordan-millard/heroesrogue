@@ -13,7 +13,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GuldanSoulRotMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Fel Lord ===== -->
-  <!-- Felfire quest (50% kept): 0.25% Fel Flame damage per enemy Hero hit. Pyre quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 75 Mana cost each, at 60 and 80 Fel Flame also fires a flame 25 degrees to its left, then to its right (script), then 3% damage each (Heroics too). -->
+  <!-- Felfire quest (50% kept): 0.25% Fel Flame damage per enemy Hero hit. Pyre quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 75 Mana cost each, at 80 each Fel Flame is cast again at the same spot 0.5 seconds later (script), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="GuldanFelfireTokenCounter" parent="StormQuestToken">
     <Face value="GuldanFelfireTokenCounter" />
     <Max value="100000" />
