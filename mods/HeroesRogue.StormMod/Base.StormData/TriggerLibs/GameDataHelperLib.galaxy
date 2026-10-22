@@ -23238,26 +23238,28 @@ void libGDHL_gt_HeroSylvanasWitheringFireHeroKillAddCharge_Init () {
 // Heroes Rogue: a minion possessed for the player's team keeps its enemy stats. Its buffs stay through
 // libAffx_UpdateUnitBehaviorFilter; this puts back what the old owner's catalog gave it: maximum Health (Sappers doubles
 // the leader's) and, for a Sappers leader, its damage to Structures (AffixSappersPossessed, see WizardMinionWeaponDamage).
+// The Health comes back as a flat bonus (AffixPossessedLife; setting LifeMax directly left possessed leaders near 0).
+// The bonus is per player, so possessed minions share the latest gap; it only ever grows.
 void libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats (unit lp_unit, fixed lp_lifeMax, bool lp_sapper) {
     fixed lv_now;
-    fixed lv_base;
-    if (UnitGetOwner(lp_unit) != libCore_gv_cOMPUTER_TeamOrder || !UnitIsAlive(lp_unit)) {
+    fixed lv_gap;
+    int lv_owner = UnitGetOwner(lp_unit);
+    if (lv_owner != libCore_gv_cOMPUTER_TeamOrder || !UnitIsAlive(lp_unit)) {
         return;
     }
     if (lp_sapper && !UnitHasBehavior2(lp_unit, "AffixSappersPossessed")) {
         UnitBehaviorAdd(lp_unit, "AffixSappersPossessed", lp_unit, 1);
     }
     lv_now = UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent);
-    if (lv_now > 0.0 && lv_now < lp_lifeMax - 0.5) {
-        // scale the base so buffs on top land on the old maximum; if setting it moved the total another way, set it directly
-        lv_base = UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropNormal);
-        UnitSetPropertyFixed(lp_unit, c_unitPropLifeMax, lv_base * lp_lifeMax / lv_now);
-        if (AbsF(UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent) - lp_lifeMax) > 1.0) {
-            UnitSetPropertyFixed(lp_unit, c_unitPropLifeMax, lp_lifeMax);
+    lv_gap = lp_lifeMax - lv_now;
+    if (lv_gap > 0.5 && !UnitHasBehavior2(lp_unit, "AffixPossessedLife")) {
+        if (lv_gap > CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "AffixPossessedLife", "Modification.VitalMaxArray[Life]", lv_owner)) {
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AffixPossessedLife", "Modification.VitalMaxArray[Life]", lv_owner, lv_gap);
         }
+        UnitBehaviorAdd(lp_unit, "AffixPossessedLife", lp_unit, 1);
+        // Possession fully heals
+        UnitSetPropertyFixed(lp_unit, c_unitPropLifePercent, 100.0);
     }
-    // Possession fully heals
-    UnitSetPropertyFixed(lp_unit, c_unitPropLife, UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent));
 }
 
 bool libGDHL_gt_HeroSylvanasPossessionRewire_Func (bool testConds, bool runActions) {

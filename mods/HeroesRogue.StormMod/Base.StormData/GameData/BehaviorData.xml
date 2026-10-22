@@ -1246,6 +1246,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- A Sappers leader possessed for the player's team: its Structure damage came from the enemy's catalog, so this marker
        gives it back (WizardMinionWeaponDamage, MultiplicativeModifierArray AffixSappersPossessed) -->
   <CBehaviorBuff id="AffixSappersPossessed" parent="CarryBehaviorParent" />
+  <!-- Maximum Health a possessed minion lost with its old owner's catalog (value set per player by the Possession rewire) -->
+  <CBehaviorBuff id="AffixPossessedLife" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxArray index="Life" value="0" />
+    </Modification>
+  </CBehaviorBuff>
   <CBehaviorBuff id="AffixSappersBehavior" parent="StormArmor">
     <DamageResponse>
       <Chance value="1" />
