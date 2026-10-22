@@ -18681,545 +18681,6 @@
             </String>
         </Instances>
 
-        <Instances Id="GuldanFelLord">
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanFelFlameRampantHellfire">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="GuldanFelFlameFelArmor">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 GuldanFelMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 GuldanFelfireTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 GuldanPyreTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="GuldanPyreTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="GuldanFelfireTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="AffixAdded libAffx_GuldanStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_GuldanTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanFelfireInfusion">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanFelLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanFelFocus">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanFelLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,GuldanFelFlame,Cost.Vital[Energy] -5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanPursuitOfFlameBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanFelLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="GuldanFelFlamePursuitOfFlame">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanDarknessWithinBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_lifetap.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanFelLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="GuldanLifeTapDarknessWithin">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanTwinFlames">
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanFelLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 GuldanTwinFlamesMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanDemonicInferno">
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanFelLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 GuldanDemonicInfernoMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 1 Add Effect,GuldanFelFlameSearch,AreaArray[0].RadiusBonus 0.22">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanSoulHarvester">
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanCorruptionCurseOfExhaustion">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="GuldanDrainLifeHealthFunnel">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 GuldanDrainMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 GuldanSiphonTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 GuldanHarvestTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="GuldanHarvestTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="GuldanSiphonTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,GuldanDrainLifeCurseOfExhaustionTalentDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="AffixAdded libAffx_GuldanStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_GuldanTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanLifeDrinker">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanSoulHarvester">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,GuldanDrainLifeCurseOfExhaustionTalentDamage,MultiplicativeModifierArray[GuldanDrainCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanQuickDrain">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanSoulHarvester">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,GuldanDrainLife,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanChaoticEnergyBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanSoulHarvester">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="GuldanChaoticEnergy">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanHarvestLifeBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanSoulHarvester">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="GuldanDrainLifeHarvestLife">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanHungerForPowerBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_hungerforpower.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanSoulHarvester">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="GuldanLifeTapHungerforPower">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanSoulHarvest">
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanSoulHarvester">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Behavior,GuldanDrainLifeChannel,Modification.UnifiedMoveSpeedFactor 0">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,GuldanDrainLifeCreateHealer,MultiplicativeModifierArray[GuldanSoulHarvest].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanCorruptor">
-            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanCorruptionRuinousAffliction">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="GuldanCorruptionEchoedCorruption">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 GuldanCorruptionMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 GuldanRotTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 GuldanAfflictionTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="GuldanAfflictionTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="GuldanRotTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,GuldanCorruptionDoTDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,GuldanCorruptionRuinousAfflictionDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,GuldanCorruptionRuinousAfflictionThreeHitDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="AffixAdded libAffx_GuldanStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_GuldanTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanSpreadingCorruption">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanCorruptor">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,GuldanCorruptionDoTDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,GuldanCorruptionRuinousAfflictionDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,GuldanCorruptionRuinousAfflictionThreeHitDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanQuickCorruption">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanCorruptor">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,GuldanCorruption,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanBoundByShadowBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanCorruptor">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="GuldanFelFlameBoundByShadow">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanLingeringCorruption">
-            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanCorruptor">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Behavior,GuldanCorruptionDoTBehavior,Duration 2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Behavior,GuldanCorruptionDoTBehavior,PeriodCount 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanEchoOfCorruption">
-            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanCorruptor">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Validator,GuldanCorruptionEchoedCorruptionMilestoneGained,Value 0">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanSoulRot">
-            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GuldanCorruptor">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 GuldanSoulRotMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 1 String Validator,GuldanCorruptionEchoedCorruptionComplete,Behavior GuldanSoulRotMarker">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Validator,GuldanCorruptionEchoedCorruptionComplete,Value 1">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,GuldanCorruptionDoTDamage,Flags[NoVitalLeechLife] 0">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanImprovedLifeTapBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_lifetap.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanLifeTapImprovedLifeTap">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanDarkBargainBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_darkbargain.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanDarkBargain">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanHealthstoneBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_healthstone.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanHealthstone">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="GuldanDemonicCircleBoon">
-            <String String="Assets/Textures/storm_ui_icon_guldan_demoniccircle.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Guldan">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="GuldanDemonicCircle">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
 
         <Instances Id="SylvanasDarkRanger">
             <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
@@ -21265,6 +20726,555 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="KelThuzadChillingTouch">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="GuldanFelLord">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanFelFlameRampantHellfire">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GuldanFelFlameFelArmor">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GuldanFelMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GuldanFelfireTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GuldanPyreTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GuldanPyreTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GuldanFelfireTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="GuldanCorruptionEchoedCorruptionQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_GuldanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GuldanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanFelfireInfusion">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanFelFocus">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GuldanFelFlame,Cost.Vital[Energy] -5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanPursuitOfFlameBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanFelFlamePursuitOfFlame">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDarknessWithinBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_lifetap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanLifeTapDarknessWithin">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanTwinFlames">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanTwinFlamesMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDemonicInferno">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanDemonicInfernoMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Add Effect,GuldanFelFlameSearch,AreaArray[0].RadiusBonus 0.22">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSoulHarvester">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanCorruptionCurseOfExhaustion">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GuldanDrainLifeHealthFunnel">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GuldanDrainMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GuldanSiphonTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GuldanHarvestTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GuldanHarvestTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GuldanSiphonTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="GuldanCorruptionEchoedCorruptionQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GuldanDrainLifeCurseOfExhaustionTalentDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_GuldanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GuldanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanLifeDrinker">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GuldanDrainLifeCurseOfExhaustionTalentDamage,MultiplicativeModifierArray[GuldanDrainCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanQuickDrain">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GuldanDrainLife,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanChaoticEnergyBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanChaoticEnergy">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanHarvestLifeBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanDrainLifeHarvestLife">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanHungerForPowerBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_hungerforpower.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanLifeTapHungerforPower">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSoulHarvest">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Behavior,GuldanDrainLifeChannel,Modification.UnifiedMoveSpeedFactor 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GuldanDrainLifeCreateHealer,MultiplicativeModifierArray[GuldanSoulHarvest].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanCorruptor">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanCorruptionRuinousAffliction">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GuldanCorruptionEchoedCorruption">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GuldanCorruptionMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GuldanRotTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GuldanAfflictionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GuldanAfflictionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GuldanRotTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="GuldanCorruptionEchoedCorruptionQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionDoTDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionRuinousAfflictionDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionRuinousAfflictionThreeHitDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_GuldanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GuldanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSpreadingCorruption">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GuldanCorruptionDoTDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GuldanCorruptionRuinousAfflictionDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,GuldanCorruptionRuinousAfflictionThreeHitDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanQuickCorruption">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GuldanCorruption,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanBoundByShadowBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanFelFlameBoundByShadow">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanLingeringCorruption">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,GuldanCorruptionDoTBehavior,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,GuldanCorruptionDoTBehavior,PeriodCount 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanEchoOfCorruption">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Validator,GuldanCorruptionEchoedCorruptionMilestoneGained,Value 0">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSoulRot">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanSoulRotMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 String Validator,GuldanCorruptionEchoedCorruptionComplete,Behavior GuldanSoulRotMarker">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Validator,GuldanCorruptionEchoedCorruptionComplete,Value 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionDoTDamage,Flags[NoVitalLeechLife] 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanImprovedLifeTapBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_lifetap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanLifeTapImprovedLifeTap">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDarkBargainBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_darkbargain.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanDarkBargain">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanHealthstoneBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthstone.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanHealthstone">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDemonicCircleBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_demoniccircle.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanDemonicCircle">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
