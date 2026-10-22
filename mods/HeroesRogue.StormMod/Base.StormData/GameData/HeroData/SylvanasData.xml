@@ -11,7 +11,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="SylvanasWindrunnersLegacyMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Dark Ranger ===== -->
-  <!-- Volley quest (50% kept): 0.1% Withering Fire damage per shot on an enemy Hero. Barrage quest: takedowns within 3 seconds of a shot; stacks 1-40 cut 1% of the 8 second cooldown each, 41-80 add 1% range each, then 3% damage each (Heroics too). -->
+  <!-- Starts with 35% Withering Fire range; a volley whose 5 shots all hit one enemy Hero Shields for 15% of maximum Health (script). Volley quest (50% kept): 0.25% Withering Fire damage per shot on an enemy Hero. Barrage quest: takedowns within 3 seconds of a shot; stacks 1-40 cut 1% of the 8 second cooldown each, at 80 each volley is fired again for free (script), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="SylvanasVolleyTokenCounter" parent="StormQuestToken">
     <Face value="SylvanasVolleyTokenCounter" />
     <Max value="100000" />
@@ -25,7 +25,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="SylvanasVolleyTokenCounter" />
-    <Scale value="0.001" />
+    <Scale value="0.0025" />
   </CAccumulatorToken>
   <CEffectDamage id="SylvanasWitheringFireDamage">
     <MultiplicativeModifierArray index="SylvanasFirePower" Modifier="0" />
@@ -150,6 +150,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
+  <!-- Dark Ranger: Shield when a whole Withering Fire volley hits one enemy Hero; the script sets ModifyLimit before each add -->
+  <CBehaviorBuff id="SylvanasDarkRangerShield" parent="StormShield">
+    <InfoIcon value="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds" />
+    <Duration value="4" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Windrunner's Legacy (Legendary, Banshee): Haunting Wave hits on enemy Heroes reset its cooldown -->
   <CEffectModifyUnit id="SylvanasWindrunnersLegacyResetCooldown">
     <ImpactUnit Value="Caster" />

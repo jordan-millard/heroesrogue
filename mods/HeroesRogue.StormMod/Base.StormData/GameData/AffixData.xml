@@ -16965,519 +16965,6 @@
         </Instances>
 
 
-        <Instances Id="SylvanasDarkRanger">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="SylvanasTalentMightOfTheBansheeQueen">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="SylvanasTalentWitheringFireBarbedShot">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 SylvanasFireMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 SylvanasVolleyTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 SylvanasBarrageTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="SylvanasBarrageTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="SylvanasVolleyTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,SylvanasWitheringFireDamage,MultiplicativeModifierArray[SylvanasFirePower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,SylvanasWitheringFireDamageRemorseless,MultiplicativeModifierArray[SylvanasFirePower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="AffixAdded libAffx_SylvanasStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_SylvanasTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasBlackFletching">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasDarkRanger">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,SylvanasWitheringFireDamage,MultiplicativeModifierArray[SylvanasFireCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,SylvanasWitheringFireDamageRemorseless,MultiplicativeModifierArray[SylvanasFireCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasQuickDraw">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasDarkRanger">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,SylvanasWitheringFire,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasEvasiveFireBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasDarkRanger">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="SylvanasTalentWitheringFireEvasiveFire">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasWithTheWind">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasDarkRanger">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Effect,SylvanasWitheringFireSearchArea,AreaArray[0].Radius 1.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Effect,SylvanasWitheringFireSearchAreaMarker,AreaArray[0].Radius 1.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Add Actor,SylvanasWitheringFireRangeSplat,Scale 1.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasWitheringBarrageBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasDarkRanger">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="SylvanasTalentWitheringBarrage">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasEndlessVolley">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasDarkRanger">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Effect,SylvanasWitheringFireConsumeAllCharges,PeriodCount 2">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasShadowQueen">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="SylvanasUnrelentingTorment">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="SylvanasTalentColdEmbrace">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 SylvanasDaggerMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 SylvanasTormentTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 SylvanasPlagueTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="SylvanasPlagueTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="SylvanasTormentTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasDaggerPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasDaggerPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="AffixAdded libAffx_SylvanasStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_SylvanasTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasCreepingDeath">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasShadowQueen">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasDaggerCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasDaggerCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasSwiftDagger">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasShadowQueen">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,SylvanasShadowDagger,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasLostSoulBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasShadowQueen">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="SylvanasTalentLostSoul">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasUnstablePoisonBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasShadowQueen">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="SylvanasTalentUnstablePoison">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasLingeringBlight">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasShadowQueen">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Behavior,SylvanasShadowDaggerTargetEnemyDamage,Duration 1">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Behavior,SylvanasShadowDaggerDummyBuffSpreadBehavior,Duration 1">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasForsakenFury">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasShadowQueen">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasForsakenFury].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasForsakenFury].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasBanshee">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="SylvanasTalentFesteringWounds">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="SylvanasTalentWindrunnerHauntingWave">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 SylvanasWaveMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 SylvanasWailTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 SylvanasHauntingTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="SylvanasHauntingTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="SylvanasWailTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,SylvanasHauntingWaveDamage,MultiplicativeModifierArray[SylvanasWavePower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="AffixAdded libAffx_SylvanasStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_SylvanasTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasBansheeWail">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasBanshee">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,SylvanasHauntingWaveDamage,MultiplicativeModifierArray[SylvanasWaveCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasQuickWave">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasBanshee">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasOverwhelmingAfflictionBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_blackarrows.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasBanshee">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="SylvanasTalentOverwhelmingAffliction">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasWillOfTheForsakenBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_willoftheforsaken.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasBanshee">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="SylvanasTalentWillOfTheForsaken">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasBansheesReturn">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasBanshee">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse -3">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasWindrunnersLegacy">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="SylvanasBanshee">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 SylvanasWindrunnersLegacyMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasRemorselessBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="SylvanasTalentRemorseless">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasLifeDrainBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_blackarrows.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="SylvanasTalentLifeDrain">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="SylvanasMercenaryQueenBoon">
-            <String String="Assets/Textures/storm_ui_icon_sylvanas_possession.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Sylvanas">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="SylvanasTalentMercenaryQueen">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
 
 
 
@@ -21343,6 +20830,529 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="GuldanDemonicCircle">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="SylvanasDarkRanger">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentMightOfTheBansheeQueen">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="SylvanasTalentWitheringFireBarbedShot">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 SylvanasFireMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SylvanasVolleyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 SylvanasBarrageTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SylvanasBarrageTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="SylvanasVolleyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Effect,SylvanasWitheringFireSearchArea,AreaArray[0].Radius 2.8">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,SylvanasWitheringFireSearchAreaMarker,AreaArray[0].Radius 2.8">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Actor,SylvanasWitheringFireRangeSplat,Scale 2.8">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasWitheringFireDamage,MultiplicativeModifierArray[SylvanasFirePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasWitheringFireDamageRemorseless,MultiplicativeModifierArray[SylvanasFirePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_SylvanasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SylvanasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBlackFletching">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,SylvanasWitheringFireDamage,MultiplicativeModifierArray[SylvanasFireCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,SylvanasWitheringFireDamageRemorseless,MultiplicativeModifierArray[SylvanasFireCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasQuickDraw">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,SylvanasWitheringFire,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasEvasiveFireBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentWitheringFireEvasiveFire">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWithTheWind">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Effect,SylvanasWitheringFireSearchArea,AreaArray[0].Radius 1.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,SylvanasWitheringFireSearchAreaMarker,AreaArray[0].Radius 1.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Actor,SylvanasWitheringFireRangeSplat,Scale 1.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWitheringBarrageBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentWitheringBarrage">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasEndlessVolley">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Effect,SylvanasWitheringFireConsumeAllCharges,PeriodCount 2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasShadowQueen">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasUnrelentingTorment">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="SylvanasTalentColdEmbrace">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 SylvanasDaggerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SylvanasTormentTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 SylvanasPlagueTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SylvanasPlagueTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="SylvanasTormentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasDaggerPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasDaggerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_SylvanasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SylvanasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasCreepingDeath">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasDaggerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasDaggerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasSwiftDagger">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,SylvanasShadowDagger,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasLostSoulBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentLostSoul">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasUnstablePoisonBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentUnstablePoison">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasLingeringBlight">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,SylvanasShadowDaggerTargetEnemyDamage,Duration 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,SylvanasShadowDaggerDummyBuffSpreadBehavior,Duration 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasForsakenFury">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasForsakenFury].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasForsakenFury].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBanshee">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentFesteringWounds">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="SylvanasTalentWindrunnerHauntingWave">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 SylvanasWaveMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SylvanasWailTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 SylvanasHauntingTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SylvanasHauntingTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="SylvanasWailTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasHauntingWaveDamage,MultiplicativeModifierArray[SylvanasWavePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_SylvanasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SylvanasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBansheeWail">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,SylvanasHauntingWaveDamage,MultiplicativeModifierArray[SylvanasWaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasQuickWave">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasOverwhelmingAfflictionBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_blackarrows.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentOverwhelmingAffliction">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWillOfTheForsakenBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_willoftheforsaken.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentWillOfTheForsaken">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBansheesReturn">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse -3">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWindrunnersLegacy">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 SylvanasWindrunnersLegacyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasRemorselessBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentRemorseless">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasLifeDrainBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_blackarrows.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentLifeDrain">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasMercenaryQueenBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_possession.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentMercenaryQueen">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
