@@ -201,7 +201,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Holo Corps ===== -->
   <!-- Illusionist quest (50% kept): each Decoy hit on an enemy Hero, 0.75% Decoy damage. Phantom Strike quest: an
        enemy Hero takedown while a Decoy is alive, 2% Decoy damage. Decoys deal the damage, so the script copies both
-       counts onto each Decoy when it spawns. Phantom Strike also boosts Nova's Heroics (Triple Tap, Precision Strike, above). -->
+       counts onto each Decoy when it spawns, into silent copies of the tokens (a quest token on a Decoy plays the quest
+       sound and visual). Phantom Strike also boosts Nova's Heroics (Triple Tap, Precision Strike, above). -->
   <CBehaviorTokenCounter id="NovaIllusionistTokenCounter" parent="StormQuestToken">
     <Face value="NovaIllusionistTokenCounter" />
     <Max value="100000" />
@@ -225,41 +226,63 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <TokenId value="NovaPhantomStrikeTokenCounter" />
     <Scale value="0.02" />
   </CAccumulatorToken>
+  <CBehaviorTokenCounter id="NovaIllusionistDecoyToken" parent="StormGenericToken">
+    <InfoFlags index="Hidden" value="1" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="NovaPhantomStrikeDecoyToken" parent="StormGenericToken">
+    <InfoFlags index="Hidden" value="1" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="NovaIllusionistDecoyAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaIllusionistDecoyToken" />
+    <Scale value="0.0075" />
+  </CAccumulatorToken>
+  <CAccumulatorToken id="NovaPhantomStrikeDecoyAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="NovaPhantomStrikeDecoyToken" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
   <CEffectDamage id="HoloDecoyWeaponRelicDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="NovaHoloDecoyWeaponRelicAntiArmorShellsDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="HoloDecoyWeaponDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="HoloDecoyExplodeDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="NovaHoloDecoySnipeDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
     <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="NovaHoloDecoySnipeExplosiveShotDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
     <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="NovaHoloDecoyPinningShotDamage">
-    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistAccumulator" />
-    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeAccumulator" />
+    <MultiplicativeModifierArray index="NovaIllusionist" Accumulator="NovaIllusionistDecoyAccumulator" />
+    <MultiplicativeModifierArray index="NovaPhantomStrike" Accumulator="NovaPhantomStrikeDecoyAccumulator" />
     <MultiplicativeModifierArray index="NovaSharperImage" Modifier="0" />
     <MultiplicativeModifierArray index="NovaMimicry" Modifier="0" />
   </CEffectDamage>

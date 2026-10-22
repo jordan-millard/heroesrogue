@@ -45,16 +45,16 @@ void libAffx_NovaQuestDing() {
 unitgroup libAffx_NovaDecoys() {
     return UnitGroup("NovaHoloClone", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
 }
-// Adds n to a token on Nova and on every live Decoy (the Decoys' copies feed their damage)
-void libAffx_NovaAddDecoyToken(string token, int n) {
+// Adds n to a quest token on Nova and to its silent copy on every live Decoy (the copies feed the Decoys' damage)
+void libAffx_NovaAddDecoyToken(string token, string decoyToken, int n) {
     unitgroup decoys = libAffx_NovaDecoys();
     unit decoy;
     int i;
     libGame_gf_ModifyTokenCount(n, token, libAffx_NovaHero());
     for (i = UnitGroupCount(decoys, c_unitCountAll); i > 0; i -= 1) {
         decoy = UnitGroupUnitFromEnd(decoys, i);
-        if (decoy != null && UnitIsAlive(decoy) && UnitHasBehavior2(decoy, token)) {
-            libGame_gf_ModifyTokenCount(n, token, decoy);
+        if (decoy != null && UnitIsAlive(decoy) && UnitHasBehavior2(decoy, decoyToken)) {
+            libGame_gf_ModifyTokenCount(n, decoyToken, decoy);
         }
     }
 }
@@ -211,15 +211,15 @@ bool libAffx_NovaDecoySpawned_Func (bool testConds, bool runActions) {
         return true;
     }
     UnitBehaviorAdd(decoy, "NovaHoloCorpsDecoyGuard", decoy, 1);
-    UnitBehaviorAdd(decoy, "NovaIllusionistTokenCounter", decoy, 1);
-    UnitBehaviorAdd(decoy, "NovaPhantomStrikeTokenCounter", decoy, 1);
+    UnitBehaviorAdd(decoy, "NovaIllusionistDecoyToken", decoy, 1);
+    UnitBehaviorAdd(decoy, "NovaPhantomStrikeDecoyToken", decoy, 1);
     count = FixedToInt(UnitGetTokenCount(hero, "NovaIllusionistTokenCounter"));
     if (count > 0) {
-        libGame_gf_ModifyTokenCount(count, "NovaIllusionistTokenCounter", decoy);
+        libGame_gf_ModifyTokenCount(count, "NovaIllusionistDecoyToken", decoy);
     }
     count = FixedToInt(UnitGetTokenCount(hero, "NovaPhantomStrikeTokenCounter"));
     if (count > 0) {
-        libGame_gf_ModifyTokenCount(count, "NovaPhantomStrikeTokenCounter", decoy);
+        libGame_gf_ModifyTokenCount(count, "NovaPhantomStrikeDecoyToken", decoy);
     }
     return true;
 }
@@ -234,7 +234,7 @@ bool libAffx_NovaDecoyDamage_Func (bool testConds, bool runActions) {
     if (!UnitHasBehavior2(hero, "NovaHoloCorpsMarker") || !libAffx_NovaIsEnemyHero(EventUnit()) || EventUnitDamageAmount() <= 0.0) {
         return false;
     }
-    libAffx_NovaAddDecoyToken("NovaIllusionistTokenCounter", 1);
+    libAffx_NovaAddDecoyToken("NovaIllusionistTokenCounter", "NovaIllusionistDecoyToken", 1);
     return true;
 }
 
@@ -301,7 +301,7 @@ bool libAffx_NovaTakedown (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
         decoys = libAffx_NovaDecoys();
         if (UnitGroupCount(decoys, c_unitCountAlive) > 0) {
-            libAffx_NovaAddDecoyToken("NovaPhantomStrikeTokenCounter", 1);
+            libAffx_NovaAddDecoyToken("NovaPhantomStrikeTokenCounter", "NovaPhantomStrikeDecoyToken", 1);
             libAffx_NovaQuestDing();
         }
     }
