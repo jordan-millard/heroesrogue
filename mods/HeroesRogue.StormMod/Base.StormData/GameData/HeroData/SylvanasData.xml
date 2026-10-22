@@ -9,6 +9,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="SylvanasDaggerMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="SylvanasWaveMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="SylvanasWindrunnersLegacyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="SylvanasSpectralPassageMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Dark Ranger ===== -->
   <!-- Starts with 35% Withering Fire range; a volley whose 5 shots all hit one enemy Hero Shields for 15% of maximum Health (script). Volley quest (50% kept): 0.25% Withering Fire damage per shot on an enemy Hero. Barrage quest: takedowns within 3 seconds of a shot; stacks 1-40 cut 1% of the 8 second cooldown each, at 80 each volley is fired again for free (script), then 3% damage each (Heroics too). -->
@@ -150,6 +151,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
+  <!-- Spectral Passage (Rare, Banshee): Protected during the Haunting Wave teleport (script adds it when the travel
+       behavior starts and removes it when it ends), then for 0.5 seconds after -->
+  <CBehaviorBuff id="SylvanasSpectralPassage" parent="StormInvulnerable">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="SylvanasSpectralPassageAfter" parent="StormInvulnerable">
+    <Alignment value="Positive" />
+    <Duration value="0.5" />
+    <InfoIcon value="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds" />
+  </CBehaviorBuff>
   <!-- Dark Ranger: Shield when a whole Withering Fire volley hits one enemy Hero; the script sets ModifyLimit before each add -->
   <CBehaviorBuff id="SylvanasDarkRangerShield" parent="StormShield">
     <InfoIcon value="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds" />

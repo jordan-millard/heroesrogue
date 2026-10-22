@@ -20835,6 +20835,7 @@
         </Instances>
 
 
+
         <Instances Id="SylvanasDarkRanger">
             <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
                 <Field Id="Icon" />
@@ -21288,6 +21289,23 @@
             </User>
             <String String="SylvanasTalentWillOfTheForsaken">
                 <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasSpectralPassage">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 SylvanasSpectralPassageMarker">
+                <Field Id="Behavior" />
             </String>
         </Instances>
         <Instances Id="SylvanasBansheesReturn">

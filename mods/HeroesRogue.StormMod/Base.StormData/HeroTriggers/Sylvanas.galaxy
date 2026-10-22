@@ -162,6 +162,23 @@ void libAffx_SylvanasDarkRangerShieldAdd (unit hero) {
     CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDarkRangerShield", "DamageResponse.ModifyLimit", libAffx_player, 0.15 * life);
     UnitBehaviorAdd(hero, "SylvanasDarkRangerShield", hero, 1);
 }
+// Spectral Passage (Rare, Banshee): Protected while the Haunting Wave teleport lasts, then 0.5 seconds more
+bool libAffx_SylvanasSpectralPassage_Func (bool testConds, bool runActions) {
+    unit hero = EventUnit();
+    if (hero != libAffx_SylvanasHero() || !UnitHasBehavior2(hero, "SylvanasSpectralPassageMarker")) {
+        return false;
+    }
+    if (EventUnitBehaviorChange() == c_unitBehaviorChangeCreate) {
+        UnitBehaviorAdd(hero, "SylvanasSpectralPassage", hero, 1);
+    }
+    else {
+        UnitBehaviorRemove(hero, "SylvanasSpectralPassage", 1);
+        if (UnitIsAlive(hero)) {
+            UnitBehaviorAdd(hero, "SylvanasSpectralPassageAfter", hero, 1);
+        }
+    }
+    return true;
+}
 // Dark Ranger hit on an enemy Hero: takedown window, SylvanasVolleyTokenCounter, the heal, and on-hit boons
 bool libAffx_SylvanasFireHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -258,6 +275,9 @@ bool libAffx_SylvanasStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_SylvanasWaveHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "SylvanasHauntingWaveDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_SylvanasVolleyEcho_Func"), libAffx_player, "SylvanasWitheringFireCastSet");
+    trig = TriggerCreate("libAffx_SylvanasSpectralPassage_Func");
+    TriggerAddEventUnitBehaviorChange(trig, null, "SylvanasHauntingWaveTravel", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChange(trig, null, "SylvanasHauntingWaveTravel", c_unitBehaviorChangeDestroy);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_SylvanasSync_Func"), 1.0, c_timeGame);
     return true;
