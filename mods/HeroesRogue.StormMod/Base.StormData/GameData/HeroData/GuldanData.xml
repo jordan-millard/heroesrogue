@@ -85,7 +85,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Corruptor ===== -->
-  <!-- Rot quest (50% kept): 0.5% Corruption damage per strike on an enemy Hero. Affliction quest: takedowns within 6 seconds of a strike (the damage over time lasts 6); stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the strikes 1% larger each, then 3% damage each (Heroics too). -->
+  <!-- Rot quest (50% kept): 0.5% Corruption damage per strike on an enemy Hero. Affliction quest: takedowns within 3 seconds of a strike or a damage over time tick; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the strikes 1% larger each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="GuldanRotTokenCounter" parent="StormQuestToken">
     <Face value="GuldanRotTokenCounter" />
     <Max value="100000" />

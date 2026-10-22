@@ -213,6 +213,16 @@ bool libAffx_GuldanCorruptionHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Corruptor: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_GuldanCorruptionWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GuldanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GuldanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GuldanCorruptionMarker")) {
+        return false;
+    }
+    libAffx_GuldanCorruptionTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_GuldanTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -238,7 +248,7 @@ bool libAffx_GuldanTakedown (bool testConds, bool runActions) {
         libAffx_GuldanSyncDrain();
         libAffx_GuldanQuestDing();
     }
-    if (UnitHasBehavior2(hero, "GuldanCorruptionMarker") && libAffx_GuldanCorruptionTime[killedPlayer] > 0.0 && now - libAffx_GuldanCorruptionTime[killedPlayer] <= 6) {
+    if (UnitHasBehavior2(hero, "GuldanCorruptionMarker") && libAffx_GuldanInWindow(libAffx_GuldanCorruptionTime[killedPlayer], now)) {
         libAffx_GuldanCorruptionTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "GuldanAfflictionTokenCounter", hero);
         libAffx_GuldanSyncCorruption();
@@ -259,6 +269,8 @@ bool libAffx_GuldanStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_GuldanCorruptionHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionThreeHitDamage");
+    trig = TriggerCreate("libAffx_GuldanCorruptionWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionDoTDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanFelEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
     // also picks up stacks loaded from the bank
