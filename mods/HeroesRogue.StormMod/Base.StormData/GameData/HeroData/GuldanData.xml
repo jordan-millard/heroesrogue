@@ -10,6 +10,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GuldanCorruptionMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GuldanTwinFlamesMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GuldanDemonicInfernoMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GuldanCorruptedWardMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GuldanSoulRotMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Fel Lord ===== -->
@@ -85,7 +86,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Corruptor ===== -->
-  <!-- Rot quest (50% kept): 0.5% Corruption damage per strike on an enemy Hero. Affliction quest: takedowns within 3 seconds of a strike or a damage over time tick; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the strikes 1% larger each, then 3% damage each (Heroics too). -->
+  <!-- Rot quest (50% kept): 1% Corruption damage per strike on an enemy Hero. Affliction quest: takedowns within 3 seconds of a strike or a damage over time tick; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the strikes 1% larger each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="GuldanRotTokenCounter" parent="StormQuestToken">
     <Face value="GuldanRotTokenCounter" />
     <Max value="100000" />
@@ -99,7 +100,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="GuldanRotTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="GuldanCorruptionDoTDamage">
     <MultiplicativeModifierArray index="GuldanCorruptionPower" Modifier="0" />
@@ -119,12 +120,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="GuldanCorruptionHit" Accumulator="GuldanRotTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="GuldanCorruptionLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="GuldanCorruptionHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="GuldanRotTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_guldan_handofguldan.dds" />
   </CButton>
@@ -145,6 +140,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
+  <!-- Corrupted Ward (Rare, Corruptor): Shield with no duration; the script sets ModifyLimit before each add -->
+  <CBehaviorBuff id="GuldanCorruptedWard" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_guldan_handofguldan.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Drain Life healing: Harvest quest stage 2 (script) and Soul Harvest (Legendary) -->
   <CEffectCreateHealer id="GuldanDrainLifeCreateHealer">
     <MultiplicativeModifierArray index="GuldanHarvestStage2" Modifier="0" />

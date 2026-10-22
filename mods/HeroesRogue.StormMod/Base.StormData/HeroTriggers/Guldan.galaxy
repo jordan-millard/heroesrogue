@@ -171,6 +171,20 @@ bool libAffx_GuldanFelEcho_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
     return true;
 }
+// Corrupted Ward (Rare, Corruptor): each Corruption strike on an enemy Hero adds Shields for 5% of maximum Health to
+// what is left, up to 30%; the Shield has no duration (script sets ModifyLimit, as Kerrigan's Brood Mother)
+void libAffx_GuldanCorruptedWardAdd (unit hero) {
+    fixed life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+    fixed current = 0.0;
+    if (!UnitIsAlive(hero)) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GuldanCorruptedWard")) {
+        current = UnitBehaviorDamageModifyRemaining(hero, "GuldanCorruptedWard");
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptedWard", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.05 * life, 0.3 * life));
+    UnitBehaviorAdd(hero, "GuldanCorruptedWard", hero, 1);
+}
 fixed libAffx_GuldanCorruptionGuideRadius = 1.5;
 // Corruption's targeting preview: a quad centred on the middle of its three strikes (3 apart) plus a circle per strike.
 // When the strike radius changes (Corruptor starter, Affliction stacks 41-80), resize them to match.
@@ -229,8 +243,8 @@ bool libAffx_GuldanCorruptionHit_Func (bool testConds, bool runActions) {
     }
     libAffx_GuldanCorruptionTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "GuldanRotTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "GuldanCorruptionHeal", hero);
+    if (UnitHasBehavior2(hero, "GuldanCorruptedWardMarker")) {
+        libAffx_GuldanCorruptedWardAdd(hero);
     }
     return true;
 }

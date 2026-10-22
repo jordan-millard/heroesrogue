@@ -1945,13 +1945,15 @@ Button/Tooltip/GuldanSiphonTokenCounter=<c val="#TooltipQuest">Bonus Drain Life 
 Button/Name/GuldanHarvestTokenCounter=Harvest
 Button/Tooltip/GuldanHarvestTokenCounter=<c val="#TooltipQuest">Harvest stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanHarvestTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Drain Life's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it heal <c val="#TooltipNumbers">2%</c> more. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Drain Life and Heroic damage.
 Affix/Name/GuldanCorruptor=Corruptor
-Affix/Tooltip/GuldanCorruptor=Gain <c val="#TooltipNumbers">Ruinous Affliction</c> and <c val="#TooltipNumbers">Echoed Corruption</c>. Corruption deals <c val="#TooltipNumbers">50%</c> more damage and its strikes are <c val="#TooltipNumbers">30%</c> larger. Each Corruption strike on an enemy Hero heals Gul'dan for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Corruption strikes on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Corruption damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Corruption strike or its damage over time reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its strikes <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Corruption and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Echoed Corruption after a win.
+Affix/Tooltip/GuldanCorruptor=Gain <c val="#TooltipNumbers">Ruinous Affliction</c> and <c val="#TooltipNumbers">Echoed Corruption</c>. Corruption deals <c val="#TooltipNumbers">50%</c> more damage and its strikes are <c val="#TooltipNumbers">30%</c> larger.<n/><n/><c val="#TooltipQuest">Quest:</c> Corruption strikes on enemy Heroes add <c val="#TooltipNumbers">1%</c> Corruption damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Corruption strike or its damage over time reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its strikes <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Corruption and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Echoed Corruption after a win.
 Affix/Name/GuldanSpreadingCorruption=Spreading Corruption
 Affix/Tooltip/GuldanSpreadingCorruption=Corruption deals <c val="#TooltipNumbers">15%</c> more damage.
 Affix/Name/GuldanQuickCorruption=Quick Corruption
 Affix/Tooltip/GuldanQuickCorruption=Corruption's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
 Affix/Name/GuldanBoundByShadowBoon=Bound by Shadow
 Affix/Tooltip/GuldanBoundByShadowBoon=Gain the talent <c val="#TooltipNumbers">Bound by Shadow</c>: each enemy Hero hit by Fel Flame reduces Corruption's cooldown.
+Affix/Name/GuldanCorruptedWard=Corrupted Ward
+Affix/Tooltip/GuldanCorruptedWard=Each Corruption strike on an enemy Hero grants Gul'dan a Shield for <c val="#TooltipNumbers">5%</c> of his maximum Health, stacking up to <c val="#TooltipNumbers">30%</c>. The Shield does not expire.
 Affix/Name/GuldanLingeringCorruption=Lingering Corruption
 Affix/Tooltip/GuldanLingeringCorruption=Corruption's damage over time lasts <c val="#TooltipNumbers">2</c> seconds longer.
 Affix/Name/GuldanEchoOfCorruption=Echo of Corruption
@@ -1959,7 +1961,7 @@ Affix/Tooltip/GuldanEchoOfCorruption=Gain Echoed Corruption's reward now: after 
 Affix/Name/GuldanSoulRot=Soul Rot
 Affix/Tooltip/GuldanSoulRot=Corruption's damage over time heals Gul'dan for <c val="#TooltipNumbers">100%</c> of the damage it deals.
 Button/Name/GuldanRotTokenCounter=Rot
-Button/Tooltip/GuldanRotTokenCounter=<c val="#TooltipQuest">Bonus Corruption damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanRotTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Tooltip/GuldanRotTokenCounter=<c val="#TooltipQuest">Bonus Corruption damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanRotTokenCounter$*1" precision="1"/>%</c></c>
 Button/Name/GuldanAfflictionTokenCounter=Affliction
 Button/Tooltip/GuldanAfflictionTokenCounter=<c val="#TooltipQuest">Affliction stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanAfflictionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Corruption's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its strikes <c val="#TooltipNumbers">1%</c> larger. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Corruption and Heroic damage.
 Affix/Name/GuldanImprovedLifeTapBoon=Improved Life Tap
@@ -1970,6 +1972,8 @@ Affix/Name/GuldanHealthstoneBoon=Healthstone
 Affix/Tooltip/GuldanHealthstoneBoon=Gain the talent <c val="#TooltipNumbers">Healthstone</c>: activate to heal for a share of Gul'dan's maximum Health.
 Affix/Name/GuldanDemonicCircleBoon=Demonic Circle
 Affix/Tooltip/GuldanDemonicCircleBoon=Gain the talent <c val="#TooltipNumbers">Demonic Circle</c>: summon a circle and activate it to teleport back to it.
+Behavior/Name/GuldanCorruptedWard=Corrupted Ward
+Behavior/Tooltip/GuldanCorruptedWard=Shielded by Corruption strikes on enemy Heroes.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

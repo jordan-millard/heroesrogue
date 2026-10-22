@@ -20771,6 +20771,7 @@
         </Instances>
 
 
+
         <Instances Id="GuldanFelLord">
             <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
                 <Field Id="Icon" />
@@ -21207,6 +21208,23 @@
             </User>
             <String String="GuldanFelFlameBoundByShadow">
                 <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanCorruptedWard">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanCorruptedWardMarker">
+                <Field Id="Behavior" />
             </String>
         </Instances>
         <Instances Id="GuldanLingeringCorruption">
