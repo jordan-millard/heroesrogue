@@ -11,7 +11,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="XalatathSecondVolleyMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Void Herald ===== -->
-  <!-- Echoing Whispers quest (50% kept): 0.25% Void Volley damage per orb hit on an enemy Hero. Prophecy quest: takedowns within 3 seconds of a hit; 1% larger Void Volley explosions each up to 40%, then 1% damage each. -->
+  <!-- Echoing Whispers quest (50% kept): 0.25% Void Volley damage per orb hit on an enemy Hero. Prophecy quest: takedowns within 3 seconds of a hit; stacks 1-40 make Void Volley explosions 1% larger each, 41-80 add 0.05 range each (script), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="XalatathEchoingWhispersTokenCounter" parent="StormQuestToken">
     <Face value="XalatathEchoingWhispersTokenCounter" />
     <Max value="100000" />
@@ -53,7 +53,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Shadow Seer ===== -->
-  <!-- Omen quest (50% kept): 1% Shadow Mark damage per enemy Hero hit. Doom quest: takedowns within 3 seconds of a hit; 1% of the 7 second recharge each up to 40%, then 1% damage each. -->
+  <!-- Omen quest (50% kept): 1% Shadow Mark damage per enemy Hero hit. Doom quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 7 second recharge each, 41-80 make the orb 1% faster each (script), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="XalatathOmenTokenCounter" parent="StormQuestToken">
     <Face value="XalatathOmenTokenCounter" />
     <Max value="100000" />
@@ -101,7 +101,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Heart of Darkness ===== -->
-  <!-- Ritual quest (50% kept): 0.5% Dark Heart damage per enemy Hero hit (pulses and detonations). Sacrifice quest: takedowns within 3 seconds of a hit; 1% of the 15 second cooldown each up to 40%, then 1% damage each. -->
+  <!-- Ritual quest (50% kept): 0.5% Dark Heart damage per enemy Hero hit (pulses and detonations). Sacrifice quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 15 second cooldown each, 41-80 make the Dark Heart last 1% longer each (script), then 3% damage each (Heroics too). Each hit on a Hero adds a Shield of 3% of maximum Health, up to 21% (script). -->
   <CBehaviorTokenCounter id="XalatathRitualTokenCounter" parent="StormQuestToken">
     <Face value="XalatathRitualTokenCounter" />
     <Max value="100000" />
@@ -141,12 +141,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="XalatathHeartHit" Accumulator="XalatathRitualTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="XalatathHeartHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="XalatathRitualTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_xalatath_e_darkheartritual.dds" />
   </CButton>
@@ -154,7 +148,101 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_xalatath_e_darkheartritual.dds" />
   </CButton>
 
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="XalatathVoidEruptionFlightDamageTier1">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFlightDamageTier2">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFlightDamageTier3">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFlightDamageTier4">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFinalDamageTier1">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFinalDamageTier2">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFinalDamageTier3">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidEruptionFinalDamageTier4">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFlightDamageTier1">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFlightDamageTier2">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFlightDamageTier3">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFlightDamageTier4">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFinalDamageTier1">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFinalDamageTier2">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFinalDamageTier3">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathOrbitalEruptionFinalDamageTier4">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="XalatathVoidMinionWeaponDamage">
+    <MultiplicativeModifierArray index="XalatathVolleyLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathMarkLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="XalatathHeartLegacy" Modifier="0" />
+  </CEffectDamage>
+
   <!-- ===== Boons ===== -->
+  <!-- Heart of Darkness: each Dark Heart hit on an enemy Hero adds a Shield of 3% of maximum Health, up to 21%, that
+       lasts until broken (the script sets its amount and re-adds it) -->
+  <CBehaviorBuff id="XalatathHeartShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_xalatath_e_darkheartritual.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Marked by the Void (Legendary, Shadow Seer): Xal'atath deals 25% more damage to enemies afflicted by Shadow Mark -->
   <CBehaviorBuff id="XalatathMarkedByTheVoid" parent="CarryBehaviorParent">
     <DamageResponse>

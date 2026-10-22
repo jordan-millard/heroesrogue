@@ -15,6 +15,12 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_XalatathMarkTime; // per enemy playe
 int libAffx_XalatathMarkAdded; // Shadow Seer: takedown stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_XalatathHeartTime; // per enemy player, last Heart of Darkness hit
 int libAffx_XalatathHeartAdded; // Heart of Darkness: takedown stacks already applied to the catalog this game
+const fixed libAffx_XalatathHeartShieldFraction = 0.03; // Heart of Darkness Shield: share of maximum Health per hit
+const fixed libAffx_XalatathHeartShieldMax = 0.21; // most it can hold
+const fixed libAffx_XalatathVolleyRangePerStack = 0.05; // Prophecy stage 2: Void Volley range per stack
+const fixed libAffx_XalatathMarkFlightTime = 0.65; // Shadow Mark's base flight time
+int libAffx_XalatathMarkFaster; // Doom stage 2: stacks applied to Shadow Mark's flight time
+int libAffx_XalatathHeartLonger; // Sacrifice stage 2: stacks applied to the Dark Heart's duration
 
 unit libAffx_XalatathHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -39,7 +45,7 @@ void libAffx_XalatathQuestDing() {
 bool libAffx_XalatathInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_XalatathTakedownWindow;
 }
-// XalatathProphecyTokenCounter: 1% of the 1.5 explosion radius per stack, up to 40%, then damage
+// XalatathProphecyTokenCounter: stacks 1-40: 1% of the 1.5 explosion radius each; 41-80: 0.05 Void Volley range each (libAffx_XalatathVolleyRangeSync); then 3% damage each, Heroics too
 void libAffx_XalatathSyncVolley () {
     unit hero = libAffx_XalatathHero();
     int stacks;
@@ -54,11 +60,28 @@ void libAffx_XalatathSyncVolley () {
         libAffx_CatalogReferenceModify("Effect,XalatathVoidVolley2AoESearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathVolleyAdded) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_XalatathVolleyAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_XalatathPastCapDamagePerStack, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidVolleyDamage", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathFracturedRealityFireDamage", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier1", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier2", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier3", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier4", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier1", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier2", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier3", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier4", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier1", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier2", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier3", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier4", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier1", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier2", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier3", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier4", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidMinionWeaponDamage", "MultiplicativeModifierArray[XalatathVolleyLegacy].Modifier", libAffx_player, bonus);
 }
-// XalatathDoomTokenCounter: 1% of the 7 second recharge per stack, up to 40%, then damage
+// XalatathDoomTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80: 1% faster orb each (libAffx_XalatathMarkSpeedSync); then 3% damage each, Heroics too
 void libAffx_XalatathSyncMark () {
     unit hero = libAffx_XalatathHero();
     int stacks;
@@ -73,12 +96,29 @@ void libAffx_XalatathSyncMark () {
         libAffx_CatalogReferenceModify("Abil,XalatathShadowMark,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathMarkAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_XalatathMarkAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_XalatathPastCapDamagePerStack, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathShadowMarkOuterDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathShadowMarkInnerDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathShadowMarkToxicMarkDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier1", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier2", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier3", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier4", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier1", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier2", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier3", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier4", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier1", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier2", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier3", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier4", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier1", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier2", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier3", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier4", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidMinionWeaponDamage", "MultiplicativeModifierArray[XalatathMarkLegacy].Modifier", libAffx_player, bonus);
 }
-// XalatathSacrificeTokenCounter: 1% of the 15 second cooldown per stack, up to 40%, then damage
+// XalatathSacrificeTokenCounter: stacks 1-40: 1% of the 15 second cooldown each; 41-80: 1% longer Dark Heart each (libAffx_XalatathHeartDurationSync); then 3% damage each, Heroics too
 void libAffx_XalatathSyncHeart () {
     unit hero = libAffx_XalatathHero();
     int stacks;
@@ -93,11 +133,28 @@ void libAffx_XalatathSyncHeart () {
         libAffx_CatalogReferenceModify("Abil,XalatathDarkHeartRitual,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathHeartAdded) * -0.15, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_XalatathHeartAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_XalatathPastCapDamagePerStack, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathDarkHeartRitualChainDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathDarkHeartRitualDamageLinkChainTargetDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathDarkHeartRitualDetonationDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "XalatathUnstableCoreFireDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier1", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier2", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier3", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFlightDamageTier4", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier1", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier2", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier3", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidEruptionFinalDamageTier4", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier1", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier2", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier3", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFlightDamageTier4", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier1", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier2", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier3", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathOrbitalEruptionFinalDamageTier4", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "XalatathVoidMinionWeaponDamage", "MultiplicativeModifierArray[XalatathHeartLegacy].Modifier", libAffx_player, bonus);
 }
 bool libAffx_XalatathSync_Func (bool testConds, bool runActions) {
     libAffx_XalatathSyncVolley();
@@ -120,6 +177,79 @@ bool libAffx_XalatathXalatathVoidVolleyCreatePersistentsEcho_Func (bool testCond
     libAffx_XalatathXalatathVoidVolleyCreatePersistentsLastEcho = GameGetMissionTime();
     UnitCreateEffectPoint(hero, "XalatathVoidVolleyCreatePersistents", target);
     return true;
+}
+// Takedown quest stage 2 (stacks 41 to 80): number of stage 2 stacks for a takedown token
+int libAffx_XalatathStage2 (string token) {
+    return MaxI(0, MinI(libAffx_XalatathStacks(token) - 40, 40));
+}
+// Prophecy stage 2: +0.05 Void Volley range per stack. Void Whispers' first milestone sets the range to 10, so the range
+// is set from the milestone's base every second.
+void libAffx_XalatathVolleyRangeSync () {
+    unit hero = libAffx_XalatathHero();
+    int n;
+    fixed range = 8.0;
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathVolleyMarker")) {
+        return;
+    }
+    n = libAffx_XalatathStage2("XalatathProphecyTokenCounter");
+    if (n <= 0) {
+        return;
+    }
+    if (UnitGetTokenCount(hero, "XalatathVoidVolleyQuestTokenCounter") >= 20.0) {
+        range = 10.0;
+    }
+    range = range + IntToFixed(n) * libAffx_XalatathVolleyRangePerStack;
+    CatalogFieldValueSet(c_gameCatalogAbil, "XalatathVoidVolley", "Range", libAffx_player, FixedToString(range, c_fixedPrecisionAny));
+    CatalogFieldValueSet(c_gameCatalogActor, "XalatathVoidVolleyRangeSplat", "Scale", libAffx_player, FixedToString(range + 0.6875, c_fixedPrecisionAny));
+}
+// Doom stage 2: Shadow Mark's orb flies 1% faster per stack (its flight time is 0.65 seconds)
+void libAffx_XalatathMarkSpeedSync () {
+    unit hero = libAffx_XalatathHero();
+    int n;
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathMarkMarker")) {
+        return;
+    }
+    n = libAffx_XalatathStage2("XalatathDoomTokenCounter");
+    if (n == libAffx_XalatathMarkFaster) {
+        return;
+    }
+    libAffx_XalatathMarkFaster = n;
+    CatalogFieldValueSet(c_gameCatalogMover, "XalatathShadowMarkLobMissile", "MotionPhases[0].FlightTime", libAffx_player, FixedToString(libAffx_XalatathMarkFlightTime * (1.0 - 0.01 * IntToFixed(n)), 4) + ",-1");
+}
+// Sacrifice stage 2: the Dark Heart lasts 1% longer per stack (of its 8 seconds)
+void libAffx_XalatathHeartDurationSync () {
+    unit hero = libAffx_XalatathHero();
+    int n;
+    if (hero == null || !UnitHasBehavior2(hero, "XalatathHeartMarker")) {
+        return;
+    }
+    n = libAffx_XalatathStage2("XalatathSacrificeTokenCounter");
+    if (n == libAffx_XalatathHeartLonger) {
+        return;
+    }
+    libAffx_CatalogReferenceModify("Behavior,XalatathDarkHeartRitualTimedLife,Duration", libAffx_player, FixedToString(IntToFixed(n - libAffx_XalatathHeartLonger) * 0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+    libAffx_XalatathHeartLonger = n;
+}
+bool libAffx_XalatathStage2_Func (bool testConds, bool runActions) {
+    libAffx_XalatathVolleyRangeSync();
+    libAffx_XalatathMarkSpeedSync();
+    libAffx_XalatathHeartDurationSync();
+    return true;
+}
+// Heart of Darkness Shield: each Dark Heart hit on an enemy Hero adds 3% of maximum Health to what is left, up to 21%
+void libAffx_XalatathHeartShield (unit hero) {
+    fixed lifeMax;
+    fixed left = 0.0;
+    if (!UnitIsAlive(hero)) {
+        return;
+    }
+    lifeMax = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+    if (UnitHasBehavior2(hero, "XalatathHeartShield")) {
+        left = UnitBehaviorDamageModifyRemaining(hero, "XalatathHeartShield");
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathHeartShield", "DamageResponse.ModifyLimit", libAffx_player, MinF(left + lifeMax * libAffx_XalatathHeartShieldFraction, lifeMax * libAffx_XalatathHeartShieldMax));
+    UnitBehaviorRemove(hero, "XalatathHeartShield", 1);
+    UnitBehaviorAdd(hero, "XalatathHeartShield", hero, 1);
 }
 // Void Herald hit on an enemy Hero: takedown window, XalatathEchoingWhispersTokenCounter, the heal, and on-hit boons
 bool libAffx_XalatathVolleyHit_Func (bool testConds, bool runActions) {
@@ -158,9 +288,7 @@ bool libAffx_XalatathHeartHit_Func (bool testConds, bool runActions) {
     }
     libAffx_XalatathHeartTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "XalatathRitualTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "XalatathHeartHeal", hero);
-    }
+    libAffx_XalatathHeartShield(hero);
     return true;
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -181,18 +309,21 @@ bool libAffx_XalatathTakedown (bool testConds, bool runActions) {
         libGame_gf_ModifyTokenCount(1, "XalatathProphecyTokenCounter", hero);
         libAffx_XalatathSyncVolley();
         libAffx_XalatathQuestDing();
+        libAffx_XalatathVolleyRangeSync();
     }
     if (UnitHasBehavior2(hero, "XalatathMarkMarker") && libAffx_XalatathInWindow(libAffx_XalatathMarkTime[killedPlayer], now)) {
         libAffx_XalatathMarkTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "XalatathDoomTokenCounter", hero);
         libAffx_XalatathSyncMark();
         libAffx_XalatathQuestDing();
+        libAffx_XalatathMarkSpeedSync();
     }
     if (UnitHasBehavior2(hero, "XalatathHeartMarker") && libAffx_XalatathInWindow(libAffx_XalatathHeartTime[killedPlayer], now)) {
         libAffx_XalatathHeartTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "XalatathSacrificeTokenCounter", hero);
         libAffx_XalatathSyncHeart();
         libAffx_XalatathQuestDing();
+        libAffx_XalatathHeartDurationSync();
     }
     return true;
 }
@@ -211,6 +342,7 @@ bool libAffx_XalatathStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathDarkHeartRitualChainDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "XalatathDarkHeartRitualDetonationDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_XalatathXalatathVoidVolleyCreatePersistentsEcho_Func"), libAffx_player, "XalatathVoidVolleyCreatePersistents");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_XalatathStage2_Func"), 1.0, c_timeGame);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_XalatathSync_Func"), 1.0, c_timeGame);
     return true;
