@@ -19219,508 +19219,6 @@
         </Instances>
 
 
-        <Instances Id="AlarakTaldarimAscendant">
-            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="AlarakChaosReigns">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="AlarakLethalOnslaughtDiscordStrike">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 AlarakDiscordMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 AlarakDiscordTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 AlarakSubjugationTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="AlarakSubjugationTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="AlarakDiscordTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="AlarakDiscordStrikeChaosReignsTalentDisplayTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="2" />
-            </String>
-            <String String="AlarakDiscordStrikeChaosReignsTalentDamageTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="3" />
-            </String>
-            <String String="1 1 Set Effect,AlarakDiscordStrikeDamage,MultiplicativeModifierArray[AlarakDiscordPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="AffixAdded libAffx_AlarakStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_AlarakTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakDiscordantPower">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakTaldarimAscendant">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,AlarakDiscordStrikeDamage,MultiplicativeModifierArray[AlarakDiscordCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakSwiftDiscord">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakTaldarimAscendant">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,AlarakDiscordStrike,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakDissonanceBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakTaldarimAscendant">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakDissonance">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakShowOfForceBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakTaldarimAscendant">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakShowofForce">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakRiteOfRakShirBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_sadism_b.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakTaldarimAscendant">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakRiteofRakShir">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakUnrelentingDiscord">
-            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakTaldarimAscendant">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 AlarakUnrelentingDiscordMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakLightningLord">
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="AlarakNegativelyCharged">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="AlarakLightningBarrage">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 AlarakSurgeMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 AlarakOverloadTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 AlarakTempestTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="AlarakTempestTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="AlarakOverloadTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="AlarakLightningSurgeNegativelyChargedTalentTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,AlarakLightningSurgeDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,AlarakLightningSurgeTargetDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,AlarakLightningSurgeHeroDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,AlarakLightningSurgeHeroTargetDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="AffixAdded libAffx_AlarakStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_AlarakTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakChargedLightning">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakLightningLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,AlarakLightningSurgeDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,AlarakLightningSurgeTargetDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,AlarakLightningSurgeHeroDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 2 Set Effect,AlarakLightningSurgeHeroTargetDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakQuickSurge">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakLightningLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,AlarakLightningSurge,Cost.Cooldown.TimeUse -0.25">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakExtendedLightningBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakLightningLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakExtendedLightning">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="AlarakLightningSurgeExtendedLightningTalentTokenCounter 0.5">
-                <Field Id="QuestRetain" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakStaticLeech">
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakLightningLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,AlarakLightningSurgeHeroDamageCreateHealer,MultiplicativeModifierArray[AlarakStaticLeech].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakSurgeOfPower">
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakLightningLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Abil,AlarakLightningSurge,Cost.Cooldown.TimeUse -1.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakEndlessEnergy">
-            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakLightningLord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 AlarakEndlessEnergyMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakHighlord">
-            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="AlarakBladeoftheHighlord">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="AlarakMockingStrikes">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 AlarakHighlordMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 AlarakCrueltyTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 AlarakDominionTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="AlarakDominionTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="AlarakCrueltyTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,AlarakHeroWeaponDamage,MultiplicativeModifierArray[AlarakBladePower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="AffixAdded libAffx_AlarakStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_AlarakTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakHighlordsEdge">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakHighlord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,AlarakHeroWeaponDamage,MultiplicativeModifierArray[AlarakBladeCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakPureMaliceBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_sadism_a.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakHighlord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakPureMalice">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakOverwhelmingPowerBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakHighlord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakOverwhelmingPowerDiscordStrike">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakLastLaughBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_lasttrick.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakHighlord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="AlarakLastLaugh">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakPinnacleOfSadism">
-            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="AlarakHighlord">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 AlarakPinnacleOfSadismMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakTelekineticFocus">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="1 3 Add Abil,AlarakTelekinesis,Cost.Cooldown.TimeUse -1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakHinderedMotionBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis_a.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="AlarakHinderedMotion">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="AlarakRuthlessMomentumBoon">
-            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Alarak">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="AlarakRuthlessMomentum">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
 
         <Instances Id="KelThuzadLordOfDecay">
             <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
@@ -21382,6 +20880,541 @@
             </String>
             <String String="SylvanasTalentMercenaryQueen">
                 <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="AlarakTaldarimAscendant">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakChaosReigns">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakLethalOnslaughtDiscordStrike">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AlarakDiscordMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AlarakDiscordTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AlarakSubjugationTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AlarakSubjugationTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AlarakDiscordTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="AlarakDiscordStrikeChaosReignsTalentDisplayTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="AlarakDiscordStrikeChaosReignsTalentDamageTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,AlarakDiscordStrike,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,AlarakDiscordStrike,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,AlarakDiscordStrike,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,AlarakDiscordStrike,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,AlarakDiscordStrike,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,AlarakDiscordStrike,Cost.Vital[Energy] -27.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,AlarakDiscordStrikeDamage,MultiplicativeModifierArray[AlarakDiscordPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_AlarakStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AlarakTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakDiscordantPower">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AlarakDiscordStrikeDamage,MultiplicativeModifierArray[AlarakDiscordCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakSwiftDiscord">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AlarakDiscordStrike,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakDissonanceBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakDissonance">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakShowOfForceBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakShowofForce">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakRiteOfRakShirBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakRiteofRakShir">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakUnrelentingDiscord">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AlarakUnrelentingDiscordMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakLightningLord">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakNegativelyCharged">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakLightningBarrage">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AlarakSurgeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AlarakOverloadTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AlarakTempestTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AlarakTempestTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AlarakOverloadTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="AlarakLightningSurgeNegativelyChargedTalentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeTargetDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeHeroDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeHeroTargetDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_AlarakStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AlarakTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakChargedLightning">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AlarakLightningSurgeDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AlarakLightningSurgeTargetDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,AlarakLightningSurgeHeroDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,AlarakLightningSurgeHeroTargetDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakQuickSurge">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AlarakLightningSurge,Cost.Cooldown.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakExtendedLightningBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakExtendedLightning">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakLightningSurgeExtendedLightningTalentTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakStaticLeech">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AlarakLightningSurgeHeroDamageCreateHealer,MultiplicativeModifierArray[AlarakStaticLeech].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakSurgeOfPower">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,AlarakLightningSurge,Cost.Cooldown.TimeUse -1.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakEndlessEnergy">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AlarakEndlessEnergyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakHighlord">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakBladeoftheHighlord">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakMockingStrikes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AlarakHighlordMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AlarakCrueltyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AlarakDominionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AlarakDominionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AlarakCrueltyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AlarakHeroWeaponDamage,MultiplicativeModifierArray[AlarakBladePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_AlarakStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AlarakTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakHighlordsEdge">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AlarakHeroWeaponDamage,MultiplicativeModifierArray[AlarakBladeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakPureMaliceBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakPureMalice">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakOverwhelmingPowerBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakOverwhelmingPowerDiscordStrike">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakLastLaughBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lasttrick.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakLastLaugh">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakPinnacleOfSadism">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AlarakPinnacleOfSadismMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakTelekineticFocus">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,AlarakTelekinesis,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakHinderedMotionBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakHinderedMotion">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakRuthlessMomentumBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakRuthlessMomentum">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakDiscordantWard">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 AlarakDiscordantWardMarker">
+                <Field Id="Behavior" />
             </String>
         </Instances>
 

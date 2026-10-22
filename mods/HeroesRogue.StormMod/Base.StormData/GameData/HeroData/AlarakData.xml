@@ -11,9 +11,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="AlarakUnrelentingDiscordMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AlarakEndlessEnergyMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AlarakPinnacleOfSadismMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AlarakDiscordantWardMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Tal'darim Ascendant ===== -->
-  <!-- Discord quest (50% kept): 0.5% Discord Strike damage per enemy Hero hit. Subjugation quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 8 second cooldown each, 41-80 make its Silence 1% longer each, then 3% damage each (Heroics too). -->
+  <!-- Discord Strike has 2 charges with a 6 second recharge (8 - 2) and costs half Mana. Discord quest (50% kept): 0.5% Discord Strike damage per enemy Hero hit. Subjugation quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 6 second recharge each, 41-80 make its Silence 1% longer each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="AlarakDiscordTokenCounter" parent="StormQuestToken">
     <Face value="AlarakDiscordTokenCounter" />
     <Max value="100000" />
@@ -35,12 +36,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="AlarakDiscordHit" Accumulator="AlarakDiscordTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="AlarakDiscordLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="AlarakDiscordHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="AlarakDiscordTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_alarak_discordstrike.dds" />
   </CButton>
@@ -145,6 +140,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
+  <!-- Discordant Ward (Rare, any Alarak): Shield with no duration; the script sets ModifyLimit before each add -->
+  <CBehaviorBuff id="AlarakDiscordantWard" parent="StormShield">
+    <InfoIcon value="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Unrelenting Discord (Legendary, Tal'darim Ascendant): Discord Strike hits on Heroes take 4 seconds off its cooldown -->
   <CEffectModifyUnit id="AlarakUnrelentingDiscordCooldown">
     <ImpactUnit Value="Caster" />

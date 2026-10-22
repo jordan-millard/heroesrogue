@@ -1730,64 +1730,6 @@ Behavior/Name/VallaMarkedForDeathDebuff=Marked for Death
 Behavior/Tooltip/VallaMarkedForDeathDebuff=Armor reduced by Valla's Multishot.
 Behavior/Name/VallaShadowCloakBuff=Shadow Cloak
 Behavior/Tooltip/VallaShadowCloakBuff=Gaining Armor while Strafing.
-Affix/Name/AlarakTaldarimAscendant=Tal'darim Ascendant
-Affix/Tooltip/AlarakTaldarimAscendant=Gain <c val="#TooltipNumbers">Chaos Reigns</c> and <c val="#TooltipNumbers">Lethal Onslaught</c>. Discord Strike deals <c val="#TooltipNumbers">50%</c> more damage. Each Discord Strike hit on an enemy Hero heals Alarak for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Discord Strike hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Discord Strike damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Discord Strike hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its Silence last <c val="#TooltipNumbers">1%</c> longer (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Discord Strike and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Chaos Reigns after a win.
-Affix/Name/AlarakDiscordantPower=Discordant Power
-Affix/Tooltip/AlarakDiscordantPower=Discord Strike deals <c val="#TooltipNumbers">15%</c> more damage.
-Affix/Name/AlarakSwiftDiscord=Swift Discord
-Affix/Tooltip/AlarakSwiftDiscord=Discord Strike's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
-Affix/Name/AlarakDissonanceBoon=Dissonance
-Affix/Tooltip/AlarakDissonanceBoon=Gain the talent <c val="#TooltipNumbers">Dissonance</c>: Discord Strike's Silence lasts <c val="#TooltipNumbers">0.75</c> seconds longer.
-Affix/Name/AlarakShowOfForceBoon=Show of Force
-Affix/Tooltip/AlarakShowOfForceBoon=Gain the talent <c val="#TooltipNumbers">Show of Force</c>: Heroes hit by <c val="#TooltipNumbers">2</c> of Alarak's Abilities in quick succession take bonus damage and increase Sadism.
-Affix/Name/AlarakRiteOfRakShirBoon=Rite of Rak'Shir
-Affix/Tooltip/AlarakRiteOfRakShirBoon=Gain the talent <c val="#TooltipNumbers">Rite of Rak'Shir</c>: activate to mark an enemy Hero. Hitting them with Discord Strike and killing them increases Sadism.
-Affix/Name/AlarakUnrelentingDiscord=Unrelenting Discord
-Affix/Tooltip/AlarakUnrelentingDiscord=Each Discord Strike hit on an enemy Hero reduces its cooldown by <c val="#TooltipNumbers">4</c> seconds.
-Button/Name/AlarakDiscordTokenCounter=Discord
-Button/Tooltip/AlarakDiscordTokenCounter=<c val="#TooltipQuest">Bonus Discord Strike damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakDiscordTokenCounter$*0.5" precision="1"/>%</c></c>
-Button/Name/AlarakSubjugationTokenCounter=Subjugation
-Button/Tooltip/AlarakSubjugationTokenCounter=<c val="#TooltipQuest">Subjugation stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakSubjugationTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Discord Strike's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its Silence last <c val="#TooltipNumbers">1%</c> longer. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Discord Strike and Heroic damage.
-Affix/Name/AlarakLightningLord=Lightning Lord
-Affix/Tooltip/AlarakLightningLord=Gain <c val="#TooltipNumbers">Negatively Charged</c> and <c val="#TooltipNumbers">Lightning Barrage</c>. Lightning Surge deals <c val="#TooltipNumbers">50%</c> more damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Lightning Surge hits on enemy Heroes add <c val="#TooltipNumbers">0.25%</c> Lightning Surge damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Lightning Surge hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> Lightning Surge range (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Lightning Surge and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Negatively Charged after a win.
-Affix/Name/AlarakChargedLightning=Charged Lightning
-Affix/Tooltip/AlarakChargedLightning=Lightning Surge deals <c val="#TooltipNumbers">15%</c> more damage.
-Affix/Name/AlarakQuickSurge=Quick Surge
-Affix/Tooltip/AlarakQuickSurge=Lightning Surge's cooldown is <c val="#TooltipNumbers">0.25</c> seconds shorter.
-Affix/Name/AlarakExtendedLightningBoon=Extended Lightning
-Affix/Tooltip/AlarakExtendedLightningBoon=Gain the talent <c val="#TooltipNumbers">Extended Lightning</c>: hit Heroes with the center of Lightning Surge to increase its range and make it Slow. Sadism is reduced by <c val="#TooltipNumbers">10%</c>.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of its quest after a win.
-Affix/Name/AlarakStaticLeech=Static Leech
-Affix/Tooltip/AlarakStaticLeech=Lightning Surge heals for <c val="#TooltipNumbers">50%</c> more.
-Affix/Name/AlarakSurgeOfPower=Surge of Power
-Affix/Tooltip/AlarakSurgeOfPower=Lightning Surge's cooldown is <c val="#TooltipNumbers">1.5</c> seconds shorter.
-Affix/Name/AlarakEndlessEnergy=Endless Energy
-Affix/Tooltip/AlarakEndlessEnergy=Each Lightning Surge hit on an enemy Hero reduces its cooldown by <c val="#TooltipNumbers">1.5</c> seconds.
-Button/Name/AlarakOverloadTokenCounter=Overload
-Button/Tooltip/AlarakOverloadTokenCounter=<c val="#TooltipQuest">Bonus Lightning Surge damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakOverloadTokenCounter$*0.25" precision="1"/>%</c></c>
-Button/Name/AlarakTempestTokenCounter=Tempest
-Button/Tooltip/AlarakTempestTokenCounter=<c val="#TooltipQuest">Tempest stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakTempestTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Lightning Surge's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Lightning Surge range. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Lightning Surge and Heroic damage.
-Affix/Name/AlarakHighlord=Highlord
-Affix/Tooltip/AlarakHighlord=Gain <c val="#TooltipNumbers">Blade of the Highlord</c> and <c val="#TooltipNumbers">Mocking Strikes</c>. Basic Attacks deal <c val="#TooltipNumbers">50%</c> more damage. Each Basic Attack on an enemy Hero heals Alarak for <c val="#TooltipNumbers">0.5%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Basic Attacks on enemy Heroes add <c val="#TooltipNumbers">0.2%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Basic Attack add <c val="#TooltipNumbers">1%</c> Sadism (up to <c val="#TooltipNumbers">40%</c>), then <c val="#TooltipNumbers">1%</c> Attack Speed (up to <c val="#TooltipNumbers">40%</c>), then <c val="#TooltipNumbers">3%</c> Basic Attack and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
-Affix/Name/AlarakHighlordsEdge=Highlord's Edge
-Affix/Tooltip/AlarakHighlordsEdge=Basic Attacks deal <c val="#TooltipNumbers">15%</c> more damage.
-Affix/Name/AlarakPureMaliceBoon=Pure Malice
-Affix/Tooltip/AlarakPureMaliceBoon=Gain the talent <c val="#TooltipNumbers">Pure Malice</c>: Sadism increases whenever an allied Hero dies, until Alarak dies.
-Affix/Name/AlarakOverwhelmingPowerBoon=Overwhelming Power
-Affix/Tooltip/AlarakOverwhelmingPowerBoon=Gain the talent <c val="#TooltipNumbers">Overwhelming Power</c>: Discord Strike hits on Heroes grant Attack Speed, and Basic Attacks heal for a share of their damage.
-Affix/Name/AlarakLastLaughBoon=Last Laugh
-Affix/Tooltip/AlarakLastLaughBoon=Gain the talent <c val="#TooltipNumbers">Last Laugh</c>: activate to teleport and remove Roots, Slows and damage over time. Alarak must hit enemy Heroes with Basic Abilities soon after, or his Health drops to 1.
-Affix/Name/AlarakPinnacleOfSadism=Pinnacle of Sadism
-Affix/Tooltip/AlarakPinnacleOfSadism=Alarak's Sadism is increased by <c val="#TooltipNumbers">30%</c>.
-Button/Name/AlarakCrueltyTokenCounter=Cruelty
-Button/Tooltip/AlarakCrueltyTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakCrueltyTokenCounter$*0.2" precision="1"/>%</c></c>
-Button/Name/AlarakDominionTokenCounter=Dominion
-Button/Tooltip/AlarakDominionTokenCounter=<c val="#TooltipQuest">Dominion stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakDominionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each add <c val="#TooltipNumbers">1%</c> Sadism. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Attack Speed. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Basic Attack and Heroic damage.
-Affix/Name/AlarakTelekineticFocus=Telekinetic Focus
-Affix/Tooltip/AlarakTelekineticFocus=Telekinesis's cooldown is <c val="#TooltipNumbers">1</c> second shorter.
-Affix/Name/AlarakHinderedMotionBoon=Hindered Motion
-Affix/Tooltip/AlarakHinderedMotionBoon=Gain the talent <c val="#TooltipNumbers">Hindered Motion</c>: Telekinesis Slows enemies.
-Affix/Name/AlarakRuthlessMomentumBoon=Ruthless Momentum
-Affix/Tooltip/AlarakRuthlessMomentumBoon=Gain the talent <c val="#TooltipNumbers">Ruthless Momentum</c>: Telekinesis costs less Mana and recharges faster while Alarak is above <c val="#TooltipNumbers">80%</c> Health.
 Affix/Name/KelThuzadLordOfDecay=Lord of Decay
 Affix/Tooltip/KelThuzadLordOfDecay=Gain <c val="#TooltipNumbers">The Plaguelands</c> and <c val="#TooltipNumbers">Accelerated Decay</c>. Death and Decay deals <c val="#TooltipNumbers">50%</c> more damage. Each enemy Hero hit by its explosion heals Kel'Thuzad for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Death and Decay explosion hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Death and Decay damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Death and Decay hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its explosion and pool <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Death and Decay and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
 Affix/Name/KelThuzadVirulentDecay=Virulent Decay
@@ -1982,6 +1924,68 @@ Behavior/Name/SylvanasSpectralPassageAfter=Spectral Passage
 Behavior/Tooltip/SylvanasSpectralPassageAfter=Protected.
 Behavior/Name/SylvanasDarkRangerShield=Dark Ranger
 Behavior/Tooltip/SylvanasDarkRangerShield=Shielded by a full Withering Fire volley on an enemy Hero.
+Affix/Name/AlarakTaldarimAscendant=Tal'darim Ascendant
+Affix/Tooltip/AlarakTaldarimAscendant=Gain <c val="#TooltipNumbers">Chaos Reigns</c> and <c val="#TooltipNumbers">Lethal Onslaught</c>. Discord Strike deals <c val="#TooltipNumbers">50%</c> more damage, has <c val="#TooltipNumbers">2</c> charges, recharges <c val="#TooltipNumbers">2</c> seconds faster and costs <c val="#TooltipNumbers">50%</c> less Mana.<n/><n/><c val="#TooltipQuest">Quest:</c> Discord Strike hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Discord Strike damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Discord Strike hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its Silence last <c val="#TooltipNumbers">1%</c> longer (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Discord Strike and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Chaos Reigns after a win.
+Affix/Name/AlarakDiscordantPower=Discordant Power
+Affix/Tooltip/AlarakDiscordantPower=Discord Strike deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AlarakSwiftDiscord=Swift Discord
+Affix/Tooltip/AlarakSwiftDiscord=Discord Strike recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/AlarakDissonanceBoon=Dissonance
+Affix/Tooltip/AlarakDissonanceBoon=Gain the talent <c val="#TooltipNumbers">Dissonance</c>: Discord Strike's Silence lasts <c val="#TooltipNumbers">0.75</c> seconds longer.
+Affix/Name/AlarakShowOfForceBoon=Show of Force
+Affix/Tooltip/AlarakShowOfForceBoon=Gain the talent <c val="#TooltipNumbers">Show of Force</c>: Heroes hit by <c val="#TooltipNumbers">2</c> of Alarak's Abilities in quick succession take bonus damage and increase Sadism.
+Affix/Name/AlarakRiteOfRakShirBoon=Rite of Rak'Shir
+Affix/Tooltip/AlarakRiteOfRakShirBoon=Gain the talent <c val="#TooltipNumbers">Rite of Rak'Shir</c>: activate to mark an enemy Hero. Hitting them with Discord Strike and killing them increases Sadism.
+Affix/Name/AlarakUnrelentingDiscord=Unrelenting Discord
+Affix/Tooltip/AlarakUnrelentingDiscord=Each Discord Strike hit on an enemy Hero reduces its cooldown by <c val="#TooltipNumbers">4</c> seconds.
+Button/Name/AlarakDiscordTokenCounter=Discord
+Button/Tooltip/AlarakDiscordTokenCounter=<c val="#TooltipQuest">Bonus Discord Strike damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakDiscordTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/AlarakSubjugationTokenCounter=Subjugation
+Button/Tooltip/AlarakSubjugationTokenCounter=<c val="#TooltipQuest">Subjugation stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakSubjugationTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Discord Strike's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its Silence last <c val="#TooltipNumbers">1%</c> longer. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Discord Strike and Heroic damage.
+Affix/Name/AlarakLightningLord=Lightning Lord
+Affix/Tooltip/AlarakLightningLord=Gain <c val="#TooltipNumbers">Negatively Charged</c> and <c val="#TooltipNumbers">Lightning Barrage</c>. Lightning Surge deals <c val="#TooltipNumbers">50%</c> more damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Lightning Surge hits on enemy Heroes add <c val="#TooltipNumbers">0.25%</c> Lightning Surge damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Lightning Surge hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> Lightning Surge range (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Lightning Surge and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Negatively Charged after a win.
+Affix/Name/AlarakChargedLightning=Charged Lightning
+Affix/Tooltip/AlarakChargedLightning=Lightning Surge deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AlarakQuickSurge=Quick Surge
+Affix/Tooltip/AlarakQuickSurge=Lightning Surge's cooldown is <c val="#TooltipNumbers">0.25</c> seconds shorter.
+Affix/Name/AlarakExtendedLightningBoon=Extended Lightning
+Affix/Tooltip/AlarakExtendedLightningBoon=Gain the talent <c val="#TooltipNumbers">Extended Lightning</c>: hit Heroes with the center of Lightning Surge to increase its range and make it Slow. Sadism is reduced by <c val="#TooltipNumbers">10%</c>.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of its quest after a win.
+Affix/Name/AlarakStaticLeech=Static Leech
+Affix/Tooltip/AlarakStaticLeech=Lightning Surge heals for <c val="#TooltipNumbers">50%</c> more.
+Affix/Name/AlarakSurgeOfPower=Surge of Power
+Affix/Tooltip/AlarakSurgeOfPower=Lightning Surge's cooldown is <c val="#TooltipNumbers">1.5</c> seconds shorter.
+Affix/Name/AlarakEndlessEnergy=Endless Energy
+Affix/Tooltip/AlarakEndlessEnergy=Each Lightning Surge hit on an enemy Hero reduces its cooldown by <c val="#TooltipNumbers">1.5</c> seconds.
+Button/Name/AlarakOverloadTokenCounter=Overload
+Button/Tooltip/AlarakOverloadTokenCounter=<c val="#TooltipQuest">Bonus Lightning Surge damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakOverloadTokenCounter$*0.25" precision="1"/>%</c></c>
+Button/Name/AlarakTempestTokenCounter=Tempest
+Button/Tooltip/AlarakTempestTokenCounter=<c val="#TooltipQuest">Tempest stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakTempestTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Lightning Surge's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Lightning Surge range. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Lightning Surge and Heroic damage.
+Affix/Name/AlarakHighlord=Highlord
+Affix/Tooltip/AlarakHighlord=Gain <c val="#TooltipNumbers">Blade of the Highlord</c> and <c val="#TooltipNumbers">Mocking Strikes</c>. Basic Attacks deal <c val="#TooltipNumbers">50%</c> more damage. Each Basic Attack on an enemy Hero heals Alarak for <c val="#TooltipNumbers">0.5%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Basic Attacks on enemy Heroes add <c val="#TooltipNumbers">0.2%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Basic Attack add <c val="#TooltipNumbers">1%</c> Sadism (up to <c val="#TooltipNumbers">40%</c>), then <c val="#TooltipNumbers">1%</c> Attack Speed (up to <c val="#TooltipNumbers">40%</c>), then <c val="#TooltipNumbers">3%</c> Basic Attack and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/AlarakHighlordsEdge=Highlord's Edge
+Affix/Tooltip/AlarakHighlordsEdge=Basic Attacks deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AlarakPureMaliceBoon=Pure Malice
+Affix/Tooltip/AlarakPureMaliceBoon=Gain the talent <c val="#TooltipNumbers">Pure Malice</c>: Sadism increases whenever an allied Hero dies, until Alarak dies.
+Affix/Name/AlarakOverwhelmingPowerBoon=Overwhelming Power
+Affix/Tooltip/AlarakOverwhelmingPowerBoon=Gain the talent <c val="#TooltipNumbers">Overwhelming Power</c>: Discord Strike hits on Heroes grant Attack Speed, and Basic Attacks heal for a share of their damage.
+Affix/Name/AlarakLastLaughBoon=Last Laugh
+Affix/Tooltip/AlarakLastLaughBoon=Gain the talent <c val="#TooltipNumbers">Last Laugh</c>: activate to teleport and remove Roots, Slows and damage over time. Alarak must hit enemy Heroes with Basic Abilities soon after, or his Health drops to 1.
+Affix/Name/AlarakPinnacleOfSadism=Pinnacle of Sadism
+Affix/Tooltip/AlarakPinnacleOfSadism=Alarak's Sadism is increased by <c val="#TooltipNumbers">30%</c>.
+Button/Name/AlarakCrueltyTokenCounter=Cruelty
+Button/Tooltip/AlarakCrueltyTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakCrueltyTokenCounter$*0.2" precision="1"/>%</c></c>
+Button/Name/AlarakDominionTokenCounter=Dominion
+Button/Tooltip/AlarakDominionTokenCounter=<c val="#TooltipQuest">Dominion stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakDominionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each add <c val="#TooltipNumbers">1%</c> Sadism. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Attack Speed. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Basic Attack and Heroic damage.
+Affix/Name/AlarakTelekineticFocus=Telekinetic Focus
+Affix/Tooltip/AlarakTelekineticFocus=Telekinesis's cooldown is <c val="#TooltipNumbers">1</c> second shorter.
+Affix/Name/AlarakHinderedMotionBoon=Hindered Motion
+Affix/Tooltip/AlarakHinderedMotionBoon=Gain the talent <c val="#TooltipNumbers">Hindered Motion</c>: Telekinesis Slows enemies.
+Affix/Name/AlarakRuthlessMomentumBoon=Ruthless Momentum
+Affix/Tooltip/AlarakRuthlessMomentumBoon=Gain the talent <c val="#TooltipNumbers">Ruthless Momentum</c>: Telekinesis costs less Mana and recharges faster while Alarak is above <c val="#TooltipNumbers">80%</c> Health.
+Affix/Name/AlarakDiscordantWard=Discordant Ward
+Affix/Tooltip/AlarakDiscordantWard=Each Discord Strike hit on an enemy Hero grants Alarak a Shield for <c val="#TooltipNumbers">5%</c> of his maximum Health, stacking up to <c val="#TooltipNumbers">20%</c>. The Shield does not expire.
+Behavior/Name/AlarakDiscordantWard=Discordant Ward
+Behavior/Tooltip/AlarakDiscordantWard=Shielded by Discord Strike hits on enemy Heroes.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

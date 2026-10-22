@@ -45,7 +45,7 @@ void libAffx_AlarakQuestDing() {
 bool libAffx_AlarakInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_AlarakTakedownWindow;
 }
-// AlarakSubjugationTokenCounter: stacks 1-40: 1% of the 8 second cooldown each; 41-80: 1% of the 1.5 second Silence each; then 3% damage each, Heroics too
+// AlarakSubjugationTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 1.5 second Silence each; then 3% damage each, Heroics too
 void libAffx_AlarakSyncDiscord () {
     unit hero = libAffx_AlarakHero();
     int stacks;
@@ -57,7 +57,7 @@ void libAffx_AlarakSyncDiscord () {
     stacks = libAffx_AlarakStacks("AlarakSubjugationTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_AlarakDiscordAdded) {
-        libAffx_CatalogReferenceModify("Abil,AlarakDiscordStrike,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,AlarakDiscordStrike,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakDiscordAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 1% of the 1.5 second Silence each
@@ -127,6 +127,23 @@ bool libAffx_AlarakSync_Func (bool testConds, bool runActions) {
     libAffx_AlarakSyncBlade();
     return true;
 }
+// Discordant Ward (Rare, any Alarak): each Discord Strike hit on an enemy Hero adds Shields for 5% of maximum Health to
+// what is left, up to 20%; the Shield has no duration (script sets ModifyLimit, as Kerrigan's Brood Mother)
+bool libAffx_AlarakDiscordantWard_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AlarakHero();
+    fixed life;
+    fixed current = 0.0;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AlarakIsEnemyHero(EventUnit()) || !UnitHasBehavior2(hero, "AlarakDiscordantWardMarker") || !UnitIsAlive(hero)) {
+        return false;
+    }
+    life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+    if (UnitHasBehavior2(hero, "AlarakDiscordantWard")) {
+        current = UnitBehaviorDamageModifyRemaining(hero, "AlarakDiscordantWard");
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordantWard", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.05 * life, 0.2 * life));
+    UnitBehaviorAdd(hero, "AlarakDiscordantWard", hero, 1);
+    return true;
+}
 // Highlord: Dominion stacks 1-40 add 1 Sadism token (1% Sadism) each, and Pinnacle of Sadism adds 30
 void libAffx_AlarakSadismSync () {
     unit hero = libAffx_AlarakHero();
@@ -177,9 +194,6 @@ bool libAffx_AlarakDiscordHit_Func (bool testConds, bool runActions) {
     }
     libAffx_AlarakDiscordTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "AlarakDiscordTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "AlarakDiscordHeal", hero);
-    }
     if (UnitHasBehavior2(hero, "AlarakUnrelentingDiscordMarker")) {
         UnitCreateEffectUnit(hero, "AlarakUnrelentingDiscordCooldown", hero);
     }
@@ -264,6 +278,7 @@ bool libAffx_AlarakStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_AlarakBladeHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AlarakHeroWeaponDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AlarakStage_Func"), 1.0, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AlarakDiscordantWard_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "AlarakDiscordStrikeDamage");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AlarakSync_Func"), 1.0, c_timeGame);
     return true;
