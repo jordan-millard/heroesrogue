@@ -138,6 +138,7 @@ bool libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func (bool testConds, boo
         return true;
     }
     libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "GuldanFelFlameSetFacing", target);
     UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
     return true;
 }
@@ -165,6 +166,8 @@ bool libAffx_GuldanFelEcho_Func (bool testConds, bool runActions) {
     }
     libAffx_GuldanFelEchoLast = GameGetMissionTime();
     libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho = libAffx_GuldanFelEchoLast;
+    // turn Gul'dan to the target first: the flame visual follows his facing
+    UnitCreateEffectPoint(hero, "GuldanFelFlameSetFacing", target);
     UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
     return true;
 }
