@@ -58,10 +58,11 @@ void libAffx_GuldanSyncFel () {
         libAffx_CatalogReferenceModify("Abil,GuldanFelFlame,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanFelAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 1% wider flames each (Pursuit of Flame adds 0.15 for 33%)
+    // stage 2 (stacks 41 to 80): 1% of the 23.94 degree flame cone each, targeting guide too (RadiusBonus is reach, not width)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_GuldanFelAdded2) {
-        libAffx_CatalogReferenceModify("Effect,GuldanFelFlameSearch,AreaArray[0].RadiusBonus", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded2) * 0.0045, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GuldanFelFlameSearch,AreaArray[0].Arc", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded2) * 0.2394, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GuldanFelFlameDummyVisualGuide,AreaArray[0].Arc", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded2) * 0.2394, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanFelAdded2 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
