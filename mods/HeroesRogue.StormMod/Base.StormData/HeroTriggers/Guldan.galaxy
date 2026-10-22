@@ -171,6 +171,27 @@ bool libAffx_GuldanFelEcho_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
     return true;
 }
+fixed libAffx_GuldanCorruptionGuideRadius = 1.5;
+// Corruption's targeting preview: a quad centred on the middle of its three strikes (3 apart) plus a circle per strike.
+// When the strike radius changes (Corruptor starter, Affliction stacks 41-80), resize them to match.
+bool libAffx_GuldanCorruptionGuide_Func (bool testConds, bool runActions) {
+    fixed r = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "GuldanCorruptionSearchArea", "AreaArray[0].Radius", libAffx_player);
+    string d;
+    if (r <= 0.0 || r == libAffx_GuldanCorruptionGuideRadius) {
+        return false;
+    }
+    libAffx_GuldanCorruptionGuideRadius = r;
+    d = FixedToString(2.0 * r, 3);
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,Width", libAffx_player, d);
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,Height", libAffx_player, FixedToString(6.0 + 2.0 * r, 3));
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,LaunchHeight", libAffx_player, d);
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,CenterHeight", libAffx_player, d);
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,ImpactHeight", libAffx_player, d);
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionActorRegion,Radius", libAffx_player, FixedToString(r, 3));
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionActorRegion2,Radius", libAffx_player, FixedToString(r, 3));
+    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionActorRegion3,Radius", libAffx_player, FixedToString(r, 3));
+    return true;
+}
 // Fel Lord hit on an enemy Hero: takedown window, GuldanFelfireTokenCounter, the heal, and on-hit boons
 bool libAffx_GuldanFelHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -273,6 +294,7 @@ bool libAffx_GuldanStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionDoTDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanFelEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GuldanCorruptionGuide_Func"), 1.0, c_timeGame);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GuldanSync_Func"), 1.0, c_timeGame);
     return true;
