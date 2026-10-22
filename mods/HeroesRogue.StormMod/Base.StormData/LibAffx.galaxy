@@ -4741,7 +4741,7 @@ void libAffx_TestCommandTrigger_Init () {
 // Mythic objectives: Mythic makes every enemy unit stronger, including their structures and the objectives and bosses
 // they win, while your side's stay at base strength. So your team's mercenaries, bosses, map objective units and
 // vehicles (Dragon Knight, Garden Terror, Protector) get half the round's Mythic bonus (AffixObjectiveDifficultyBehavior),
-// and objective damage to enemy structures is raised to make up for the structures' Mythic Health bonus, so it does
+// and so do the neutral ones (uncaptured camps and bosses), so they aren't paper in late rounds. Objective damage to enemy structures is raised to make up for the structures' Mythic Health bonus, so it does
 // what it would in a normal game.
 // ============================================================
 const fixed libAffx_objectiveDifficultyFraction = 0.5;
@@ -4749,6 +4749,10 @@ fixed libAffx_mythicScaledModifier; // the enemy's Mythic bonus this game, 0 unt
 
 bool libAffx_IsOrderPlayer (int player) {
     return (player >= 1 && player <= 5) || player == libAffx_teamOrder;
+}
+// Gets the half Mythic bonus: your team's objective units and neutral ones
+bool libAffx_GetsObjectiveDifficulty (int player) {
+    return libAffx_IsOrderPlayer(player) || player == libCore_gv_cOMPUTER_Hostile || player == libCore_gv_cOMPUTER_Neutral;
 }
 bool libAffx_IsObjectiveUnit (unit unitVar) {
     string unitType = UnitGetType(unitVar);
@@ -4771,7 +4775,7 @@ void libAffx_UpdateObjectiveDifficulty (unit unitVar) {
     if (unitVar == null || libAffx_mythicScaledModifier <= 0.0) {
         return;
     }
-    if (libAffx_IsOrderPlayer(UnitGetOwner(unitVar)) && libAffx_IsObjectiveUnit(unitVar)) {
+    if (libAffx_GetsObjectiveDifficulty(UnitGetOwner(unitVar)) && libAffx_IsObjectiveUnit(unitVar)) {
         if (!UnitHasBehavior2(unitVar, "AffixObjectiveDifficultyBehavior")) {
             UnitBehaviorAdd(unitVar, "AffixObjectiveDifficultyBehavior", unitVar, 1);
         }
@@ -4787,6 +4791,10 @@ void libAffx_ApplyObjectiveDifficulty () {
     libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.DamageDealtFraction[Basic]", value);
     libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.VitalMaxFractionArray[Life]", value);
     libAffx_CatalogModifyForAllPlayers("Behavior,AffixObjectiveDifficultyBehavior,Modification.VitalRegenMultiplier[Life]", value);
+    CatalogReferenceModify("Behavior,AffixObjectiveDifficultyBehavior,Modification.DamageDealtFraction[Ability]", libCore_gv_cOMPUTER_Neutral, value, c_upgradeOperationSet);
+    CatalogReferenceModify("Behavior,AffixObjectiveDifficultyBehavior,Modification.DamageDealtFraction[Basic]", libCore_gv_cOMPUTER_Neutral, value, c_upgradeOperationSet);
+    CatalogReferenceModify("Behavior,AffixObjectiveDifficultyBehavior,Modification.VitalMaxFractionArray[Life]", libCore_gv_cOMPUTER_Neutral, value, c_upgradeOperationSet);
+    CatalogReferenceModify("Behavior,AffixObjectiveDifficultyBehavior,Modification.VitalRegenMultiplier[Life]", libCore_gv_cOMPUTER_Neutral, value, c_upgradeOperationSet);
     for (;; i -= 1) {
         if (i <= 0) { break; }
         libAffx_UpdateObjectiveDifficulty(UnitGroupUnitFromEnd(unitGroup, i));
