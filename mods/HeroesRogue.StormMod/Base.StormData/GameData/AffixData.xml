@@ -18681,6 +18681,2594 @@
             </String>
         </Instances>
 
+        <Instances Id="GuldanFelLord">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanFelFlameRampantHellfire">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GuldanFelFlameFelArmor">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GuldanFelMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GuldanFelfireTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GuldanPyreTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GuldanPyreTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GuldanFelfireTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_GuldanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GuldanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanFelfireInfusion">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanFelFocus">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GuldanFelFlame,Cost.Vital[Energy] -5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanPursuitOfFlameBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanFelFlamePursuitOfFlame">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDarknessWithinBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_lifetap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanLifeTapDarknessWithin">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanTwinFlames">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanTwinFlamesMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDemonicInferno">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanFelLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanDemonicInfernoMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Add Effect,GuldanFelFlameSearch,AreaArray[0].RadiusBonus 0.22">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSoulHarvester">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanCorruptionCurseOfExhaustion">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GuldanDrainLifeHealthFunnel">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GuldanDrainMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GuldanSiphonTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GuldanHarvestTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GuldanHarvestTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GuldanSiphonTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GuldanDrainLifeCurseOfExhaustionTalentDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_GuldanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GuldanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanLifeDrinker">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GuldanDrainLifeCurseOfExhaustionTalentDamage,MultiplicativeModifierArray[GuldanDrainCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanQuickDrain">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GuldanDrainLife,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanChaoticEnergyBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanChaoticEnergy">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanHarvestLifeBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanDrainLifeHarvestLife">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanHungerForPowerBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_hungerforpower.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanLifeTapHungerforPower">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSoulHarvest">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthfunnel.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanSoulHarvester">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Behavior,GuldanDrainLifeChannel,Modification.UnifiedMoveSpeedFactor 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GuldanDrainLifeCreateHealer,MultiplicativeModifierArray[GuldanSoulHarvest].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanCorruptor">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanCorruptionRuinousAffliction">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GuldanCorruptionEchoedCorruption">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GuldanCorruptionMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GuldanRotTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GuldanAfflictionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GuldanAfflictionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GuldanRotTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionDoTDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionRuinousAfflictionDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionRuinousAfflictionThreeHitDamage,MultiplicativeModifierArray[GuldanCorruptionPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_GuldanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GuldanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSpreadingCorruption">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GuldanCorruptionDoTDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GuldanCorruptionRuinousAfflictionDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,GuldanCorruptionRuinousAfflictionThreeHitDamage,MultiplicativeModifierArray[GuldanCorruptionCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanQuickCorruption">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GuldanCorruption,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanBoundByShadowBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_felflame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GuldanFelFlameBoundByShadow">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanLingeringCorruption">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,GuldanCorruptionDoTBehavior,Duration 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,GuldanCorruptionDoTBehavior,PeriodCount 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanEchoOfCorruption">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Validator,GuldanCorruptionEchoedCorruptionMilestoneGained,Value 0">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanSoulRot">
+            <String String="Assets/Textures/storm_ui_icon_guldan_handofguldan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GuldanCorruptor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GuldanSoulRotMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 String Validator,GuldanCorruptionEchoedCorruptionComplete,Behavior GuldanSoulRotMarker">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Validator,GuldanCorruptionEchoedCorruptionComplete,Value 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,GuldanCorruptionDoTDamage,Flags[NoVitalLeechLife] 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanImprovedLifeTapBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_lifetap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanLifeTapImprovedLifeTap">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDarkBargainBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_darkbargain.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanDarkBargain">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanHealthstoneBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_healthstone.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanHealthstone">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GuldanDemonicCircleBoon">
+            <String String="Assets/Textures/storm_ui_icon_guldan_demoniccircle.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Guldan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GuldanDemonicCircle">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="SylvanasDarkRanger">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentMightOfTheBansheeQueen">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="SylvanasTalentWitheringFireBarbedShot">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 SylvanasFireMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SylvanasVolleyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 SylvanasBarrageTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SylvanasBarrageTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="SylvanasVolleyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasWitheringFireDamage,MultiplicativeModifierArray[SylvanasFirePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasWitheringFireDamageRemorseless,MultiplicativeModifierArray[SylvanasFirePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_SylvanasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SylvanasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBlackFletching">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,SylvanasWitheringFireDamage,MultiplicativeModifierArray[SylvanasFireCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,SylvanasWitheringFireDamageRemorseless,MultiplicativeModifierArray[SylvanasFireCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasQuickDraw">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,SylvanasWitheringFire,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasEvasiveFireBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentWitheringFireEvasiveFire">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWithTheWind">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Effect,SylvanasWitheringFireSearchArea,AreaArray[0].Radius 1.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,SylvanasWitheringFireSearchAreaMarker,AreaArray[0].Radius 1.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Actor,SylvanasWitheringFireRangeSplat,Scale 1.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWitheringBarrageBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentWitheringBarrage">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasEndlessVolley">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasDarkRanger">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Effect,SylvanasWitheringFireConsumeAllCharges,PeriodCount 2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasShadowQueen">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasUnrelentingTorment">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="SylvanasTalentColdEmbrace">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 SylvanasDaggerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SylvanasTormentTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 SylvanasPlagueTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SylvanasPlagueTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="SylvanasTormentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasDaggerPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasDaggerPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_SylvanasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SylvanasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasCreepingDeath">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasDaggerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasDaggerCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasSwiftDagger">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,SylvanasShadowDagger,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasLostSoulBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentLostSoul">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasUnstablePoisonBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentUnstablePoison">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasLingeringBlight">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,SylvanasShadowDaggerTargetEnemyDamage,Duration 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,SylvanasShadowDaggerDummyBuffSpreadBehavior,Duration 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasForsakenFury">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_shadowdagger.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasShadowQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerInitialDamage,MultiplicativeModifierArray[SylvanasForsakenFury].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasShadowDaggerDoTDamage,MultiplicativeModifierArray[SylvanasForsakenFury].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBanshee">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentFesteringWounds">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="SylvanasTalentWindrunnerHauntingWave">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 SylvanasWaveMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 SylvanasWailTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 SylvanasHauntingTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="SylvanasHauntingTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="SylvanasWailTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,SylvanasHauntingWaveDamage,MultiplicativeModifierArray[SylvanasWavePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_SylvanasStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_SylvanasTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBansheeWail">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,SylvanasHauntingWaveDamage,MultiplicativeModifierArray[SylvanasWaveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasQuickWave">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasOverwhelmingAfflictionBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_blackarrows.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentOverwhelmingAffliction">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWillOfTheForsakenBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_willoftheforsaken.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="SylvanasTalentWillOfTheForsaken">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasBansheesReturn">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse -3">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasWindrunnersLegacy">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_hauntingwave.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="SylvanasBanshee">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 SylvanasWindrunnersLegacyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasRemorselessBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_witheringfire.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentRemorseless">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasLifeDrainBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_blackarrows.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentLifeDrain">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="SylvanasMercenaryQueenBoon">
+            <String String="Assets/Textures/storm_ui_icon_sylvanas_possession.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Sylvanas">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="SylvanasTalentMercenaryQueen">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="OrpheaShadowDancer">
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaEnPointe">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="OrpheaBondOfAnguish">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 OrpheaWaltzMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 OrpheaPirouetteTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 OrpheaEncoreTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="OrpheaEncoreTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="OrpheaPirouetteTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_OrpheaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_OrpheaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDarkMelody">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaQuickstep">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDeterminationBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaDetermination">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaAncestralStrengthBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaAncestralStrength">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaFinalToccataBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_reset.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaFinalToccata">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDanseMacabre">
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,OrpheaShadowWaltzHeroHitModifyCooldown,Cost[0].CooldownTimeUse 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaAbyssalMaw">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaAbyssalSymbiosis">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="OrpheaRavenousHunger">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 OrpheaChompMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 OrpheaGnashTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 OrpheaFeastTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="OrpheaFeastTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="OrpheaGnashTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_OrpheaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_OrpheaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaSharpTeeth">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaHungryMaw">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,OrpheaChomp,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaBackbiterBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaBackbiter">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaInsatiableBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaInsatiable">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaEldritchConduitBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaEldritchConduit">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDevourer">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 OrpheaDevourerMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDreadbringer">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaGrowingNightmare">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="OrpheaMindDevourer">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 OrpheaDreadMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 OrpheaTerrorTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 OrpheaNightmareTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="OrpheaNightmareTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="OrpheaTerrorTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_OrpheaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_OrpheaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDeepeningDread">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaRestlessDread">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,OrpheaDread,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDreadsGrip">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,OrpheaDreadFinalSlow,Modification.UnifiedMoveSpeedFactor -0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaLurkingTerrorBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e_terror.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaLurkingTerror">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaEchoingDread">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 OrpheaEchoingDreadMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaParalyzingDread">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 OrpheaParalyzingDreadMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Set Behavior,OrpheaDreadStun,Duration 0.75">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaChaoticAssaultBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaChaoticAssault">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDeadMagicBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaDeadMagic">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaInvasiveMiasmaBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaInvasiveMiasma">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="AlarakTaldarimAscendant">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakChaosReigns">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakLethalOnslaughtDiscordStrike">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AlarakDiscordMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AlarakDiscordTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AlarakSubjugationTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AlarakSubjugationTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AlarakDiscordTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AlarakDiscordStrikeDamage,MultiplicativeModifierArray[AlarakDiscordPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_AlarakStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AlarakTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakDiscordantPower">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AlarakDiscordStrikeDamage,MultiplicativeModifierArray[AlarakDiscordCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakSwiftDiscord">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AlarakDiscordStrike,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakDissonanceBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakDissonance">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakShowOfForceBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakShowofForce">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakRiteOfRakShirBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakRiteofRakShir">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakUnrelentingDiscord">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakTaldarimAscendant">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AlarakUnrelentingDiscordMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakLightningLord">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakNegativelyCharged">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakLightningBarrage">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AlarakSurgeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AlarakOverloadTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AlarakTempestTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AlarakTempestTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AlarakOverloadTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeTargetDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeHeroDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,AlarakLightningSurgeHeroTargetDamage,MultiplicativeModifierArray[AlarakSurgePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_AlarakStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AlarakTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakChargedLightning">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AlarakLightningSurgeDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AlarakLightningSurgeTargetDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,AlarakLightningSurgeHeroDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,AlarakLightningSurgeHeroTargetDamage,MultiplicativeModifierArray[AlarakSurgeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakQuickSurge">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AlarakLightningSurge,Cost.Cooldown.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakExtendedLightningBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakExtendedLightning">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakStaticLeech">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,AlarakLightningSurgeHeroDamageCreateHealer,MultiplicativeModifierArray[AlarakStaticLeech].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakSurgeOfPower">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Abil,AlarakLightningSurge,Cost.Cooldown.TimeUse -1.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakEndlessEnergy">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lightningsurge.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakLightningLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AlarakEndlessEnergyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakHighlord">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakBladeoftheHighlord">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AlarakMockingStrikes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AlarakHighlordMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AlarakCrueltyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AlarakDominionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AlarakDominionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AlarakCrueltyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AlarakHeroWeaponDamage,MultiplicativeModifierArray[AlarakBladePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_AlarakStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AlarakTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakHighlordsEdge">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AlarakHeroWeaponDamage,MultiplicativeModifierArray[AlarakBladeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakPureMaliceBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakPureMalice">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakOverwhelmingPowerBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_discordstrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakOverwhelmingPowerDiscordStrike">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakLastLaughBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_lasttrick.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AlarakLastLaugh">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakPinnacleOfSadism">
+            <String String="Assets/Textures/storm_ui_icon_alarak_sadism.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AlarakHighlord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AlarakPinnacleOfSadismMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakTelekineticFocus">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 3 Add Abil,AlarakTelekinesis,Cost.Cooldown.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakHinderedMotionBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakHinderedMotion">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AlarakRuthlessMomentumBoon">
+            <String String="Assets/Textures/storm_ui_icon_alarak_telekinesis.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Alarak">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AlarakRuthlessMomentum">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="KelThuzadLordOfDecay">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KelThuzadThePlaguelands">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KelThuzadAcceleratedDecay">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KelThuzadDecayMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KelThuzadPestilenceTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KelThuzadPlagueTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KelThuzadPlagueTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KelThuzadPestilenceTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadDeathAndDecayDamage,MultiplicativeModifierArray[KelThuzadDecayPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadDeathAndDecayRotDamage,MultiplicativeModifierArray[KelThuzadDecayPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadDeathAndDecayShadeDamage,MultiplicativeModifierArray[KelThuzadDecayPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadDeathAndDecayShadeRotDamage,MultiplicativeModifierArray[KelThuzadDecayPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_KelThuzadStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KelThuzadTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadVirulentDecay">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadLordOfDecay">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KelThuzadDeathAndDecayDamage,MultiplicativeModifierArray[KelThuzadDecayCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KelThuzadDeathAndDecayRotDamage,MultiplicativeModifierArray[KelThuzadDecayCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,KelThuzadDeathAndDecayShadeDamage,MultiplicativeModifierArray[KelThuzadDecayCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,KelThuzadDeathAndDecayShadeRotDamage,MultiplicativeModifierArray[KelThuzadDecayCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadQuickDecay">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadLordOfDecay">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KelThuzadDeathAndDecay,Cost.Cooldown.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadArcaneEchoesBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadLordOfDecay">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadArcaneEchoes">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadTheDamnedReturnBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadLordOfDecay">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadTheDamnedReturn">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadLingeringDecay">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadLordOfDecay">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Effect,KelThuzadDeathAndDecayRotCreatePersistent,PeriodCount 4">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,KelThuzadDeathAndDecayShadeRotCreatePersistent,PeriodCount 4">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadGripOfDeath">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_deathanddecay.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadLordOfDecay">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KelThuzadGripOfDeathMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadFrostbinder">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_frostnova.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KelThuzadBlightedFrost">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KelThuzadIcyGrasp">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KelThuzadNovaMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KelThuzadRimeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KelThuzadWinterTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KelThuzadWinterTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KelThuzadRimeTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadFrostNovaDamage,MultiplicativeModifierArray[KelThuzadNovaPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadFrostNovaRootDamage,MultiplicativeModifierArray[KelThuzadNovaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadFrostNovaSlowDamage,MultiplicativeModifierArray[KelThuzadNovaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_KelThuzadStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KelThuzadTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadBitingCold">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_frostnova.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadFrostbinder">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KelThuzadFrostNovaDamage,MultiplicativeModifierArray[KelThuzadNovaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KelThuzadFrostNovaRootDamage,MultiplicativeModifierArray[KelThuzadNovaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,KelThuzadFrostNovaSlowDamage,MultiplicativeModifierArray[KelThuzadNovaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadQuickFrost">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_frostnova.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadFrostbinder">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KelThuzadFrostNova,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadHungeringColdBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_frostnova.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadFrostbinder">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadHungeringCold">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadPowerOfIcecrownBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_poweroficecrown.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadFrostbinder">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadPowerOfIcecrown">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadDeepFreeze">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_frostnova.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadFrostbinder">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,KelThuzadFrostNovaRoot,Duration 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadAbsoluteZero">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_frostnova.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadFrostbinder">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,KelThuzadFrostNovaRootSearch,AreaArray[0].Radius 3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadFrostNovaInnerDamageSearch,AreaArray[0].Radius 3">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadChainsOfTheLich">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chains.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KelThuzadBarbedChains">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="KelThuzadChainLink">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 KelThuzadChainsMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 KelThuzadShackleTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 KelThuzadBondageTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="KelThuzadBondageTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="KelThuzadShackleTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadChainsDamage,MultiplicativeModifierArray[KelThuzadChainsPower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,KelThuzadChainsLinkDamage,MultiplicativeModifierArray[KelThuzadChainsPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_KelThuzadStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_KelThuzadTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadColdIron">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chains.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadChainsOfTheLich">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,KelThuzadChainsDamage,MultiplicativeModifierArray[KelThuzadChainsCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,KelThuzadChainsLinkDamage,MultiplicativeModifierArray[KelThuzadChainsCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadQuickChains">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chains.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadChainsOfTheLich">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,KelThuzadChains,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadChainsOfIceBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chains.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadChainsOfTheLich">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadChainsOfIce">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadStripShieldsBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chains.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadChainsOfTheLich">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadStripShields">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadShiftingMaliceBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_shiftingmalice.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadChainsOfTheLich">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="KelThuzadShiftingMalice">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadLichKingsGrasp">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chains.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="KelThuzadChainsOfTheLich">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 KelThuzadLichKingsGraspMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadPhylacteryBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_phylactery.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KelThuzadPhylactery">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadArchlichArmorBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_armorofthearchlich.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KelThuzadArchlichArmor">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="KelThuzadChillingTouchBoon">
+            <String String="Assets/Textures/storm_ui_icon_kel'thuzad_chillingtouch.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="KelThuzad">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="KelThuzadChillingTouch">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

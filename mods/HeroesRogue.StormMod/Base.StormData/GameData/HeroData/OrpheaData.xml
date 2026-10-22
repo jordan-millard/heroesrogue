@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Orphea. Starters: Shadow Dancer (Shadow Waltz), Abyssal Maw (Chomp) and Dreadbringer (Dread). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Orphea.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="OrpheaWaltzMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="OrpheaChompMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="OrpheaDreadMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="OrpheaDevourerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="OrpheaEchoingDreadMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="OrpheaParalyzingDreadMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Shadow Dancer ===== -->
+  <!-- Pirouette quest (50% kept): 0.5% Shadow Waltz damage per enemy Hero hit. Encore quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 5 second cooldown each, 41-80 make the dash 2% wider each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="OrpheaPirouetteTokenCounter" parent="StormQuestToken">
+    <Face value="OrpheaPirouetteTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="OrpheaEncoreTokenCounter" parent="StormQuestToken">
+    <Face value="OrpheaEncoreTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="OrpheaPirouetteTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="OrpheaPirouetteTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="OrpheaShadowWaltzDamage">
+    <MultiplicativeModifierArray index="OrpheaWaltzPower" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaWaltzCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaWaltzHit" Accumulator="OrpheaPirouetteTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="OrpheaEnPointeDamage">
+    <MultiplicativeModifierArray index="OrpheaWaltzPower" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaWaltzCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaWaltzHit" Accumulator="OrpheaPirouetteTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="OrpheaBondOfAnguishDamage">
+    <MultiplicativeModifierArray index="OrpheaWaltzPower" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaWaltzCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaWaltzHit" Accumulator="OrpheaPirouetteTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="OrpheaWaltzHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="OrpheaPirouetteTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_orphea_q.dds" />
+  </CButton>
+  <CButton id="OrpheaEncoreTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_orphea_q.dds" />
+  </CButton>
+
+  <!-- ===== Abyssal Maw ===== -->
+  <!-- Gnash quest (50% kept): 1% Chomp damage per enemy Hero hit. Feast quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 make it bite 1% sooner each (cast time), then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="OrpheaGnashTokenCounter" parent="StormQuestToken">
+    <Face value="OrpheaGnashTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="OrpheaFeastTokenCounter" parent="StormQuestToken">
+    <Face value="OrpheaFeastTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="OrpheaGnashTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="OrpheaGnashTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="OrpheaChompDamage">
+    <MultiplicativeModifierArray index="OrpheaChompPower" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaChompCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaChompHit" Accumulator="OrpheaGnashTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="OrpheaChompLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="OrpheaChompHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="OrpheaGnashTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_orphea_w.dds" />
+  </CButton>
+  <CButton id="OrpheaFeastTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_orphea_w.dds" />
+  </CButton>
+
+  <!-- ===== Dreadbringer ===== -->
+  <!-- Terror quest (50% kept): 1% Dread damage per enemy Hero hit by the eruption. Nightmare quest: takedowns within 3 seconds of an eruption hit; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the eruption 1% larger each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="OrpheaTerrorTokenCounter" parent="StormQuestToken">
+    <Face value="OrpheaTerrorTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="OrpheaNightmareTokenCounter" parent="StormQuestToken">
+    <Face value="OrpheaNightmareTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="OrpheaTerrorTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="OrpheaTerrorTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="OrpheaDreadLineDamage">
+    <MultiplicativeModifierArray index="OrpheaDreadPower" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadHit" Accumulator="OrpheaTerrorTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="OrpheaDreadLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="OrpheaDreadFinalDamage">
+    <MultiplicativeModifierArray index="OrpheaDreadPower" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadHit" Accumulator="OrpheaTerrorTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="OrpheaDreadLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="OrpheaDreadHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="OrpheaTerrorTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_orphea_e.dds" />
+  </CButton>
+  <CButton id="OrpheaNightmareTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_orphea_e.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="OrpheaEternalFeastDamage">
+    <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaChompLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="OrpheaEternalFeastInnerDamage">
+    <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaChompLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="OrpheaCrushingJawsDamage">
+    <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaChompLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="OrpheaDreadLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- Devourer (Legendary, Abyssal Maw): Chomp hits on enemy Heroes heal Orphea for 8% of her maximum Health -->
+  <CEffectModifyUnit id="OrpheaDevourerHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.08" />
+    </VitalArray>
+  </CEffectModifyUnit>
+</Catalog>

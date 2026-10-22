@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Gul'dan. Starters: Fel Lord (Fel Flame), Soul Harvester (Drain Life) and Corruptor (Corruption). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Guldan.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="GuldanFelMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GuldanDrainMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GuldanCorruptionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GuldanTwinFlamesMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GuldanDemonicInfernoMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GuldanSoulRotMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Fel Lord ===== -->
+  <!-- Felfire quest (50% kept): 0.25% Fel Flame damage per enemy Hero hit. Pyre quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 75 Mana cost each, 41-80 make the flames 1% wider each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="GuldanFelfireTokenCounter" parent="StormQuestToken">
+    <Face value="GuldanFelfireTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GuldanPyreTokenCounter" parent="StormQuestToken">
+    <Face value="GuldanPyreTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GuldanFelfireTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GuldanFelfireTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GuldanFelFlameDamage">
+    <MultiplicativeModifierArray index="GuldanFelPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanFelCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanFelHit" Accumulator="GuldanFelfireTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GuldanFelLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="GuldanFelHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.005" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="GuldanFelfireTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_guldan_felflame.dds" />
+  </CButton>
+  <CButton id="GuldanPyreTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_guldan_felflame.dds" />
+  </CButton>
+
+  <!-- ===== Soul Harvester ===== -->
+  <!-- Siphon quest (50% kept): 0.1% Drain Life damage per tick on an enemy Hero. Harvest quest: takedowns within 3 seconds of a tick; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 add 2% Drain Life healing each (script), then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="GuldanSiphonTokenCounter" parent="StormQuestToken">
+    <Face value="GuldanSiphonTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GuldanHarvestTokenCounter" parent="StormQuestToken">
+    <Face value="GuldanHarvestTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GuldanSiphonTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GuldanSiphonTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GuldanDrainLifeDamage">
+    <MultiplicativeModifierArray index="GuldanDrainPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanDrainCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanDrainHit" Accumulator="GuldanSiphonTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GuldanDrainLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GuldanDrainLifeCurseOfExhaustionTalentDamage">
+    <MultiplicativeModifierArray index="GuldanDrainPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanDrainCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanDrainHit" Accumulator="GuldanSiphonTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GuldanDrainLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="GuldanSiphonTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_guldan_healthfunnel.dds" />
+  </CButton>
+  <CButton id="GuldanHarvestTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_guldan_healthfunnel.dds" />
+  </CButton>
+
+  <!-- ===== Corruptor ===== -->
+  <!-- Rot quest (50% kept): 0.5% Corruption damage per strike on an enemy Hero. Affliction quest: takedowns within 6 seconds of a strike (the damage over time lasts 6); stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the strikes 1% larger each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="GuldanRotTokenCounter" parent="StormQuestToken">
+    <Face value="GuldanRotTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GuldanAfflictionTokenCounter" parent="StormQuestToken">
+    <Face value="GuldanAfflictionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GuldanRotTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GuldanRotTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GuldanCorruptionDoTDamage">
+    <MultiplicativeModifierArray index="GuldanCorruptionPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionHit" Accumulator="GuldanRotTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GuldanCorruptionLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GuldanCorruptionRuinousAfflictionDamage">
+    <MultiplicativeModifierArray index="GuldanCorruptionPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionHit" Accumulator="GuldanRotTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GuldanCorruptionLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GuldanCorruptionRuinousAfflictionThreeHitDamage">
+    <MultiplicativeModifierArray index="GuldanCorruptionPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionHit" Accumulator="GuldanRotTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GuldanCorruptionLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="GuldanCorruptionHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="GuldanRotTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_guldan_handofguldan.dds" />
+  </CButton>
+  <CButton id="GuldanAfflictionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_guldan_handofguldan.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="GuldanHorrifyDamage">
+    <MultiplicativeModifierArray index="GuldanFelLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanDrainLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GuldanRainOfDestructionDamage">
+    <MultiplicativeModifierArray index="GuldanFelLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanDrainLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanCorruptionLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- Drain Life healing: Harvest quest stage 2 (script) and Soul Harvest (Legendary) -->
+  <CEffectCreateHealer id="GuldanDrainLifeCreateHealer">
+    <MultiplicativeModifierArray index="GuldanHarvestStage2" Modifier="0" />
+    <MultiplicativeModifierArray index="GuldanSoulHarvest" Modifier="0" />
+  </CEffectCreateHealer>
+  <!-- Demonic Inferno (Legendary, Fel Lord): Fel Flame hits on enemy Heroes restore 10 Mana -->
+  <CEffectModifyUnit id="GuldanDemonicInfernoMana">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Energy">
+      <Change value="10" />
+    </VitalArray>
+  </CEffectModifyUnit>
+</Catalog>

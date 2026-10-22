@@ -1,0 +1,249 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Orphea. Each starter: hits on enemy Heroes open a takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token: stacks 1-40 and 41-80 each improve the ability in two ways, then
+// 3% damage per stack, Heroics too.
+// Echoing Dread (Epic): Dread erupts again at the same spot 0.75 seconds later.
+// ============================================================
+
+const fixed libAffx_OrpheaTakedownWindow = 3.0;
+const fixed libAffx_OrpheaPastCapDamagePerStack = 0.01;
+bool libAffx_OrpheaStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_OrpheaWaltzTime; // per enemy player, last Shadow Dancer hit
+int libAffx_OrpheaWaltzAdded; // Shadow Dancer: takedown stacks already applied to the catalog this game
+int libAffx_OrpheaWaltzAdded2; // Shadow Dancer: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_OrpheaChompTime; // per enemy player, last Abyssal Maw hit
+int libAffx_OrpheaChompAdded; // Abyssal Maw: takedown stacks already applied to the catalog this game
+int libAffx_OrpheaChompAdded2; // Abyssal Maw: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_OrpheaDreadTime; // per enemy player, last Dreadbringer hit
+int libAffx_OrpheaDreadAdded; // Dreadbringer: takedown stacks already applied to the catalog this game
+int libAffx_OrpheaDreadAdded2; // Dreadbringer: takedown quest stage 2 stacks already applied to the catalog this game
+
+unit libAffx_OrpheaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_OrpheaIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_OrpheaStacks(string tokenId) {
+    unit hero = libAffx_OrpheaHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_OrpheaQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_OrpheaInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_OrpheaTakedownWindow;
+}
+// OrpheaEncoreTokenCounter: stacks 1-40: 1% of the 5 second cooldown each; 41-80: 2% of the 1.25 dash width each; then 3% damage each, Heroics too
+void libAffx_OrpheaSyncWaltz () {
+    unit hero = libAffx_OrpheaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "OrpheaWaltzMarker")) {
+        return;
+    }
+    stacks = libAffx_OrpheaStacks("OrpheaEncoreTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_OrpheaWaltzAdded) {
+        libAffx_CatalogReferenceModify("Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded) * -0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_OrpheaWaltzAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 2% of the 1.25 dash width each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_OrpheaWaltzAdded2) {
+        libAffx_CatalogReferenceModify("Effect,OrpheaShadowWaltzSearchArea,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_OrpheaWaltzAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaShadowWaltzDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEnPointeDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaBondOfAnguishDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+}
+// OrpheaFeastTokenCounter: stacks 1-40: 1% of the 10 second cooldown each; 41-80: 1% of the 0.625 second cast time each; then 3% damage each, Heroics too
+void libAffx_OrpheaSyncChomp () {
+    unit hero = libAffx_OrpheaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "OrpheaChompMarker")) {
+        return;
+    }
+    stacks = libAffx_OrpheaStacks("OrpheaFeastTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_OrpheaChompAdded) {
+        libAffx_CatalogReferenceModify("Abil,OrpheaChomp,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaChompAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_OrpheaChompAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 0.625 second cast time each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_OrpheaChompAdded2) {
+        libAffx_CatalogReferenceModify("Abil,OrpheaChomp,CastIntroTime", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaChompAdded2) * -0.00625, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_OrpheaChompAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaChompDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
+}
+// OrpheaNightmareTokenCounter: stacks 1-40: 1% of the 14 second cooldown each; 41-80: 1% of the 2.5 eruption radius each; then 3% damage each, Heroics too
+void libAffx_OrpheaSyncDread () {
+    unit hero = libAffx_OrpheaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "OrpheaDreadMarker")) {
+        return;
+    }
+    stacks = libAffx_OrpheaStacks("OrpheaNightmareTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_OrpheaDreadAdded) {
+        libAffx_CatalogReferenceModify("Abil,OrpheaDread,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaDreadAdded) * -0.14, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_OrpheaDreadAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 2.5 eruption radius each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_OrpheaDreadAdded2) {
+        libAffx_CatalogReferenceModify("Effect,OrpheaDreadFinalSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaDreadAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_OrpheaDreadAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaDreadLineDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaDreadFinalDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_OrpheaSync_Func (bool testConds, bool runActions) {
+    libAffx_OrpheaSyncWaltz();
+    libAffx_OrpheaSyncChomp();
+    libAffx_OrpheaSyncDread();
+    return true;
+}
+fixed libAffx_OrpheaOrpheaDreadFinalSearchAreaLastEcho = -1.0;
+// OrpheaEchoingDreadMarker: OrpheaDreadFinalSearchArea is cast again toward the same point 0.75 seconds later. The echo is skipped by its own event.
+bool libAffx_OrpheaOrpheaDreadFinalSearchAreaEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_OrpheaHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "OrpheaEchoingDreadMarker") || GameGetMissionTime() == libAffx_OrpheaOrpheaDreadFinalSearchAreaLastEcho) {
+        return false;
+    }
+    Wait(0.75, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_OrpheaOrpheaDreadFinalSearchAreaLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "OrpheaDreadFinalSearchArea", target);
+    return true;
+}
+// Shadow Dancer hit on an enemy Hero: takedown window, OrpheaPirouetteTokenCounter, the heal, and on-hit boons
+bool libAffx_OrpheaWaltzHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_OrpheaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_OrpheaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "OrpheaWaltzMarker")) {
+        return false;
+    }
+    libAffx_OrpheaWaltzTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "OrpheaPirouetteTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "OrpheaWaltzHeal", hero);
+    }
+    return true;
+}
+// Abyssal Maw hit on an enemy Hero: takedown window, OrpheaGnashTokenCounter, the heal, and on-hit boons
+bool libAffx_OrpheaChompHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_OrpheaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_OrpheaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "OrpheaChompMarker")) {
+        return false;
+    }
+    libAffx_OrpheaChompTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "OrpheaGnashTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "OrpheaChompHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "OrpheaDevourerMarker")) {
+        UnitCreateEffectUnit(hero, "OrpheaDevourerHeal", hero);
+    }
+    return true;
+}
+// Dreadbringer hit on an enemy Hero: takedown window, OrpheaTerrorTokenCounter, the heal, and on-hit boons
+bool libAffx_OrpheaDreadHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_OrpheaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_OrpheaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "OrpheaDreadMarker")) {
+        return false;
+    }
+    libAffx_OrpheaDreadTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "OrpheaTerrorTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "OrpheaDreadHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "OrpheaParalyzingDreadMarker")) {
+        UnitCreateEffectUnit(hero, "OrpheaDreadStunApply", victim);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_OrpheaTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_OrpheaHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "OrpheaWaltzMarker") && libAffx_OrpheaInWindow(libAffx_OrpheaWaltzTime[killedPlayer], now)) {
+        libAffx_OrpheaWaltzTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "OrpheaEncoreTokenCounter", hero);
+        libAffx_OrpheaSyncWaltz();
+        libAffx_OrpheaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "OrpheaChompMarker") && libAffx_OrpheaInWindow(libAffx_OrpheaChompTime[killedPlayer], now)) {
+        libAffx_OrpheaChompTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "OrpheaFeastTokenCounter", hero);
+        libAffx_OrpheaSyncChomp();
+        libAffx_OrpheaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "OrpheaDreadMarker") && libAffx_OrpheaInWindow(libAffx_OrpheaDreadTime[killedPlayer], now)) {
+        libAffx_OrpheaDreadTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "OrpheaNightmareTokenCounter", hero);
+        libAffx_OrpheaSyncDread();
+        libAffx_OrpheaQuestDing();
+    }
+    return true;
+}
+bool libAffx_OrpheaStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_OrpheaStarted) {
+        return true;
+    }
+    libAffx_OrpheaStarted = true;
+    trig = TriggerCreate("libAffx_OrpheaWaltzHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaShadowWaltzDamage");
+    trig = TriggerCreate("libAffx_OrpheaChompHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaChompDamage");
+    trig = TriggerCreate("libAffx_OrpheaDreadHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaDreadFinalDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaOrpheaDreadFinalSearchAreaEcho_Func"), libAffx_player, "OrpheaDreadFinalSearchArea");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_OrpheaSync_Func"), 1.0, c_timeGame);
+    return true;
+}

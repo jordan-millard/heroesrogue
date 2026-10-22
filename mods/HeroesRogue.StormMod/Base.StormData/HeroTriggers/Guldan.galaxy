@@ -1,0 +1,243 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Gul'dan. Each starter: hits on enemy Heroes open a takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token: stacks 1-40 and 41-80 each improve the ability in two ways, then
+// 3% damage per stack, Heroics too.
+// Twin Flames (Epic): each Fel Flame is cast again 0.5 seconds later.
+// ============================================================
+
+const fixed libAffx_GuldanTakedownWindow = 3.0;
+const fixed libAffx_GuldanPastCapDamagePerStack = 0.01;
+bool libAffx_GuldanStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanFelTime; // per enemy player, last Fel Lord hit
+int libAffx_GuldanFelAdded; // Fel Lord: takedown stacks already applied to the catalog this game
+int libAffx_GuldanFelAdded2; // Fel Lord: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanDrainTime; // per enemy player, last Soul Harvester hit
+int libAffx_GuldanDrainAdded; // Soul Harvester: takedown stacks already applied to the catalog this game
+int libAffx_GuldanDrainAdded2; // Soul Harvester: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanCorruptionTime; // per enemy player, last Corruptor hit
+int libAffx_GuldanCorruptionAdded; // Corruptor: takedown stacks already applied to the catalog this game
+int libAffx_GuldanCorruptionAdded2; // Corruptor: takedown quest stage 2 stacks already applied to the catalog this game
+
+unit libAffx_GuldanHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_GuldanIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_GuldanStacks(string tokenId) {
+    unit hero = libAffx_GuldanHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_GuldanQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_GuldanInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_GuldanTakedownWindow;
+}
+// GuldanPyreTokenCounter: stacks 1-40: 1% of the 75 Mana cost each; 41-80: 1% wider flames each; then 3% damage each, Heroics too
+void libAffx_GuldanSyncFel () {
+    unit hero = libAffx_GuldanHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GuldanFelMarker")) {
+        return;
+    }
+    stacks = libAffx_GuldanStacks("GuldanPyreTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_GuldanFelAdded) {
+        libAffx_CatalogReferenceModify("Abil,GuldanFelFlame,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GuldanFelAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% wider flames each (Pursuit of Flame adds 0.15 for 33%)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_GuldanFelAdded2) {
+        libAffx_CatalogReferenceModify("Effect,GuldanFelFlameSearch,AreaArray[0].RadiusBonus", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded2) * 0.0045, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GuldanFelAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanFelFlameDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanHorrifyDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanRainOfDestructionDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
+}
+// GuldanHarvestTokenCounter: stacks 1-40: 1% of the 10 second cooldown each; 41-80: 2% more Drain Life healing each; then 3% damage each, Heroics too
+void libAffx_GuldanSyncDrain () {
+    unit hero = libAffx_GuldanHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GuldanDrainMarker")) {
+        return;
+    }
+    stacks = libAffx_GuldanStacks("GuldanHarvestTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_GuldanDrainAdded) {
+        libAffx_CatalogReferenceModify("Abil,GuldanDrainLife,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanDrainAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GuldanDrainAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 2% more Drain Life healing each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_GuldanDrainAdded2) {
+        libAffx_CatalogReferenceModify("Effect,GuldanDrainLifeCreateHealer,MultiplicativeModifierArray[GuldanHarvestStage2].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanDrainAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GuldanDrainAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanDrainLifeDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanDrainLifeCurseOfExhaustionTalentDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanHorrifyDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanRainOfDestructionDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
+}
+// GuldanAfflictionTokenCounter: stacks 1-40: 1% of the 14 second cooldown each; 41-80: 1% larger strikes each; then 3% damage each, Heroics too
+void libAffx_GuldanSyncCorruption () {
+    unit hero = libAffx_GuldanHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GuldanCorruptionMarker")) {
+        return;
+    }
+    stacks = libAffx_GuldanStacks("GuldanAfflictionTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_GuldanCorruptionAdded) {
+        libAffx_CatalogReferenceModify("Abil,GuldanCorruption,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanCorruptionAdded) * -0.14, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GuldanCorruptionAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 1.5 strike radius each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_GuldanCorruptionAdded2) {
+        libAffx_CatalogReferenceModify("Effect,GuldanCorruptionSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanCorruptionAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GuldanCorruptionThirdSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanCorruptionAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GuldanCorruptionEchoedCorruptionSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanCorruptionAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GuldanCorruptionAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanCorruptionDoTDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanCorruptionRuinousAfflictionDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanCorruptionRuinousAfflictionThreeHitDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanHorrifyDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanRainOfDestructionDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_GuldanSync_Func (bool testConds, bool runActions) {
+    libAffx_GuldanSyncFel();
+    libAffx_GuldanSyncDrain();
+    libAffx_GuldanSyncCorruption();
+    return true;
+}
+fixed libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho = -1.0;
+// GuldanTwinFlamesMarker: GuldanFelFlameInitialPersistent is cast again toward the same point 0.5 seconds later. The echo is skipped by its own event.
+bool libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GuldanHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "GuldanTwinFlamesMarker") || GameGetMissionTime() == libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho) {
+        return false;
+    }
+    Wait(0.5, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
+    return true;
+}
+// Fel Lord hit on an enemy Hero: takedown window, GuldanFelfireTokenCounter, the heal, and on-hit boons
+bool libAffx_GuldanFelHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GuldanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GuldanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GuldanFelMarker")) {
+        return false;
+    }
+    libAffx_GuldanFelTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "GuldanFelfireTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "GuldanFelHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "GuldanDemonicInfernoMarker")) {
+        UnitCreateEffectUnit(hero, "GuldanDemonicInfernoMana", hero);
+    }
+    return true;
+}
+// Soul Harvester hit on an enemy Hero: takedown window, GuldanSiphonTokenCounter, the heal, and on-hit boons
+bool libAffx_GuldanDrainHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GuldanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GuldanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GuldanDrainMarker")) {
+        return false;
+    }
+    libAffx_GuldanDrainTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "GuldanSiphonTokenCounter", hero);
+    return true;
+}
+// Corruptor hit on an enemy Hero: takedown window, GuldanRotTokenCounter, the heal, and on-hit boons
+bool libAffx_GuldanCorruptionHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GuldanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GuldanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GuldanCorruptionMarker")) {
+        return false;
+    }
+    libAffx_GuldanCorruptionTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "GuldanRotTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "GuldanCorruptionHeal", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_GuldanTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_GuldanHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "GuldanFelMarker") && libAffx_GuldanInWindow(libAffx_GuldanFelTime[killedPlayer], now)) {
+        libAffx_GuldanFelTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GuldanPyreTokenCounter", hero);
+        libAffx_GuldanSyncFel();
+        libAffx_GuldanQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "GuldanDrainMarker") && libAffx_GuldanInWindow(libAffx_GuldanDrainTime[killedPlayer], now)) {
+        libAffx_GuldanDrainTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GuldanHarvestTokenCounter", hero);
+        libAffx_GuldanSyncDrain();
+        libAffx_GuldanQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "GuldanCorruptionMarker") && libAffx_GuldanCorruptionTime[killedPlayer] > 0.0 && now - libAffx_GuldanCorruptionTime[killedPlayer] <= 6) {
+        libAffx_GuldanCorruptionTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GuldanAfflictionTokenCounter", hero);
+        libAffx_GuldanSyncCorruption();
+        libAffx_GuldanQuestDing();
+    }
+    return true;
+}
+bool libAffx_GuldanStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_GuldanStarted) {
+        return true;
+    }
+    libAffx_GuldanStarted = true;
+    trig = TriggerCreate("libAffx_GuldanFelHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanFelFlameDamage");
+    trig = TriggerCreate("libAffx_GuldanDrainHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanDrainLifeDamage");
+    trig = TriggerCreate("libAffx_GuldanCorruptionHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionThreeHitDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GuldanSync_Func"), 1.0, c_timeGame);
+    return true;
+}

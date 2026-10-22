@@ -1,0 +1,231 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Sylvanas. Each starter: hits on enemy Heroes open a takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token: stacks 1-40 and 41-80 each improve the ability in two ways, then
+// 3% damage per stack, Heroics too.
+// ============================================================
+
+const fixed libAffx_SylvanasTakedownWindow = 3.0;
+const fixed libAffx_SylvanasPastCapDamagePerStack = 0.01;
+bool libAffx_SylvanasStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_SylvanasFireTime; // per enemy player, last Dark Ranger hit
+int libAffx_SylvanasFireAdded; // Dark Ranger: takedown stacks already applied to the catalog this game
+int libAffx_SylvanasFireAdded2; // Dark Ranger: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_SylvanasDaggerTime; // per enemy player, last Shadow Queen hit
+int libAffx_SylvanasDaggerAdded; // Shadow Queen: takedown stacks already applied to the catalog this game
+int libAffx_SylvanasDaggerAdded2; // Shadow Queen: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_SylvanasWaveTime; // per enemy player, last Banshee hit
+int libAffx_SylvanasWaveAdded; // Banshee: takedown stacks already applied to the catalog this game
+int libAffx_SylvanasWaveAdded2; // Banshee: takedown quest stage 2 stacks already applied to the catalog this game
+
+unit libAffx_SylvanasHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_SylvanasIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_SylvanasStacks(string tokenId) {
+    unit hero = libAffx_SylvanasHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_SylvanasQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_SylvanasInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_SylvanasTakedownWindow;
+}
+// SylvanasBarrageTokenCounter: stacks 1-40: 1% of the 8 second cooldown each; 41-80: 1% of the 8 range each; then 3% damage each, Heroics too
+void libAffx_SylvanasSyncFire () {
+    unit hero = libAffx_SylvanasHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "SylvanasFireMarker")) {
+        return;
+    }
+    stacks = libAffx_SylvanasStacks("SylvanasBarrageTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_SylvanasFireAdded) {
+        libAffx_CatalogReferenceModify("Abil,SylvanasWitheringFire,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasFireAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_SylvanasFireAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.08 Withering Fire range each (as With the Wind)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_SylvanasFireAdded2) {
+        libAffx_CatalogReferenceModify("Effect,SylvanasWitheringFireSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasFireAdded2) * 0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,SylvanasWitheringFireSearchAreaMarker,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasFireAdded2) * 0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,SylvanasWitheringFireRangeSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasFireAdded2) * 0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_SylvanasFireAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWitheringFireDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWitheringFireDamageRemorseless", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDeafeningBlastDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowActivateDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
+}
+// SylvanasPlagueTokenCounter: stacks 1-40: 1% of the 11 second cooldown each; 41-80: 1% longer damage over time each; then 3% damage each, Heroics too
+void libAffx_SylvanasSyncDagger () {
+    unit hero = libAffx_SylvanasHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "SylvanasDaggerMarker")) {
+        return;
+    }
+    stacks = libAffx_SylvanasStacks("SylvanasPlagueTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_SylvanasDaggerAdded) {
+        libAffx_CatalogReferenceModify("Abil,SylvanasShadowDagger,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasDaggerAdded) * -0.11, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_SylvanasDaggerAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 2.5 second damage over time each (and its spread window, as Unrelenting Torment)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_SylvanasDaggerAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,SylvanasShadowDaggerTargetEnemyDamage,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasDaggerAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,SylvanasShadowDaggerDummyBuffSpreadBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasDaggerAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_SylvanasDaggerAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasShadowDaggerInitialDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasShadowDaggerDoTDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDeafeningBlastDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowActivateDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
+}
+// SylvanasHauntingTokenCounter: stacks 1-40: 1% of the 11 second cooldown each; 41-80: 1% of the 75 Mana cost each; then 3% damage each, Heroics too
+void libAffx_SylvanasSyncWave () {
+    unit hero = libAffx_SylvanasHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "SylvanasWaveMarker")) {
+        return;
+    }
+    stacks = libAffx_SylvanasStacks("SylvanasHauntingTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_SylvanasWaveAdded) {
+        libAffx_CatalogReferenceModify("Abil,SylvanasHauntingWave,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasWaveAdded) * -0.11, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_SylvanasWaveAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 75 Mana cost each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_SylvanasWaveAdded2) {
+        libAffx_CatalogReferenceModify("Abil,SylvanasHauntingWave,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasWaveAdded2) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_SylvanasWaveAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasHauntingWaveDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDeafeningBlastDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowActivateDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_SylvanasSync_Func (bool testConds, bool runActions) {
+    libAffx_SylvanasSyncFire();
+    libAffx_SylvanasSyncDagger();
+    libAffx_SylvanasSyncWave();
+    return true;
+}
+// Dark Ranger hit on an enemy Hero: takedown window, SylvanasVolleyTokenCounter, the heal, and on-hit boons
+bool libAffx_SylvanasFireHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_SylvanasHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_SylvanasIsEnemyHero(victim) || !UnitHasBehavior2(hero, "SylvanasFireMarker")) {
+        return false;
+    }
+    libAffx_SylvanasFireTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "SylvanasVolleyTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "SylvanasFireHeal", hero);
+    }
+    return true;
+}
+// Shadow Queen hit on an enemy Hero: takedown window, SylvanasTormentTokenCounter, the heal, and on-hit boons
+bool libAffx_SylvanasDaggerHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_SylvanasHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_SylvanasIsEnemyHero(victim) || !UnitHasBehavior2(hero, "SylvanasDaggerMarker")) {
+        return false;
+    }
+    libAffx_SylvanasDaggerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "SylvanasTormentTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "SylvanasDaggerHeal", hero);
+    }
+    return true;
+}
+// Banshee hit on an enemy Hero: takedown window, SylvanasWailTokenCounter, the heal, and on-hit boons
+bool libAffx_SylvanasWaveHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_SylvanasHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_SylvanasIsEnemyHero(victim) || !UnitHasBehavior2(hero, "SylvanasWaveMarker")) {
+        return false;
+    }
+    libAffx_SylvanasWaveTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "SylvanasWailTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "SylvanasWaveHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "SylvanasWindrunnersLegacyMarker")) {
+        UnitCreateEffectUnit(hero, "SylvanasWindrunnersLegacyResetCooldown", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_SylvanasTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_SylvanasHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "SylvanasFireMarker") && libAffx_SylvanasInWindow(libAffx_SylvanasFireTime[killedPlayer], now)) {
+        libAffx_SylvanasFireTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "SylvanasBarrageTokenCounter", hero);
+        libAffx_SylvanasSyncFire();
+        libAffx_SylvanasQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "SylvanasDaggerMarker") && libAffx_SylvanasDaggerTime[killedPlayer] > 0.0 && now - libAffx_SylvanasDaggerTime[killedPlayer] <= 4) {
+        libAffx_SylvanasDaggerTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "SylvanasPlagueTokenCounter", hero);
+        libAffx_SylvanasSyncDagger();
+        libAffx_SylvanasQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "SylvanasWaveMarker") && libAffx_SylvanasInWindow(libAffx_SylvanasWaveTime[killedPlayer], now)) {
+        libAffx_SylvanasWaveTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "SylvanasHauntingTokenCounter", hero);
+        libAffx_SylvanasSyncWave();
+        libAffx_SylvanasQuestDing();
+    }
+    return true;
+}
+bool libAffx_SylvanasStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_SylvanasStarted) {
+        return true;
+    }
+    libAffx_SylvanasStarted = true;
+    trig = TriggerCreate("libAffx_SylvanasFireHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "SylvanasWitheringFireDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "SylvanasWitheringFireDamageRemorseless");
+    trig = TriggerCreate("libAffx_SylvanasDaggerHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "SylvanasShadowDaggerInitialDamage");
+    trig = TriggerCreate("libAffx_SylvanasWaveHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "SylvanasHauntingWaveDamage");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_SylvanasSync_Func"), 1.0, c_timeGame);
+    return true;
+}

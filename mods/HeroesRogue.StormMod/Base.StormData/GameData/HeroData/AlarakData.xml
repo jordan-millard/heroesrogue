@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Alarak. Starters: Tal'darim Ascendant (Discord Strike), Lightning Lord (Lightning Surge) and Highlord (Basic Attacks). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Alarak.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="AlarakDiscordMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AlarakSurgeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AlarakHighlordMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AlarakUnrelentingDiscordMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AlarakEndlessEnergyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AlarakPinnacleOfSadismMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Tal'darim Ascendant ===== -->
+  <!-- Discord quest (50% kept): 0.5% Discord Strike damage per enemy Hero hit. Subjugation quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 8 second cooldown each, 41-80 make its Silence 1% longer each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="AlarakDiscordTokenCounter" parent="StormQuestToken">
+    <Face value="AlarakDiscordTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AlarakSubjugationTokenCounter" parent="StormQuestToken">
+    <Face value="AlarakSubjugationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AlarakDiscordTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AlarakDiscordTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AlarakDiscordStrikeDamage">
+    <MultiplicativeModifierArray index="AlarakDiscordPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakDiscordCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakDiscordHit" Accumulator="AlarakDiscordTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AlarakDiscordLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="AlarakDiscordHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="AlarakDiscordTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_alarak_discordstrike.dds" />
+  </CButton>
+  <CButton id="AlarakSubjugationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_alarak_discordstrike.dds" />
+  </CButton>
+
+  <!-- ===== Lightning Lord ===== -->
+  <!-- Overload quest (50% kept): 0.25% Lightning Surge damage per enemy Hero hit. Tempest quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 6 second cooldown each, 41-80 add 1% range each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="AlarakOverloadTokenCounter" parent="StormQuestToken">
+    <Face value="AlarakOverloadTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AlarakTempestTokenCounter" parent="StormQuestToken">
+    <Face value="AlarakTempestTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AlarakOverloadTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AlarakOverloadTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AlarakLightningSurgeDamage">
+    <MultiplicativeModifierArray index="AlarakSurgePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeHit" Accumulator="AlarakOverloadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AlarakLightningSurgeTargetDamage">
+    <MultiplicativeModifierArray index="AlarakSurgePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeHit" Accumulator="AlarakOverloadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AlarakLightningSurgeHeroDamage">
+    <MultiplicativeModifierArray index="AlarakSurgePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeHit" Accumulator="AlarakOverloadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AlarakLightningSurgeHeroTargetDamage">
+    <MultiplicativeModifierArray index="AlarakSurgePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeHit" Accumulator="AlarakOverloadTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="AlarakOverloadTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_alarak_lightningsurge.dds" />
+  </CButton>
+  <CButton id="AlarakTempestTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_alarak_lightningsurge.dds" />
+  </CButton>
+
+  <!-- ===== Highlord ===== -->
+  <!-- Cruelty quest (50% kept): 0.2% Basic Attack damage per Basic Attack on an enemy Hero. Dominion quest: takedowns within 3 seconds of an attack; stacks 1-40 add 1% Sadism each, 41-80 add 1% Attack Speed each (script), then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="AlarakCrueltyTokenCounter" parent="StormQuestToken">
+    <Face value="AlarakCrueltyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AlarakDominionTokenCounter" parent="StormQuestToken">
+    <Face value="AlarakDominionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AlarakCrueltyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AlarakCrueltyTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AlarakHeroWeaponDamage">
+    <MultiplicativeModifierArray index="AlarakBladePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakBladeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakBladeHit" Accumulator="AlarakCrueltyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AlarakBladeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="AlarakBladeHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.005" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="AlarakCrueltyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_alarak_sadism.dds" />
+  </CButton>
+  <CButton id="AlarakDominionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_alarak_sadism.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="AlarakDeadlyChargeDamage">
+    <MultiplicativeModifierArray index="AlarakDiscordLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakBladeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AlarakCounterStrikeDamage">
+    <MultiplicativeModifierArray index="AlarakDiscordLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AlarakBladeLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- Unrelenting Discord (Legendary, Tal'darim Ascendant): Discord Strike hits on Heroes take 4 seconds off its cooldown -->
+  <CEffectModifyUnit id="AlarakUnrelentingDiscordCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="AlarakDiscordStrike,Execute" CooldownOperation="Add" CooldownTimeUse="-4" ChargeTimeUse="-4" />
+  </CEffectModifyUnit>
+  <!-- Endless Energy (Legendary, Lightning Lord): Lightning Surge hits on Heroes take 1.5 seconds off its cooldown -->
+  <CEffectModifyUnit id="AlarakEndlessEnergyCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="AlarakLightningSurge,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" ChargeTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <!-- Static Leech (Rare, Lightning Lord): Lightning Surge heals 50% more -->
+  <CEffectCreateHealer id="AlarakLightningSurgeHeroDamageCreateHealer">
+    <MultiplicativeModifierArray index="AlarakStaticLeech" Modifier="0" />
+  </CEffectCreateHealer>
+  <!-- Highlord, Dominion quest stage 2: Attack Speed (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="AlarakHighlordFrenzy" parent="CarryBehaviorParent">
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+</Catalog>

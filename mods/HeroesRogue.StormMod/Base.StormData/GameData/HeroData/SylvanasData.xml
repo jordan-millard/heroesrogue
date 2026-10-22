@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Sylvanas. Starters: Dark Ranger (Withering Fire), Shadow Queen (Shadow Dagger) and Banshee (Haunting Wave). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Sylvanas.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="SylvanasFireMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="SylvanasDaggerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="SylvanasWaveMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="SylvanasWindrunnersLegacyMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Dark Ranger ===== -->
+  <!-- Volley quest (50% kept): 0.1% Withering Fire damage per shot on an enemy Hero. Barrage quest: takedowns within 3 seconds of a shot; stacks 1-40 cut 1% of the 8 second cooldown each, 41-80 add 1% range each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="SylvanasVolleyTokenCounter" parent="StormQuestToken">
+    <Face value="SylvanasVolleyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="SylvanasBarrageTokenCounter" parent="StormQuestToken">
+    <Face value="SylvanasBarrageTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="SylvanasVolleyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="SylvanasVolleyTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="SylvanasWitheringFireDamage">
+    <MultiplicativeModifierArray index="SylvanasFirePower" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasFireCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasFireHit" Accumulator="SylvanasVolleyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="SylvanasFireLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="SylvanasWitheringFireDamageRemorseless">
+    <MultiplicativeModifierArray index="SylvanasFirePower" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasFireCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasFireHit" Accumulator="SylvanasVolleyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="SylvanasFireLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="SylvanasFireHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.0025" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="SylvanasVolleyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sylvanas_witheringfire.dds" />
+  </CButton>
+  <CButton id="SylvanasBarrageTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sylvanas_witheringfire.dds" />
+  </CButton>
+
+  <!-- ===== Shadow Queen ===== -->
+  <!-- Torment quest (50% kept): 0.5% Shadow Dagger damage per enemy Hero afflicted. Plague quest: takedowns within 4 seconds of a hit (the damage over time lasts 2.5); stacks 1-40 cut 1% of the 11 second cooldown each, 41-80 make it last 1% longer each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="SylvanasTormentTokenCounter" parent="StormQuestToken">
+    <Face value="SylvanasTormentTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="SylvanasPlagueTokenCounter" parent="StormQuestToken">
+    <Face value="SylvanasPlagueTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="SylvanasTormentTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="SylvanasTormentTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="SylvanasShadowDaggerInitialDamage">
+    <MultiplicativeModifierArray index="SylvanasDaggerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerHit" Accumulator="SylvanasTormentTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="SylvanasDaggerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasForsakenFury" Validator="SylvanasTargetHas3StacksOfBlackArrowsStackingBehavior" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="SylvanasShadowDaggerDoTDamage">
+    <MultiplicativeModifierArray index="SylvanasDaggerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerHit" Accumulator="SylvanasTormentTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="SylvanasDaggerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasForsakenFury" Validator="SylvanasTargetHas3StacksOfBlackArrowsStackingBehavior" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="SylvanasDaggerHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="SylvanasTormentTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sylvanas_shadowdagger.dds" />
+  </CButton>
+  <CButton id="SylvanasPlagueTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sylvanas_shadowdagger.dds" />
+  </CButton>
+
+  <!-- ===== Banshee ===== -->
+  <!-- Wail quest (50% kept): 0.5% Haunting Wave damage per enemy Hero hit. Haunting quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 11 second cooldown each, 41-80 cut 1% of the 75 Mana cost each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="SylvanasWailTokenCounter" parent="StormQuestToken">
+    <Face value="SylvanasWailTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="SylvanasHauntingTokenCounter" parent="StormQuestToken">
+    <Face value="SylvanasHauntingTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="SylvanasWailTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="SylvanasWailTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="SylvanasHauntingWaveDamage">
+    <MultiplicativeModifierArray index="SylvanasWavePower" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasWaveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasWaveHit" Accumulator="SylvanasWailTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="SylvanasWaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="SylvanasWaveHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="SylvanasWailTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sylvanas_hauntingwave.dds" />
+  </CButton>
+  <CButton id="SylvanasHauntingTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_sylvanas_hauntingwave.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="SylvanasWailingArrowDamage">
+    <MultiplicativeModifierArray index="SylvanasFireLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasWaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="SylvanasWailingArrowDeafeningBlastDamage">
+    <MultiplicativeModifierArray index="SylvanasFireLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasWaveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="SylvanasWailingArrowActivateDamage">
+    <MultiplicativeModifierArray index="SylvanasFireLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasDaggerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="SylvanasWaveLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- Windrunner's Legacy (Legendary, Banshee): Haunting Wave hits on enemy Heroes reset its cooldown -->
+  <CEffectModifyUnit id="SylvanasWindrunnersLegacyResetCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="SylvanasHauntingWave,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+</Catalog>

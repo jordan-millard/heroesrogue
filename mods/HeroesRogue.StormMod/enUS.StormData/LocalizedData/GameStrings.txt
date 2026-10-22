@@ -1670,6 +1670,306 @@ Affix/Name/XalatathSilenceOfTheLambBoon=Silence of the Lamb
 Affix/Tooltip/XalatathSilenceOfTheLambBoon=Gain the talent <c val="#TooltipNumbers">Silence of the Lamb</c>: Void Step leaves a seal that damages and Silences enemies inside it.
 Affix/Name/XalatathVoidSummonerBoon=Void Summoner
 Affix/Tooltip/XalatathVoidSummonerBoon=Gain the talent <c val="#TooltipNumbers">Void Summoner</c>: Void Step summons a Void Minion where Xal'atath started.
+Affix/Name/GuldanFelLord=Fel Lord
+Affix/Tooltip/GuldanFelLord=Gain <c val="#TooltipNumbers">Rampant Hellfire</c> and <c val="#TooltipNumbers">Fel Armor</c>. Fel Flame deals <c val="#TooltipNumbers">50%</c> more damage. Each Fel Flame hit on an enemy Hero heals Gul'dan for <c val="#TooltipNumbers">0.5%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Fel Flame hits on enemy Heroes add <c val="#TooltipNumbers">0.25%</c> Fel Flame damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Fel Flame hit reduce its Mana cost by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its flames <c val="#TooltipNumbers">1%</c> wider (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Fel Flame and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/GuldanFelfireInfusion=Felfire Infusion
+Affix/Tooltip/GuldanFelfireInfusion=Fel Flame deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GuldanFelFocus=Fel Focus
+Affix/Tooltip/GuldanFelFocus=Fel Flame costs <c val="#TooltipNumbers">5</c> less Mana.
+Affix/Name/GuldanPursuitOfFlameBoon=Pursuit of Flame
+Affix/Tooltip/GuldanPursuitOfFlameBoon=Gain the talent <c val="#TooltipNumbers">Pursuit of Flame</c>: hit enemy Heroes with Fel Flame without dying to make its area <c val="#TooltipNumbers">33%</c> larger.
+Affix/Name/GuldanDarknessWithinBoon=Darkness Within
+Affix/Tooltip/GuldanDarknessWithinBoon=Gain the talent <c val="#TooltipNumbers">Darkness Within</c>: dealing damage to enemy Heroes makes the next Life Tap cost no Health and grant Spell Power.
+Affix/Name/GuldanTwinFlames=Twin Flames
+Affix/Tooltip/GuldanTwinFlames=Each Fel Flame is cast again in the same direction <c val="#TooltipNumbers">0.5</c> seconds later.
+Affix/Name/GuldanDemonicInferno=Demonic Inferno
+Affix/Tooltip/GuldanDemonicInferno=Fel Flame's area is <c val="#TooltipNumbers">50%</c> larger, and each Fel Flame hit on an enemy Hero restores <c val="#TooltipNumbers">10</c> Mana.
+Button/Name/GuldanFelfireTokenCounter=Felfire
+Button/Tooltip/GuldanFelfireTokenCounter=<c val="#TooltipQuest">Bonus Fel Flame damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanFelfireTokenCounter$*0.25" precision="1"/>%</c></c>
+Button/Name/GuldanPyreTokenCounter=Pyre
+Button/Tooltip/GuldanPyreTokenCounter=<c val="#TooltipQuest">Pyre stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanPyreTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Fel Flame's Mana cost by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its flames <c val="#TooltipNumbers">1%</c> wider. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Fel Flame and Heroic damage.
+Affix/Name/GuldanSoulHarvester=Soul Harvester
+Affix/Tooltip/GuldanSoulHarvester=Gain <c val="#TooltipNumbers">Curse of Exhaustion</c> and <c val="#TooltipNumbers">Health Funnel</c>. Drain Life deals <c val="#TooltipNumbers">50%</c> more damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Drain Life tick on an enemy Hero adds <c val="#TooltipNumbers">0.1%</c> Drain Life damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Drain Life tick reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make it heal <c val="#TooltipNumbers">2%</c> more (up to <c val="#TooltipNumbers">80%</c>), then add <c val="#TooltipNumbers">3%</c> Drain Life and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/GuldanLifeDrinker=Life Drinker
+Affix/Tooltip/GuldanLifeDrinker=Drain Life deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GuldanQuickDrain=Quick Drain
+Affix/Tooltip/GuldanQuickDrain=Drain Life's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/GuldanChaoticEnergyBoon=Chaotic Energy
+Affix/Tooltip/GuldanChaoticEnergyBoon=Gain the talent <c val="#TooltipNumbers">Chaotic Energy</c>: Drain Life has more range, Regeneration Globes heal more, and gathering them lowers Basic Ability Mana costs.
+Affix/Name/GuldanHarvestLifeBoon=Harvest Life
+Affix/Tooltip/GuldanHarvestLifeBoon=Gain the talent <c val="#TooltipNumbers">Harvest Life</c>: Drain Life heals for <c val="#TooltipNumbers">75%</c> more when used on Heroes.
+Affix/Name/GuldanHungerForPowerBoon=Hunger for Power
+Affix/Tooltip/GuldanHungerForPowerBoon=Gain the talent <c val="#TooltipNumbers">Hunger for Power</c>: Spell Power is increased, but healing received from allies is reduced.
+Affix/Name/GuldanSoulHarvest=Soul Harvest
+Affix/Tooltip/GuldanSoulHarvest=Drain Life no longer Slows Gul'dan and heals for <c val="#TooltipNumbers">50%</c> more.
+Button/Name/GuldanSiphonTokenCounter=Siphon
+Button/Tooltip/GuldanSiphonTokenCounter=<c val="#TooltipQuest">Bonus Drain Life damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanSiphonTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/GuldanHarvestTokenCounter=Harvest
+Button/Tooltip/GuldanHarvestTokenCounter=<c val="#TooltipQuest">Harvest stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanHarvestTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Drain Life's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it heal <c val="#TooltipNumbers">2%</c> more. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Drain Life and Heroic damage.
+Affix/Name/GuldanCorruptor=Corruptor
+Affix/Tooltip/GuldanCorruptor=Gain <c val="#TooltipNumbers">Ruinous Affliction</c> and <c val="#TooltipNumbers">Echoed Corruption</c>. Corruption deals <c val="#TooltipNumbers">50%</c> more damage. Each Corruption strike on an enemy Hero heals Gul'dan for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Corruption strikes on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Corruption damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Corruption strike reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its strikes <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Corruption and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/GuldanSpreadingCorruption=Spreading Corruption
+Affix/Tooltip/GuldanSpreadingCorruption=Corruption deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GuldanQuickCorruption=Quick Corruption
+Affix/Tooltip/GuldanQuickCorruption=Corruption's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/GuldanBoundByShadowBoon=Bound by Shadow
+Affix/Tooltip/GuldanBoundByShadowBoon=Gain the talent <c val="#TooltipNumbers">Bound by Shadow</c>: each enemy Hero hit by Fel Flame reduces Corruption's cooldown.
+Affix/Name/GuldanLingeringCorruption=Lingering Corruption
+Affix/Tooltip/GuldanLingeringCorruption=Corruption's damage over time lasts <c val="#TooltipNumbers">2</c> seconds longer.
+Affix/Name/GuldanEchoOfCorruption=Echo of Corruption
+Affix/Tooltip/GuldanEchoOfCorruption=Gain Echoed Corruption's reward now: after its third strike, Corruption strikes <c val="#TooltipNumbers">3</c> more times in the opposite direction.
+Affix/Name/GuldanSoulRot=Soul Rot
+Affix/Tooltip/GuldanSoulRot=Corruption's damage over time heals Gul'dan for <c val="#TooltipNumbers">100%</c> of the damage it deals.
+Button/Name/GuldanRotTokenCounter=Rot
+Button/Tooltip/GuldanRotTokenCounter=<c val="#TooltipQuest">Bonus Corruption damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanRotTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/GuldanAfflictionTokenCounter=Affliction
+Button/Tooltip/GuldanAfflictionTokenCounter=<c val="#TooltipQuest">Affliction stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GuldanAfflictionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Corruption's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its strikes <c val="#TooltipNumbers">1%</c> larger. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Corruption and Heroic damage.
+Affix/Name/GuldanImprovedLifeTapBoon=Improved Life Tap
+Affix/Tooltip/GuldanImprovedLifeTapBoon=Gain the talent <c val="#TooltipNumbers">Improved Life Tap</c>: Life Tap restores more Mana.
+Affix/Name/GuldanDarkBargainBoon=Dark Bargain
+Affix/Tooltip/GuldanDarkBargainBoon=Gain the talent <c val="#TooltipNumbers">Dark Bargain</c>: Gul'dan's maximum Health is increased, but his respawn time is longer.
+Affix/Name/GuldanHealthstoneBoon=Healthstone
+Affix/Tooltip/GuldanHealthstoneBoon=Gain the talent <c val="#TooltipNumbers">Healthstone</c>: activate to heal for a share of Gul'dan's maximum Health.
+Affix/Name/GuldanDemonicCircleBoon=Demonic Circle
+Affix/Tooltip/GuldanDemonicCircleBoon=Gain the talent <c val="#TooltipNumbers">Demonic Circle</c>: summon a circle and activate it to teleport back to it.
+Affix/Name/SylvanasDarkRanger=Dark Ranger
+Affix/Tooltip/SylvanasDarkRanger=Gain <c val="#TooltipNumbers">Might of the Banshee Queen</c> and <c val="#TooltipNumbers">Barbed Shot</c>. Withering Fire deals <c val="#TooltipNumbers">50%</c> more damage. Each Withering Fire shot that hits an enemy Hero heals Sylvanas for <c val="#TooltipNumbers">0.25%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Withering Fire shots that hit enemy Heroes add <c val="#TooltipNumbers">0.1%</c> Withering Fire damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Withering Fire hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> Withering Fire range (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Withering Fire and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/SylvanasBlackFletching=Black Fletching
+Affix/Tooltip/SylvanasBlackFletching=Withering Fire deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/SylvanasQuickDraw=Quick Draw
+Affix/Tooltip/SylvanasQuickDraw=Withering Fire's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/SylvanasEvasiveFireBoon=Evasive Fire
+Affix/Tooltip/SylvanasEvasiveFireBoon=Gain the talent <c val="#TooltipNumbers">Evasive Fire</c>: Withering Fire hits grant Movement Speed, stacking.
+Affix/Name/SylvanasWithTheWind=With the Wind
+Affix/Tooltip/SylvanasWithTheWind=Withering Fire's range is increased by <c val="#TooltipNumbers">1.5</c>.
+Affix/Name/SylvanasWitheringBarrageBoon=Withering Barrage
+Affix/Tooltip/SylvanasWitheringBarrageBoon=Gain the talent <c val="#TooltipNumbers">Withering Barrage</c>: Withering Fire applies Black Arrows, and Heroes hit reduce its cooldown.
+Affix/Name/SylvanasEndlessVolley=Endless Volley
+Affix/Tooltip/SylvanasEndlessVolley=Withering Fire fires <c val="#TooltipNumbers">2</c> more volleys.
+Button/Name/SylvanasVolleyTokenCounter=Volley
+Button/Tooltip/SylvanasVolleyTokenCounter=<c val="#TooltipQuest">Bonus Withering Fire damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SylvanasVolleyTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/SylvanasBarrageTokenCounter=Barrage
+Button/Tooltip/SylvanasBarrageTokenCounter=<c val="#TooltipQuest">Barrage stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SylvanasBarrageTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Withering Fire's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Withering Fire range. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Withering Fire and Heroic damage.
+Affix/Name/SylvanasShadowQueen=Shadow Queen
+Affix/Tooltip/SylvanasShadowQueen=Gain <c val="#TooltipNumbers">Unrelenting Torment</c> and <c val="#TooltipNumbers">Cold Embrace</c>. Shadow Dagger deals <c val="#TooltipNumbers">50%</c> more damage. Each enemy Hero afflicted by Shadow Dagger heals Sylvanas for <c val="#TooltipNumbers">1%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero afflicted by Shadow Dagger adds <c val="#TooltipNumbers">0.5%</c> Shadow Dagger damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">4</c> seconds of a Shadow Dagger hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make it last <c val="#TooltipNumbers">1%</c> longer (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Shadow Dagger and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/SylvanasCreepingDeath=Creeping Death
+Affix/Tooltip/SylvanasCreepingDeath=Shadow Dagger deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/SylvanasSwiftDagger=Swift Dagger
+Affix/Tooltip/SylvanasSwiftDagger=Shadow Dagger's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/SylvanasLostSoulBoon=Lost Soul
+Affix/Tooltip/SylvanasLostSoulBoon=Gain the talent <c val="#TooltipNumbers">Lost Soul</c>: Basic Attacks against enemies with 3 stacks of Black Arrows reduce Shadow Dagger's cooldown.
+Affix/Name/SylvanasUnstablePoisonBoon=Unstable Poison
+Affix/Tooltip/SylvanasUnstablePoisonBoon=Gain the talent <c val="#TooltipNumbers">Unstable Poison</c>: Minions that die under Shadow Dagger or Black Arrows explode, damaging nearby enemies.
+Affix/Name/SylvanasLingeringBlight=Lingering Blight
+Affix/Tooltip/SylvanasLingeringBlight=Shadow Dagger lasts <c val="#TooltipNumbers">1</c> second longer.
+Affix/Name/SylvanasForsakenFury=Forsaken Fury
+Affix/Tooltip/SylvanasForsakenFury=Shadow Dagger deals <c val="#TooltipNumbers">50%</c> more damage to enemies with <c val="#TooltipNumbers">3</c> stacks of Black Arrows.
+Button/Name/SylvanasTormentTokenCounter=Torment
+Button/Tooltip/SylvanasTormentTokenCounter=<c val="#TooltipQuest">Bonus Shadow Dagger damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SylvanasTormentTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/SylvanasPlagueTokenCounter=Plague
+Button/Tooltip/SylvanasPlagueTokenCounter=<c val="#TooltipQuest">Plague stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SylvanasPlagueTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Shadow Dagger's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it last <c val="#TooltipNumbers">1%</c> longer. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Shadow Dagger and Heroic damage.
+Affix/Name/SylvanasBanshee=Banshee
+Affix/Tooltip/SylvanasBanshee=Gain <c val="#TooltipNumbers">Festering Wounds</c> and <c val="#TooltipNumbers">Windrunner</c>. Haunting Wave deals <c val="#TooltipNumbers">50%</c> more damage. Each Haunting Wave hit on an enemy Hero heals Sylvanas for <c val="#TooltipNumbers">1%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Haunting Wave hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Haunting Wave damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Haunting Wave hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then reduce its Mana cost by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Haunting Wave and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/SylvanasBansheeWail=Banshee's Wail
+Affix/Tooltip/SylvanasBansheeWail=Haunting Wave deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/SylvanasQuickWave=Restless Spirit
+Affix/Tooltip/SylvanasQuickWave=Haunting Wave's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/SylvanasOverwhelmingAfflictionBoon=Overwhelming Affliction
+Affix/Tooltip/SylvanasOverwhelmingAfflictionBoon=Gain the talent <c val="#TooltipNumbers">Overwhelming Affliction</c>: enemy Heroes with 3 stacks of Black Arrows are Slowed, and Basic Attacks against Slowed Heroes deal bonus damage.
+Affix/Name/SylvanasWillOfTheForsakenBoon=Will of the Forsaken
+Affix/Tooltip/SylvanasWillOfTheForsakenBoon=Gain the talent <c val="#TooltipNumbers">Will of the Forsaken</c>: activate to become Unstoppable and gain Movement Speed.
+Affix/Name/SylvanasBansheesReturn=Banshee's Return
+Affix/Tooltip/SylvanasBansheesReturn=Haunting Wave's cooldown is <c val="#TooltipNumbers">3</c> seconds shorter.
+Affix/Name/SylvanasWindrunnersLegacy=Windrunner's Legacy
+Affix/Tooltip/SylvanasWindrunnersLegacy=Haunting Wave hits on enemy Heroes reset its cooldown.
+Button/Name/SylvanasWailTokenCounter=Wail
+Button/Tooltip/SylvanasWailTokenCounter=<c val="#TooltipQuest">Bonus Haunting Wave damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SylvanasWailTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/SylvanasHauntingTokenCounter=Haunting
+Button/Tooltip/SylvanasHauntingTokenCounter=<c val="#TooltipQuest">Haunting stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:SylvanasHauntingTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Haunting Wave's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each reduce its Mana cost by <c val="#TooltipNumbers">1%</c>. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Haunting Wave and Heroic damage.
+Affix/Name/SylvanasRemorselessBoon=Remorseless
+Affix/Tooltip/SylvanasRemorselessBoon=Gain the talent <c val="#TooltipNumbers">Remorseless</c>: Basic Attacks against enemy Heroes with 3 stacks of Black Arrows fire a shot of Withering Fire, and Basic Attack range is increased.
+Affix/Name/SylvanasLifeDrainBoon=Life Drain
+Affix/Tooltip/SylvanasLifeDrainBoon=Gain the talent <c val="#TooltipNumbers">Life Drain</c>: heal for a share of the damage Sylvanas deals to enemies with 3 stacks of Black Arrows, doubled against Heroes.
+Affix/Name/SylvanasMercenaryQueenBoon=Mercenary Queen
+Affix/Tooltip/SylvanasMercenaryQueenBoon=Gain the talent <c val="#TooltipNumbers">Mercenary Queen</c>: nearby Mercenaries deal more damage, and Sylvanas's Basic Attacks Stun neutral Mercenaries.
+Affix/Name/OrpheaShadowDancer=Shadow Dancer
+Affix/Tooltip/OrpheaShadowDancer=Gain <c val="#TooltipNumbers">En Pointe</c> and <c val="#TooltipNumbers">Bond of Anguish</c>. Shadow Waltz deals <c val="#TooltipNumbers">50%</c> more damage. Each Shadow Waltz hit on an enemy Hero heals Orphea for <c val="#TooltipNumbers">1%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Shadow Waltz hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Shadow Waltz damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Shadow Waltz hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its dash <c val="#TooltipNumbers">2%</c> wider (up to <c val="#TooltipNumbers">80%</c>), then add <c val="#TooltipNumbers">3%</c> Shadow Waltz and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/OrpheaDarkMelody=Dark Melody
+Affix/Tooltip/OrpheaDarkMelody=Shadow Waltz deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/OrpheaQuickstep=Quickstep
+Affix/Tooltip/OrpheaQuickstep=Shadow Waltz's cooldown is <c val="#TooltipNumbers">0.25</c> seconds shorter.
+Affix/Name/OrpheaDeterminationBoon=Determination
+Affix/Tooltip/OrpheaDeterminationBoon=Gain the talent <c val="#TooltipNumbers">Determination</c>: dashing with Shadow Waltz grants Spell Armor against the next enemy Ability, and Physical damage is increased while it lasts.
+Affix/Name/OrpheaAncestralStrengthBoon=Ancestral Strength
+Affix/Tooltip/OrpheaAncestralStrengthBoon=Gain the talent <c val="#TooltipNumbers">Ancestral Strength</c>: Basic Abilities deal more damage to Stunned, Rooted, Silenced or Slowed enemies, and Overflowing Chaos Slows Heroes.
+Affix/Name/OrpheaFinalToccataBoon=Final Toccata
+Affix/Tooltip/OrpheaFinalToccataBoon=Gain the talent <c val="#TooltipNumbers">Final Toccata</c>: activate to reset Shadow Waltz, and for a while each dash resets it again.
+Affix/Name/OrpheaDanseMacabre=Danse Macabre
+Affix/Tooltip/OrpheaDanseMacabre=Shadow Waltz hits on enemy Heroes set its cooldown to <c val="#TooltipNumbers">1</c> second.
+Button/Name/OrpheaPirouetteTokenCounter=Pirouette
+Button/Tooltip/OrpheaPirouetteTokenCounter=<c val="#TooltipQuest">Bonus Shadow Waltz damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:OrpheaPirouetteTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/OrpheaEncoreTokenCounter=Encore
+Button/Tooltip/OrpheaEncoreTokenCounter=<c val="#TooltipQuest">Encore stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:OrpheaEncoreTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Shadow Waltz's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its dash <c val="#TooltipNumbers">2%</c> wider. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Shadow Waltz and Heroic damage.
+Affix/Name/OrpheaAbyssalMaw=Abyssal Maw
+Affix/Tooltip/OrpheaAbyssalMaw=Gain <c val="#TooltipNumbers">Abyssal Symbiosis</c> and <c val="#TooltipNumbers">Ravenous Hunger</c>. Chomp deals <c val="#TooltipNumbers">50%</c> more damage. Each Chomp hit on an enemy Hero heals Orphea for <c val="#TooltipNumbers">2%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Chomp hits on enemy Heroes add <c val="#TooltipNumbers">1%</c> Chomp damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Chomp hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make it bite <c val="#TooltipNumbers">1%</c> sooner (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Chomp and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/OrpheaSharpTeeth=Sharp Teeth
+Affix/Tooltip/OrpheaSharpTeeth=Chomp deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/OrpheaHungryMaw=Hungry Maw
+Affix/Tooltip/OrpheaHungryMaw=Chomp's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/OrpheaBackbiterBoon=Backbiter
+Affix/Tooltip/OrpheaBackbiterBoon=Gain the talent <c val="#TooltipNumbers">Backbiter</c>: if Chomp hits a Hero, Orphea dashes backwards, and she gains maximum Health.
+Affix/Name/OrpheaInsatiableBoon=Insatiable
+Affix/Tooltip/OrpheaInsatiableBoon=Gain the talent <c val="#TooltipNumbers">Insatiable</c>: hitting a Hero with Chomp sets its cooldown to <c val="#TooltipNumbers">2</c> seconds.
+Affix/Name/OrpheaEldritchConduitBoon=Eldritch Conduit
+Affix/Tooltip/OrpheaEldritchConduitBoon=Gain the talent <c val="#TooltipNumbers">Eldritch Conduit</c>: each Chaos consumed increases Spell Power for a while, stacking.
+Affix/Name/OrpheaDevourer=Devourer
+Affix/Tooltip/OrpheaDevourer=Each Chomp hit on an enemy Hero heals Orphea for <c val="#TooltipNumbers">8%</c> of her maximum Health.
+Button/Name/OrpheaGnashTokenCounter=Gnash
+Button/Tooltip/OrpheaGnashTokenCounter=<c val="#TooltipQuest">Bonus Chomp damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:OrpheaGnashTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/OrpheaFeastTokenCounter=Feast
+Button/Tooltip/OrpheaFeastTokenCounter=<c val="#TooltipQuest">Feast stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:OrpheaFeastTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Chomp's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it bite <c val="#TooltipNumbers">1%</c> sooner. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Chomp and Heroic damage.
+Affix/Name/OrpheaDreadbringer=Dreadbringer
+Affix/Tooltip/OrpheaDreadbringer=Gain <c val="#TooltipNumbers">Growing Nightmare</c> and <c val="#TooltipNumbers">Mind Devourer</c>. Dread deals <c val="#TooltipNumbers">50%</c> more damage. Each enemy Hero hit by Dread's eruption heals Orphea for <c val="#TooltipNumbers">1%</c> of her maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Dread eruption hits on enemy Heroes add <c val="#TooltipNumbers">1%</c> Dread damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Dread eruption hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its eruption <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Dread and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/OrpheaDeepeningDread=Deepening Dread
+Affix/Tooltip/OrpheaDeepeningDread=Dread deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/OrpheaRestlessDread=Restless Dread
+Affix/Tooltip/OrpheaRestlessDread=Dread's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/OrpheaDreadsGrip=Dread's Grip
+Affix/Tooltip/OrpheaDreadsGrip=Dread's eruption Slows enemies by an additional <c val="#TooltipNumbers">15%</c>.
+Affix/Name/OrpheaLurkingTerrorBoon=Lurking Terror
+Affix/Tooltip/OrpheaLurkingTerrorBoon=Gain the talent <c val="#TooltipNumbers">Lurking Terror</c>: after Dread erupts, activate to cast Chomp from the eruption area.
+Affix/Name/OrpheaEchoingDread=Echoing Dread
+Affix/Tooltip/OrpheaEchoingDread=Dread erupts again at the same spot <c val="#TooltipNumbers">0.75</c> seconds later.
+Affix/Name/OrpheaParalyzingDread=Paralyzing Dread
+Affix/Tooltip/OrpheaParalyzingDread=Dread's eruption Stuns enemy Heroes for <c val="#TooltipNumbers">0.75</c> seconds.
+Button/Name/OrpheaTerrorTokenCounter=Terror
+Button/Tooltip/OrpheaTerrorTokenCounter=<c val="#TooltipQuest">Bonus Dread damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:OrpheaTerrorTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/OrpheaNightmareTokenCounter=Nightmare
+Button/Tooltip/OrpheaNightmareTokenCounter=<c val="#TooltipQuest">Nightmare stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:OrpheaNightmareTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Dread's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its eruption <c val="#TooltipNumbers">1%</c> larger. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Dread and Heroic damage.
+Affix/Name/OrpheaChaoticAssaultBoon=Chaotic Assault
+Affix/Tooltip/OrpheaChaoticAssaultBoon=Gain the talent <c val="#TooltipNumbers">Chaotic Assault</c>: Basic Attacks against enemy Heroes with 3 stacks of Chaos deal bonus damage.
+Affix/Name/OrpheaDeadMagicBoon=Dead Magic
+Affix/Tooltip/OrpheaDeadMagicBoon=Gain the talent <c val="#TooltipNumbers">Dead Magic</c>: Basic Attacks that consume Chaos ignore Armor and deal Spell Damage around the target.
+Affix/Name/OrpheaInvasiveMiasmaBoon=Invasive Miasma
+Affix/Tooltip/OrpheaInvasiveMiasmaBoon=Gain the talent <c val="#TooltipNumbers">Invasive Miasma</c>: activate to damage nearby enemies, healing and gaining Chaos for each Hero hit.
+Affix/Name/AlarakTaldarimAscendant=Tal'darim Ascendant
+Affix/Tooltip/AlarakTaldarimAscendant=Gain <c val="#TooltipNumbers">Chaos Reigns</c> and <c val="#TooltipNumbers">Lethal Onslaught</c>. Discord Strike deals <c val="#TooltipNumbers">50%</c> more damage. Each Discord Strike hit on an enemy Hero heals Alarak for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Discord Strike hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Discord Strike damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Discord Strike hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its Silence last <c val="#TooltipNumbers">1%</c> longer (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Discord Strike and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/AlarakDiscordantPower=Discordant Power
+Affix/Tooltip/AlarakDiscordantPower=Discord Strike deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AlarakSwiftDiscord=Swift Discord
+Affix/Tooltip/AlarakSwiftDiscord=Discord Strike's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/AlarakDissonanceBoon=Dissonance
+Affix/Tooltip/AlarakDissonanceBoon=Gain the talent <c val="#TooltipNumbers">Dissonance</c>: Discord Strike's Silence lasts <c val="#TooltipNumbers">0.75</c> seconds longer.
+Affix/Name/AlarakShowOfForceBoon=Show of Force
+Affix/Tooltip/AlarakShowOfForceBoon=Gain the talent <c val="#TooltipNumbers">Show of Force</c>: Heroes hit by <c val="#TooltipNumbers">2</c> of Alarak's Abilities in quick succession take bonus damage and increase Sadism.
+Affix/Name/AlarakRiteOfRakShirBoon=Rite of Rak'Shir
+Affix/Tooltip/AlarakRiteOfRakShirBoon=Gain the talent <c val="#TooltipNumbers">Rite of Rak'Shir</c>: activate to mark an enemy Hero. Hitting them with Discord Strike and killing them increases Sadism.
+Affix/Name/AlarakUnrelentingDiscord=Unrelenting Discord
+Affix/Tooltip/AlarakUnrelentingDiscord=Each Discord Strike hit on an enemy Hero reduces its cooldown by <c val="#TooltipNumbers">4</c> seconds.
+Button/Name/AlarakDiscordTokenCounter=Discord
+Button/Tooltip/AlarakDiscordTokenCounter=<c val="#TooltipQuest">Bonus Discord Strike damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakDiscordTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/AlarakSubjugationTokenCounter=Subjugation
+Button/Tooltip/AlarakSubjugationTokenCounter=<c val="#TooltipQuest">Subjugation stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakSubjugationTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Discord Strike's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its Silence last <c val="#TooltipNumbers">1%</c> longer. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Discord Strike and Heroic damage.
+Affix/Name/AlarakLightningLord=Lightning Lord
+Affix/Tooltip/AlarakLightningLord=Gain <c val="#TooltipNumbers">Negatively Charged</c> and <c val="#TooltipNumbers">Lightning Barrage</c>. Lightning Surge deals <c val="#TooltipNumbers">50%</c> more damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Lightning Surge hits on enemy Heroes add <c val="#TooltipNumbers">0.25%</c> Lightning Surge damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Lightning Surge hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">1%</c> Lightning Surge range (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Lightning Surge and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/AlarakChargedLightning=Charged Lightning
+Affix/Tooltip/AlarakChargedLightning=Lightning Surge deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AlarakQuickSurge=Quick Surge
+Affix/Tooltip/AlarakQuickSurge=Lightning Surge's cooldown is <c val="#TooltipNumbers">0.25</c> seconds shorter.
+Affix/Name/AlarakExtendedLightningBoon=Extended Lightning
+Affix/Tooltip/AlarakExtendedLightningBoon=Gain the talent <c val="#TooltipNumbers">Extended Lightning</c>: hit Heroes with the center of Lightning Surge to increase its range and make it Slow. Sadism is reduced by <c val="#TooltipNumbers">10%</c>.
+Affix/Name/AlarakStaticLeech=Static Leech
+Affix/Tooltip/AlarakStaticLeech=Lightning Surge heals for <c val="#TooltipNumbers">50%</c> more.
+Affix/Name/AlarakSurgeOfPower=Surge of Power
+Affix/Tooltip/AlarakSurgeOfPower=Lightning Surge's cooldown is <c val="#TooltipNumbers">1.5</c> seconds shorter.
+Affix/Name/AlarakEndlessEnergy=Endless Energy
+Affix/Tooltip/AlarakEndlessEnergy=Each Lightning Surge hit on an enemy Hero reduces its cooldown by <c val="#TooltipNumbers">1.5</c> seconds.
+Button/Name/AlarakOverloadTokenCounter=Overload
+Button/Tooltip/AlarakOverloadTokenCounter=<c val="#TooltipQuest">Bonus Lightning Surge damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakOverloadTokenCounter$*0.25" precision="1"/>%</c></c>
+Button/Name/AlarakTempestTokenCounter=Tempest
+Button/Tooltip/AlarakTempestTokenCounter=<c val="#TooltipQuest">Tempest stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakTempestTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Lightning Surge's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Lightning Surge range. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Lightning Surge and Heroic damage.
+Affix/Name/AlarakHighlord=Highlord
+Affix/Tooltip/AlarakHighlord=Gain <c val="#TooltipNumbers">Blade of the Highlord</c> and <c val="#TooltipNumbers">Mocking Strikes</c>. Basic Attacks deal <c val="#TooltipNumbers">50%</c> more damage. Each Basic Attack on an enemy Hero heals Alarak for <c val="#TooltipNumbers">0.5%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Basic Attacks on enemy Heroes add <c val="#TooltipNumbers">0.2%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Basic Attack add <c val="#TooltipNumbers">1%</c> Sadism (up to <c val="#TooltipNumbers">40%</c>), then <c val="#TooltipNumbers">1%</c> Attack Speed (up to <c val="#TooltipNumbers">40%</c>), then <c val="#TooltipNumbers">3%</c> Basic Attack and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/AlarakHighlordsEdge=Highlord's Edge
+Affix/Tooltip/AlarakHighlordsEdge=Basic Attacks deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AlarakPureMaliceBoon=Pure Malice
+Affix/Tooltip/AlarakPureMaliceBoon=Gain the talent <c val="#TooltipNumbers">Pure Malice</c>: Sadism increases whenever an allied Hero dies, until Alarak dies.
+Affix/Name/AlarakOverwhelmingPowerBoon=Overwhelming Power
+Affix/Tooltip/AlarakOverwhelmingPowerBoon=Gain the talent <c val="#TooltipNumbers">Overwhelming Power</c>: Discord Strike hits on Heroes grant Attack Speed, and Basic Attacks heal for a share of their damage.
+Affix/Name/AlarakLastLaughBoon=Last Laugh
+Affix/Tooltip/AlarakLastLaughBoon=Gain the talent <c val="#TooltipNumbers">Last Laugh</c>: activate to teleport and remove Roots, Slows and damage over time. Alarak must hit enemy Heroes with Basic Abilities soon after, or his Health drops to 1.
+Affix/Name/AlarakPinnacleOfSadism=Pinnacle of Sadism
+Affix/Tooltip/AlarakPinnacleOfSadism=Alarak's Sadism is increased by <c val="#TooltipNumbers">30%</c>.
+Button/Name/AlarakCrueltyTokenCounter=Cruelty
+Button/Tooltip/AlarakCrueltyTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakCrueltyTokenCounter$*0.2" precision="1"/>%</c></c>
+Button/Name/AlarakDominionTokenCounter=Dominion
+Button/Tooltip/AlarakDominionTokenCounter=<c val="#TooltipQuest">Dominion stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AlarakDominionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each add <c val="#TooltipNumbers">1%</c> Sadism. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Attack Speed. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Basic Attack and Heroic damage.
+Affix/Name/AlarakTelekineticFocus=Telekinetic Focus
+Affix/Tooltip/AlarakTelekineticFocus=Telekinesis's cooldown is <c val="#TooltipNumbers">1</c> second shorter.
+Affix/Name/AlarakHinderedMotionBoon=Hindered Motion
+Affix/Tooltip/AlarakHinderedMotionBoon=Gain the talent <c val="#TooltipNumbers">Hindered Motion</c>: Telekinesis Slows enemies.
+Affix/Name/AlarakRuthlessMomentumBoon=Ruthless Momentum
+Affix/Tooltip/AlarakRuthlessMomentumBoon=Gain the talent <c val="#TooltipNumbers">Ruthless Momentum</c>: Telekinesis costs less Mana and recharges faster while Alarak is above <c val="#TooltipNumbers">80%</c> Health.
+Affix/Name/KelThuzadLordOfDecay=Lord of Decay
+Affix/Tooltip/KelThuzadLordOfDecay=Gain <c val="#TooltipNumbers">The Plaguelands</c> and <c val="#TooltipNumbers">Accelerated Decay</c>. Death and Decay deals <c val="#TooltipNumbers">50%</c> more damage. Each enemy Hero hit by its explosion heals Kel'Thuzad for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Death and Decay explosion hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Death and Decay damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Death and Decay hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its explosion and pool <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Death and Decay and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/KelThuzadVirulentDecay=Virulent Decay
+Affix/Tooltip/KelThuzadVirulentDecay=Death and Decay deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/KelThuzadQuickDecay=Quick Decay
+Affix/Tooltip/KelThuzadQuickDecay=Death and Decay's cooldown is <c val="#TooltipNumbers">0.25</c> seconds shorter.
+Affix/Name/KelThuzadArcaneEchoesBoon=Arcane Echoes
+Affix/Tooltip/KelThuzadArcaneEchoesBoon=Gain the talent <c val="#TooltipNumbers">Arcane Echoes</c>: hitting an enemy Hero with Death and Decay's explosion reduces its cooldown.
+Affix/Name/KelThuzadTheDamnedReturnBoon=The Damned Return
+Affix/Tooltip/KelThuzadTheDamnedReturnBoon=Gain the talent <c val="#TooltipNumbers">The Damned Return</c>: activate to create a Shade of Naxxramas that mimics Kel'Thuzad's casts of Death and Decay.
+Affix/Name/KelThuzadLingeringDecay=Lingering Decay
+Affix/Tooltip/KelThuzadLingeringDecay=Death and Decay's pool lasts <c val="#TooltipNumbers">2</c> seconds longer.
+Affix/Name/KelThuzadGripOfDeath=Grip of Death
+Affix/Tooltip/KelThuzadGripOfDeath=Death and Decay's explosion Roots enemy Heroes for <c val="#TooltipNumbers">1</c> second.
+Button/Name/KelThuzadPestilenceTokenCounter=Pestilence
+Button/Tooltip/KelThuzadPestilenceTokenCounter=<c val="#TooltipQuest">Bonus Death and Decay damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:KelThuzadPestilenceTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/KelThuzadPlagueTokenCounter=Plague
+Button/Tooltip/KelThuzadPlagueTokenCounter=<c val="#TooltipQuest">Plague stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:KelThuzadPlagueTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Death and Decay's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its explosion and pool <c val="#TooltipNumbers">1%</c> larger. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Death and Decay and Heroic damage.
+Affix/Name/KelThuzadFrostbinder=Frostbinder
+Affix/Tooltip/KelThuzadFrostbinder=Gain <c val="#TooltipNumbers">Blighted Frost</c> and <c val="#TooltipNumbers">Icy Grasp</c>. Frost Nova deals <c val="#TooltipNumbers">50%</c> more damage. Each Frost Nova hit on an enemy Hero heals Kel'Thuzad for <c val="#TooltipNumbers">1%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Frost Nova hits on enemy Heroes add <c val="#TooltipNumbers">0.5%</c> Frost Nova damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Frost Nova hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make it <c val="#TooltipNumbers">1%</c> larger (up to <c val="#TooltipNumbers">40%</c>), then add <c val="#TooltipNumbers">3%</c> Frost Nova and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/KelThuzadBitingCold=Biting Cold
+Affix/Tooltip/KelThuzadBitingCold=Frost Nova deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/KelThuzadQuickFrost=Quick Frost
+Affix/Tooltip/KelThuzadQuickFrost=Frost Nova's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/KelThuzadHungeringColdBoon=Hungering Cold
+Affix/Tooltip/KelThuzadHungeringColdBoon=Gain the talent <c val="#TooltipNumbers">Hungering Cold</c>: Rooted enemies take bonus damage each time Kel'Thuzad damages them.
+Affix/Name/KelThuzadPowerOfIcecrownBoon=Power of Icecrown
+Affix/Tooltip/KelThuzadPowerOfIcecrownBoon=Gain the talent <c val="#TooltipNumbers">Power of Icecrown</c>: Stunning, Rooting or Slowing a Hero grants Spell Power, stacking.
+Affix/Name/KelThuzadDeepFreeze=Deep Freeze
+Affix/Tooltip/KelThuzadDeepFreeze=Frost Nova's Root lasts <c val="#TooltipNumbers">0.5</c> seconds longer.
+Affix/Name/KelThuzadAbsoluteZero=Absolute Zero
+Affix/Tooltip/KelThuzadAbsoluteZero=Frost Nova's whole area counts as its center: every enemy hit is Rooted and takes the center's damage.
+Button/Name/KelThuzadRimeTokenCounter=Rime
+Button/Tooltip/KelThuzadRimeTokenCounter=<c val="#TooltipQuest">Bonus Frost Nova damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:KelThuzadRimeTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/KelThuzadWinterTokenCounter=Winter
+Button/Tooltip/KelThuzadWinterTokenCounter=<c val="#TooltipQuest">Winter stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:KelThuzadWinterTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Frost Nova's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it <c val="#TooltipNumbers">1%</c> larger. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Frost Nova and Heroic damage.
+Affix/Name/KelThuzadChainsOfTheLich=Chains of the Lich
+Affix/Tooltip/KelThuzadChainsOfTheLich=Gain <c val="#TooltipNumbers">Barbed Chains</c> and <c val="#TooltipNumbers">Chain-Link</c>. Chains of Kel'Thuzad deals <c val="#TooltipNumbers">50%</c> more damage. Each Chains hit on an enemy Hero heals Kel'Thuzad for <c val="#TooltipNumbers">2%</c> of his maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Chains hits on enemy Heroes add <c val="#TooltipNumbers">1%</c> Chains damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Chains hit reduce its cooldown by <c val="#TooltipNumbers">1%</c> (up to <c val="#TooltipNumbers">40%</c>), then make its chains <c val="#TooltipNumbers">2%</c> wider (up to <c val="#TooltipNumbers">80%</c>), then add <c val="#TooltipNumbers">3%</c> Chains and Heroic damage each.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/KelThuzadColdIron=Cold Iron
+Affix/Tooltip/KelThuzadColdIron=Chains of Kel'Thuzad deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/KelThuzadQuickChains=Quick Chains
+Affix/Tooltip/KelThuzadQuickChains=Chains of Kel'Thuzad's cooldown is <c val="#TooltipNumbers">0.5</c> seconds shorter.
+Affix/Name/KelThuzadChainsOfIceBoon=Chains of Ice
+Affix/Tooltip/KelThuzadChainsOfIceBoon=Gain the talent <c val="#TooltipNumbers">Chains of Ice</c>: after Chains' Stun expires, the enemy is also Slowed.
+Affix/Name/KelThuzadStripShieldsBoon=Strip Shields
+Affix/Tooltip/KelThuzadStripShieldsBoon=Gain the talent <c val="#TooltipNumbers">Strip Shields</c>: pulling a Hero with Chains grants a permanent Shield, stacking, and Chains deals bonus damage to Shields.
+Affix/Name/KelThuzadShiftingMaliceBoon=Shifting Malice
+Affix/Tooltip/KelThuzadShiftingMaliceBoon=Gain the talent <c val="#TooltipNumbers">Shifting Malice</c>: activate to dash forward, damaging enemies in the path. Takedowns reset its cooldown.
+Affix/Name/KelThuzadLichKingsGrasp=Lich King's Grasp
+Affix/Tooltip/KelThuzadLichKingsGrasp=Each Chains hit on an enemy Hero reduces the cooldowns of Frost Nova and Death and Decay by <c val="#TooltipNumbers">3</c> seconds.
+Button/Name/KelThuzadShackleTokenCounter=Shackle
+Button/Tooltip/KelThuzadShackleTokenCounter=<c val="#TooltipQuest">Bonus Chains of Kel'Thuzad damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:KelThuzadShackleTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/KelThuzadBondageTokenCounter=Bondage
+Button/Tooltip/KelThuzadBondageTokenCounter=<c val="#TooltipQuest">Bondage stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:KelThuzadBondageTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each reduce Chains of Kel'Thuzad's cooldown by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make its chains <c val="#TooltipNumbers">2%</c> wider. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">3%</c> Chains and Heroic damage.
+Affix/Name/KelThuzadPhylacteryBoon=Phylactery of Kel'Thuzad
+Affix/Tooltip/KelThuzadPhylacteryBoon=Gain the talent <c val="#TooltipNumbers">Phylactery of Kel'Thuzad</c>: gather Regeneration Globes to charge the Phylactery, then activate it while dead to respawn.
+Affix/Name/KelThuzadArchlichArmorBoon=Armor of the Archlich
+Affix/Tooltip/KelThuzadArchlichArmorBoon=Gain the talent <c val="#TooltipNumbers">Armor of the Archlich</c>: activate to gain Physical Armor, damaging and Slowing nearby enemies.
+Affix/Name/KelThuzadChillingTouchBoon=Chilling Touch
+Affix/Tooltip/KelThuzadChillingTouchBoon=Gain the talent <c val="#TooltipNumbers">Chilling Touch</c>: every few seconds, the next Basic Attack hits all enemies in the area for bonus Spell damage and Slows them.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

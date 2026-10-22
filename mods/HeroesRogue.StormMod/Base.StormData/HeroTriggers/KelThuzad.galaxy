@@ -1,0 +1,248 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Kel'Thuzad. Each starter: hits on enemy Heroes open a takedown window, add the hit quest token and heal;
+// takedowns in the window add the takedown token: stacks 1-40 and 41-80 each improve the ability in two ways, then
+// 3% damage per stack, Heroics too.
+// ============================================================
+
+const fixed libAffx_KelThuzadTakedownWindow = 3.0;
+const fixed libAffx_KelThuzadPastCapDamagePerStack = 0.01;
+bool libAffx_KelThuzadStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KelThuzadDecayTime; // per enemy player, last Lord of Decay hit
+int libAffx_KelThuzadDecayAdded; // Lord of Decay: takedown stacks already applied to the catalog this game
+int libAffx_KelThuzadDecayAdded2; // Lord of Decay: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KelThuzadNovaTime; // per enemy player, last Frostbinder hit
+int libAffx_KelThuzadNovaAdded; // Frostbinder: takedown stacks already applied to the catalog this game
+int libAffx_KelThuzadNovaAdded2; // Frostbinder: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KelThuzadChainsTime; // per enemy player, last Chains of the Lich hit
+int libAffx_KelThuzadChainsAdded; // Chains of the Lich: takedown stacks already applied to the catalog this game
+int libAffx_KelThuzadChainsAdded2; // Chains of the Lich: takedown quest stage 2 stacks already applied to the catalog this game
+
+unit libAffx_KelThuzadHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_KelThuzadIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_KelThuzadStacks(string tokenId) {
+    unit hero = libAffx_KelThuzadHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_KelThuzadQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_KelThuzadInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_KelThuzadTakedownWindow;
+}
+// KelThuzadPlagueTokenCounter: stacks 1-40: 1% of the 5 second cooldown each; 41-80: 1% larger explosion and pool each; then 3% damage each, Heroics too
+void libAffx_KelThuzadSyncDecay () {
+    unit hero = libAffx_KelThuzadHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "KelThuzadDecayMarker")) {
+        return;
+    }
+    stacks = libAffx_KelThuzadStacks("KelThuzadPlagueTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_KelThuzadDecayAdded) {
+        libAffx_CatalogReferenceModify("Abil,KelThuzadDeathAndDecay,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadDecayAdded) * -0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_KelThuzadDecayAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the explosion (2.5) and pool (2) radius each, the Shade's too
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_KelThuzadDecayAdded2) {
+        libAffx_CatalogReferenceModify("Effect,KelThuzadDeathAndDecayDamageSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadDecayAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadDeathAndDecayShadeDamageSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadDecayAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadDeathAndDecayRotSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadDecayAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadDeathAndDecayShadeRotSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadDecayAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_KelThuzadDecayAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadDeathAndDecayDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadDeathAndDecayRotDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadDeathAndDecayShadeDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadDeathAndDecayShadeRotDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombExplosionDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadShadowFissureDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
+}
+// KelThuzadWinterTokenCounter: stacks 1-40: 1% of the 8 second cooldown each; 41-80: 1% larger (outer 3, center 1.5) each; then 3% damage each, Heroics too
+void libAffx_KelThuzadSyncNova () {
+    unit hero = libAffx_KelThuzadHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "KelThuzadNovaMarker")) {
+        return;
+    }
+    stacks = libAffx_KelThuzadStacks("KelThuzadWinterTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_KelThuzadNovaAdded) {
+        libAffx_CatalogReferenceModify("Abil,KelThuzadFrostNova,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_KelThuzadNovaAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the outer (3) and center (1.5) radius each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_KelThuzadNovaAdded2) {
+        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaSlowSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaOuterDamageSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaRootSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaInnerDamageSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_KelThuzadNovaAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrostNovaDamage", "MultiplicativeModifierArray[KelThuzadNovaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrostNovaRootDamage", "MultiplicativeModifierArray[KelThuzadNovaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrostNovaSlowDamage", "MultiplicativeModifierArray[KelThuzadNovaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombDamage", "MultiplicativeModifierArray[KelThuzadNovaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombExplosionDamage", "MultiplicativeModifierArray[KelThuzadNovaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadShadowFissureDamage", "MultiplicativeModifierArray[KelThuzadNovaLegacy].Modifier", libAffx_player, bonus);
+}
+// KelThuzadBondageTokenCounter: stacks 1-40: 1% of the 10 second cooldown each; 41-80: 2% of the 1 chain width each; then 3% damage each, Heroics too
+void libAffx_KelThuzadSyncChains () {
+    unit hero = libAffx_KelThuzadHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "KelThuzadChainsMarker")) {
+        return;
+    }
+    stacks = libAffx_KelThuzadStacks("KelThuzadBondageTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_KelThuzadChainsAdded) {
+        libAffx_CatalogReferenceModify("Abil,KelThuzadChains,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadChainsAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_KelThuzadChainsAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 2% of the 1 chain width each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_KelThuzadChainsAdded2) {
+        libAffx_CatalogReferenceModify("Effect,KelThuzadChainsEnemySearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadChainsAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,KelThuzadChainsLinkEnemySearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadChainsAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_KelThuzadChainsAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadChainsDamage", "MultiplicativeModifierArray[KelThuzadChainsLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadChainsLinkDamage", "MultiplicativeModifierArray[KelThuzadChainsLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombDamage", "MultiplicativeModifierArray[KelThuzadChainsLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombExplosionDamage", "MultiplicativeModifierArray[KelThuzadChainsLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadShadowFissureDamage", "MultiplicativeModifierArray[KelThuzadChainsLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_KelThuzadSync_Func (bool testConds, bool runActions) {
+    libAffx_KelThuzadSyncDecay();
+    libAffx_KelThuzadSyncNova();
+    libAffx_KelThuzadSyncChains();
+    return true;
+}
+// Lord of Decay hit on an enemy Hero: takedown window, KelThuzadPestilenceTokenCounter, the heal, and on-hit boons
+bool libAffx_KelThuzadDecayHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_KelThuzadHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_KelThuzadIsEnemyHero(victim) || !UnitHasBehavior2(hero, "KelThuzadDecayMarker")) {
+        return false;
+    }
+    libAffx_KelThuzadDecayTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "KelThuzadPestilenceTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "KelThuzadDecayHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadGripOfDeathMarker")) {
+        UnitCreateEffectUnit(hero, "KelThuzadFrostNovaApplyRoot", victim);
+    }
+    return true;
+}
+// Frostbinder hit on an enemy Hero: takedown window, KelThuzadRimeTokenCounter, the heal, and on-hit boons
+bool libAffx_KelThuzadNovaHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_KelThuzadHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_KelThuzadIsEnemyHero(victim) || !UnitHasBehavior2(hero, "KelThuzadNovaMarker")) {
+        return false;
+    }
+    libAffx_KelThuzadNovaTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "KelThuzadRimeTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "KelThuzadNovaHeal", hero);
+    }
+    return true;
+}
+// Chains of the Lich hit on an enemy Hero: takedown window, KelThuzadShackleTokenCounter, the heal, and on-hit boons
+bool libAffx_KelThuzadChainsHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_KelThuzadHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_KelThuzadIsEnemyHero(victim) || !UnitHasBehavior2(hero, "KelThuzadChainsMarker")) {
+        return false;
+    }
+    libAffx_KelThuzadChainsTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "KelThuzadShackleTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "KelThuzadChainsHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadLichKingsGraspMarker")) {
+        UnitCreateEffectUnit(hero, "KelThuzadLichKingsGraspFrostNova", hero);
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadLichKingsGraspMarker")) {
+        UnitCreateEffectUnit(hero, "KelThuzadLichKingsGraspDeathAndDecay", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_KelThuzadTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_KelThuzadHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadDecayMarker") && libAffx_KelThuzadInWindow(libAffx_KelThuzadDecayTime[killedPlayer], now)) {
+        libAffx_KelThuzadDecayTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "KelThuzadPlagueTokenCounter", hero);
+        libAffx_KelThuzadSyncDecay();
+        libAffx_KelThuzadQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadNovaMarker") && libAffx_KelThuzadInWindow(libAffx_KelThuzadNovaTime[killedPlayer], now)) {
+        libAffx_KelThuzadNovaTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "KelThuzadWinterTokenCounter", hero);
+        libAffx_KelThuzadSyncNova();
+        libAffx_KelThuzadQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadChainsMarker") && libAffx_KelThuzadInWindow(libAffx_KelThuzadChainsTime[killedPlayer], now)) {
+        libAffx_KelThuzadChainsTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "KelThuzadBondageTokenCounter", hero);
+        libAffx_KelThuzadSyncChains();
+        libAffx_KelThuzadQuestDing();
+    }
+    return true;
+}
+bool libAffx_KelThuzadStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_KelThuzadStarted) {
+        return true;
+    }
+    libAffx_KelThuzadStarted = true;
+    trig = TriggerCreate("libAffx_KelThuzadDecayHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadDeathAndDecayDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadDeathAndDecayShadeDamage");
+    trig = TriggerCreate("libAffx_KelThuzadNovaHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadFrostNovaDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadFrostNovaRootDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadFrostNovaSlowDamage");
+    trig = TriggerCreate("libAffx_KelThuzadChainsHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadChainsDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadChainsLinkDamage");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KelThuzadSync_Func"), 1.0, c_timeGame);
+    return true;
+}
