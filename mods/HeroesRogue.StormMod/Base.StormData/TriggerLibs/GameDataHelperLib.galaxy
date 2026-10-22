@@ -23250,6 +23250,10 @@ void libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats (unit lp_unit, fixed lp_lif
     if (lp_sapper && !UnitHasBehavior2(lp_unit, "AffixSappersPossessed")) {
         UnitBehaviorAdd(lp_unit, "AffixSappersPossessed", lp_unit, 1);
     }
+    // a leader with the curse's Possession converts a nearby enemy Minion right away instead of waiting out its 80 seconds
+    if (UnitHasBehavior2(lp_unit, "AffixPossessionController") && !UnitHasBehavior2(lp_unit, "AffixPossessionReadyBehavior")) {
+        UnitBehaviorAdd(lp_unit, "AffixPossessionReadyBehavior", lp_unit, 1);
+    }
     lv_now = UnitGetPropertyFixed(lp_unit, c_unitPropLifeMax, c_unitPropCurrent);
     lv_gap = lp_lifeMax - lv_now;
     if (lv_gap > 0.5 && !UnitHasBehavior2(lp_unit, "AffixPossessedLife")) {
