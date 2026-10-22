@@ -186,21 +186,15 @@ void libAffx_GuldanCorruptedWardAdd (unit hero) {
     UnitBehaviorAdd(hero, "GuldanCorruptedWard", hero, 1);
 }
 fixed libAffx_GuldanCorruptionGuideRadius = 1.5;
-// Corruption's targeting preview: a quad centred on the middle of its three strikes (3 apart) plus a circle per strike.
-// When the strike radius changes (Corruptor starter, Affliction stacks 41-80), resize them to match.
+// Corruption's targeting preview: when the strike radius changes (Corruptor starter, Affliction stacks 41-80), resize the
+// three invisible circles that light up enemies the strikes would hit. The visible quad stays as it is: it is drawn as
+// end and middle pieces laid edge to edge, which cannot show circles wider than the 3 between strikes (it tiled and flipped).
 bool libAffx_GuldanCorruptionGuide_Func (bool testConds, bool runActions) {
     fixed r = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "GuldanCorruptionSearchArea", "AreaArray[0].Radius", libAffx_player);
-    string d;
     if (r <= 0.0 || r == libAffx_GuldanCorruptionGuideRadius) {
         return false;
     }
     libAffx_GuldanCorruptionGuideRadius = r;
-    d = FixedToString(2.0 * r, 3);
-    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,Width", libAffx_player, d);
-    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,Height", libAffx_player, FixedToString(6.0 + 2.0 * r, 3));
-    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,LaunchHeight", libAffx_player, d);
-    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,CenterHeight", libAffx_player, d);
-    libAffx_CatalogReferenceSet("Actor,GuldanCorruptionInvisibleQuad,ImpactHeight", libAffx_player, d);
     libAffx_CatalogReferenceSet("Actor,GuldanCorruptionActorRegion,Radius", libAffx_player, FixedToString(r, 3));
     libAffx_CatalogReferenceSet("Actor,GuldanCorruptionActorRegion2,Radius", libAffx_player, FixedToString(r, 3));
     libAffx_CatalogReferenceSet("Actor,GuldanCorruptionActorRegion3,Radius", libAffx_player, FixedToString(r, 3));
