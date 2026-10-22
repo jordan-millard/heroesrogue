@@ -12,7 +12,6 @@ const fixed libAffx_GuldanPastCapDamagePerStack = 0.01;
 bool libAffx_GuldanStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanFelTime; // per enemy player, last Fel Lord hit
 int libAffx_GuldanFelAdded; // Fel Lord: takedown stacks already applied to the catalog this game
-int libAffx_GuldanFelAdded2; // Fel Lord: takedown quest stage 2 stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanDrainTime; // per enemy player, last Soul Harvester hit
 int libAffx_GuldanDrainAdded; // Soul Harvester: takedown stacks already applied to the catalog this game
 int libAffx_GuldanDrainAdded2; // Soul Harvester: takedown quest stage 2 stacks already applied to the catalog this game
@@ -43,7 +42,7 @@ void libAffx_GuldanQuestDing() {
 bool libAffx_GuldanInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_GuldanTakedownWindow;
 }
-// GuldanPyreTokenCounter: stacks 1-40: 1% of the 75 Mana cost each; 41-80: 1% wider flames each; then 3% damage each, Heroics too
+// GuldanPyreTokenCounter: stacks 1-40: 1% of the 75 Mana cost each; 60 and 80: side flames (libAffx_GuldanFelSides_Func); then 3% damage each, Heroics too
 void libAffx_GuldanSyncFel () {
     unit hero = libAffx_GuldanHero();
     int stacks;
@@ -57,13 +56,6 @@ void libAffx_GuldanSyncFel () {
     if (wanted != libAffx_GuldanFelAdded) {
         libAffx_CatalogReferenceModify("Abil,GuldanFelFlame,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanFelAdded = wanted;
-    }
-    // stage 2 (stacks 41 to 80): 1% of the 23.94 degree flame cone each, targeting guide too (RadiusBonus is reach, not width)
-    wanted = MaxI(0, MinI(stacks - 40, 40));
-    if (wanted != libAffx_GuldanFelAdded2) {
-        libAffx_CatalogReferenceModify("Effect,GuldanFelFlameSearch,AreaArray[0].Arc", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded2) * 0.2394, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,GuldanFelFlameDummyVisualGuide,AreaArray[0].Arc", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded2) * 0.2394, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_GuldanFelAdded2 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "GuldanFelFlameDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
@@ -147,6 +139,34 @@ bool libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func (bool testConds, boo
     }
     libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho = GameGetMissionTime();
     UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", target);
+    return true;
+}
+fixed libAffx_GuldanFelSidesLast = -1.0;
+// Fel Lord, Pyre at 60 stacks: each Fel Flame also fires one 25 degrees to the left; at 80, one to the right too.
+// Skips the side flames' own events and Twin Flames echoes (the echo repeats each flame, sides included).
+bool libAffx_GuldanFelSides_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GuldanHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    point origin;
+    fixed angle;
+    fixed range;
+    fixed stacks;
+    fixed now = GameGetMissionTime();
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "GuldanFelMarker") || now == libAffx_GuldanFelSidesLast || now == libAffx_GuldanGuldanFelFlameInitialPersistentLastEcho) {
+        return false;
+    }
+    stacks = UnitGetTokenCount(hero, "GuldanPyreTokenCounter");
+    if (stacks < 60.0) {
+        return false;
+    }
+    origin = UnitGetPosition(hero);
+    angle = AngleBetweenPoints(origin, target);
+    range = MaxF(DistanceBetweenPoints(origin, target), 1.0);
+    libAffx_GuldanFelSidesLast = now;
+    UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", PointWithOffsetPolar(origin, range, angle + 25.0));
+    if (stacks >= 80.0) {
+        UnitCreateEffectPoint(hero, "GuldanFelFlameInitialPersistent", PointWithOffsetPolar(origin, range, angle - 25.0));
+    }
     return true;
 }
 // Fel Lord hit on an enemy Hero: takedown window, GuldanFelfireTokenCounter, the heal, and on-hit boons
@@ -238,6 +258,7 @@ bool libAffx_GuldanStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GuldanCorruptionRuinousAfflictionThreeHitDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanGuldanFelFlameInitialPersistentEcho_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GuldanFelSides_Func"), libAffx_player, "GuldanFelFlameInitialPersistent");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GuldanSync_Func"), 1.0, c_timeGame);
     return true;
