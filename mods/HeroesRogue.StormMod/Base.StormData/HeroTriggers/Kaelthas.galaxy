@@ -250,6 +250,27 @@ bool libAffx_KaelthasBombVerdantRefund_Func (bool testConds, bool runActions) {
     UnitCreateEffectUnit(hero, "KaelthasBombVerdantRefund", hero);
     return true;
 }
+// Convection (Sunfire talent) keeps half its stacks after a win. Re-adding them restores the Health per 20 stacks (token
+// delta events) but not the 200 Flamestrike damage per 20, which the base grants from a separate counter that reaches 20.
+// Once the kept stacks are in, add that damage and set the counter to the stacks past the last 20 so later milestones line up.
+bool libAffx_KaelthasConvectionKept_Func (bool testConds, bool runActions) {
+    unit hero;
+    int stacks;
+    Wait(2.0, c_timeGame);
+    hero = libAffx_KaelthasHero();
+    if (hero == null) {
+        return true;
+    }
+    stacks = FixedToInt(UnitGetTokenCount(hero, "KaelthasFlamestrikeConvectionQuestToken"));
+    if (stacks <= 0) {
+        return true;
+    }
+    if (stacks >= 20) {
+        libAffx_CatalogReferenceModify("Accumulator,KaelthasFlamestrikeConvectionAccumulator,Offset", libAffx_player, IntToString((stacks / 20) * 200), c_upgradeOperationAdd);
+    }
+    UnitSetTokenCount(hero, "KaelthasFlamestrikeConvectionMilestoneToken", IntToFixed(stacks % 20), hero);
+    return true;
+}
 // Sunfire hit on an enemy Hero: takedown window, KaelthasEmberTokenCounter, the heal, and on-hit boons
 bool libAffx_KaelthasFlamestrikeHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -361,6 +382,7 @@ bool libAffx_KaelthasStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KaelthasPyroblastDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KaelthasPyroblastSplashDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasKaelthasFlamestrikeInitialSetEcho_Func"), libAffx_player, "KaelthasFlamestrikeInitialSet");
+    TriggerExecute(TriggerCreate("libAffx_KaelthasConvectionKept_Func"), false, false);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasVerdantRemember_Func"), 0.25, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_KaelthasFlamestrikeCursor_Func"), 0.25, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_KaelthasSunfireRings_Func"), libAffx_player, "KaelthasFlamestrikeVerdantSpheresSearchArea");
