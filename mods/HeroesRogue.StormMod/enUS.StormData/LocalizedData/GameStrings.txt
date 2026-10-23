@@ -2061,6 +2061,58 @@ Button/Name/ZagaraHiveInfest=Infest
 Button/Tooltip/ZagaraHiveInfest=Channel for <c val="#TooltipNumbers">1</c> second on an enemy Minion, Catapults included, to take control of it.<n/><n/>Stores up to <c val="#TooltipNumbers">2</c> charges, with a <c val="#TooltipNumbers">30</c> second recharge.
 Behavior/Name/ZagaraLivingCarpetSlow=Living Carpet
 Behavior/Tooltip/ZagaraLivingCarpetSlow=Slowed and taking damage on Zagara's Creep.
+Affix/Name/AzmodanLordOfAnnihilation=Lord of Annihilation
+Affix/Tooltip/AzmodanLordOfAnnihilation=Gain <c val="#TooltipNumbers">Wrath</c> and <c val="#TooltipNumbers">Total Annihilation</c>. Globe of Annihilation has <c val="#TooltipNumbers">2</c> charges, costs <c val="#TooltipNumbers">50%</c> less Mana, reaches <c val="#TooltipNumbers">25%</c> farther and deals <c val="#TooltipNumbers">20%</c> more damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Globe hits on enemy Heroes add <c val="#TooltipNumbers">1.5%</c> Globe damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Globe hit make Globe recharge faster (up to <c val="#TooltipNumbers">40%</c>), then cast faster and hit a larger area, then reach farther. At <c val="#TooltipNumbers">100</c> stacks every Globe explodes a second time. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2.5%</c> to all your damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Annihilation and Wrath after a win.
+Affix/Name/AzmodanHellfireGlobes=Hellfire Globes
+Affix/Tooltip/AzmodanHellfireGlobes=Globe of Annihilation deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AzmodanSwiftDoom=Swift Doom
+Affix/Tooltip/AzmodanSwiftDoom=Globe of Annihilation recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/AzmodanGreedBoon=Greed
+Affix/Tooltip/AzmodanGreedBoon=Gain the talent <c val="#TooltipNumbers">Greed</c>: Globe hits on Minions and Mercenaries complete a quest for more Globe range and All Shall Burn range.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of its quest after a win.
+Affix/Name/AzmodanArtOfChaosBoon=Art of Chaos
+Affix/Tooltip/AzmodanArtOfChaosBoon=Gain the talent <c val="#TooltipNumbers">Art of Chaos</c>: Globes that hit several Heroes restore Mana and add more Annihilation.
+Affix/Name/AzmodanSplinteringDoom=Splintering Doom
+Affix/Tooltip/AzmodanSplinteringDoom=A Globe that hits an enemy Hero splits into <c val="#TooltipNumbers">3</c> small globes that land around them for <c val="#TooltipNumbers">30%</c> of its damage each.
+Affix/Name/AzmodanAnnihilator=Annihilator
+Affix/Tooltip/AzmodanAnnihilator=A Globe killing blow on an enemy Hero gives a Globe charge back, and Globe deals <c val="#TooltipNumbers">double</c> damage for <c val="#TooltipNumbers">4</c> seconds.
+Button/Name/AzmodanGoldenDoomTokenCounter=Doom
+Button/Tooltip/AzmodanGoldenDoomTokenCounter=<c val="#TooltipQuest">Bonus Globe damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AzmodanGoldenDoomTokenCounter$*1.5" precision="1"/>%</c></c>
+Button/Name/AzmodanGoldenDestructionTokenCounter=Lord of Destruction
+Button/Tooltip/AzmodanGoldenDestructionTokenCounter=<c val="#TooltipQuest">Lord of Destruction stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AzmodanGoldenDestructionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Globe recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Globe cast <c val="#TooltipNumbers">1%</c> faster and <c val="#TooltipNumbers">0.5%</c> larger. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each add <c val="#TooltipNumbers">1%</c> Globe range. At <c val="#TooltipNumbers">100</c> stacks, every Globe explodes again <c val="#TooltipNumbers">1</c> second later for <c val="#TooltipNumbers">50%</c> damage. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2.5%</c> to all of Azmodan's damage.
+Affix/Name/AzmodanLordOfSin=Lord of Sin
+Affix/Tooltip/AzmodanLordOfSin=Gain <c val="#TooltipNumbers">Cydaea's Kiss</c> and <c val="#TooltipNumbers">Sin's Grasp</c>. All Shall Burn has <c val="#TooltipNumbers">2</c> charges, costs <c val="#TooltipNumbers">50%</c> less Mana, reaches and stretches <c val="#TooltipNumbers">30%</c> farther and deals <c val="#TooltipNumbers">25%</c> more damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Every <c val="#TooltipNumbers">10</c> All Shall Burn ticks on enemy Heroes add <c val="#TooltipNumbers">2%</c> All Shall Burn damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a beam tick make All Shall Burn recharge faster (up to <c val="#TooltipNumbers">40%</c>), then reach farther, then let you move faster while channeling. At <c val="#TooltipNumbers">100</c> stacks the beam also burns a second Hero. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2.5%</c> to all your damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Annihilation after a win.
+Affix/Name/AzmodanInfernalBeam=Infernal Beam
+Affix/Tooltip/AzmodanInfernalBeam=All Shall Burn deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AzmodanQuickBurn=Quick Burn
+Affix/Tooltip/AzmodanQuickBurn=All Shall Burn recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/AzmodanHellRiftBoon=Hell Rift
+Affix/Tooltip/AzmodanHellRiftBoon=Gain the talent <c val="#TooltipNumbers">Hell Rift</c>: a completed All Shall Burn summons a Demon Warrior at the target.
+Affix/Name/AzmodanMasterOfDestructionBoon=Master of Destruction
+Affix/Tooltip/AzmodanMasterOfDestructionBoon=Gain the talent <c val="#TooltipNumbers">Master of Destruction</c>: All Shall Burn's final explosion also hits enemies around the target and deals bonus damage to Heroes.
+Affix/Name/AzmodanSinSpreader=Sin Spreader
+Affix/Tooltip/AzmodanSinSpreader=An enemy Hero killed by All Shall Burn explodes, dealing All Shall Burn's final explosion damage to enemies within <c val="#TooltipNumbers">4</c>.
+Affix/Name/AzmodanBurningLegion=Burning Legion
+Affix/Tooltip/AzmodanBurningLegion=While you channel All Shall Burn, your Demon Warriors within <c val="#TooltipNumbers">10</c> attack <c val="#TooltipNumbers">50%</c> faster and take <c val="#TooltipNumbers">50%</c> less damage.
+Button/Name/AzmodanGoldenBurnTokenCounter=Burning Sin
+Button/Tooltip/AzmodanGoldenBurnTokenCounter=<c val="#TooltipQuest">Bonus All Shall Burn damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AzmodanGoldenBurnTokenCounter$*0.2" precision="1"/>%</c></c>
+Button/Name/AzmodanGoldenSinTokenCounter=Sinful Harvest
+Button/Tooltip/AzmodanGoldenSinTokenCounter=<c val="#TooltipQuest">Sinful Harvest stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AzmodanGoldenSinTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make All Shall Burn recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> to its range and how far the beam stretches. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each add <c val="#TooltipNumbers">1%</c> Movement Speed while channeling. At <c val="#TooltipNumbers">100</c> stacks, each beam tick also burns the nearest other enemy Hero within <c val="#TooltipNumbers">5</c> for <c val="#TooltipNumbers">50%</c>. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2.5%</c> to all of Azmodan's damage.
+Affix/Name/AzmodanGeneralOfHell=General of the Burning Hells
+Affix/Tooltip/AzmodanGeneralOfHell=Gain <c val="#TooltipNumbers">Demonic Invasion</c> at level 1. You cannot use Globe of Annihilation or learn <c val="#TooltipNumbers">Tide of Sin</c>.<n/><n/>Summon Demon Warrior has <c val="#TooltipNumbers">4</c> charges and a <c val="#TooltipNumbers">6</c> second recharge. Demon Warriors no longer decay, have <c val="#TooltipNumbers">30%</c> more Health and gain all of your damage boons. Up to <c val="#TooltipNumbers">6</c> can be alive; summoning more replaces the oldest.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Demon Warrior hit add <c val="#TooltipNumbers">1%</c> Demon Warrior damage and Health each (up to <c val="#TooltipNumbers">80%</c>). Past <c val="#TooltipNumbers">80</c>, each adds <c val="#TooltipNumbers">2.5%</c> to all your damage.<n/><n/>Keep <c val="#TooltipNumbers">100%</c> of the quest and <c val="#TooltipNumbers">50%</c> of Annihilation after a win.
+Affix/Name/AzmodanHellforgedSteel=Hellforged Steel
+Affix/Tooltip/AzmodanHellforgedSteel=Demon Warriors deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/AzmodanBattleReady=Battle Ready
+Affix/Tooltip/AzmodanBattleReady=Summon Demon Warrior recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/AzmodanHellforgedArmorBoon=Hellforged Armor
+Affix/Tooltip/AzmodanHellforgedArmorBoon=Gain the talent <c val="#TooltipNumbers">Hellforged Armor</c>: Demon Warriors gain Armor.
+Affix/Name/AzmodanBrutishVanguardBoon=Brutish Vanguard
+Affix/Tooltip/AzmodanBrutishVanguardBoon=Gain the talent <c val="#TooltipNumbers">Brutish Vanguard</c>: Demon Warriors have more Health and their attacks Slow.
+Affix/Name/AzmodanLieutenantsRally=Lieutenant's Rally
+Affix/Tooltip/AzmodanLieutenantsRally=Every <c val="#TooltipNumbers">4th</c> Demon Warrior is a lieutenant with <c val="#TooltipNumbers">double</c> Health whose aura gives Demon Warriors within <c val="#TooltipNumbers">5</c> <c val="#TooltipNumbers">20%</c> Attack Speed.
+Affix/Name/AzmodanEndlessLegion=Endless Legion
+Affix/Tooltip/AzmodanEndlessLegion=A Demon Warrior that dies has a <c val="#TooltipNumbers">50%</c> chance to rise again <c val="#TooltipNumbers">2</c> seconds later at full Health, once per warrior.
+Button/Name/AzmodanGoldenLegionTokenCounter=Legion of Hell
+Button/Tooltip/AzmodanGoldenLegionTokenCounter=<c val="#TooltipQuest">Legion of Hell stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AzmodanGoldenLegionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> Demon Warrior damage and Health. Each stack past <c val="#TooltipNumbers">80</c> adds <c val="#TooltipNumbers">2.5%</c> to all of Azmodan's damage.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

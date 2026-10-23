@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Azmodan. Starters: Lord of Annihilation (Globe of Annihilation), Lord of Sin (All Shall Burn) and General of the Burning Hells (Demon Warriors, no Globe). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script; past the cap the takedown quest adds 2.5% to all of Azmodan's damage). Hits, quests and script boons are in HeroTriggers/Azmodan.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="AzmodanGlobeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanSinMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanGenMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanSplinteringDoomMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanAnnihilatorMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanSinSpreaderMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanBurningLegionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanLieutenantsRallyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AzmodanEndlessLegionMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Lord of Annihilation ===== -->
+  <!-- Globe of Annihilation has 2 charges with a 10 second recharge, costs half Mana (35), has 25% more range (30 to 37.5) and deals 20% more damage; Wrath and Total Annihilation. Doom quest (50% kept): 1.5% Globe damage per Globe hit on an enemy Hero. Lord of Destruction quest: takedowns within 3 seconds of a Globe hit; stacks 1-40 cut 1% of the recharge each, 41-80 make the cast 1% shorter and the blast 0.5% larger each, 81-100 add 1% range each, 100 unlocks the echo (the blast again 1 s later for 50%), then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="AzmodanGoldenDoomTokenCounter" parent="StormQuestToken">
+    <Face value="AzmodanGoldenDoomTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AzmodanGoldenDestructionTokenCounter" parent="StormQuestToken">
+    <Face value="AzmodanGoldenDestructionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AzmodanGoldenDoomTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AzmodanGoldenDoomTokenCounter" />
+    <Scale value="0.015" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AzmodanGlobeOfAnnihilationDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeHit" Accumulator="AzmodanGoldenDoomTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGoldenEcho" Validator="AzmodanGoldenCasterEchoing" Modifier="-0.5" />
+    <MultiplicativeModifierArray index="AzmodanGoldenAnnihilator" Validator="AzmodanGoldenCasterAnnihilating" Modifier="1" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGlobeOfAnnihilationTideOfSinTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeHit" Accumulator="AzmodanGoldenDoomTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGoldenEcho" Validator="AzmodanGoldenCasterEchoing" Modifier="-0.5" />
+    <MultiplicativeModifierArray index="AzmodanGoldenAnnihilator" Validator="AzmodanGoldenCasterAnnihilating" Modifier="1" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeHit" Accumulator="AzmodanGoldenDoomTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGoldenEcho" Validator="AzmodanGoldenCasterEchoing" Modifier="-0.5" />
+    <MultiplicativeModifierArray index="AzmodanGoldenAnnihilator" Validator="AzmodanGoldenCasterAnnihilating" Modifier="1" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGoldenSplinterDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobePower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGlobeHit" Accumulator="AzmodanGoldenDoomTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGoldenAnnihilator" Validator="AzmodanGoldenCasterAnnihilating" Modifier="1" />
+  </CEffectDamage>
+  <CButton id="AzmodanGoldenDoomTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_azmodan_globeofannihilation.dds" />
+  </CButton>
+  <CButton id="AzmodanGoldenDestructionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_azmodan_globeofannihilation.dds" />
+  </CButton>
+
+  <!-- ===== Lord of Sin ===== -->
+  <!-- All Shall Burn has 2 charges with a 6 second recharge, costs half Mana (12.5), has 30% more range and stretch (7.5 to 9.75 cast, 9.75 to 12 leash) and deals 25% more damage; Cydaea's Kiss and Sin's Grasp (its cooldown cut goes on the recharge, by script). Burning Sin quest (50% kept): 0.2% All Shall Burn damage per beam tick on an enemy Hero, added 10 at a time. Sinful Harvest quest: takedowns within 3 seconds of a beam tick; stacks 1-40 cut 1% of the recharge each, 41-80 add 1% range and stretch each, 81-100 add 1% Movement Speed while channeling each, 100 unlocks the fork (each tick also burns the nearest other enemy Hero within 5 for 50%), then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="AzmodanGoldenBurnTokenCounter" parent="StormQuestToken">
+    <Face value="AzmodanGoldenBurnTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AzmodanGoldenSinTokenCounter" parent="StormQuestToken">
+    <Face value="AzmodanGoldenSinTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AzmodanGoldenBurnTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AzmodanGoldenBurnTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AzmodanAllShallBurnDamage">
+    <MultiplicativeModifierArray index="AzmodanSinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinHit" Accumulator="AzmodanGoldenBurnTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanAllShallBurnFinalExplosionDamage">
+    <MultiplicativeModifierArray index="AzmodanSinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinHit" Accumulator="AzmodanGoldenBurnTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanAllShallBurnMasterOfDestructionTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanSinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinHit" Accumulator="AzmodanGoldenBurnTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGoldenForkDamage">
+    <MultiplicativeModifierArray index="AzmodanSinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinHit" Accumulator="AzmodanGoldenBurnTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="AzmodanGoldenBurnTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_azmodan_allshallburn.dds" />
+  </CButton>
+  <CButton id="AzmodanGoldenSinTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_azmodan_allshallburn.dds" />
+  </CButton>
+
+  <!-- ===== General of the Burning Hells ===== -->
+  <!-- No Globe of Annihilation. Summon Demon Warrior has 4 charges with a 6 second recharge; Demon Warriors no longer decay, have 30% more Health and carry Azmodan's damage boons at full strength (script); at most 6 are alive (the oldest dies). Demonic Invasion at level 1 (Tide of Sin disabled). Legion of Hell quest (no hit quest): takedowns within 3 seconds of a Demon Warrior hit; stacks 1-80 add 1% Demon Warrior damage and Health each, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="AzmodanGoldenLegionTokenCounter" parent="StormQuestToken">
+    <Face value="AzmodanGoldenLegionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="AzmodanSummonDemonWarriorWeaponDamage">
+    <MultiplicativeModifierArray index="AzmodanGenPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGoldenLegion" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanSummonDemonWarriorPeriodicDamage">
+    <MultiplicativeModifierArray index="AzmodanGenPower" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGoldenLegion" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="AzmodanGoldenLegionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_azmodan_generalofhell.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="AzmodanAllShallBurnDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanAllShallBurnFinalExplosionDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanAllShallBurnMasterOfDestructionTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGoldenForkDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanSummonDemonWarriorWeaponDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanSummonDemonWarriorPeriodicDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanDemonicInvasionDemonGruntWeaponDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanDemonicInvasionExplodeDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanDemonicInvasionImpactDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanDemonLieutenantDemonicSmiteDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanDemonLieutenantWeaponDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanHeroWeaponDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanTideOfSinBlackPoolTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanTrampleDamage">
+    <MultiplicativeModifierArray index="AzmodanGlobeLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGlobeOfAnnihilationDamage">
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGlobeOfAnnihilationTideOfSinTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage">
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AzmodanGoldenSplinterDamage">
+    <MultiplicativeModifierArray index="AzmodanSinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Lord of Annihilation ===== -->
+  <!-- Globe echo (takedown quest 100): the Globe's impact goes off again 1 second later at the same point; while the
+       script casts it, this marker on Azmodan halves the damage -->
+  <CBehaviorBuff id="AzmodanGoldenEchoMarker">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.0625" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="AzmodanGoldenCasterEchoing">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AzmodanGoldenEchoMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Splintering Doom (Epic): 3 small globes (1.5 radius) around a Hero the Globe hit, 30% damage each. The script
+       copies the Globe's current Amount (level scaling) into this effect. -->
+  <CEffectDamage id="AzmodanGoldenSplinterDamage" parent="StormSpell">
+    <MultiplicativeModifierArray index="Splinter" Modifier="-0.7" />
+    <MultiplicativeModifierArray index="MinionMerc" Validator="GlobeofAnnihilationPvEDamageCheckCombine" Modifier="-0.5" />
+    <MultiplicativeModifierArray index="Structure" Validator="IsStructureTarget" Modifier="-0.5" />
+    <FlatModifierArray index="Globe" Accumulator="AzmodanGlobeOfAnnihilationDamageAccumulator" />
+    <FlatModifierArray index="Pride" Validator="AzmodanHasPrideCarry" Modifier="$AzmodanPrideBonusDamage" />
+    <Amount value="176" />
+    <SourceButtonFace value="AzmodanGlobeOfAnnihilation" />
+  </CEffectDamage>
+  <CEffectEnumArea id="AzmodanGoldenSplinterSearch">
+    <SearchFilters value="-;Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="AzmodanGoldenSplinterDamage">
+      <Radius value="1.5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <!-- Annihilator (Legendary): a Globe killing blow on a Hero gives a charge back and doubles Globe damage for 4 s -->
+  <CBehaviorBuff id="AzmodanGoldenAnnihilatorBuff">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_azmodan_globeofannihilation_b.dds" />
+    <Duration value="4" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="AzmodanGoldenCasterAnnihilating">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AzmodanGoldenAnnihilatorBuff" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- ===== Lord of Sin ===== -->
+  <!-- Beam fork (takedown quest 100): each beam tick on a Hero also burns the nearest other enemy Hero within 5 for 50%.
+       The script copies the beam tick's current Amount into this effect. -->
+  <CEffectDamage id="AzmodanGoldenForkDamage" parent="StormSpell">
+    <MultiplicativeModifierArray index="Fork" Modifier="-0.5" />
+    <Amount value="32" />
+    <SourceButtonFace value="AzmodanAllShallBurn" />
+  </CEffectDamage>
+  <!-- Sin Spreader (Epic): an enemy Hero killed by All Shall Burn explodes: the final explosion on enemies within 4 -->
+  <CEffectEnumArea id="AzmodanGoldenSinSpreaderSearch">
+    <SearchFilters value="-;Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="AzmodanAllShallBurnFinalExplosionDamage">
+      <Radius value="4" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <!-- Burning Legion (Legendary): Demon Warriors near Azmodan while he channels attack 50% faster and take 50% less -->
+  <CBehaviorBuff id="AzmodanGoldenBurningLegionBuff">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_azmodan_allshallburn.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedAttackSpeedFactor value="0.5" />
+    </Modification>
+    <DamageResponse>
+      <Chance value="1" />
+      <ModifyFraction value="0.5" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <!-- ===== General of the Burning Hells ===== -->
+  <CBehaviorBuff id="AzmodanGoldenGeneralRestrictions" parent="CarryBehaviorParent">
+    <Modification>
+      <AbilLinkDisableArray value="AzmodanGlobeOfAnnihilation" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- added by the script to every Demon Warrior: +30% Health, +1% per Legion of Hell stack -->
+  <CBehaviorBuff id="AzmodanGoldenWarriorHealth">
+    <InfoFlags index="Hidden" value="1" />
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Lieutenant's Rally (Epic): every 4th Demon Warrior is a lieutenant with double Health and an aura of +20% Attack
+       Speed for Demon Warriors within 5 -->
+  <CBehaviorBuff id="AzmodanGoldenLieutenant">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_azmodan_generalofhell.dds" />
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="1" />
+    </Modification>
+    <Period value="0.5" />
+    <PeriodicEffect value="AzmodanGoldenRallySearch" />
+  </CBehaviorBuff>
+  <CValidatorUnitType id="AzmodanGoldenTargetIsDemonWarrior">
+    <Value value="AzmodanDemonWarrior" />
+  </CValidatorUnitType>
+  <CEffectEnumArea id="AzmodanGoldenRallySearch">
+    <SearchFilters value="-;Enemy,Neutral,Structure,Missile,Item,Stasis,Dead,Hidden" />
+    <AreaArray Effect="AzmodanGoldenRallyApply">
+      <Radius value="5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectApplyBehavior id="AzmodanGoldenRallyApply">
+    <ValidatorArray value="AzmodanGoldenTargetIsDemonWarrior" />
+    <Behavior value="AzmodanGoldenRallyBuff" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="AzmodanGoldenRallyBuff">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_azmodan_generalofhell.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedAttackSpeedFactor value="0.2" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Endless Legion (Legendary): a Demon Warrior that came back once does not come back again -->
+  <CBehaviorBuff id="AzmodanGoldenRisen">
+    <InfoFlags index="Hidden" value="1" />
+  </CBehaviorBuff>
+</Catalog>

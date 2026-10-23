@@ -1,0 +1,556 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Azmodan. Each ability starter: hits on enemy Heroes open a takedown window and add the hit quest token;
+// takedowns in the window add the takedown token: stacks 1-40, 41-80 and 81-100 each improve the starter, stack 100
+// unlocks the Globe echo or the beam fork, then 2.5% to all of Azmodan's damage per stack. General of the Burning
+// Hells has only the takedown quest (1% Demon Warrior damage and Health per stack up to 80, then 2.5% all damage).
+// ============================================================
+
+const fixed libAffx_AzmodanTakedownWindow = 3.0;
+const fixed libAffx_AzmodanPastCapDamagePerStack = 0.01;
+bool libAffx_AzmodanStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanGlobeTime; // per enemy player, last Lord of Annihilation hit
+int libAffx_AzmodanGlobeAdded; // Lord of Annihilation: takedown stacks already applied to the catalog this game
+int libAffx_AzmodanGlobeAdded2; // Lord of Annihilation: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_AzmodanGlobeAdded3; // Lord of Annihilation: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanSinTime; // per enemy player, last Lord of Sin hit
+int libAffx_AzmodanSinAdded; // Lord of Sin: takedown stacks already applied to the catalog this game
+int libAffx_AzmodanSinAdded2; // Lord of Sin: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_AzmodanSinAdded3; // Lord of Sin: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanGenTime; // per enemy player, last General of the Burning Hells hit
+int libAffx_AzmodanGenAdded; // General of the Burning Hells: takedown stacks already applied to the catalog this game
+
+unit libAffx_AzmodanHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_AzmodanIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_AzmodanStacks(string tokenId) {
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_AzmodanQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_AzmodanInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_AzmodanTakedownWindow;
+}
+// AzmodanGoldenDestructionTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% shorter cast and 0.5% larger blast each; 81-100: 1% range each; then 2.5% all damage each
+void libAffx_AzmodanSyncGlobe () {
+    unit hero = libAffx_AzmodanHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "AzmodanGlobeMarker")) {
+        return;
+    }
+    stacks = libAffx_AzmodanStacks("AzmodanGoldenDestructionTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_AzmodanGlobeAdded) {
+        libAffx_CatalogReferenceModify("Abil,AzmodanGlobeOfAnnihilation,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanGlobeAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 0.5625 second cast shorter and 0.5% (0.02) larger blast each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_AzmodanGlobeAdded2) {
+        libAffx_CatalogReferenceModify("Abil,AzmodanGlobeOfAnnihilation,CastIntroTime", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded2) * -0.005625, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AzmodanGlobeOfAnnihilationSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AzmodanGlobeOfAnnihilationArtOfChaosTalent2TargetSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AzmodanGlobeOfAnnihilationArtOfChaosTalent3TargetSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,AzmodanGlobeOfAnnihilationWarningModel,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded2) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,AzmodanGlobeOfAnnihilationTideOfSinWarningModel,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded2) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanGlobeAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% of the 30 range each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_AzmodanGlobeAdded3) {
+        libAffx_CatalogReferenceModify("Abil,AzmodanGlobeOfAnnihilation,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded3) * 0.3, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanGlobeAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnFinalExplosionDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnMasterOfDestructionTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorPeriodicDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionDemonGruntWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionExplodeDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionImpactDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantDemonicSmiteDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanHeroWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+}
+// AzmodanGoldenSinTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% range and stretch each; 81-100: 1% Movement Speed while channeling each; then 2.5% all damage each
+void libAffx_AzmodanSyncSin () {
+    unit hero = libAffx_AzmodanHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "AzmodanSinMarker")) {
+        return;
+    }
+    stacks = libAffx_AzmodanStacks("AzmodanGoldenSinTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_AzmodanSinAdded) {
+        libAffx_CatalogReferenceModify("Abil,AzmodanAllShallBurn,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanSinAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 7.5 cast range each, also on the stretch (leash) and its range circle
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_AzmodanSinAdded2) {
+        libAffx_CatalogReferenceModify("Abil,AzmodanAllShallBurn,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Validator,AzmodanAllShallBurnRangeValidator,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,AzmodanAllShallBurnActiveRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanSinAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% Movement Speed while channeling each (the channel slows by 30%)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_AzmodanSinAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,AzmodanAllShallBurnChannel,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanSinAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnFinalExplosionDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnMasterOfDestructionTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorPeriodicDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionDemonGruntWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionExplodeDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionImpactDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantDemonicSmiteDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanHeroWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+}
+// AzmodanGoldenLegionTokenCounter: stacks 1-80: 1% Demon Warrior damage and Health each; then 2.5% all damage each
+void libAffx_AzmodanSyncGen () {
+    unit hero = libAffx_AzmodanHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
+        return;
+    }
+    stacks = libAffx_AzmodanStacks("AzmodanGoldenLegionTokenCounter");
+    wanted = MinI(stacks, 80);
+    if (wanted != libAffx_AzmodanGenAdded) {
+        libAffx_CatalogReferenceModify("Effect,AzmodanSummonDemonWarriorWeaponDamage,MultiplicativeModifierArray[AzmodanGoldenLegion].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGenAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AzmodanSummonDemonWarriorPeriodicDamage,MultiplicativeModifierArray[AzmodanGoldenLegion].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGenAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,AzmodanGoldenWarriorHealth,Modification.VitalMaxFractionArray[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGenAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AzmodanGenAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.025, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorPeriodicDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnFinalExplosionDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnMasterOfDestructionTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionDemonGruntWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionExplodeDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionImpactDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantDemonicSmiteDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanHeroWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_AzmodanSync_Func (bool testConds, bool runActions) {
+    libAffx_AzmodanSyncGlobe();
+    libAffx_AzmodanSyncSin();
+    libAffx_AzmodanSyncGen();
+    return true;
+}
+// Lord of Annihilation and Lord of Sin, takedown quest 100: the echo and the fork
+bool libAffx_AzmodanHas100(string starterMarker, string token) {
+    unit hero = libAffx_AzmodanHero();
+    return hero != null && UnitHasBehavior2(hero, starterMarker) && libAffx_AzmodanStacks(token) >= 100;
+}
+// Splinter and fork damage follow the Globe and the beam tick (level scaling): copy their Amount each second
+bool libAffx_AzmodanAmounts_Func (bool testConds, bool runActions) {
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "Amount", libAffx_player,
+                         CatalogFieldValueGet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "Amount", libAffx_player));
+    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "Amount", libAffx_player,
+                         CatalogFieldValueGet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "Amount", libAffx_player));
+    return true;
+}
+// Globe echo: the impact goes off again 1 second later at the same point for 50%. The echo's own impact event is skipped.
+fixed libAffx_AzmodanGlobeLastEcho = -1.0;
+bool libAffx_AzmodanGlobeEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (!libAffx_AzmodanHas100("AzmodanGlobeMarker", "AzmodanGoldenDestructionTokenCounter") || GameGetMissionTime() == libAffx_AzmodanGlobeLastEcho) {
+        return false;
+    }
+    Wait(1.0, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_AzmodanGlobeLastEcho = GameGetMissionTime();
+    UnitBehaviorAdd(hero, "AzmodanGoldenEchoMarker", hero, 1);
+    UnitCreateEffectPoint(hero, "AzmodanGlobeOfAnnihilationImpactSet", target);
+    UnitBehaviorRemove(hero, "AzmodanGoldenEchoMarker", 1);
+    return true;
+}
+// Splintering Doom (Epic): a Globe hit on an enemy Hero drops 3 small globes around them
+bool libAffx_AzmodanSplinter_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    unit victim = EventUnit();
+    point center = UnitGetPosition(victim);
+    int i;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "AzmodanSplinteringDoomMarker") || !libAffx_AzmodanIsEnemyHero(victim)) {
+        return false;
+    }
+    for (i = 0; i < 3; i += 1) {
+        UnitCreateEffectPoint(hero, "AzmodanGoldenSplinterSearch", PointWithOffsetPolar(center, 2.5, IntToFixed(i) * 120.0 + RandomFixed(0.0, 60.0)));
+    }
+    return true;
+}
+// Annihilator (Legendary): a Globe killing blow on an enemy Hero gives a charge back and doubles Globe damage for 4 s
+bool libAffx_AzmodanAnnihilator_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "AzmodanAnnihilatorMarker") || !libAffx_AzmodanIsEnemyHero(EventUnit())) {
+        return false;
+    }
+    if (UnitGetChargeUsed(hero, "Abil/AzmodanGlobeOfAnnihilation") > 0.0) {
+        UnitAddChargeUsed(hero, "Abil/AzmodanGlobeOfAnnihilation", -1.0);
+    }
+    UnitBehaviorAdd(hero, "AzmodanGoldenAnnihilatorBuff", hero, 1);
+    return true;
+}
+// All Shall Burn fork: each beam tick on an enemy Hero also burns the nearest other enemy Hero within 5 for 50%
+bool libAffx_AzmodanFork_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    unit victim = EventUnit();
+    unit best;
+    unit enemy;
+    fixed bestDistance = 5.0;
+    fixed distance;
+    int p;
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !libAffx_AzmodanHas100("AzmodanSinMarker", "AzmodanGoldenSinTokenCounter")) {
+        return false;
+    }
+    for (p = 1; p <= libCore_gv_bALMaxPlayers; p += 1) {
+        enemy = libGame_gv_players[p].lv_heroUnit;
+        if (enemy != null && enemy != victim && UnitIsAlive(enemy) && libAffx_AzmodanIsEnemyHero(enemy)) {
+            distance = DistanceBetweenPoints(UnitGetPosition(enemy), UnitGetPosition(victim));
+            if (distance <= bestDistance) {
+                bestDistance = distance;
+                best = enemy;
+            }
+        }
+    }
+    if (best != null) {
+        UnitCreateEffectUnit(hero, "AzmodanGoldenForkDamage", best);
+    }
+    return true;
+}
+// Lord of Sin: All Shall Burn has charges, so Sin's Grasp's 3 second cooldown cut goes on the recharge
+bool libAffx_AzmodanSinsGrasp_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    fixed left;
+    if (hero == null || !UnitHasBehavior2(hero, "AzmodanSinMarker") || !UnitHasBehavior2(hero, "AzmodanAllShallBurnSinsGraspCooldownMarker")) {
+        return false;
+    }
+    left = UnitGetChargeRegen(hero, "Abil/AzmodanAllShallBurn");
+    if (left > 0.0) {
+        UnitAddChargeRegen(hero, "Abil/AzmodanAllShallBurn", -MinF(3.0, left));
+    }
+    return true;
+}
+// Sin Spreader (Epic): an enemy Hero killed by All Shall Burn explodes on enemies within 4
+bool libAffx_AzmodanSinSpreader_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    unit victim = EventUnit();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "AzmodanSinSpreaderMarker") || !libAffx_AzmodanIsEnemyHero(victim)) {
+        return false;
+    }
+    UnitCreateEffectPoint(hero, "AzmodanGoldenSinSpreaderSearch", UnitGetPosition(victim));
+    return true;
+}
+// Burning Legion (Legendary): while Azmodan channels All Shall Burn, Demon Warriors within 10 of him attack 50%
+// faster and take 50% less damage
+bool libAffx_AzmodanBurningLegion_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    unitgroup demons;
+    unit demon;
+    int i;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "AzmodanBurningLegionMarker") || !UnitHasBehavior2(hero, "AzmodanAllShallBurnChannel")) {
+        return false;
+    }
+    demons = UnitGroup("AzmodanDemonWarrior", libAffx_player, RegionCircle(UnitGetPosition(hero), 10.0), UnitFilter(0, 0, 0, 0), 0);
+    for (i = UnitGroupCount(demons, c_unitCountAll); i > 0; i -= 1) {
+        demon = UnitGroupUnitFromEnd(demons, i);
+        if (demon != null && UnitIsAlive(demon)) {
+            UnitBehaviorAdd(demon, "AzmodanGoldenBurningLegionBuff", hero, 1);
+        }
+    }
+    return true;
+}
+// General of the Burning Hells: Demon Warriors carry Azmodan's damage boons at full strength. Every "Affix" behavior on
+// him that raises Basic, Ability or Splash damage is copied to the warrior with the same stack count.
+bool libAffx_AzmodanIsDamageBoon(string behavior) {
+    string[5] fields;
+    int i;
+    if (StringSub(behavior, 1, 5) != "Affix") {
+        return false;
+    }
+    fields[0] = "Modification.DamageDealtFraction[Basic]";
+    fields[1] = "Modification.DamageDealtFraction[Ability]";
+    fields[2] = "Modification.DamageDealtFraction[Splash]";
+    fields[3] = "Modification.DamageDealtScaled[Basic]";
+    fields[4] = "Modification.DamageDealtScaled[Ability]";
+    for (i = 0; i < 5; i += 1) {
+        if (StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, behavior, fields[i], libAffx_player)) != 0.0) {
+            return true;
+        }
+    }
+    return false;
+}
+void libAffx_AzmodanCopyBoons(unit demon) {
+    unit hero = libAffx_AzmodanHero();
+    int i;
+    int count;
+    int want;
+    int have;
+    string behavior;
+    string previous = "";
+    if (hero == null || demon == null || !UnitIsAlive(demon)) {
+        return;
+    }
+    count = UnitBehaviorCountAll(hero);
+    for (i = 1; i <= count; i += 1) {
+        behavior = UnitBehaviorGet(hero, i);
+        if (behavior == previous || behavior == "") {
+            continue;
+        }
+        previous = behavior;
+        if (!libAffx_AzmodanIsDamageBoon(behavior)) {
+            continue;
+        }
+        want = UnitBehaviorCount(hero, behavior);
+        have = UnitBehaviorCount(demon, behavior);
+        if (want > have) {
+            UnitBehaviorAdd(demon, behavior, hero, want - have);
+        } else if (have > want) {
+            UnitBehaviorRemove(demon, behavior, have - want);
+        }
+    }
+}
+// General of the Burning Hells: every new Demon Warrior gets the extra Health, the damage boons and, with the boons,
+// the lieutenant; only 6 can be alive (the oldest one dies). Warriors no longer decay (AffixData.xml).
+unitgroup libAffx_AzmodanDemons;
+int libAffx_AzmodanSummoned;
+bool libAffx_AzmodanDemonSpawned_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    unit demon = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    unit oldest;
+    int i;
+    if (hero == null || demon == null || UnitGetType(demon) != "AzmodanDemonWarrior" || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
+        return false;
+    }
+    if (libAffx_AzmodanDemons == null) {
+        libAffx_AzmodanDemons = UnitGroupEmpty();
+    }
+    UnitBehaviorAdd(demon, "AzmodanGoldenWarriorHealth", hero, 1);
+    libAffx_AzmodanSummoned += 1;
+    if (UnitHasBehavior2(hero, "AzmodanLieutenantsRallyMarker") && ModI(libAffx_AzmodanSummoned, 4) == 0) {
+        UnitBehaviorAdd(demon, "AzmodanGoldenLieutenant", hero, 1);
+        ActorSend(libNtve_gf_MainActorofUnit(demon), "SetScale 1.3");
+    }
+    UnitSetPropertyFixed(demon, c_unitPropLifePercent, 100.0);
+    libAffx_AzmodanCopyBoons(demon);
+    UnitGroupAdd(libAffx_AzmodanDemons, demon);
+    for (i = UnitGroupCount(libAffx_AzmodanDemons, c_unitCountAll); i > 0; i -= 1) {
+        oldest = UnitGroupUnitFromEnd(libAffx_AzmodanDemons, i);
+        if (oldest == null || !UnitIsAlive(oldest)) {
+            UnitGroupRemove(libAffx_AzmodanDemons, oldest);
+        }
+    }
+    while (UnitGroupCount(libAffx_AzmodanDemons, c_unitCountAlive) > 6) {
+        oldest = UnitGroupUnit(libAffx_AzmodanDemons, 1);
+        UnitGroupRemove(libAffx_AzmodanDemons, oldest);
+        UnitKill(oldest);
+    }
+    return true;
+}
+// keeps the warriors' damage boons in step with Azmodan's (boons picked mid-game, stacks that change)
+bool libAffx_AzmodanDemonBoons_Func (bool testConds, bool runActions) {
+    int i;
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || libAffx_AzmodanDemons == null || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
+        return false;
+    }
+    for (i = UnitGroupCount(libAffx_AzmodanDemons, c_unitCountAll); i > 0; i -= 1) {
+        libAffx_AzmodanCopyBoons(UnitGroupUnitFromEnd(libAffx_AzmodanDemons, i));
+    }
+    return true;
+}
+// Endless Legion (Legendary): a Demon Warrior that dies has a 50% chance to rise again 2 s later at full Health, once
+bool libAffx_AzmodanEndlessLegion_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    unit dead = EventUnit();
+    unit demon;
+    point where = UnitGetPosition(dead);
+    fixed facing = UnitGetFacing(dead);
+    if (hero == null || UnitGetType(dead) != "AzmodanDemonWarrior" || UnitGetOwner(dead) != libAffx_player || !UnitHasBehavior2(hero, "AzmodanEndlessLegionMarker")) {
+        return false;
+    }
+    if (UnitHasBehavior2(dead, "AzmodanGoldenRisen") || RandomInt(1, 2) != 1) {
+        return true;
+    }
+    Wait(2.0, c_timeGame);
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    libNtve_gf_UnitCreateFacingPoint(1, "AzmodanDemonWarrior", 0, libAffx_player, where, PointWithOffsetPolar(where, 1.0, facing), hero);
+    demon = UnitLastCreated();
+    if (demon == null) {
+        return true;
+    }
+    UnitBehaviorAdd(demon, "AzmodanGoldenRisen", hero, 1);
+    UnitCreateEffectUnit(hero, "AzmodanSummonDemonWarriorSpawnSet", demon);
+    if (PlayerHasTalent(libAffx_player, "AzmodanHellforgedArmor")) {
+        UnitBehaviorAdd(demon, "AzmodanSummonDemonWarriorHellforgedArmorTalent", hero, 1);
+    }
+    UnitCreateAIThinkTree(demon);
+    return true;
+}
+// Lord of Annihilation hit on an enemy Hero: takedown window, AzmodanGoldenDoomTokenCounter, the heal, and on-hit boons
+bool libAffx_AzmodanGlobeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "AzmodanGlobeMarker")) {
+        return false;
+    }
+    libAffx_AzmodanGlobeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "AzmodanGoldenDoomTokenCounter", hero);
+    return true;
+}
+// Lord of Sin: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_AzmodanSinHits;
+// Lord of Sin hit on an enemy Hero: takedown window, AzmodanGoldenBurnTokenCounter, the heal, and on-hit boons
+bool libAffx_AzmodanSinHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "AzmodanSinMarker")) {
+        return false;
+    }
+    libAffx_AzmodanSinTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libAffx_AzmodanSinHits += 1;
+    if (libAffx_AzmodanSinHits >= 10) {
+        libAffx_AzmodanSinHits = 0;
+        libGame_gf_ModifyTokenCount(10, "AzmodanGoldenBurnTokenCounter", hero);
+    }
+    return true;
+}
+// General of the Burning Hells hit on an enemy Hero: takedown window, None, the heal, and on-hit boons
+bool libAffx_AzmodanGenHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
+        return false;
+    }
+    libAffx_AzmodanGenTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_AzmodanTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_AzmodanHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "AzmodanGlobeMarker") && libAffx_AzmodanInWindow(libAffx_AzmodanGlobeTime[killedPlayer], now)) {
+        libAffx_AzmodanGlobeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "AzmodanGoldenDestructionTokenCounter", hero);
+        libAffx_AzmodanSyncGlobe();
+        libAffx_AzmodanQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "AzmodanSinMarker") && libAffx_AzmodanInWindow(libAffx_AzmodanSinTime[killedPlayer], now)) {
+        libAffx_AzmodanSinTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "AzmodanGoldenSinTokenCounter", hero);
+        libAffx_AzmodanSyncSin();
+        libAffx_AzmodanQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "AzmodanGenMarker") && libAffx_AzmodanInWindow(libAffx_AzmodanGenTime[killedPlayer], now)) {
+        libAffx_AzmodanGenTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "AzmodanGoldenLegionTokenCounter", hero);
+        libAffx_AzmodanSyncGen();
+        libAffx_AzmodanQuestDing();
+    }
+    return true;
+}
+bool libAffx_AzmodanStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_AzmodanStarted) {
+        return true;
+    }
+    libAffx_AzmodanStarted = true;
+    trig = TriggerCreate("libAffx_AzmodanGlobeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanGlobeOfAnnihilationDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage");
+    trig = TriggerCreate("libAffx_AzmodanSinHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanAllShallBurnDamage");
+    trig = TriggerCreate("libAffx_AzmodanGenHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanSummonDemonWarriorWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanSummonDemonWarriorPeriodicDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanAmounts_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_AzmodanGlobeEcho_Func"), libAffx_player, "AzmodanGlobeOfAnnihilationImpactSet");
+    trig = TriggerCreate("libAffx_AzmodanSplinter_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanGlobeOfAnnihilationDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage");
+    trig = TriggerCreate("libAffx_AzmodanAnnihilator_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanGlobeOfAnnihilationDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanGoldenSplinterDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AzmodanFork_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanAllShallBurnDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_AzmodanSinsGrasp_Func"), libAffx_player, "AzmodanAllShallBurnSinsGraspTalentModifyCooldown");
+    trig = TriggerCreate("libAffx_AzmodanSinSpreader_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanAllShallBurnDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanAllShallBurnFinalExplosionDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageFatal, "AzmodanGoldenForkDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanBurningLegion_Func"), 0.5, c_timeGame);
+    trig = TriggerCreate("libAffx_AzmodanDemonSpawned_Func");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "AzmodanSummonDemonWarriorSpawnSet");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "AzmodanSummonDemonWarriorTalentedSpawnSet");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanDemonBoons_Func"), 2.0, c_timeGame);
+    TriggerAddEventUnitDied(TriggerCreate("libAffx_AzmodanEndlessLegion_Func"), null);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanSync_Func"), 1.0, c_timeGame);
+    return true;
+}

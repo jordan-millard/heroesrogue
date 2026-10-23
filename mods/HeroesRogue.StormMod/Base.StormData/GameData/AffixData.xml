@@ -22076,6 +22076,578 @@
             </String>
         </Instances>
 
+
+        <Instances Id="AzmodanLordOfAnnihilation">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AzmodanWrath">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AzmodanTotalAnnihilation">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AzmodanGlobeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AzmodanGoldenDoomTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AzmodanGoldenDestructionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AzmodanGoldenDestructionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AzmodanGoldenDoomTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationDisplayTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationWrathTalentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,AzmodanGlobeOfAnnihilation,Cost.Vital[Energy] -35">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,AzmodanGlobeOfAnnihilation,Range 7.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanGlobeOfAnnihilation,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanGlobeOfAnnihilation,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanGlobeOfAnnihilation,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanGlobeOfAnnihilation,Cost.Charge.TimeUse 10">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanGlobeOfAnnihilation,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanGlobeOfAnnihilationDamage,MultiplicativeModifierArray[AzmodanGlobePower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanGlobeOfAnnihilationTideOfSinTalentDamage,MultiplicativeModifierArray[AzmodanGlobePower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage,MultiplicativeModifierArray[AzmodanGlobePower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanGoldenSplinterDamage,MultiplicativeModifierArray[AzmodanGlobePower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="AffixAdded libAffx_AzmodanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AzmodanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanHellfireGlobes">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfAnnihilation">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AzmodanGlobeOfAnnihilationDamage,MultiplicativeModifierArray[AzmodanGlobeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanGlobeOfAnnihilationTideOfSinTalentDamage,MultiplicativeModifierArray[AzmodanGlobeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage,MultiplicativeModifierArray[AzmodanGlobeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanGoldenSplinterDamage,MultiplicativeModifierArray[AzmodanGlobeCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanSwiftDoom">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfAnnihilation">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AzmodanGlobeOfAnnihilation,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanGreedBoon">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfAnnihilation">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AzmodanGreed">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationGreedTalentTokenCounter 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanArtOfChaosBoon">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation_b.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfAnnihilation">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AzmodanArtOfChaos">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanSplinteringDoom">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfAnnihilation">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AzmodanSplinteringDoomMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanAnnihilator">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfAnnihilation">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AzmodanAnnihilatorMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanLordOfSin">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_allshallburn.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AzmodanCydaeasKiss">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AzmodanSinsGrasp">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AzmodanSinMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AzmodanGoldenBurnTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AzmodanGoldenSinTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AzmodanGoldenSinTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AzmodanGoldenBurnTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationDisplayTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Add Abil,AzmodanAllShallBurn,Cost.Vital[Energy] -12.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,AzmodanAllShallBurn,Range 2.25">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Validator,AzmodanAllShallBurnRangeValidator,Range 2.25">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Add Actor,AzmodanAllShallBurnActiveRange,Range 2.25">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanAllShallBurnDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanAllShallBurnFinalExplosionDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanAllShallBurnMasterOfDestructionTalentDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanGoldenForkDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="AffixAdded libAffx_AzmodanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AzmodanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanInfernalBeam">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_azmodan_allshallburn.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfSin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AzmodanAllShallBurnDamage,MultiplicativeModifierArray[AzmodanSinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanAllShallBurnFinalExplosionDamage,MultiplicativeModifierArray[AzmodanSinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanAllShallBurnMasterOfDestructionTalentDamage,MultiplicativeModifierArray[AzmodanSinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanGoldenForkDamage,MultiplicativeModifierArray[AzmodanSinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanQuickBurn">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_azmodan_allshallburn.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfSin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AzmodanAllShallBurn,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanHellRiftBoon">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_summondemonwarrior_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfSin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AzmodanHellRift">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanMasterOfDestructionBoon">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_allshallburn.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfSin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AzmodanMasterofDestruction">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanSinSpreader">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_allshallburn.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfSin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AzmodanSinSpreaderMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanBurningLegion">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_summondemonwarrior.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanLordOfSin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AzmodanBurningLegionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanGeneralOfHell">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_generalofhell.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AzmodanHeroicAbilityDemonicInvasion">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AzmodanTideOfSin">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 AzmodanGenMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AzmodanGoldenLegionTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AzmodanGoldenGeneralRestrictions">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AzmodanGoldenLegionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationDisplayTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanSummonDemonWarrior,Cost.Charge.CountMax 4">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanSummonDemonWarrior,Cost.Charge.CountStart 4">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,AzmodanSummonDemonWarrior,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Unit,AzmodanDemonWarrior,LifeRegenRate 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanSummonDemonWarriorWeaponDamage,MultiplicativeModifierArray[AzmodanGenPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanSummonDemonWarriorPeriodicDamage,MultiplicativeModifierArray[AzmodanGenPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_AzmodanStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_AzmodanTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanHellforgedSteel">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_azmodan_generalofhell.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanGeneralOfHell">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AzmodanSummonDemonWarriorWeaponDamage,MultiplicativeModifierArray[AzmodanGenCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AzmodanSummonDemonWarriorPeriodicDamage,MultiplicativeModifierArray[AzmodanGenCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanBattleReady">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_azmodan_generalofhell.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanGeneralOfHell">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AzmodanSummonDemonWarrior,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanHellforgedArmorBoon">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_summondemonwarrior_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanGeneralOfHell">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AzmodanHellforgedArmor">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanBrutishVanguardBoon">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_summondemonwarrior_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanGeneralOfHell">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AzmodanBrutishVanguard">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanLieutenantsRally">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_generalofhell.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanGeneralOfHell">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AzmodanLieutenantsRallyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="AzmodanEndlessLegion">
+            <String String="Assets/Textures/storm_ui_icon_azmodan_demonicinvasion.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Azmodan">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="AzmodanGeneralOfHell">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AzmodanEndlessLegionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
