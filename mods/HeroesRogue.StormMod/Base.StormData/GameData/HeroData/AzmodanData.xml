@@ -119,7 +119,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== General of the Burning Hells ===== -->
-  <!-- Summon Demon Warrior has 4 charges with a 6 second recharge and costs no Mana; Demon Warriors no longer decay, have 30% more Health and carry Azmodan's damage boons at full strength (script); at most 6 are alive (the oldest dies). Demonic Invasion at level 1 (Tide of Sin disabled). Rampage quest (50% kept): 0.25% Demon Warrior damage per Demon Warrior attack on an enemy Hero, added 10 at a time. Legion of Hell quest: takedowns within 3 seconds of a Demon Warrior hit (attack or burn); stacks 1-80 add 1% Demon Warrior damage and Health each, then 2.5% all damage each. -->
+  <!-- Summon Demon Warrior has 4 charges with a 6 second recharge and costs no Mana; Demon Warriors no longer decay, have 30% more Health and carry Azmodan's damage boons at full strength (script); at most 12 are alive (the oldest dies). Demonic Invasion at level 1 (Tide of Sin disabled). Rampage quest (50% kept, 1 stack = 0.025%): 0.25% Demon Warrior damage per Demon Warrior attack on an enemy Hero (10 stacks, added 10 attacks at a time) and 0.025% per attack on an enemy Minion (1 stack, added 100 attacks at a time). Legion of Hell quest: takedowns within 3 seconds of a Demon Warrior hit (attack or burn); stacks 1-80 add 1% Demon Warrior damage and Health each, then 2.5% all damage each. -->
   <CBehaviorTokenCounter id="AzmodanGoldenRampageTokenCounter" parent="StormQuestToken">
     <Face value="AzmodanGoldenRampageTokenCounter" />
     <Max value="100000" />
@@ -133,7 +133,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AzmodanGoldenRampageTokenCounter" />
-    <Scale value="0.0025" />
+    <Scale value="0.00025" />
   </CAccumulatorToken>
   <CEffectDamage id="AzmodanSummonDemonWarriorWeaponDamage">
     <MultiplicativeModifierArray index="AzmodanGenPower" Modifier="0" />

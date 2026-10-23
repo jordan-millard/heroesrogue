@@ -366,7 +366,7 @@ void libAffx_AzmodanCopyBoons(unit demon) {
     }
 }
 // General of the Burning Hells: every new Demon Warrior gets the extra Health, the damage boons and, with the boons,
-// the lieutenant; only 6 can be alive (the oldest one dies). Warriors no longer decay (AffixData.xml).
+// the lieutenant; only 12 can be alive (the oldest one dies). Warriors no longer decay (AffixData.xml).
 unitgroup libAffx_AzmodanDemons;
 int libAffx_AzmodanSummoned;
 bool libAffx_AzmodanDemonSpawned_Func (bool testConds, bool runActions) {
@@ -395,7 +395,7 @@ bool libAffx_AzmodanDemonSpawned_Func (bool testConds, bool runActions) {
             UnitGroupRemove(libAffx_AzmodanDemons, oldest);
         }
     }
-    while (UnitGroupCount(libAffx_AzmodanDemons, c_unitCountAlive) > 6) {
+    while (UnitGroupCount(libAffx_AzmodanDemons, c_unitCountAlive) > 12) {
         oldest = UnitGroupUnit(libAffx_AzmodanDemons, 1);
         UnitGroupRemove(libAffx_AzmodanDemons, oldest);
         UnitKill(oldest);
@@ -411,6 +411,24 @@ bool libAffx_AzmodanDemonBoons_Func (bool testConds, bool runActions) {
     }
     for (i = UnitGroupCount(libAffx_AzmodanDemons, c_unitCountAll); i > 0; i -= 1) {
         libAffx_AzmodanCopyBoons(UnitGroupUnitFromEnd(libAffx_AzmodanDemons, i));
+    }
+    return true;
+}
+// Rampage (General of the Burning Hells' hit quest): Demon Warrior attacks on enemy Minions count a tenth as much as
+// on Heroes (1 stack instead of 10), added 100 attacks at a time
+int libAffx_AzmodanMinionHits;
+bool libAffx_AzmodanRampageMinion_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
+        return false;
+    }
+    if (!UnitTypeTestAttribute(UnitGetType(EventUnit()), c_unitAttributeMinion) || UnitTypeTestAttribute(UnitGetType(EventUnit()), c_unitAttributeHeroic)) {
+        return false;
+    }
+    libAffx_AzmodanMinionHits += 1;
+    if (libAffx_AzmodanMinionHits >= 100) {
+        libAffx_AzmodanMinionHits = 0;
+        libGame_gf_ModifyTokenCount(100, "AzmodanGoldenRampageTokenCounter", hero);
     }
     return true;
 }
@@ -485,7 +503,7 @@ bool libAffx_AzmodanGenHit_Func (bool testConds, bool runActions) {
     libAffx_AzmodanGenHits += 1;
     if (libAffx_AzmodanGenHits >= 10) {
         libAffx_AzmodanGenHits = 0;
-        libGame_gf_ModifyTokenCount(10, "AzmodanGoldenRampageTokenCounter", hero);
+        libGame_gf_ModifyTokenCount(100, "AzmodanGoldenRampageTokenCounter", hero);
     }
     return true;
 }
@@ -569,6 +587,7 @@ bool libAffx_AzmodanStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "AzmodanSummonDemonWarriorTalentedSpawnSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanDemonBoons_Func"), 2.0, c_timeGame);
     TriggerAddEventUnitDied(TriggerCreate("libAffx_AzmodanEndlessLegion_Func"), null);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_AzmodanRampageMinion_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanSummonDemonWarriorWeaponDamage");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanSync_Func"), 1.0, c_timeGame);
     return true;
