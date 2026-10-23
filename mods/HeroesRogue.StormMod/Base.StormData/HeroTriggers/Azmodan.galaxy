@@ -4,7 +4,8 @@ include "AffixTriggers"
 // Golden Azmodan. Each ability starter: hits on enemy Heroes open a takedown window and add the hit quest token;
 // takedowns in the window add the takedown token: stacks 1-40, 41-80 and 81-100 each improve the starter, stack 100
 // unlocks the Globe echo or the beam fork, then 2.5% to all of Azmodan's damage per stack. General of the Burning
-// Hells has only the takedown quest (1% Demon Warrior damage and Health per stack up to 80, then 2.5% all damage).
+// Hells: the Rampage hit quest (Demon Warrior attacks on Heroes) and the takedown quest (1% Demon Warrior damage and
+// Health per stack up to 80, then 2.5% all damage).
 // ============================================================
 
 const fixed libAffx_AzmodanTakedownWindow = 3.0;
@@ -471,8 +472,25 @@ bool libAffx_AzmodanSinHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// General of the Burning Hells hit on an enemy Hero: takedown window, None, the heal, and on-hit boons
+// General of the Burning Hells: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_AzmodanGenHits;
+// General of the Burning Hells hit on an enemy Hero: takedown window, AzmodanGoldenRampageTokenCounter, the heal, and on-hit boons
 bool libAffx_AzmodanGenHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
+        return false;
+    }
+    libAffx_AzmodanGenTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libAffx_AzmodanGenHits += 1;
+    if (libAffx_AzmodanGenHits >= 10) {
+        libAffx_AzmodanGenHits = 0;
+        libGame_gf_ModifyTokenCount(10, "AzmodanGoldenRampageTokenCounter", hero);
+    }
+    return true;
+}
+// General of the Burning Hells: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_AzmodanGenWindow_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit hero = libAffx_AzmodanHero();
     if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
@@ -527,6 +545,7 @@ bool libAffx_AzmodanStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanAllShallBurnDamage");
     trig = TriggerCreate("libAffx_AzmodanGenHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanSummonDemonWarriorWeaponDamage");
+    trig = TriggerCreate("libAffx_AzmodanGenWindow_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanSummonDemonWarriorPeriodicDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_AzmodanAmounts_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_AzmodanGlobeEcho_Func"), libAffx_player, "AzmodanGlobeOfAnnihilationImpactSet");

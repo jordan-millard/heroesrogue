@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Azmodan. Starters: Lord of Annihilation (Globe of Annihilation), Lord of Sin (All Shall Burn) and General of the Burning Hells (Demon Warriors, no Globe). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script; past the cap the takedown quest adds 2.5% to all of Azmodan's damage). Hits, quests and script boons are in HeroTriggers/Azmodan.galaxy. -->
+  <!-- Golden Azmodan. Starters: Lord of Annihilation (Globe of Annihilation), Lord of Sin (All Shall Burn) and General of the Burning Hells (Demon Warriors). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script; past the cap the takedown quest adds 2.5% to all of Azmodan's damage). Hits, quests and script boons are in HeroTriggers/Azmodan.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="AzmodanGlobeMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AzmodanSinMarker" parent="CarryBehaviorParent" />
@@ -119,23 +119,39 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== General of the Burning Hells ===== -->
-  <!-- No Globe of Annihilation. Summon Demon Warrior has 4 charges with a 6 second recharge; Demon Warriors no longer decay, have 30% more Health and carry Azmodan's damage boons at full strength (script); at most 6 are alive (the oldest dies). Demonic Invasion at level 1 (Tide of Sin disabled). Legion of Hell quest (no hit quest): takedowns within 3 seconds of a Demon Warrior hit; stacks 1-80 add 1% Demon Warrior damage and Health each, then 2.5% all damage each. -->
+  <!-- Summon Demon Warrior has 4 charges with a 6 second recharge and costs no Mana; Demon Warriors no longer decay, have 30% more Health and carry Azmodan's damage boons at full strength (script); at most 6 are alive (the oldest dies). Demonic Invasion at level 1 (Tide of Sin disabled). Rampage quest (50% kept): 0.25% Demon Warrior damage per Demon Warrior attack on an enemy Hero, added 10 at a time. Legion of Hell quest: takedowns within 3 seconds of a Demon Warrior hit (attack or burn); stacks 1-80 add 1% Demon Warrior damage and Health each, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="AzmodanGoldenRampageTokenCounter" parent="StormQuestToken">
+    <Face value="AzmodanGoldenRampageTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
   <CBehaviorTokenCounter id="AzmodanGoldenLegionTokenCounter" parent="StormQuestToken">
     <Face value="AzmodanGoldenLegionTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AzmodanGoldenRampageTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AzmodanGoldenRampageTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
   <CEffectDamage id="AzmodanSummonDemonWarriorWeaponDamage">
     <MultiplicativeModifierArray index="AzmodanGenPower" Modifier="0" />
     <MultiplicativeModifierArray index="AzmodanGenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenHit" Accumulator="AzmodanGoldenRampageTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="AzmodanGoldenLegion" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="AzmodanSummonDemonWarriorPeriodicDamage">
     <MultiplicativeModifierArray index="AzmodanGenPower" Modifier="0" />
     <MultiplicativeModifierArray index="AzmodanGenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="AzmodanGenHit" Accumulator="AzmodanGoldenRampageTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="AzmodanGenLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="AzmodanGoldenLegion" Modifier="0" />
   </CEffectDamage>
+  <CButton id="AzmodanGoldenRampageTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_azmodan_generalofhell.dds" />
+  </CButton>
   <CButton id="AzmodanGoldenLegionTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_azmodan_generalofhell.dds" />
   </CButton>
@@ -292,11 +308,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </DamageResponse>
   </CBehaviorBuff>
   <!-- ===== General of the Burning Hells ===== -->
-  <CBehaviorBuff id="AzmodanGoldenGeneralRestrictions" parent="CarryBehaviorParent">
-    <Modification>
-      <AbilLinkDisableArray value="AzmodanGlobeOfAnnihilation" />
-    </Modification>
-  </CBehaviorBuff>
   <!-- added by the script to every Demon Warrior: +30% Health, +1% per Legion of Hell stack -->
   <CBehaviorBuff id="AzmodanGoldenWarriorHealth">
     <InfoFlags index="Hidden" value="1" />

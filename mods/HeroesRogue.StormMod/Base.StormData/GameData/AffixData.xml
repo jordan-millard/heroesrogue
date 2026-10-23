@@ -22077,6 +22077,8 @@
         </Instances>
 
 
+
+
         <Instances Id="AzmodanLordOfAnnihilation">
             <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
                 <Field Id="Icon" />
@@ -22496,20 +22498,23 @@
             <String String="1 0 AzmodanGenMarker">
                 <Field Id="Behavior" />
             </String>
-            <String String="1 0 AzmodanGoldenLegionTokenCounter">
+            <String String="1 0 AzmodanGoldenRampageTokenCounter">
                 <Field Id="Behavior" Index="1" />
             </String>
-            <String String="1 0 AzmodanGoldenGeneralRestrictions">
+            <String String="1 0 AzmodanGoldenLegionTokenCounter">
                 <Field Id="Behavior" Index="2" />
             </String>
             <String String="AzmodanGoldenLegionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
+            <String String="AzmodanGoldenRampageTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="AzmodanGlobeOfAnnihilationDisplayTokenCounter 0.5">
+            <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="AzmodanGlobeOfAnnihilationDisplayTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="3" />
             </String>
             <String String="1 1 Set Abil,AzmodanSummonDemonWarrior,Cost.Charge.CountMax 4">
                 <Field Id="CatalogModification" />
@@ -22520,14 +22525,17 @@
             <String String="1 1 Set Abil,AzmodanSummonDemonWarrior,Cost.Charge.TimeUse 6">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Unit,AzmodanDemonWarrior,LifeRegenRate 0">
+            <String String="1 1 Set Abil,AzmodanSummonDemonWarrior,Cost.Vital[Energy] 0">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,AzmodanSummonDemonWarriorWeaponDamage,MultiplicativeModifierArray[AzmodanGenPower].Modifier 0">
+            <String String="1 1 Set Unit,AzmodanDemonWarrior,LifeRegenRate 0">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,AzmodanSummonDemonWarriorPeriodicDamage,MultiplicativeModifierArray[AzmodanGenPower].Modifier 0">
+            <String String="1 1 Set Effect,AzmodanSummonDemonWarriorWeaponDamage,MultiplicativeModifierArray[AzmodanGenPower].Modifier 0">
                 <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,AzmodanSummonDemonWarriorPeriodicDamage,MultiplicativeModifierArray[AzmodanGenPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
             </String>
             <String String="AffixAdded libAffx_AzmodanStart">
                 <Field Id="Trigger" />
