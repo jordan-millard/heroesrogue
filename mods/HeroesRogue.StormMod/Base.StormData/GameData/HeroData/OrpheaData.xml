@@ -55,7 +55,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Abyssal Maw ===== -->
-  <!-- Basic Attacks +1.1 range; Chomp costs half Mana. Gnash quest (50% kept): 2.5% Chomp damage per enemy Hero hit. Feast quest: takedowns within 6 seconds of a hit; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 make it bite 1% sooner each (cast time), then 3% damage each (Heroics too). -->
+  <!-- Basic Attacks +1.1 range; Chomp has 2 charges with a 7 second recharge (10 - 3) and costs half Mana. Gnash quest (50% kept): 1.5% Chomp damage per enemy Hero hit. Feast quest: takedowns within 6 seconds of a hit; stacks 1-40 cut 1% of the 7 second recharge each, 41-80 make it bite 1% sooner each (cast time), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="OrpheaGnashTokenCounter" parent="StormQuestToken">
     <Face value="OrpheaGnashTokenCounter" />
     <Max value="100000" />
@@ -69,7 +69,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="OrpheaGnashTokenCounter" />
-    <Scale value="0.025" />
+    <Scale value="0.015" />
   </CAccumulatorToken>
   <CEffectDamage id="OrpheaChompDamage">
     <MultiplicativeModifierArray index="OrpheaChompPower" Modifier="0" />
@@ -80,7 +80,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectModifyUnit id="OrpheaChompHeal">
     <ImpactUnit Value="Caster" />
     <VitalArray index="Life">
-      <ChangeFraction value="0.15" />
+      <ChangeFraction value="0.1" />
     </VitalArray>
   </CEffectModifyUnit>
   <CButton id="OrpheaGnashTokenCounter" parent="StormButtonParent">
@@ -144,6 +144,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
+  <!-- Abyssal Maw gives Chomp charges, so effects that change its cooldown also change the recharge.
+       Insatiable sets the recharge to 2 seconds; its cooldown Set becomes the 0.5 second charge lockout, not 2 -->
+  <CEffectModifyUnit id="OrpheaInsatiableReduceChompCooldown">
+    <Cost index="0" CooldownTimeUse="0.5" ChargeTimeUse="2" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="OrpheaEternalFeastMonsterWithinCooldownReduction">
+    <Cost index="1" ChargeTimeUse="-0.0937" />
+  </CEffectModifyUnit>
   <!-- Devourer (Legendary, Abyssal Maw): Chomp hits on enemy Heroes heal Orphea for 8% of her maximum Health -->
   <CEffectModifyUnit id="OrpheaDevourerHeal">
     <ImpactUnit Value="Caster" />

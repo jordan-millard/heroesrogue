@@ -72,7 +72,7 @@ void libAffx_OrpheaSyncWaltz () {
     CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
 }
-// OrpheaFeastTokenCounter: stacks 1-40: 1% of the 10 second cooldown each; 41-80: 1% of the 0.625 second cast time each; then 3% damage each, Heroics too
+// OrpheaFeastTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80: 1% of the 0.625 second cast time each; then 3% damage each, Heroics too
 void libAffx_OrpheaSyncChomp () {
     unit hero = libAffx_OrpheaHero();
     int stacks;
@@ -84,7 +84,7 @@ void libAffx_OrpheaSyncChomp () {
     stacks = libAffx_OrpheaStacks("OrpheaFeastTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_OrpheaChompAdded) {
-        libAffx_CatalogReferenceModify("Abil,OrpheaChomp,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaChompAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,OrpheaChomp,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaChompAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaChompAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 1% of the 0.625 second cast time each

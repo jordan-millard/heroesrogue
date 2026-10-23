@@ -20934,6 +20934,8 @@
         </Instances>
 
 
+
+
         <Instances Id="OrpheaShadowDancer">
             <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
                 <Field Id="Icon" />
@@ -21159,8 +21161,23 @@
             <String String="1 1 Add Abil,OrpheaChomp,Cost.Vital[Energy] -30">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
+            <String String="1 1 Set Abil,OrpheaChomp,Cost.Charge.CountMax 2">
                 <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Abil,OrpheaChomp,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Abil,OrpheaChomp,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Abil,OrpheaChomp,Cost.Charge.TimeUse 7">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Abil,OrpheaChomp,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="10" />
             </String>
             <String String="AffixAdded libAffx_OrpheaStart">
                 <Field Id="Trigger" />
@@ -21205,7 +21222,7 @@
             <User Type="Affix" Instance="OrpheaAbyssalMaw">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 3 Add Abil,OrpheaChomp,Cost.Cooldown.TimeUse -0.5">
+            <String String="1 3 Add Abil,OrpheaChomp,Cost.Charge.TimeUse -0.5">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
