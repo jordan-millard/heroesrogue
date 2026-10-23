@@ -14,6 +14,7 @@ bool libAffx_AlarakStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AlarakDiscordTime; // per enemy player, last Tal'darim Ascendant hit
 int libAffx_AlarakDiscordAdded; // Tal'darim Ascendant: takedown stacks already applied to the catalog this game
 int libAffx_AlarakDiscordAdded2; // Tal'darim Ascendant: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_AlarakDiscordAdded3; // Tal'darim Ascendant: takedown quest stage 3 stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AlarakSurgeTime; // per enemy player, last Lightning Lord hit
 int libAffx_AlarakSurgeAdded; // Lightning Lord: takedown stacks already applied to the catalog this game
 int libAffx_AlarakSurgeAdded2; // Lightning Lord: takedown quest stage 2 stacks already applied to the catalog this game
@@ -45,7 +46,7 @@ void libAffx_AlarakQuestDing() {
 bool libAffx_AlarakInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_AlarakTakedownWindow;
 }
-// AlarakSubjugationTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 1.5 second Silence each; then 3% damage each, Heroics too
+// AlarakSubjugationTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 1.5 second Silence each; 81-120: 1% larger area each; then 3% damage each, Heroics and Basic Attacks too
 void libAffx_AlarakSyncDiscord () {
     unit hero = libAffx_AlarakHero();
     int stacks;
@@ -66,10 +67,30 @@ void libAffx_AlarakSyncDiscord () {
         libAffx_CatalogReferenceModify("Behavior,AlarakDiscordStrikeSilence,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakDiscordAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    // stage 3 (stacks 81 to 120): 1% of the Discord Strike area (every polygon vertex) each
+    wanted = MaxI(0, MinI(stacks - 80, 40));
+    if (wanted != libAffx_AlarakDiscordAdded3) {
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[0].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[0].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[1].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[1].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.00875, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[2].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[2].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.0125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[3].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.065625, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[4].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[4].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.0125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[5].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[5].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.00875, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[6].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[6].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,AlarakDiscordStrikePolygonGuide,Height", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.0625, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_AlarakDiscordAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 120)) * 0.03, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "AlarakDiscordStrikeDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AlarakDeadlyChargeDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AlarakCounterStrikeDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakHeroWeaponDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
 }
 // AlarakTempestTokenCounter: stacks 1-40: 1% of the 6 second cooldown each; 41-80: 1% of the 10 range each; then 3% damage each, Heroics too
 void libAffx_AlarakSyncSurge () {

@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="AlarakDiscordantWardMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Tal'darim Ascendant ===== -->
-  <!-- Discord Strike has 2 charges with a 6 second recharge (8 - 2) and costs half Mana. Discord quest (50% kept): 1.5% Discord Strike damage per enemy Hero hit. Subjugation quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 6 second recharge each, 41-80 make its Silence 1% longer each, then 3% damage each (Heroics too). -->
+  <!-- Discord Strike has 2 charges with a 6 second recharge (8 - 2) and costs half Mana. Discord quest (50% kept): 1.5% Discord Strike damage per enemy Hero hit. Subjugation quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 6 second recharge each, 41-80 make its Silence 1% longer each, 81-120 make its area 1% larger each, then 3% damage each (Heroics and Basic Attacks too). -->
   <CBehaviorTokenCounter id="AlarakDiscordTokenCounter" parent="StormQuestToken">
     <Face value="AlarakDiscordTokenCounter" />
     <Max value="100000" />
@@ -137,6 +137,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="AlarakDiscordLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="AlarakSurgeLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="AlarakBladeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AlarakHeroWeaponDamage">
+    <MultiplicativeModifierArray index="AlarakDiscordLegacy" Modifier="0" />
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
