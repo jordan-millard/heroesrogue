@@ -239,6 +239,181 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Boons ===== -->
+  <!-- ===== Lord of Sin leash ===== -->
+  <!-- The beam breaks when AzmodanAllShallBurnRangeValidatorCombine (an Or) fails. Lord of Sin adds a branch: 12 range
+       (9.75 cast + 2.25 stretch), +0.375 per 5 Sinful Harvest stacks from 41 to 80 (rounded up, 15 at 80) -->
+  <CValidatorCombine id="AzmodanAllShallBurnRangeValidatorCombine">
+    <CombineArray value="AzmodanGoldenSinLeash0" />
+    <CombineArray value="AzmodanGoldenSinLeash1" />
+    <CombineArray value="AzmodanGoldenSinLeash2" />
+    <CombineArray value="AzmodanGoldenSinLeash3" />
+    <CombineArray value="AzmodanGoldenSinLeash4" />
+    <CombineArray value="AzmodanGoldenSinLeash5" />
+    <CombineArray value="AzmodanGoldenSinLeash6" />
+    <CombineArray value="AzmodanGoldenSinLeash7" />
+    <CombineArray value="AzmodanGoldenSinLeash8" />
+  </CValidatorCombine>
+  <CValidatorUnitCompareBehaviorCount id="AzmodanGoldenSinHasMarker">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AzmodanSinMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash0">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashRange0" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange0">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="12" />
+  </CValidatorLocationCompareRange>
+  <CValidatorCombine id="AzmodanGoldenSinLeash1">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks1" />
+    <CombineArray value="AzmodanGoldenSinLeashRange1" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange1">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="12.375" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks1">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="41" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash2">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks2" />
+    <CombineArray value="AzmodanGoldenSinLeashRange2" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange2">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="12.75" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks2">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="46" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash3">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks3" />
+    <CombineArray value="AzmodanGoldenSinLeashRange3" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange3">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="13.125" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks3">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="51" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash4">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks4" />
+    <CombineArray value="AzmodanGoldenSinLeashRange4" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange4">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="13.5" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks4">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="56" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash5">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks5" />
+    <CombineArray value="AzmodanGoldenSinLeashRange5" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange5">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="13.875" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks5">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="61" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash6">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks6" />
+    <CombineArray value="AzmodanGoldenSinLeashRange6" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange6">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="14.25" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks6">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="66" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash7">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks7" />
+    <CombineArray value="AzmodanGoldenSinLeashRange7" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange7">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="14.625" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks7">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="71" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorCombine id="AzmodanGoldenSinLeash8">
+    <Type value="And" />
+    <CombineArray value="AzmodanGoldenSinHasMarker" />
+    <CombineArray value="AzmodanGoldenSinLeashStacks8" />
+    <CombineArray value="AzmodanGoldenSinLeashRange8" />
+  </CValidatorCombine>
+  <CValidatorLocationCompareRange id="AzmodanGoldenSinLeashRange8">
+    <Value Value="CasterPoint" />
+    <WhichLocation Value="TargetUnit" />
+    <Compare value="LE" />
+    <Range value="15" />
+  </CValidatorLocationCompareRange>
+  <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks8">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="76" />
+    <TokenId value="AzmodanGoldenSinTokenCounter" />
+  </CValidatorUnitCompareTokenCount>
   <!-- ===== Lord of Annihilation ===== -->
   <!-- Globe echo (takedown quest 100): the Globe's impact goes off again 1 second later at the same point; while the
        script casts it, this marker on Azmodan halves the damage -->

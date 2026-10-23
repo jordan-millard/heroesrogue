@@ -116,7 +116,6 @@ void libAffx_AzmodanSyncSin () {
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_AzmodanSinAdded2) {
         libAffx_CatalogReferenceModify("Abil,AzmodanAllShallBurn,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Validator,AzmodanAllShallBurnRangeValidator,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Actor,AzmodanAllShallBurnActiveRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanSinAdded2 = wanted;
     }
