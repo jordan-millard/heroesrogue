@@ -21559,6 +21559,508 @@
             </String>
         </Instances>
 
+        <Instances Id="ZagaraHiveMother">
+            <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZagaraMasteryEndlessCreep">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZagaraHeroicAbilityNydusAssault">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="ZagaraHiveInfest">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="ZagaraHeroicAbilityDevouringMaw">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="ZagaraMasteryTyrantMaw">
+                <Field Id="TalentsDisable" Index="1" />
+            </String>
+            <String String="1 0 ZagaraHiveMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZagaraInfestationTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZagaraSpreadingBlightTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 ZagaraHiveRestrictions">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="ZagaraSpreadingBlightTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZagaraInfestationTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraHydraliskRangedDamage,MultiplicativeModifierArray[ZagaraHivePower].Modifier 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraRoachAttackDamage,MultiplicativeModifierArray[ZagaraHivePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraInfestedDropDamage,MultiplicativeModifierArray[ZagaraHivePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_ZagaraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZagaraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraVirulentBrood">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraHiveMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZagaraHydraliskRangedDamage,MultiplicativeModifierArray[ZagaraHiveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ZagaraRoachAttackDamage,MultiplicativeModifierArray[ZagaraHiveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,ZagaraInfestedDropDamage,MultiplicativeModifierArray[ZagaraHiveCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraRapidTumors">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraHiveMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZagaraSummonCreepTumor,Cost.Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraTumorClutchBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraHiveMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraMasteryTumorClutch">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraReconstitutionBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraHiveMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraMasteryReconstitution">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraNydusBrood">
+            <String String="Assets/Textures/storm_ui_icon_zagara_nydusworm.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraHiveMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZagaraNydusBroodMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraLivingCarpet">
+            <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraHiveMother">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZagaraLivingCarpetMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraAcidQueen">
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZagaraMasteryBanelingMassacre">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZagaraViscousAcid">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZagaraBaneMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZagaraAcidBurnTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZagaraVolatileBroodTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZagaraVolatileBroodTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZagaraAcidBurnTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Abil,ZagaraBanelingBarrage,Cost.Vital[Energy] -7.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraBanelingExplodeDamage,MultiplicativeModifierArray[ZagaraBanePower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_ZagaraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZagaraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraCausticPayload">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraAcidQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZagaraBanelingExplodeDamage,MultiplicativeModifierArray[ZagaraBaneCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraQuickBrood">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraAcidQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZagaraBanelingBarrage,Cost.Charge.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraCentrifugalHooksBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraAcidQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraMasteryCentrifugalHooks">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraBroodmotherBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraAcidQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraBroodmother">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraSwollenSacs">
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraAcidQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Effect,SummonBanelingsPersistent,PeriodCount 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraChainReaction">
+            <String String="Assets/Textures/storm_ui_icon_zagara_banelingbarrage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraAcidQueen">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZagaraChainReactionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraSwarmMatriarch">
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkillermuta.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ZagaraMasteryMutalisk">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ZagaraMasteryGroovedSpines">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ZagaraMutaMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ZagaraFeedingFrenzyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ZagaraSwarmHostTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ZagaraSwarmHostTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ZagaraFeedingFrenzyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Charge.TimeUse 9">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage1,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage2,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage3,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_ZagaraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ZagaraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraSerratedWings">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkillermuta.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraSwarmMatriarch">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ZagaraMutaliskWeaponDamage1,MultiplicativeModifierArray[ZagaraMutaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ZagaraMutaliskWeaponDamage2,MultiplicativeModifierArray[ZagaraMutaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,ZagaraMutaliskWeaponDamage3,MultiplicativeModifierArray[ZagaraMutaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraQuickHatch">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkillermuta.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraSwarmMatriarch">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ZagaraSummonHydralisk,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraHydraliskTransfusionBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkiller.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraSwarmMatriarch">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraMasteryHydraliskTransfusion">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraCorrosiveSalivaBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkiller.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraSwarmMatriarch">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraMasteryCorrosiveSaliva">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraPackInstinctBoon">
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkiller.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraSwarmMatriarch">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ZagaraPackInstinct">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ZagaraTwinBrood">
+            <String String="Assets/Textures/storm_ui_icon_zagara_hunterkillermuta.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Zagara">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ZagaraSwarmMatriarch">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ZagaraTwinBroodMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Zagara. Starters: Hive Mother (Creep and summons), Acid Queen (Baneling Barrage) and Swarm Matriarch (Hunter Killer as a Mutalisk). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Zagara.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ZagaraHiveMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZagaraBaneMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZagaraMutaMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZagaraLivingCarpetMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZagaraNydusBroodMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZagaraChainReactionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ZagaraTwinBroodMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Hive Mother ===== -->
+  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 5 seconds to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second and stops Hydralisk and Roachling decay (tumor pulses). Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
+  <CBehaviorTokenCounter id="ZagaraInfestationTokenCounter" parent="StormQuestToken">
+    <Face value="ZagaraInfestationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZagaraSpreadingBlightTokenCounter" parent="StormQuestToken">
+    <Face value="ZagaraSpreadingBlightTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZagaraInfestationTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZagaraInfestationTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZagaraHydraliskRangedDamage">
+    <MultiplicativeModifierArray index="ZagaraHivePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraHiveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraHiveHit" Accumulator="ZagaraInfestationTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraHiveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZagaraRoachAttackDamage">
+    <MultiplicativeModifierArray index="ZagaraHivePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraHiveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraHiveHit" Accumulator="ZagaraInfestationTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraHiveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZagaraInfestedDropDamage">
+    <MultiplicativeModifierArray index="ZagaraHivePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraHiveCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraHiveHit" Accumulator="ZagaraInfestationTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraHiveLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ZagaraInfestationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_creep.dds" />
+  </CButton>
+  <CButton id="ZagaraSpreadingBlightTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_creep.dds" />
+  </CButton>
+
+  <!-- ===== Acid Queen ===== -->
+  <!-- Baneling Massacre (4 charges, 6 second recharge) and Viscous Acid; Baneling Barrage costs half Mana and deals 50% more damage. Acid Burn quest (50% kept): 0.5% Baneling damage per Baneling hit on an enemy Hero. Volatile Brood quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 6 second recharge each, 41-80 make the explosion 1% larger each, then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="ZagaraAcidBurnTokenCounter" parent="StormQuestToken">
+    <Face value="ZagaraAcidBurnTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZagaraVolatileBroodTokenCounter" parent="StormQuestToken">
+    <Face value="ZagaraVolatileBroodTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZagaraAcidBurnTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZagaraAcidBurnTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZagaraBanelingExplodeDamage">
+    <MultiplicativeModifierArray index="ZagaraBanePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraBaneCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraBaneHit" Accumulator="ZagaraAcidBurnTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraBaneLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ZagaraAcidBurnTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_banelingbarrage.dds" />
+  </CButton>
+  <CButton id="ZagaraVolatileBroodTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_banelingbarrage.dds" />
+  </CButton>
+
+  <!-- ===== Swarm Matriarch ===== -->
+  <!-- Mutalisk and Grooved Spines; Hunter Killer has 2 charges with a 9 second recharge (16 - 4 for Mutalisk, then 25% less) and deals 50% more damage. Feeding Frenzy quest (50% kept): 0.2% Hunter Killer damage per Mutalisk hit on an enemy Hero. Swarm Host quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 9 second recharge each, 41-80 make Mutalisks last 1% longer each (decay), then 3% damage each (Heroics too). -->
+  <CBehaviorTokenCounter id="ZagaraFeedingFrenzyTokenCounter" parent="StormQuestToken">
+    <Face value="ZagaraFeedingFrenzyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ZagaraSwarmHostTokenCounter" parent="StormQuestToken">
+    <Face value="ZagaraSwarmHostTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ZagaraFeedingFrenzyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ZagaraFeedingFrenzyTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ZagaraMutaliskWeaponDamage1">
+    <MultiplicativeModifierArray index="ZagaraMutaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaHit" Accumulator="ZagaraFeedingFrenzyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraMutaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZagaraMutaliskWeaponDamage2">
+    <MultiplicativeModifierArray index="ZagaraMutaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaHit" Accumulator="ZagaraFeedingFrenzyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraMutaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ZagaraMutaliskWeaponDamage3">
+    <MultiplicativeModifierArray index="ZagaraMutaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaHit" Accumulator="ZagaraFeedingFrenzyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ZagaraMutaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ZagaraFeedingFrenzyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_hunterkillermuta.dds" />
+  </CButton>
+  <CButton id="ZagaraSwarmHostTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_hunterkillermuta.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="DevouringMawImpactDamage">
+    <MultiplicativeModifierArray index="ZagaraBaneLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DevouringMawSustainedDamage">
+    <MultiplicativeModifierArray index="ZagaraBaneLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ZagaraMutaLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Hive Mother ===== -->
+  <!-- No Basic Attacks and no Baneling Barrage -->
+  <CBehaviorBuff id="ZagaraHiveRestrictions" parent="CarryBehaviorParent">
+    <Modification>
+      <ModifyFlags index="DisableWeapons" value="1" />
+      <AbilLinkDisableArray value="attack" />
+      <AbilLinkDisableArray value="AttackAlly" />
+      <AbilLinkDisableArray value="ZagaraBanelingBarrage" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Creep: every Creep Tumor and Nydus Worm pulses once a second (the script adds the pulse when one is created). Allied
+       units (Heroes, summons, Minions) standing on Creep within 12 heal 2% of maximum Health, once per tick however many
+       pulses reach them; Hydralisks and Roachlings stop losing Health while on Creep. -->
+  <CValidatorLocationCreep id="ZagaraHiveTargetOnCreep">
+    <WhichLocation Value="TargetUnit" />
+  </CValidatorLocationCreep>
+  <CValidatorUnitCompareBehaviorCount id="ZagaraHiveTargetNotTicked">
+    <WhichUnit Value="Target" />
+    <Compare value="LT" />
+    <Value value="1" />
+    <Behavior value="ZagaraHiveCreepTick" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitType id="ZagaraHiveTargetIsHydralisk">
+    <Value value="ZagaraHydralisk" />
+  </CValidatorUnitType>
+  <CValidatorUnitType id="ZagaraHiveTargetIsRoach">
+    <Value value="ZagaraRoach" />
+  </CValidatorUnitType>
+  <CValidatorCombine id="ZagaraHiveTargetDecays">
+    <Type value="Or" />
+    <CombineArray value="ZagaraHiveTargetIsHydralisk" />
+    <CombineArray value="ZagaraHiveTargetIsRoach" />
+  </CValidatorCombine>
+  <CBehaviorBuff id="ZagaraHiveCreepPulse">
+    <InfoFlags index="Hidden" value="1" />
+    <Period value="1" />
+    <PeriodicEffect value="ZagaraHiveCreepSearch" />
+  </CBehaviorBuff>
+  <CEffectEnumArea id="ZagaraHiveCreepSearch">
+    <SearchFilters value="-;Enemy,Neutral,Structure,Missile,Item,Stasis,Dead,Hidden" />
+    <AreaArray Effect="ZagaraHiveCreepImpactSet">
+      <Radius value="12" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="ZagaraHiveCreepImpactSet">
+    <ValidatorArray value="ZagaraHiveTargetOnCreep" />
+    <ValidatorArray value="ZagaraHiveTargetNotTicked" />
+    <EffectArray value="ZagaraHiveCreepHeal" />
+    <EffectArray value="ZagaraHiveApplyCreepTick" />
+    <EffectArray value="ZagaraHiveApplyNoDecay" />
+  </CEffectSet>
+  <CEffectModifyUnit id="ZagaraHiveCreepHeal">
+    <VitalArray index="Life">
+      <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="ZagaraHiveCreepTick">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.9" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZagaraHiveApplyCreepTick">
+    <Behavior value="ZagaraHiveCreepTick" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ZagaraHiveNoDecay">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="1.25" />
+    <Modification>
+      <VitalRegenMultiplier index="Life" value="-1" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZagaraHiveApplyNoDecay">
+    <ValidatorArray value="ZagaraHiveTargetDecays" />
+    <Behavior value="ZagaraHiveNoDecay" />
+  </CEffectApplyBehavior>
+  <!-- Infest (Hive Mother, key 1): channel 5 seconds on an enemy Minion (Catapults too, for one charge) to take it, as
+       Possession (SylvanasPossessionTarget: the rewire in GameDataHelperLib gives it to the player's team and it keeps
+       its enemy buffs). 2 charges, 30 second recharge. -->
+  <CAbilEffectTarget id="ZagaraHiveInfest">
+    <PrepEffect value="DismountDecloakCasterSet" />
+    <Effect value="ZagaraHiveInfestSet" />
+    <Cost>
+      <Charge>
+        <CountMax value="2" />
+        <CountStart value="2" />
+        <CountUse value="1" />
+        <TimeUse value="30" />
+      </Charge>
+      <Cooldown TimeUse="1" />
+    </Cost>
+    <TargetFilters value="-;Player,Ally,Neutral,Creep,Structure,Heroic,Summoned,Missile,Item,Stasis,Dead,Hidden,Invulnerable,MapCreature" />
+    <Range value="6" />
+    <RangeSlop value="2" />
+    <Arc value="360" />
+    <CastIntroTime value="5" />
+    <ShowProgressArray index="Cast" value="1" />
+    <Flags index="AllowMovement" value="0" />
+    <CmdButtonArray index="Execute" DefaultButtonFace="ZagaraHiveInfest" />
+  </CAbilEffectTarget>
+  <CEffectSet id="ZagaraHiveInfestSet">
+    <ValidatorArray value="TargetIsNotABossUnitOrMonsterMinorCombine" />
+    <ValidatorArray value="TargetNotMerc" />
+    <EffectArray value="AffixPossessionSupressRegenGlobeCreationApplyBehavior" />
+    <EffectArray value="AffixPossessionHealModifyUnit" />
+    <EffectArray value="SylvanasPossessionApplyTargetBehavior" />
+  </CEffectSet>
+  <CButton id="ZagaraHiveInfest" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_zagara_infest.dds" />
+  </CButton>
+  <CBehaviorAbility id="ZagaraHiveInfestItem">
+    <Buttons Face="ZagaraHiveInfest" Type="AbilCmd" AbilCmd="ZagaraHiveInfest,Execute" />
+  </CBehaviorAbility>
+  <CTalent id="ZagaraHiveInfest">
+    <Face value="ZagaraHiveInfest" />
+    <Abil value="ZagaraHiveInfest" />
+    <RankArray>
+      <BehaviorArray value="ZagaraHiveInfestItem" />
+    </RankArray>
+    <Active value="1" />
+  </CTalent>
+  <CUnit id="HeroZagara">
+    <AbilArray Link="ZagaraHiveInfest" />
+  </CUnit>
+  <!-- Living Carpet (Legendary, Hive Mother): Creep Tumors and Nydus Worms also pulse at enemies on Creep within 12:
+       1.5% of maximum Health as damage and 15% Slow each second -->
+  <CValidatorUnitCompareBehaviorCount id="ZagaraLivingCarpetTargetNotTicked">
+    <WhichUnit Value="Target" />
+    <Compare value="LT" />
+    <Value value="1" />
+    <Behavior value="ZagaraLivingCarpetTick" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="ZagaraLivingCarpetPulse">
+    <InfoFlags index="Hidden" value="1" />
+    <Period value="1" />
+    <PeriodicEffect value="ZagaraLivingCarpetSearch" />
+  </CBehaviorBuff>
+  <CEffectEnumArea id="ZagaraLivingCarpetSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,Structure,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="ZagaraLivingCarpetImpactSet">
+      <Radius value="12" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="ZagaraLivingCarpetImpactSet">
+    <ValidatorArray value="ZagaraHiveTargetOnCreep" />
+    <ValidatorArray value="ZagaraLivingCarpetTargetNotTicked" />
+    <EffectArray value="ZagaraLivingCarpetDamage" />
+    <EffectArray value="ZagaraLivingCarpetApplySlow" />
+    <EffectArray value="ZagaraLivingCarpetApplyTick" />
+  </CEffectSet>
+  <CEffectDamage id="ZagaraLivingCarpetDamage" parent="StormSpellPercentDamage">
+    <VitalFractionMax index="Life" value="0.015" />
+    <Visibility value="Hidden" />
+  </CEffectDamage>
+  <CBehaviorBuff id="ZagaraLivingCarpetSlow">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_zagara_creep.dds" />
+    <Duration value="1.1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.15" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZagaraLivingCarpetApplySlow">
+    <Behavior value="ZagaraLivingCarpetSlow" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ZagaraLivingCarpetTick">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.9" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ZagaraLivingCarpetApplyTick">
+    <Behavior value="ZagaraLivingCarpetTick" />
+  </CEffectApplyBehavior>
+  <!-- Swollen Sacs (Epic, Acid Queen): a third launch slot for Baneling Barrage; the boon adds the period that uses it -->
+  <CEffectCreatePersistent id="SummonBanelingsPersistent">
+    <PeriodicEffectArray index="2" value="SummonBanelingsLaunchDummy" />
+  </CEffectCreatePersistent>
+</Catalog>

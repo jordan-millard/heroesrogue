@@ -1,0 +1,317 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Zagara. Each starter: hits on enemy Heroes open a takedown window and add the hit quest token;
+// takedowns in the window add the takedown token: stacks 1-40 and 41-80 each improve the starter in two ways, then
+// 3% damage per stack (Heroics too for Acid Queen and Swarm Matriarch).
+// ============================================================
+
+const fixed libAffx_ZagaraTakedownWindow = 3.0;
+const fixed libAffx_ZagaraPastCapDamagePerStack = 0.01;
+bool libAffx_ZagaraStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZagaraHiveTime; // per enemy player, last Hive Mother hit
+int libAffx_ZagaraHiveAdded; // Hive Mother: takedown stacks already applied to the catalog this game
+int libAffx_ZagaraHiveAdded2; // Hive Mother: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZagaraBaneTime; // per enemy player, last Acid Queen hit
+int libAffx_ZagaraBaneAdded; // Acid Queen: takedown stacks already applied to the catalog this game
+int libAffx_ZagaraBaneAdded2; // Acid Queen: takedown quest stage 2 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZagaraMutaTime; // per enemy player, last Swarm Matriarch hit
+int libAffx_ZagaraMutaAdded; // Swarm Matriarch: takedown stacks already applied to the catalog this game
+int libAffx_ZagaraMutaAdded2; // Swarm Matriarch: takedown quest stage 2 stacks already applied to the catalog this game
+
+unit libAffx_ZagaraHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ZagaraIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_ZagaraStacks(string tokenId) {
+    unit hero = libAffx_ZagaraHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_ZagaraQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_ZagaraInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_ZagaraTakedownWindow;
+}
+// ZagaraSpreadingBlightTokenCounter: stacks 1-40: 1% of the 18 second Creep Tumor recharge each; 41-80: 0.025% creep heal each; then 3% summon damage each
+void libAffx_ZagaraSyncHive () {
+    unit hero = libAffx_ZagaraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZagaraHiveMarker")) {
+        return;
+    }
+    stacks = libAffx_ZagaraStacks("ZagaraSpreadingBlightTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ZagaraHiveAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZagaraSummonCreepTumor,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraHiveAdded) * -0.18, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZagaraHiveAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.025% of maximum Health on the creep heal each (2% to 3%)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ZagaraHiveAdded2) {
+        libAffx_CatalogReferenceModify("Effect,ZagaraHiveCreepHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraHiveAdded2) * 0.00025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZagaraHiveAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraHydraliskRangedDamage", "MultiplicativeModifierArray[ZagaraHiveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraRoachAttackDamage", "MultiplicativeModifierArray[ZagaraHiveLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraInfestedDropDamage", "MultiplicativeModifierArray[ZagaraHiveLegacy].Modifier", libAffx_player, bonus);
+}
+// ZagaraVolatileBroodTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 2.75 explosion radius each; then 3% damage each, Heroics too
+void libAffx_ZagaraSyncBane () {
+    unit hero = libAffx_ZagaraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZagaraBaneMarker")) {
+        return;
+    }
+    stacks = libAffx_ZagaraStacks("ZagaraVolatileBroodTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ZagaraBaneAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZagaraBanelingBarrage,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraBaneAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZagaraBaneAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 2.75 explosion radius each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ZagaraBaneAdded2) {
+        libAffx_CatalogReferenceModify("Effect,ZagaraBanelingExplodeSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraBaneAdded2) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZagaraBaneAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraBanelingExplodeDamage", "MultiplicativeModifierArray[ZagaraBaneLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawImpactDamage", "MultiplicativeModifierArray[ZagaraBaneLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawSustainedDamage", "MultiplicativeModifierArray[ZagaraBaneLegacy].Modifier", libAffx_player, bonus);
+}
+// ZagaraSwarmHostTokenCounter: stacks 1-40: 1% of the 9 second recharge each; 41-80: 1% less Mutalisk decay each (450 Health over 42 seconds); then 3% damage each, Heroics too
+void libAffx_ZagaraSyncMuta () {
+    unit hero = libAffx_ZagaraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ZagaraMutaMarker")) {
+        return;
+    }
+    stacks = libAffx_ZagaraStacks("ZagaraSwarmHostTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ZagaraMutaAdded) {
+        libAffx_CatalogReferenceModify("Abil,ZagaraSummonHydralisk,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraMutaAdded) * -0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZagaraMutaAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the Mutalisk decay (10.71 Health per second) each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ZagaraMutaAdded2) {
+        libAffx_CatalogReferenceModify("Unit,ZagaraMutalisk,LifeRegenRate", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraMutaAdded2) * 0.1071, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ZagaraMutaAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraMutaliskWeaponDamage1", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraMutaliskWeaponDamage2", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraMutaliskWeaponDamage3", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawImpactDamage", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawSustainedDamage", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_ZagaraSync_Func (bool testConds, bool runActions) {
+    libAffx_ZagaraSyncHive();
+    libAffx_ZagaraSyncBane();
+    libAffx_ZagaraSyncMuta();
+    return true;
+}
+// Hive Mother: Creep Tumors and Nydus Worms pulse their creep heal (and Living Carpet)
+bool libAffx_ZagaraHiveUnitCreated_Func (bool testConds, bool runActions) {
+    unit created = EventUnitCreatedUnit();
+    unit hero = libAffx_ZagaraHero();
+    string unitType = UnitGetType(created);
+    if (hero == null || UnitGetOwner(created) != libAffx_player || !UnitHasBehavior2(hero, "ZagaraHiveMarker")) {
+        return false;
+    }
+    if (unitType != "ZagaraCreepTumor" && unitType != "ZagaraCreepTumorBurrowed" && unitType != "ZagaraNydusWorm") {
+        return false;
+    }
+    UnitBehaviorAdd(created, "ZagaraHiveCreepPulse", hero, 1);
+    if (UnitHasBehavior2(hero, "ZagaraLivingCarpetMarker")) {
+        UnitBehaviorAdd(created, "ZagaraLivingCarpetPulse", hero, 1);
+    }
+    return true;
+}
+// Nydus Brood (Epic, Hive Mother): every 12 seconds each Nydus Worm with an enemy Hero within 8 spawns 2 Roachlings
+bool libAffx_ZagaraNydusBrood_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ZagaraHero();
+    unitgroup worms;
+    unit worm;
+    unit enemy;
+    int i;
+    int p;
+    bool near;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "ZagaraNydusBroodMarker")) {
+        return false;
+    }
+    worms = UnitGroup("ZagaraNydusWorm", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+    for (i = UnitGroupCount(worms, c_unitCountAll); i > 0; i -= 1) {
+        worm = UnitGroupUnitFromEnd(worms, i);
+        if (worm == null || !UnitIsAlive(worm)) {
+            continue;
+        }
+        near = false;
+        for (p = libAffx_enemy; p <= 10; p += 1) {
+            enemy = libGame_gv_players[p].lv_heroUnit;
+            if (enemy != null && UnitIsAlive(enemy) && DistanceBetweenPoints(UnitGetPosition(enemy), UnitGetPosition(worm)) <= 8.0) {
+                near = true;
+            }
+        }
+        if (near) {
+            UnitCreateEffectPoint(hero, "ZagaraRoachCreateEgg", UnitGetPosition(worm));
+        }
+    }
+    return true;
+}
+// Chain Reaction (Legendary, Acid Queen): a Baneling's hit on an enemy Hero sets off a Baneling explosion at the nearest
+// other enemy Hero within 6, once per Baneling. The chained explosion comes from Zagara, so it does not chain again.
+unit libAffx_ZagaraChainLast;
+bool libAffx_ZagaraChainReaction_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ZagaraHero();
+    unit victim = EventUnit();
+    unit baneling = EventUnitDamageSourceUnit();
+    unit best;
+    unit enemy;
+    fixed bestDistance = 6.0;
+    fixed distance;
+    int p;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "ZagaraChainReactionMarker")) {
+        return false;
+    }
+    if (baneling == null || UnitGetType(baneling) != "ZagaraBaneling" || baneling == libAffx_ZagaraChainLast || !libAffx_ZagaraIsEnemyHero(victim)) {
+        return false;
+    }
+    libAffx_ZagaraChainLast = baneling;
+    for (p = libAffx_enemy; p <= 10; p += 1) {
+        enemy = libGame_gv_players[p].lv_heroUnit;
+        if (enemy != null && enemy != victim && UnitIsAlive(enemy)) {
+            distance = DistanceBetweenPoints(UnitGetPosition(enemy), UnitGetPosition(victim));
+            if (distance <= bestDistance) {
+                bestDistance = distance;
+                best = enemy;
+            }
+        }
+    }
+    if (best != null) {
+        UnitCreateEffectPoint(hero, "ZagaraBanelingExplodeSearch", UnitGetPosition(best));
+    }
+    return true;
+}
+// Twin Brood (Legendary, Swarm Matriarch): Hunter Killer summons a second Mutalisk on the same target. The second summon
+// goes through the game's own Hunter Killer script; its event (same game time) is skipped here.
+fixed libAffx_ZagaraTwinLast = -1.0;
+bool libAffx_ZagaraTwinBrood_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ZagaraHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    if (hero == null || !UnitHasBehavior2(hero, "ZagaraTwinBroodMarker") || GameGetMissionTime() == libAffx_ZagaraTwinLast) {
+        return false;
+    }
+    libAffx_ZagaraTwinLast = GameGetMissionTime();
+    if (UnitIsValid(target) && UnitIsAlive(target)) {
+        UnitCreateEffectUnit(hero, "SummonMutaliskPersistent", target);
+    }
+    return true;
+}
+// Hive Mother hit on an enemy Hero: takedown window, ZagaraInfestationTokenCounter, the heal, and on-hit boons
+bool libAffx_ZagaraHiveHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZagaraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZagaraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZagaraHiveMarker")) {
+        return false;
+    }
+    libAffx_ZagaraHiveTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZagaraInfestationTokenCounter", hero);
+    return true;
+}
+// Acid Queen hit on an enemy Hero: takedown window, ZagaraAcidBurnTokenCounter, the heal, and on-hit boons
+bool libAffx_ZagaraBaneHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZagaraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZagaraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZagaraBaneMarker")) {
+        return false;
+    }
+    libAffx_ZagaraBaneTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZagaraAcidBurnTokenCounter", hero);
+    return true;
+}
+// Swarm Matriarch hit on an enemy Hero: takedown window, ZagaraFeedingFrenzyTokenCounter, the heal, and on-hit boons
+bool libAffx_ZagaraMutaHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ZagaraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ZagaraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ZagaraMutaMarker")) {
+        return false;
+    }
+    libAffx_ZagaraMutaTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ZagaraFeedingFrenzyTokenCounter", hero);
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_ZagaraTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_ZagaraHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "ZagaraHiveMarker") && libAffx_ZagaraInWindow(libAffx_ZagaraHiveTime[killedPlayer], now)) {
+        libAffx_ZagaraHiveTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZagaraSpreadingBlightTokenCounter", hero);
+        libAffx_ZagaraSyncHive();
+        libAffx_ZagaraQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "ZagaraBaneMarker") && libAffx_ZagaraInWindow(libAffx_ZagaraBaneTime[killedPlayer], now)) {
+        libAffx_ZagaraBaneTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZagaraVolatileBroodTokenCounter", hero);
+        libAffx_ZagaraSyncBane();
+        libAffx_ZagaraQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "ZagaraMutaMarker") && libAffx_ZagaraInWindow(libAffx_ZagaraMutaTime[killedPlayer], now)) {
+        libAffx_ZagaraMutaTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ZagaraSwarmHostTokenCounter", hero);
+        libAffx_ZagaraSyncMuta();
+        libAffx_ZagaraQuestDing();
+    }
+    return true;
+}
+bool libAffx_ZagaraStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_ZagaraStarted) {
+        return true;
+    }
+    libAffx_ZagaraStarted = true;
+    trig = TriggerCreate("libAffx_ZagaraHiveHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraHydraliskRangedDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraRoachAttackDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraInfestedDropDamage");
+    trig = TriggerCreate("libAffx_ZagaraBaneHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraBanelingExplodeDamage");
+    trig = TriggerCreate("libAffx_ZagaraMutaHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraMutaliskWeaponDamage1");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraMutaliskWeaponDamage2");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraMutaliskWeaponDamage3");
+    TriggerAddEventUnitCreated(TriggerCreate("libAffx_ZagaraHiveUnitCreated_Func"), null, null, null);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ZagaraNydusBrood_Func"), 12.0, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ZagaraChainReaction_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "ZagaraBanelingExplodeDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ZagaraTwinBrood_Func"), libAffx_player, "SummonMutaliskPersistent");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ZagaraSync_Func"), 1.0, c_timeGame);
+    return true;
+}
