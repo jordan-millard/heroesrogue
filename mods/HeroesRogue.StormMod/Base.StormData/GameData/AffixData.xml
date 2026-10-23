@@ -22085,6 +22085,7 @@
 
 
 
+
         <Instances Id="AzmodanLordOfAnnihilation">
             <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
                 <Field Id="Icon" />
@@ -22325,23 +22326,17 @@
             <String String="1 1 Add Abil,AzmodanAllShallBurn,Cost.Vital[Energy] -12.5">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Add Abil,AzmodanAllShallBurn,Range 1.25">
+            <String String="1 1 Set Effect,AzmodanAllShallBurnDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Add Actor,AzmodanAllShallBurnActiveRange,Range 1.25">
+            <String String="1 1 Set Effect,AzmodanAllShallBurnFinalExplosionDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,AzmodanAllShallBurnDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
+            <String String="1 1 Set Effect,AzmodanAllShallBurnMasterOfDestructionTalentDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,AzmodanAllShallBurnFinalExplosionDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
+            <String String="1 1 Set Effect,AzmodanGoldenForkDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Effect,AzmodanAllShallBurnMasterOfDestructionTalentDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Set Effect,AzmodanGoldenForkDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
-                <Field Id="CatalogModification" Index="6" />
             </String>
             <String String="AffixAdded libAffx_AzmodanStart">
                 <Field Id="Trigger" />

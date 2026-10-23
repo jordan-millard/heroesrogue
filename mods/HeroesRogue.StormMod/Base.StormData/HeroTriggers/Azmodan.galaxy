@@ -97,7 +97,7 @@ void libAffx_AzmodanSyncGlobe () {
     CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
 }
-// AzmodanGoldenSinTokenCounter: stacks 1-40: 1% of the 6 second cooldown each; 41-80: 1% range and stretch each; 81-100: 1% Movement Speed while channeling each; then 2.5% all damage each
+// AzmodanGoldenSinTokenCounter: stacks 1-40: 0.03125 range and stretch each (1.25 at 40); 41-80: 1% range and stretch each; 81-100: 1% Movement Speed while channeling each; then 2.5% all damage each
 void libAffx_AzmodanSyncSin () {
     unit hero = libAffx_AzmodanHero();
     int stacks;
@@ -109,7 +109,8 @@ void libAffx_AzmodanSyncSin () {
     stacks = libAffx_AzmodanStacks("AzmodanGoldenSinTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_AzmodanSinAdded) {
-        libAffx_CatalogReferenceModify("Abil,AzmodanAllShallBurn,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,AzmodanAllShallBurn,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded) * 0.03125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,AzmodanAllShallBurnActiveRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded) * 0.03125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanSinAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 1% of the 7.5 cast range each, also on the stretch (leash) and its range circle
