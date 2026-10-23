@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ZagaraTwinBroodMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hive Mother ===== -->
-  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 1 second to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second (map bosses half) and stops Hydralisk and Roachling decay (tumor pulses). Creep Tumors have double Health and 50 Armor. Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
+  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 1 second to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second (map bosses half) and stops Hydralisk and Roachling decay (tumor pulses). Creep Tumors have double Health and are not healed by Creep. Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
   <CBehaviorTokenCounter id="ZagaraInfestationTokenCounter" parent="StormQuestToken">
     <Face value="ZagaraInfestationTokenCounter" />
     <Max value="100000" />
@@ -86,7 +86,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Swarm Matriarch ===== -->
-  <!-- Mutalisk and Grooved Spines; Hunter Killer has 2 charges with a 9 second recharge (16 - 4 for Mutalisk, then 25% less) and deals 50% more damage. Feeding Frenzy quest (50% kept): 0.2% Hunter Killer damage per Mutalisk hit on an enemy Hero. Swarm Host quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 9 second recharge each, 41-80 make Mutalisks last 1% longer each (decay), then 3% damage each (Heroics too). -->
+  <!-- Mutalisk and Grooved Spines; Hunter Killer has 2 charges with a 9 second recharge (16 - 4 for Mutalisk, then 25% less) and deals 50% more damage; Mutalisks have 30 Armor. Feeding Frenzy quest (50% kept): 0.2% Hunter Killer damage per Mutalisk hit on an enemy Hero. Swarm Host quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 9 second recharge each, 41-80 make Mutalisks last 1% longer each (decay), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="ZagaraFeedingFrenzyTokenCounter" parent="StormQuestToken">
     <Face value="ZagaraFeedingFrenzyTokenCounter" />
     <Max value="100000" />
@@ -171,13 +171,26 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="ZagaraHiveTargetIsHydralisk" />
     <CombineArray value="ZagaraHiveTargetIsRoach" />
   </CValidatorCombine>
-  <!-- Hive Mother's Creep Tumors have double Health and 50 Armor (the script adds this when one is created) -->
+  <!-- Hive Mother's Creep Tumors have double Health (the script adds this when one is created) -->
+  <!-- the creep heal does not heal the tumors themselves -->
+  <CValidatorUnitType id="ZagaraHiveTargetNotTumor">
+    <Value value="ZagaraCreepTumor" />
+    <Find value="0" />
+  </CValidatorUnitType>
+  <CValidatorUnitType id="ZagaraHiveTargetNotTumorBurrowed">
+    <Value value="ZagaraCreepTumorBurrowed" />
+    <Find value="0" />
+  </CValidatorUnitType>
+  <!-- Swarm Matriarch: Hunter Killer's summons have 30 Armor (the script adds this when one is created) -->
+  <CBehaviorBuff id="ZagaraMutaArmor">
+    <InfoFlags index="Hidden" value="1" />
+    <ArmorModification AllArmorBonus="30" />
+  </CBehaviorBuff>
   <CBehaviorBuff id="ZagaraHiveTumorHardened">
     <InfoFlags index="Hidden" value="1" />
     <Modification>
       <VitalMaxFractionArray index="Life" value="1" />
     </Modification>
-    <ArmorModification AllArmorBonus="50" />
   </CBehaviorBuff>
   <CBehaviorBuff id="ZagaraHiveCreepPulse">
     <InfoFlags index="Hidden" value="1" />
@@ -193,6 +206,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="ZagaraHiveCreepImpactSet">
     <ValidatorArray value="ZagaraHiveTargetOnCreep" />
     <ValidatorArray value="ZagaraHiveTargetNotTicked" />
+    <ValidatorArray value="ZagaraHiveTargetNotTumor" />
+    <ValidatorArray value="ZagaraHiveTargetNotTumorBurrowed" />
     <EffectArray value="ZagaraHiveCreepHeal" />
     <EffectArray value="ZagaraHiveCreepHealBoss" />
     <EffectArray value="ZagaraHiveApplyCreepTick" />

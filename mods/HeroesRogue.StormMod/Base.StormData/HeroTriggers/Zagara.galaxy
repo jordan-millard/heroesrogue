@@ -134,7 +134,14 @@ bool libAffx_ZagaraHiveUnitCreated_Func (bool testConds, bool runActions) {
     unit created = EventUnitCreatedUnit();
     unit hero = libAffx_ZagaraHero();
     string unitType = UnitGetType(created);
-    if (hero == null || UnitGetOwner(created) != libAffx_player || !UnitHasBehavior2(hero, "ZagaraHiveMarker")) {
+    if (hero == null || UnitGetOwner(created) != libAffx_player) {
+        return false;
+    }
+    if ((unitType == "ZagaraMutalisk" || unitType == "ZagaraHydralisk") && UnitHasBehavior2(hero, "ZagaraMutaMarker")) {
+        UnitBehaviorAdd(created, "ZagaraMutaArmor", hero, 1);
+        return true;
+    }
+    if (!UnitHasBehavior2(hero, "ZagaraHiveMarker")) {
         return false;
     }
     if (unitType != "ZagaraCreepTumor" && unitType != "ZagaraCreepTumorBurrowed" && unitType != "ZagaraNydusWorm") {
