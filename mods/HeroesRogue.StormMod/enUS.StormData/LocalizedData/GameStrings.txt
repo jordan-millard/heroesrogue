@@ -16,6 +16,8 @@ Param/Value/lib_PBU2_CB24D52E=UNLOCK
 Param/Value/lib_PBU2_E99FE310=Ranged
 Param/Value/lib_PBU2_FF5E7DD7=Warrior
 Param/Expression/AffixStacksUpTo=<n/><n/>Stacks up to <c val="#TooltipNumbers">~A~</c> times.
+Param/Expression/AffixReverseHexTarget=<n/><n/>Flips: <c val="FFDE36">~A~</c>
+Param/Expression/AffixReversed=<n/><n/><c val="FFDE36">Reversed by Reverse Hex: affects the other team.</c>
 Param/Expression/AffixCurseSkips=<n/><n/><c val="FFDE36">Skips the next Curse.</c>
 Param/Expression/AffixCurseSkipsMultiple=<n/><n/><c val="FFDE36">Skips the next ~A~ Curses.</c>
 Param/Expression/AffixCurseSkipsEachStack=<n/><n/><c val="FFDE36">Each stack skips the next Curse.</c>
@@ -303,6 +305,7 @@ Label/Name/GameoverExit=Are you sure you wish to exit?<n/><n/><c val="c52020">Al
 Message/AchievementsReset=<c val="FFDE36">All achievements have been reset!</c>
 Message/CurseToBoon=<c val="FFDE36">The next Curse you obtain will become a Boon!</c>
 Message/CurseSkipped=<c val="FFDE36">Curse skipped due to a previous Curse.</c>
+Message/ReverseHex=<c val="FFDE36">Reverse Hex flipped </c>
 Message/CurseSwap=<c val="FFDE36">Curse swapped to a Boon due to winning the last Objective.</c>
 Message/CurseNextGame1=<c val="FC4747">Obtained a Curse for missing a level 10 Curse last game.</c>
 Message/CurseNextGame2=<c val="FC4747">Obtained 2 Curses for missing the level 7 and level 10 Curses last game.</c>
@@ -559,6 +562,8 @@ Affix/Tooltip/EmergencyMeasure/Cho=On fatal damage, AI teammates gain a Shield e
 Affix/Tooltip/EmergencyMeasure/Gall=On fatal damage, AI teammates gain a Shield equal to <c val="#TooltipNumbers">50%</c> of Maximum Health for <c val="#TooltipNumbers">4</c> seconds.<n/><n/>This effect has a <c val="#TooltipNumbers">60</c> second cooldown per Hero.<n/><n/>Also affects Gall.
 Affix/Tooltip/Append/EmergencyMeasure=
 Affix/Name/CriticalMass=Critical Mass
+Affix/Name/ReverseHex=Reverse Hex
+Affix/Tooltip/ReverseHex=Flip one of your stat Curses: its effect now applies to the other team, so a buff for the enemy helps your team and a hindrance on you hinders the enemy Heroes instead.<n/><n/>Each stack flips another Curse. Only offered while a stat Curse is left to flip.
 Affix/Tooltip/CriticalMass=Getting a Takedown will refresh the cooldown on all of your Abilities.
 Affix/Tooltip/CriticalMass/Cho=Getting a Takedown will refresh the cooldown on all of your and Gall's Abilities.
 Affix/Tooltip/CriticalMass/Gall=Getting a Takedown will refresh the cooldown on all of your and Cho's Abilities.

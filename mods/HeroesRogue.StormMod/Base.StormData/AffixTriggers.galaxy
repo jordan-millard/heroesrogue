@@ -1297,10 +1297,11 @@ bool libAffx_ChainedDownBehaviorChangeCategory (bool testConds, bool runActions)
     fixed newDuration;
     fixed percentIncrease;
     if (testConds) {
+        // any Hero player: Reverse Hex can move the curse to the enemy team; units without the behavior get 0%
         if (!(UnitGetOwner(unitVar) > 0)) {
             return false;
         }
-        if (!(UnitGetOwner(unitVar) <= 5)) {
+        if (!(UnitGetOwner(unitVar) <= 10)) {
             return false;
         }
     }
@@ -1329,7 +1330,8 @@ bool libAffx_RelentlessBehaviorChangeCategory (bool testConds, bool runActions) 
     fixed newDuration;
     fixed percentDecrease;
     if (testConds) {
-        if (!((UnitGetOwner(unitVar) > 5))) {
+        // any Hero player: Reverse Hex can move the curse to the player's team; units without the behavior get 0%
+        if (!((UnitGetOwner(unitVar) > 0))) {
             return false;
         }
 

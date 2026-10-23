@@ -1034,6 +1034,15 @@ text libAffx_GetAffixTooltip(int affix) {
             tooltip += TextExpressionAssemble("Param/Expression/AffixCurseSkipsMultipleEachStack");
         }
     }
+
+    // Reverse Hex: the curse this offer flips, and curses already flipped
+    if (name == "ReverseHex" && libAffx_flipTarget != 0) {
+        TextExpressionSetToken("Param/Expression/AffixReverseHexTarget", "A", StringExternal("Affix/Name/" + libAffx_affixes[libAffx_flipTarget].name));
+        tooltip += TextExpressionAssemble("Param/Expression/AffixReverseHexTarget");
+    }
+    if (libAffx_affixes[affix].flipped) {
+        tooltip += TextExpressionAssemble("Param/Expression/AffixReversed");
+    }
     return tooltip;
 }
 
@@ -3095,6 +3104,141 @@ void libAffx_RemoveBehaviors(int affix) {
         }
     }
 }
+// ============================================================
+// Reverse Hex (Legendary): flips a curse whose whole effect is its Behavior entries onto the other team
+// ============================================================
+// first player of the team opposite to player (1-5 is the player's team, 6-10 the enemy Heroes)
+int libAffx_FlipTeamFirst(int player) {
+    if (player <= 5) {
+        return libAffx_enemy;
+    }
+    return 1;
+}
+// whether an earlier Behavior entry of the affix already gives this behavior to a player
+bool libAffx_FlipSeenBehavior(int affix, int index) {
+    int i;
+    for (i = 1; i < index; i += 1) {
+        if (libAffx_affixes[affix].behaviors[i].behavior == libAffx_affixes[affix].behaviors[index].behavior && libAffx_affixes[affix].behaviors[i].player >= 1 && libAffx_affixes[affix].behaviors[i].player <= 10) {
+            return true;
+        }
+    }
+    return false;
+}
+bool libAffx_FlipSeenAffixBehavior(int affix, int index) {
+    int i;
+    for (i = 1; i < index; i += 1) {
+        if (libAffx_affixes[affix].affixBehaviors[i].behavior == libAffx_affixes[affix].affixBehaviors[index].behavior && libAffx_affixes[affix].affixBehaviors[i].player >= 1 && libAffx_affixes[affix].affixBehaviors[i].player <= 10) {
+            return true;
+        }
+    }
+    return false;
+}
+// A stat curse: owned, not flipped yet, at least one Behavior entry for a player, nothing for the computer teams, no
+// script (Chained Down and Relentless only scale durations by the behavior they find on a unit) and no catalog change
+// aimed at one player
+bool libAffx_FlipIsEligible(int affix) {
+    int i;
+    bool anyBehavior = false;
+    string name = libAffx_affixes[affix].name;
+    if (!libAffx_affixes[affix].curse || libAffx_affixes[affix].count <= 0 || libAffx_affixes[affix].flipped || !libAffx_affixes[affix].enabled) {
+        return false;
+    }
+    // Slow Start would Time Stop every enemy Hero for 40+ seconds
+    if (name == "SlowStart") {
+        return false;
+    }
+    for (i = 1; i <= libAffx_maxBehaviors; i += 1) {
+        if (libAffx_affixes[affix].behaviors[i].behavior != "" && libAffx_affixes[affix].behaviors[i].behavior != null) {
+            if (libAffx_affixes[affix].behaviors[i].player < 1 || libAffx_affixes[affix].behaviors[i].player > 10) {
+                return false;
+            }
+            anyBehavior = true;
+        }
+    }
+    if (!anyBehavior) {
+        return false;
+    }
+    for (i = 1; i <= libAffx_maxRemoveBehaviors; i += 1) {
+        if (libAffx_affixes[affix].removeBehaviors[i].behavior != "" && libAffx_affixes[affix].removeBehaviors[i].behavior != null) {
+            return false;
+        }
+    }
+    if (name != "ChainedDown" && name != "Relentless") {
+        for (i = 1; i <= libAffx_maxTriggers; i += 1) {
+            if (libAffx_affixes[affix].triggers[i].name != "" && libAffx_affixes[affix].triggers[i].name != null) {
+                return false;
+            }
+        }
+    }
+    for (i = 1; i <= libAffx_maxCatalogModifications; i += 1) {
+        if (libAffx_affixes[affix].catalogModifications[i].reference != "" && libAffx_affixes[affix].catalogModifications[i].reference != null && libAffx_affixes[affix].catalogModifications[i].player != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+// a random flippable curse, or 0
+int libAffx_FlipPickRandom() {
+    int i;
+    int eligible = 0;
+    int pick;
+    for (i = 1; i <= libAffx_registeredAffixes; i += 1) {
+        if (libAffx_FlipIsEligible(i)) {
+            eligible += 1;
+        }
+    }
+    if (eligible == 0) {
+        return 0;
+    }
+    pick = RandomInt(1, eligible);
+    for (i = 1; i <= libAffx_registeredAffixes; i += 1) {
+        if (libAffx_FlipIsEligible(i)) {
+            pick -= 1;
+            if (pick == 0) {
+                return i;
+            }
+        }
+    }
+    return 0;
+}
+// forget a behavior in a player's synced affix behaviors (so a D.Va Mech or a respawn does not get it back)
+void libAffx_ForgetAffixBehavior(int player, string behavior) {
+    int i;
+    for (i = 1; i <= libAffx_affixBehaviorIndex[player]; i += 1) {
+        if (libAffx_affixBehaviors[player][i] == behavior) {
+            libAffx_affixBehaviors[player][i] = "";
+        }
+    }
+}
+// take the curse's behaviors off the team it hurt or helped, then give them to the other team
+void libAffx_FlipCurse(int affix) {
+    int i;
+    int player;
+    string behavior;
+    if (affix == 0 || libAffx_affixes[affix].flipped) {
+        return;
+    }
+    for (i = 1; i <= libAffx_maxBehaviors; i += 1) {
+        behavior = libAffx_affixes[affix].behaviors[i].behavior;
+        player = libAffx_affixes[affix].behaviors[i].player;
+        if (behavior != "" && behavior != null && player >= 1 && player <= 10) {
+            libAffx_RemovePlayerBehavior(player, behavior, 100, true);
+            libAffx_ForgetAffixBehavior(player, behavior);
+        }
+    }
+    for (i = 1; i <= libAffx_maxAffixBehaviorEntries; i += 1) {
+        behavior = libAffx_affixes[affix].affixBehaviors[i].behavior;
+        player = libAffx_affixes[affix].affixBehaviors[i].player;
+        if (behavior != "" && behavior != null && player >= 1 && player <= 10) {
+            libAffx_RemovePlayerBehavior(player, behavior, 100, true);
+            libAffx_ForgetAffixBehavior(player, behavior);
+        }
+    }
+    libAffx_affixes[affix].flipped = true;
+    libAffx_ApplyBehaviors(affix, libAffx_affixes[affix].count);
+    libAffx_ApplyAffixBehaviors(affix, libAffx_affixes[affix].count);
+    libAffx_DisplayChatMessage(StringExternal("Message/ReverseHex") + TextWithColor(StringExternal("Affix/Name/" + libAffx_affixes[affix].name), libAffx_GetAffixColor(affix)) + StringToText("."));
+}
 void libAffx_ApplyBehaviors(int affix, int amount) {
     int i;
     int i2;
@@ -3114,7 +3258,23 @@ void libAffx_ApplyBehaviors(int affix, int amount) {
             } else {
                 amountToAdd = 1;
             }
-            if (behaviorPlayer == 0) {
+            if (libAffx_affixes[affix].flipped && behaviorPlayer >= 1 && behaviorPlayer <= 10) {
+                // Reverse Hex: the whole other team gets it, once per behavior (curses list one entry per player)
+                if (libAffx_FlipSeenBehavior(affix, i)) {
+                    continue;
+                }
+                i3 = libAffx_FlipTeamFirst(behaviorPlayer);
+                for (i2 = i3; i2 <= i3 + 4; i2 += 1) {
+                    if ((i2 == libAffx_choPlayer || i2 == libAffx_gallPlayer) && libAffx_affixes[affix].excludeChoGall) {
+                        continue;
+                    }
+                    if (UnitHasBehavior2(libGame_gv_players[i2].lv_heroUnit, "NotManaUserDummy") && libAffx_affixes[affix].behaviors[i].onlyManaUsers) {
+                    } else if (!UnitHasBehavior2(libGame_gv_players[i2].lv_heroUnit, "NotManaUserDummy") && libAffx_affixes[affix].behaviors[i].disallowManaUsers) {
+                    } else {
+                        libAffx_AddPlayerBehavior(i2, behavior, amountToAdd, true);
+                    }
+                }
+            } else if (behaviorPlayer == 0) {
                 for (i2 = 1; i2 <= 10; i2 += 1) {
                     if ((i2 == libAffx_choPlayer || i2 == libAffx_gallPlayer) && libAffx_affixes[affix].excludeChoGall) {
                         continue;
@@ -3147,7 +3307,16 @@ void libAffx_ApplyAffixBehaviors(int affix, int amount) {
         behavior = libAffx_affixes[affix].affixBehaviors[i].behavior;
         if (behavior != "" && behavior != null) {
             behaviorPlayer = libAffx_affixes[affix].affixBehaviors[i].player;
-            if (behaviorPlayer == 0) {
+            if (libAffx_affixes[affix].flipped && behaviorPlayer >= 1 && behaviorPlayer <= 10) {
+                if (libAffx_FlipSeenAffixBehavior(affix, i)) {
+                    continue;
+                }
+                for (i2 = libAffx_FlipTeamFirst(behaviorPlayer); i2 <= libAffx_FlipTeamFirst(behaviorPlayer) + 4; i2 += 1) {
+                    if (!((i2 == libAffx_choPlayer || i2 == libAffx_gallPlayer) && libAffx_affixes[affix].excludeChoGall)) {
+                        libAffx_AddAffixBehavior(i2, behavior);
+                    }
+                }
+            } else if (behaviorPlayer == 0) {
                 for (i2 = 1; i2 <= 10; i2 += 1) {
                     if ((i2 == libAffx_choPlayer || i2 == libAffx_gallPlayer) && libAffx_affixes[affix].excludeChoGall) {
                         continue;
@@ -3333,11 +3502,22 @@ void libAffx_ApplyAffix(int affix, int amount) {
     libAffx_affixes[affix].shouldExecute = false;
 }
 void libAffx_AddAffix(int affix, int count) {
+    int i;
     if (affix == 0) { return; }
     libAffx_affixes[affix].count += count;
     libAffx_affixes[affix].shouldExecute = true;
     libAffx_skipCurseCounter += libAffx_affixes[affix].skipCurses;
     libAffx_ApplyAffix(affix, count);
+    // Reverse Hex: each stack flips a curse; the offered one first (named in the tooltip), then random ones
+    if (libAffx_affixes[affix].name == "ReverseHex") {
+        for (i = 1; i <= count; i += 1) {
+            if (libAffx_flipTarget == 0 || !libAffx_FlipIsEligible(libAffx_flipTarget)) {
+                libAffx_flipTarget = libAffx_FlipPickRandom();
+            }
+            libAffx_FlipCurse(libAffx_flipTarget);
+            libAffx_flipTarget = 0;
+        }
+    }
 }
 void libAffx_SetAffix(int affix, int count) {
     if (affix == 0) { return; }
@@ -3554,6 +3734,11 @@ void libAffx_SaveBank() {
         } else if (!libAffx_affixes[i].banned && BankKeyExists(BankLastCreated(), libAffx_BankSection, affixName + "_Banned")) {
             BankValueSetFromInt(BankLastCreated(), libAffx_BankSection, affixName + "_Banned", 0);
         }
+        if (libAffx_affixes[i].flipped) {
+            BankValueSetFromInt(BankLastCreated(), libAffx_BankSection, affixName + "_Flipped", 1);
+        } else if (BankKeyExists(BankLastCreated(), libAffx_BankSection, affixName + "_Flipped")) {
+            BankValueSetFromInt(BankLastCreated(), libAffx_BankSection, affixName + "_Flipped", 0);
+        }
     }
     BankSave(BankLastCreated());
     libAffx_LunaraSaveBank();
@@ -3641,6 +3826,7 @@ void libAffx_LoadBank() {
                 libAffx_affixes[i].banned = false;
             }
         }
+        libAffx_affixes[i].flipped = BankKeyExists(BankLastCreated(), libAffx_BankSection, affixName + "_Flipped") && BankValueGetAsInt(BankLastCreated(), libAffx_BankSection, affixName + "_Flipped") == 1 && libAffx_affixes[i].count > 0;
     }
     while (!libAffx_playersFirstSpawnIn[libAffx_player]) {
         libAffx_Wait(0.0625, c_timeGame);
@@ -3838,6 +4024,13 @@ bool libAffx_AffixFailsRequirements(int affix) {
             return true;
         }
     }
+    // Reverse Hex: only while a stat curse is left to flip; flipped curses are not rolled again
+    if (libAffx_affixes[affix].name == "ReverseHex" && libAffx_FlipPickRandom() == 0) {
+        return true;
+    }
+    if (libAffx_affixes[affix].flipped) {
+        return true;
+    }
     for (i = 1; i <= libAffx_affixes[affix].excludedCount; i += 1) {
         affixToCheck = libAffx_affixes[affix].excludedAffixes[i];
         if (libAffx_affixes[affixToCheck].count > 0) {
@@ -4023,6 +4216,9 @@ void libAffx_RollForSlot(int slot) {
         rolledRarity = libAffx_RollRarity(libAffx_currentQueue.rarity, libAffx_currentQueue.curse);
     }
     libAffx_rolledAffixes[slot] = libAffx_RollAffix(rolledRarity, libAffx_currentQueue.curse, libAffx_currentQueue.level, libAffx_currentQueue.lockRarity);
+    if (libAffx_rolledAffixes[slot] != 0 && libAffx_affixes[libAffx_rolledAffixes[slot]].name == "ReverseHex") {
+        libAffx_flipTarget = libAffx_FlipPickRandom();
+    }
 }
 
 void libAffx_RollAffixChoices() {

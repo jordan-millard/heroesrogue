@@ -573,6 +573,7 @@ struct libAffx_AffixData {
 
     bool cannotRoll;
     bool banned;
+    bool flipped; // Reverse Hex flipped this curse: its Behavior entries go to the other team
 
     int[libAffx_maxRequirements + 1] excludedAffixes; // List of mutually exclusive affixes.
     int[libAffx_maxRequirements + 1] requiredAffixes; // List of required affixes.
@@ -762,6 +763,7 @@ int libAffx_skipCurseCounter;
 
 int libAffx_cursesSkipped;
 int libAffx_cursesSwapped;
+int libAffx_flipTarget; // Reverse Hex: the curse the boon on offer will flip (shown in its tooltip)
 
 int[libCore_gv_bALMaxTeams + 1][libAffx_maxHeroes + 1] libAffx_heroCounter;
 

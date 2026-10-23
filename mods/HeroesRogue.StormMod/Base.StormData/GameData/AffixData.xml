@@ -2246,6 +2246,19 @@
                 <Field Id="Trigger" />
             </String>
         </Instances>
+        <!-- Reverse Hex: each stack flips a random stat curse onto the other team (LibAffx.galaxy, libAffx_FlipCurse).
+             Unlimited stacks; only offered while a stat curse is left to flip. -->
+        <Instances Id="ReverseHex">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_lucio_reverseamp.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+        </Instances>
         <Instances Id="ToxicField">
             <Int Int="3">
                 <Field Id="Max" />
