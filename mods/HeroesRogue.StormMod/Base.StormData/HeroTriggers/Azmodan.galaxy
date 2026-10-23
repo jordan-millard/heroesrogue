@@ -18,7 +18,6 @@ int libAffx_AzmodanGlobeAdded3; // Lord of Annihilation: takedown quest stage 3 
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanSinTime; // per enemy player, last Lord of Sin hit
 int libAffx_AzmodanSinAdded; // Lord of Sin: takedown stacks already applied to the catalog this game
 int libAffx_AzmodanSinAdded2; // Lord of Sin: takedown quest stage 2 stacks already applied to the catalog this game
-int libAffx_AzmodanSinAdded3; // Lord of Sin: takedown quest stage 3 stacks already applied to the catalog this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanGenTime; // per enemy player, last General of the Burning Hells hit
 int libAffx_AzmodanGenAdded; // General of the Burning Hells: takedown stacks already applied to the catalog this game
 
@@ -97,7 +96,7 @@ void libAffx_AzmodanSyncGlobe () {
     CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
 }
-// AzmodanGoldenSinTokenCounter: stacks 1-40: 0.03125 range and stretch each (1.25 at 40); 41-80: 1% range and stretch each; 81-100: 1% Movement Speed while channeling each; then 2.5% all damage each
+// AzmodanGoldenSinTokenCounter: stacks 1-40: 0.03125 range and stretch each (1.25 at 40); 41-80: 1% Movement Speed while channeling each; then 2.5% all damage each
 void libAffx_AzmodanSyncSin () {
     unit hero = libAffx_AzmodanHero();
     int stacks;
@@ -113,18 +112,11 @@ void libAffx_AzmodanSyncSin () {
         libAffx_CatalogReferenceModify("Actor,AzmodanAllShallBurnActiveRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded) * 0.03125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanSinAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 1% of the 7.5 cast range each, also on the stretch (leash) and its range circle
+    // stage 2 (stacks 41 to 80): 1% Movement Speed while channeling each (the channel slows by 30%)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_AzmodanSinAdded2) {
-        libAffx_CatalogReferenceModify("Abil,AzmodanAllShallBurn,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Actor,AzmodanAllShallBurnActiveRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,AzmodanAllShallBurnChannel,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanSinAdded2 = wanted;
-    }
-    // stage 3 (stacks 81 to 100): 1% Movement Speed while channeling each (the channel slows by 30%)
-    wanted = MaxI(0, MinI(stacks - 80, 20));
-    if (wanted != libAffx_AzmodanSinAdded3) {
-        libAffx_CatalogReferenceModify("Behavior,AzmodanAllShallBurnChannel,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_AzmodanSinAdded3 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
