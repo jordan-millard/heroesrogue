@@ -57,10 +57,11 @@ void libAffx_ZagaraSyncHive () {
         libAffx_CatalogReferenceModify("Abil,ZagaraSummonCreepTumor,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraHiveAdded) * -0.18, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZagaraHiveAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 0.025% of maximum Health on the creep heal each (2% to 3%)
+    // stage 2 (stacks 41 to 80): 0.025% of maximum Health on the creep heal each (2% to 3%; half on map bosses)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_ZagaraHiveAdded2) {
         libAffx_CatalogReferenceModify("Effect,ZagaraHiveCreepHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraHiveAdded2) * 0.00025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,ZagaraHiveCreepHealBoss,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraHiveAdded2) * 0.000125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZagaraHiveAdded2 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);

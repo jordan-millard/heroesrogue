@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ZagaraTwinBroodMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hive Mother ===== -->
-  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 2 seconds to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second and stops Hydralisk and Roachling decay (tumor pulses). Creep Tumors have double Health and 50 Armor. Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
+  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 2 seconds to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second (map bosses half) and stops Hydralisk and Roachling decay (tumor pulses). Creep Tumors have double Health and 50 Armor. Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
   <CBehaviorTokenCounter id="ZagaraInfestationTokenCounter" parent="StormQuestToken">
     <Face value="ZagaraInfestationTokenCounter" />
     <Max value="100000" />
@@ -194,12 +194,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="ZagaraHiveTargetOnCreep" />
     <ValidatorArray value="ZagaraHiveTargetNotTicked" />
     <EffectArray value="ZagaraHiveCreepHeal" />
+    <EffectArray value="ZagaraHiveCreepHealBoss" />
     <EffectArray value="ZagaraHiveApplyCreepTick" />
     <EffectArray value="ZagaraHiveApplyNoDecay" />
   </CEffectSet>
   <CEffectModifyUnit id="ZagaraHiveCreepHeal">
+    <ValidatorArray value="ZagaraHiveTargetNotBoss" />
     <VitalArray index="Life">
       <ChangeFraction value="0.02" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <!-- Map bosses on your side (the Battlefield of Eternity Immortal, a captured boss) get half the creep heal -->
+  <CValidatorUnitFilters id="ZagaraHiveTargetNotBoss">
+    <Filters value="-;MapBoss" />
+  </CValidatorUnitFilters>
+  <CValidatorUnitFilters id="ZagaraHiveTargetIsBoss">
+    <Filters value="MapBoss;-" />
+  </CValidatorUnitFilters>
+  <CEffectModifyUnit id="ZagaraHiveCreepHealBoss">
+    <ValidatorArray value="ZagaraHiveTargetIsBoss" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.01" />
     </VitalArray>
   </CEffectModifyUnit>
   <CBehaviorBuff id="ZagaraHiveCreepTick">
