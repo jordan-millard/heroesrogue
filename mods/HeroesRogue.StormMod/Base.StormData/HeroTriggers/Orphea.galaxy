@@ -43,7 +43,7 @@ void libAffx_OrpheaQuestDing() {
 bool libAffx_OrpheaInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_OrpheaTakedownWindow;
 }
-// OrpheaEncoreTokenCounter: stacks 1-40: 1% of the 5 second cooldown each; 41-80: 2% of the 1.25 dash width each; then 3% damage each, Heroics too
+// OrpheaEncoreTokenCounter: stacks 1-40: 2% of the 1.25 dash width each; 41-80: 1% of the 5 second cooldown each; then 3% damage each, Heroics too
 void libAffx_OrpheaSyncWaltz () {
     unit hero = libAffx_OrpheaHero();
     int stacks;
@@ -55,13 +55,13 @@ void libAffx_OrpheaSyncWaltz () {
     stacks = libAffx_OrpheaStacks("OrpheaEncoreTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_OrpheaWaltzAdded) {
-        libAffx_CatalogReferenceModify("Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded) * -0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,OrpheaShadowWaltzSearchArea,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaWaltzAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 2% of the 1.25 dash width each
+    // stage 2 (stacks 41 to 80): 1% of the 5 second cooldown each
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_OrpheaWaltzAdded2) {
-        libAffx_CatalogReferenceModify("Effect,OrpheaShadowWaltzSearchArea,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded2) * -0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaWaltzAdded2 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
@@ -158,9 +158,6 @@ bool libAffx_OrpheaWaltzHit_Func (bool testConds, bool runActions) {
     }
     libAffx_OrpheaWaltzTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "OrpheaPirouetteTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "OrpheaWaltzHeal", hero);
-    }
     return true;
 }
 // Abyssal Maw hit on an enemy Hero: takedown window, OrpheaGnashTokenCounter, the heal, and on-hit boons
@@ -189,11 +186,11 @@ bool libAffx_OrpheaDreadHit_Func (bool testConds, bool runActions) {
     }
     libAffx_OrpheaDreadTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "OrpheaTerrorTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "OrpheaDreadHeal", hero);
-    }
-    if (UnitHasBehavior2(hero, "OrpheaParalyzingDreadMarker")) {
-        UnitCreateEffectUnit(hero, "OrpheaDreadStunApply", victim);
+    if (EventUnitDamageEffect() == "OrpheaDreadFinalDamage") {
+        libGame_gf_ModifyTokenCount(2, "OrpheaTerrorTokenCounter", hero);
+        if (UnitHasBehavior2(hero, "OrpheaParalyzingDreadMarker")) {
+            UnitCreateEffectUnit(hero, "OrpheaDreadStunApply", victim);
+        }
     }
     return true;
 }
@@ -241,6 +238,7 @@ bool libAffx_OrpheaStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_OrpheaChompHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaChompDamage");
     trig = TriggerCreate("libAffx_OrpheaDreadHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaDreadLineDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaDreadFinalDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaOrpheaDreadFinalSearchAreaEcho_Func"), libAffx_player, "OrpheaDreadFinalSearchArea");
     // also picks up stacks loaded from the bank

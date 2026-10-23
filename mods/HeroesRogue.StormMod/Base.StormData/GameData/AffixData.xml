@@ -17526,522 +17526,6 @@
             </String>
         </Instances>
 
-        <Instances Id="OrpheaShadowDancer">
-            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="OrpheaEnPointe">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="OrpheaBondOfAnguish">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 OrpheaWaltzMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 OrpheaPirouetteTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 OrpheaEncoreTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="OrpheaEncoreTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="OrpheaPirouetteTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="AffixAdded libAffx_OrpheaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_OrpheaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDarkMelody">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaShadowDancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaQuickstep">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaShadowDancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse -0.25">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDeterminationBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaShadowDancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaDetermination">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaAncestralStrengthBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaShadowDancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaAncestralStrength">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaFinalToccataBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_reset.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaShadowDancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaFinalToccata">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDanseMacabre">
-            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaShadowDancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,OrpheaShadowWaltzHeroHitModifyCooldown,Cost[0].CooldownTimeUse 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaAbyssalMaw">
-            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="OrpheaAbyssalSymbiosis">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="OrpheaRavenousHunger">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 OrpheaChompMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 OrpheaGnashTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 OrpheaFeastTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="OrpheaFeastTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="OrpheaGnashTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="OrpheaRavenousHungerToken 0.5">
-                <Field Id="QuestRetain" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="AffixAdded libAffx_OrpheaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_OrpheaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaSharpTeeth">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaAbyssalMaw">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaHungryMaw">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaAbyssalMaw">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,OrpheaChomp,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaBackbiterBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_w_2.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaAbyssalMaw">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaBackbiter">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaInsatiableBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaAbyssalMaw">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaInsatiable">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaEldritchConduitBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaAbyssalMaw">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaEldritchConduit">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDevourer">
-            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaAbyssalMaw">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 OrpheaDevourerMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDreadbringer">
-            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="OrpheaGrowingNightmare">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="OrpheaMindDevourer">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 OrpheaDreadMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 OrpheaTerrorTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 OrpheaNightmareTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="OrpheaNightmareTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="OrpheaTerrorTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="OrpheaMindDevourerToken 0.5">
-                <Field Id="QuestRetain" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="AffixAdded libAffx_OrpheaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_OrpheaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDeepeningDread">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaDreadbringer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaRestlessDread">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaDreadbringer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,OrpheaDread,Cost.Cooldown.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDreadsGrip">
-            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaDreadbringer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Add Behavior,OrpheaDreadFinalSlow,Modification.UnifiedMoveSpeedFactor -0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaLurkingTerrorBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_e_terror.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaDreadbringer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="OrpheaLurkingTerror">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaEchoingDread">
-            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaDreadbringer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 OrpheaEchoingDreadMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaParalyzingDread">
-            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="OrpheaDreadbringer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 OrpheaParalyzingDreadMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 1 Set Behavior,OrpheaDreadStun,Duration 0.75">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaChaoticAssaultBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="OrpheaChaoticAssault">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaDeadMagicBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="OrpheaDeadMagic">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="OrpheaInvasiveMiasmaBoon">
-            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Orphea">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="OrpheaInvasiveMiasma">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
 
         <Instances Id="ZuljinAxeThrower">
             <String String="Assets/Textures/storm_ui_icon_zuljin_berzerker.dds">
@@ -21445,6 +20929,559 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="KelThuzadChillingTouch">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+
+        <Instances Id="OrpheaShadowDancer">
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaEnPointe">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="OrpheaBondOfAnguish">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 OrpheaWaltzMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 OrpheaPirouetteTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 OrpheaEncoreTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="OrpheaEncoreTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="OrpheaPirouetteTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaWeapon,Range 1.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaWeapon,MinScanRange 1.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,Range 1.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,MinScanRange 1.1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_OrpheaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_OrpheaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDarkMelody">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaQuickstep">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDeterminationBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaDetermination">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaAncestralStrengthBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaAncestralStrength">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaFinalToccataBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_reset.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaFinalToccata">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDanseMacabre">
+            <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaShadowDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,OrpheaShadowWaltzHeroHitModifyCooldown,Cost[0].CooldownTimeUse 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaAbyssalMaw">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaAbyssalSymbiosis">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="OrpheaRavenousHunger">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 OrpheaChompMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 OrpheaGnashTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 OrpheaFeastTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="OrpheaFeastTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="OrpheaGnashTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="OrpheaRavenousHungerToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaWeapon,Range 1.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaWeapon,MinScanRange 1.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,Range 1.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,MinScanRange 1.1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_OrpheaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_OrpheaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaSharpTeeth">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaHungryMaw">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,OrpheaChomp,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaBackbiterBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaBackbiter">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaInsatiableBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaInsatiable">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaEldritchConduitBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaEldritchConduit">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDevourer">
+            <String String="Assets/Textures/storm_ui_icon_orphea_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaAbyssalMaw">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 OrpheaDevourerMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDreadbringer">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaGrowingNightmare">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="OrpheaMindDevourer">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 OrpheaDreadMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 OrpheaTerrorTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 OrpheaNightmareTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="OrpheaNightmareTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="OrpheaTerrorTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="OrpheaMindDevourerToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaWeapon,Range 1.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaWeapon,MinScanRange 1.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,Range 1.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,MinScanRange 1.1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_OrpheaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_OrpheaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDeepeningDread">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaRestlessDread">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,OrpheaDread,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDreadsGrip">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,OrpheaDreadFinalSlow,Modification.UnifiedMoveSpeedFactor -0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaLurkingTerrorBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e_terror.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="OrpheaLurkingTerror">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaEchoingDread">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 OrpheaEchoingDreadMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaParalyzingDread">
+            <String String="Assets/Textures/storm_ui_icon_orphea_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="OrpheaDreadbringer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 OrpheaParalyzingDreadMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Set Behavior,OrpheaDreadStun,Duration 0.75">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaChaoticAssaultBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaChaoticAssault">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaDeadMagicBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaDeadMagic">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="OrpheaInvasiveMiasmaBoon">
+            <String String="Assets/Textures/storm_ui_icon_orphea_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Orphea">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="OrpheaInvasiveMiasma">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>

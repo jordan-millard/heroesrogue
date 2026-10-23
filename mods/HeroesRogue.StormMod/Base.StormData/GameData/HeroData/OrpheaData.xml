@@ -13,7 +13,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="OrpheaParalyzingDreadMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Shadow Dancer ===== -->
-  <!-- Pirouette quest (50% kept): 0.5% Shadow Waltz damage per enemy Hero hit. Encore quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 5 second cooldown each, 41-80 make the dash 2% wider each, then 3% damage each (Heroics too). -->
+  <!-- Basic Attacks +1.1 range. Pirouette quest (50% kept): 3% Shadow Waltz damage per enemy Hero hit. Encore quest: takedowns within 3 seconds of a hit; stacks 1-40 make the dash 2% wider each, 41-80 cut 1% of the 5 second cooldown each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="OrpheaPirouetteTokenCounter" parent="StormQuestToken">
     <Face value="OrpheaPirouetteTokenCounter" />
     <Max value="100000" />
@@ -27,7 +27,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="OrpheaPirouetteTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.03" />
   </CAccumulatorToken>
   <CEffectDamage id="OrpheaShadowWaltzDamage">
     <MultiplicativeModifierArray index="OrpheaWaltzPower" Modifier="0" />
@@ -47,12 +47,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="OrpheaWaltzHit" Accumulator="OrpheaPirouetteTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="OrpheaWaltzLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="OrpheaWaltzHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="OrpheaPirouetteTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_orphea_q.dds" />
   </CButton>
@@ -61,7 +55,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Abyssal Maw ===== -->
-  <!-- Gnash quest (50% kept): 1% Chomp damage per enemy Hero hit. Feast quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 make it bite 1% sooner each (cast time), then 3% damage each (Heroics too). -->
+  <!-- Basic Attacks +1.1 range. Gnash quest (50% kept): 5% Chomp damage per enemy Hero hit. Feast quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 make it bite 1% sooner each (cast time), then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="OrpheaGnashTokenCounter" parent="StormQuestToken">
     <Face value="OrpheaGnashTokenCounter" />
     <Max value="100000" />
@@ -75,7 +69,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="OrpheaGnashTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.05" />
   </CAccumulatorToken>
   <CEffectDamage id="OrpheaChompDamage">
     <MultiplicativeModifierArray index="OrpheaChompPower" Modifier="0" />
@@ -86,7 +80,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectModifyUnit id="OrpheaChompHeal">
     <ImpactUnit Value="Caster" />
     <VitalArray index="Life">
-      <ChangeFraction value="0.02" />
+      <ChangeFraction value="0.15" />
     </VitalArray>
   </CEffectModifyUnit>
   <CButton id="OrpheaGnashTokenCounter" parent="StormButtonParent">
@@ -97,7 +91,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Dreadbringer ===== -->
-  <!-- Terror quest (50% kept): 1% Dread damage per enemy Hero hit by the eruption. Nightmare quest: takedowns within 3 seconds of an eruption hit; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the eruption 1% larger each, then 3% damage each (Heroics too). -->
+  <!-- Basic Attacks +1.1 range. Terror quest (50% kept): 1% Dread damage per enemy Hero hit, 3% by the eruption (script adds 2 more tokens). Nightmare quest: takedowns within 3 seconds of an eruption hit; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the eruption 1% larger each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="OrpheaTerrorTokenCounter" parent="StormQuestToken">
     <Face value="OrpheaTerrorTokenCounter" />
     <Max value="100000" />
@@ -125,12 +119,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="OrpheaDreadHit" Accumulator="OrpheaTerrorTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="OrpheaDreadLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="OrpheaDreadHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="OrpheaTerrorTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_orphea_e.dds" />
   </CButton>
