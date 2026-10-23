@@ -213,7 +213,7 @@ bool libAffx_OrpheaTakedown (bool testConds, bool runActions) {
         libAffx_OrpheaSyncWaltz();
         libAffx_OrpheaQuestDing();
     }
-    if (UnitHasBehavior2(hero, "OrpheaChompMarker") && libAffx_OrpheaInWindow(libAffx_OrpheaChompTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "OrpheaChompMarker") && libAffx_OrpheaChompTime[killedPlayer] > 0.0 && now - libAffx_OrpheaChompTime[killedPlayer] <= 6.0) {
         libAffx_OrpheaChompTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "OrpheaFeastTokenCounter", hero);
         libAffx_OrpheaSyncChomp();
