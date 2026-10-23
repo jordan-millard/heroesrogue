@@ -459,8 +459,6 @@ bool libAffx_AzmodanGlobeHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "AzmodanGoldenDoomTokenCounter", hero);
     return true;
 }
-// Lord of Sin: hits counted toward the next batch of 10 tokens (one quest ding per batch)
-int libAffx_AzmodanSinHits;
 // Lord of Sin hit on an enemy Hero: takedown window, AzmodanGoldenBurnTokenCounter, the heal, and on-hit boons
 bool libAffx_AzmodanSinHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -469,11 +467,17 @@ bool libAffx_AzmodanSinHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_AzmodanSinTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    libAffx_AzmodanSinHits += 1;
-    if (libAffx_AzmodanSinHits >= 10) {
-        libAffx_AzmodanSinHits = 0;
-        libGame_gf_ModifyTokenCount(10, "AzmodanGoldenBurnTokenCounter", hero);
+    libGame_gf_ModifyTokenCount(1, "AzmodanGoldenBurnTokenCounter", hero);
+    return true;
+}
+// Lord of Sin: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_AzmodanSinWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_AzmodanIsEnemyHero(victim) || !UnitHasBehavior2(hero, "AzmodanSinMarker")) {
+        return false;
     }
+    libAffx_AzmodanSinTime[UnitGetOwner(victim)] = GameGetMissionTime();
     return true;
 }
 // General of the Burning Hells: hits counted toward the next batch of 10 tokens (one quest ding per batch)
@@ -546,6 +550,9 @@ bool libAffx_AzmodanStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanGlobeOfAnnihilationDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage");
     trig = TriggerCreate("libAffx_AzmodanSinHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanAllShallBurnFinalExplosionDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanAllShallBurnMasterOfDestructionTalentDamage");
+    trig = TriggerCreate("libAffx_AzmodanSinWindow_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanAllShallBurnDamage");
     trig = TriggerCreate("libAffx_AzmodanGenHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "AzmodanSummonDemonWarriorWeaponDamage");

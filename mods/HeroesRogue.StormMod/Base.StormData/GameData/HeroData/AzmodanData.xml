@@ -71,7 +71,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Lord of Sin ===== -->
-  <!-- All Shall Burn has a 4 second cooldown (base 6), costs half Mana (12.5), has 30% more range and stretch (7.5 to 9.75 cast, 9.75 to 12 leash) and deals 25% more damage; Cydaea's Kiss and Sin's Grasp. Burning Sin quest (50% kept): 0.2% All Shall Burn damage per beam tick on an enemy Hero, added 10 at a time. Sinful Harvest quest: takedowns within 3 seconds of a beam tick; stacks 1-40 cut 1% of the cooldown each, 41-80 add 1% range and stretch each, 81-100 add 1% Movement Speed while channeling each, 100 unlocks the fork (each tick also burns the nearest other enemy Hero within 5 for 50%), then 2.5% all damage each. -->
+  <!-- All Shall Burn has a 4 second cooldown (base 6), costs half Mana (12.5), has 30% more range and stretch (7.5 to 9.75 cast, 9.75 to 12 leash) and deals 25% more damage; Cydaea's Kiss and Sin's Grasp. Burning Sin quest (50% kept): 5% All Shall Burn damage per enemy Hero hit by the final explosion (also the Master of Destruction explosion). Sinful Harvest quest: takedowns within 3 seconds of a beam tick; stacks 1-40 cut 1% of the cooldown each, 41-80 add 1% range and stretch each, 81-100 add 1% Movement Speed while channeling each, 100 unlocks the fork (each tick also burns the nearest other enemy Hero within 5 for 50%), then 2.5% all damage each. -->
   <CBehaviorTokenCounter id="AzmodanGoldenBurnTokenCounter" parent="StormQuestToken">
     <Face value="AzmodanGoldenBurnTokenCounter" />
     <Max value="100000" />
@@ -85,7 +85,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AzmodanGoldenBurnTokenCounter" />
-    <Scale value="0.002" />
+    <Scale value="0.05" />
   </CAccumulatorToken>
   <CEffectDamage id="AzmodanAllShallBurnDamage">
     <MultiplicativeModifierArray index="AzmodanSinPower" Modifier="0" />
