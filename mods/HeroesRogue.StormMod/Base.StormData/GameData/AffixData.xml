@@ -21560,6 +21560,7 @@
         </Instances>
 
 
+
         <Instances Id="ZagaraHiveMother">
             <String String="Assets/Textures/storm_ui_icon_zagara_creep.dds">
                 <Field Id="Icon" />
@@ -21934,14 +21935,17 @@
             <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Charge.HideCount 0">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage1,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+            <String String="1 1 Add Abil,ZagaraSummonHydralisk,Cost.Vital[Energy] -30">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage2,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage1,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage3,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage2,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,ZagaraMutaliskWeaponDamage3,MultiplicativeModifierArray[ZagaraMutaPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
             </String>
             <String String="AffixAdded libAffx_ZagaraStart">
                 <Field Id="Trigger" />
