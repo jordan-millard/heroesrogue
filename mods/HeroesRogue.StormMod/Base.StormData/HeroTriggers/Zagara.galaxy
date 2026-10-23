@@ -140,6 +140,10 @@ bool libAffx_ZagaraHiveUnitCreated_Func (bool testConds, bool runActions) {
         return false;
     }
     UnitBehaviorAdd(created, "ZagaraHiveCreepPulse", hero, 1);
+    if (unitType != "ZagaraNydusWorm") {
+        UnitBehaviorAdd(created, "ZagaraHiveTumorHardened", hero, 1);
+        UnitSetPropertyFixed(created, c_unitPropLifePercent, 100.0);
+    }
     if (UnitHasBehavior2(hero, "ZagaraLivingCarpetMarker")) {
         UnitBehaviorAdd(created, "ZagaraLivingCarpetPulse", hero, 1);
     }
