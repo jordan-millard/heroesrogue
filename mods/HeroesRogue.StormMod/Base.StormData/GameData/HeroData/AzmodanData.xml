@@ -71,7 +71,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Lord of Sin ===== -->
-  <!-- All Shall Burn has a 4 second cooldown (base 6), costs half Mana (12.5), has 30% more range and stretch (7.5 to 9.75 cast, 9.75 to 12 leash) and deals 25% more damage; Cydaea's Kiss and Sin's Grasp. Burning Sin quest (50% kept): 5% All Shall Burn damage per enemy Hero hit by the final explosion (also the Master of Destruction explosion). Sinful Harvest quest: takedowns within 3 seconds of a beam tick; stacks 1-40 cut 1% of the cooldown each, 41-80 add 1% range and stretch each, 81-100 add 1% Movement Speed while channeling each, 100 unlocks the fork (each tick also burns the nearest other enemy Hero within 5 for 50%), then 2.5% all damage each. -->
+  <!-- All Shall Burn costs half Mana (12.5), has 1.25 more range and stretch (7.5 to 8.75 cast, 9.75 to 11 leash), heals Azmodan for 10% of his maximum Health when a channel finishes (Cydaea's Kiss ending it early counts) and deals 25% more damage; Cydaea's Kiss and Sin's Grasp. Burning Sin quest (50% kept): 3% All Shall Burn damage per enemy Hero hit by the final explosion (also the Master of Destruction explosion). Sinful Harvest quest: takedowns within 3 seconds of a beam tick; stacks 1-40 cut 1% of the cooldown each, 41-80 add 1% range and stretch each, 81-100 add 1% Movement Speed while channeling each, 100 unlocks the fork (each tick also burns the nearest other enemy Hero within 5 for 50%), then 2.5% all damage each. -->
   <CBehaviorTokenCounter id="AzmodanGoldenBurnTokenCounter" parent="StormQuestToken">
     <Face value="AzmodanGoldenBurnTokenCounter" />
     <Max value="100000" />
@@ -85,7 +85,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AzmodanGoldenBurnTokenCounter" />
-    <Scale value="0.05" />
+    <Scale value="0.03" />
   </CAccumulatorToken>
   <CEffectDamage id="AzmodanAllShallBurnDamage">
     <MultiplicativeModifierArray index="AzmodanSinPower" Modifier="0" />
@@ -240,8 +240,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Boons ===== -->
   <!-- ===== Lord of Sin leash ===== -->
-  <!-- The beam breaks when AzmodanAllShallBurnRangeValidatorCombine (an Or) fails. Lord of Sin adds a branch: 12 range
-       (9.75 cast + 2.25 stretch), +0.375 per 5 Sinful Harvest stacks from 41 to 80 (rounded up, 15 at 80) -->
+  <!-- The beam breaks when AzmodanAllShallBurnRangeValidatorCombine (an Or) fails. Lord of Sin adds a branch: 11 range
+       (8.75 cast + 2.25 stretch), +0.375 per 5 Sinful Harvest stacks from 41 to 80 (rounded up, 14 at 80) -->
   <CValidatorCombine id="AzmodanAllShallBurnRangeValidatorCombine">
     <CombineArray value="AzmodanGoldenSinLeash0" />
     <CombineArray value="AzmodanGoldenSinLeash1" />
@@ -253,6 +253,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="AzmodanGoldenSinLeash7" />
     <CombineArray value="AzmodanGoldenSinLeash8" />
   </CValidatorCombine>
+  <!-- Lord of Sin: finishing a channel heals 10% of maximum Health -->
+  <CEffectSet id="AzmodanAllShallBurnExpireSet">
+    <EffectArray value="AzmodanGoldenSinChannelHeal" />
+  </CEffectSet>
+  <CEffectModifyUnit id="AzmodanGoldenSinChannelHeal">
+    <ValidatorArray value="AzmodanGoldenSinHasMarker" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.1" />
+    </VitalArray>
+  </CEffectModifyUnit>
   <CValidatorUnitCompareBehaviorCount id="AzmodanGoldenSinHasMarker">
     <WhichUnit Value="Caster" />
     <Behavior value="AzmodanSinMarker" />
@@ -268,7 +279,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="12" />
+    <Range value="11" />
   </CValidatorLocationCompareRange>
   <CValidatorCombine id="AzmodanGoldenSinLeash1">
     <Type value="And" />
@@ -280,7 +291,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="12.375" />
+    <Range value="11.375" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks1">
     <WhichUnit Value="Caster" />
@@ -298,7 +309,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="12.75" />
+    <Range value="11.75" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks2">
     <WhichUnit Value="Caster" />
@@ -316,7 +327,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="13.125" />
+    <Range value="12.125" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks3">
     <WhichUnit Value="Caster" />
@@ -334,7 +345,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="13.5" />
+    <Range value="12.5" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks4">
     <WhichUnit Value="Caster" />
@@ -352,7 +363,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="13.875" />
+    <Range value="12.875" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks5">
     <WhichUnit Value="Caster" />
@@ -370,7 +381,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="14.25" />
+    <Range value="13.25" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks6">
     <WhichUnit Value="Caster" />
@@ -388,7 +399,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="14.625" />
+    <Range value="13.625" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks7">
     <WhichUnit Value="Caster" />
@@ -406,7 +417,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Value Value="CasterPoint" />
     <WhichLocation Value="TargetUnit" />
     <Compare value="LE" />
-    <Range value="15" />
+    <Range value="14" />
   </CValidatorLocationCompareRange>
   <CValidatorUnitCompareTokenCount id="AzmodanGoldenSinLeashStacks8">
     <WhichUnit Value="Caster" />
