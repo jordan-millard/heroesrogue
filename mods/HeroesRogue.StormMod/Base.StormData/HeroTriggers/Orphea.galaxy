@@ -99,7 +99,7 @@ void libAffx_OrpheaSyncChomp () {
     CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
 }
-// OrpheaNightmareTokenCounter: stacks 1-40: 1% of the 14 second cooldown each; 41-80: 1% of the 2.5 eruption radius each; then 3% damage each, Heroics too
+// OrpheaNightmareTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80: 1% of the 2.5 eruption radius each; then 3% damage each, Heroics too
 void libAffx_OrpheaSyncDread () {
     unit hero = libAffx_OrpheaHero();
     int stacks;
@@ -111,7 +111,7 @@ void libAffx_OrpheaSyncDread () {
     stacks = libAffx_OrpheaStacks("OrpheaNightmareTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_OrpheaDreadAdded) {
-        libAffx_CatalogReferenceModify("Abil,OrpheaDread,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaDreadAdded) * -0.14, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,OrpheaDread,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaDreadAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaDreadAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 1% of the 2.5 eruption radius each
@@ -160,6 +160,19 @@ bool libAffx_OrpheaInsatiable_Func (bool testConds, bool runActions) {
     left = UnitGetChargeRegen(hero, "Abil/OrpheaChomp");
     if (left > 2.0) {
         UnitAddChargeRegen(hero, "Abil/OrpheaChomp", 2.0 - left);
+    }
+    return true;
+}
+// Mind Devourer on a charged Dread (Dreadbringer): a Dread hit on a Hero cuts the recharge in progress to 6 seconds
+bool libAffx_OrpheaMindDevourer_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_OrpheaHero();
+    fixed left;
+    if (hero == null || !UnitHasBehavior2(hero, "OrpheaDreadMarker")) {
+        return false;
+    }
+    left = UnitGetChargeRegen(hero, "Abil/OrpheaDread");
+    if (left > 6.0) {
+        UnitAddChargeRegen(hero, "Abil/OrpheaDread", 6.0 - left);
     }
     return true;
 }
@@ -256,6 +269,7 @@ bool libAffx_OrpheaStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaDreadFinalDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaOrpheaDreadFinalSearchAreaEcho_Func"), libAffx_player, "OrpheaDreadFinalSearchArea");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaInsatiable_Func"), libAffx_player, "OrpheaInsatiableReduceChompCooldown");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaMindDevourer_Func"), libAffx_player, "OrpheaMindDevourerModifyCooldown");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_OrpheaSync_Func"), 1.0, c_timeGame);
     return true;

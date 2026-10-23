@@ -13,7 +13,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="OrpheaParalyzingDreadMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Shadow Dancer ===== -->
-  <!-- Basic Attacks +1.1 range; Shadow Waltz costs half Mana. Pirouette quest (50% kept): 3% Shadow Waltz damage per enemy Hero hit. Encore quest: takedowns within 3 seconds of a hit; stacks 1-40 make the dash 2% wider each, 41-80 cut 1% of the 5 second cooldown each, then 3% damage each (Heroics too). -->
+  <!-- Basic Attacks +1.1 range; Shadow Waltz costs half Mana and dashes after 0.2 seconds instead of 0.5. Pirouette quest (50% kept): 5% Shadow Waltz damage per enemy Hero hit. Encore quest: takedowns within 3 seconds of a hit; stacks 1-40 make the dash 2% wider each, 41-80 cut 1% of the 5 second cooldown each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="OrpheaPirouetteTokenCounter" parent="StormQuestToken">
     <Face value="OrpheaPirouetteTokenCounter" />
     <Max value="100000" />
@@ -27,7 +27,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="OrpheaPirouetteTokenCounter" />
-    <Scale value="0.03" />
+    <Scale value="0.05" />
   </CAccumulatorToken>
   <CEffectDamage id="OrpheaShadowWaltzDamage">
     <MultiplicativeModifierArray index="OrpheaWaltzPower" Modifier="0" />
@@ -91,7 +91,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Dreadbringer ===== -->
-  <!-- Basic Attacks +1.1 range; Dread costs half Mana. Terror quest (50% kept): 1% Dread damage per enemy Hero hit, 3% by the eruption (script adds 2 more tokens). Nightmare quest: takedowns within 3 seconds of an eruption hit; stacks 1-40 cut 1% of the 14 second cooldown each, 41-80 make the eruption 1% larger each, then 3% damage each (Heroics too). -->
+  <!-- Basic Attacks +1.1 range; Dread has 2 charges with a 7 second recharge (14 / 2), erupts after 0.5 seconds instead of 0.75, costs half Mana and gets no starter damage bonus. Terror quest (50% kept): 1% Dread damage per enemy Hero hit, 3% by the eruption (script adds 2 more tokens). Nightmare quest: takedowns within 3 seconds of an eruption hit; stacks 1-40 cut 1% of the 7 second recharge each, 41-80 make the eruption 1% larger each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="OrpheaTerrorTokenCounter" parent="StormQuestToken">
     <Face value="OrpheaTerrorTokenCounter" />
     <Max value="100000" />
@@ -152,6 +152,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectModifyUnit>
   <CEffectModifyUnit id="OrpheaEternalFeastMonsterWithinCooldownReduction">
     <Cost index="1" ChargeTimeUse="-0.0937" />
+    <Cost index="2" ChargeTimeUse="-0.0937" />
+  </CEffectModifyUnit>
+  <!-- Dreadbringer gives Dread charges. Mind Devourer: its cooldown Set is only the 0.5 second charge lockout (not 6); the
+       script cuts the recharge to 6 seconds (libAffx_OrpheaMindDevourer_Func) -->
+  <CEffectModifyUnit id="OrpheaMindDevourerModifyCooldown">
+    <Cost index="0" CooldownTimeUse="0.5" />
   </CEffectModifyUnit>
   <!-- Devourer (Legendary, Abyssal Maw): Chomp hits on enemy Heroes heal Orphea for 8% of her maximum Health -->
   <CEffectModifyUnit id="OrpheaDevourerHeal">
