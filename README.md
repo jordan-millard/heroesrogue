@@ -8,7 +8,7 @@ This is a fork of [sobbyellow/heroesrogue](https://github.com/sobbyellow/heroesr
 
 ## **How to Play**
 
-- Download this fork's latest code: [dev branch as a zip](https://github.com/jordan-millard/heroesrogue/archive/refs/heads/dev.zip) (or **Code > Download ZIP** with the `dev` branch selected). The fork has no Releases of its own; the Releases on the original repo are the original mod without these changes.
+- Download `HeroesRogue.<version>.zip` from this fork's [latest release](https://github.com/jordan-millard/heroesrogue/releases/latest). Fork releases are named after the original version they build on, e.g. `v0.17.2-fork.1`; the Releases on the original repo are the original mod without these changes. For the very newest (untested) changes, download the [dev branch as a zip](https://github.com/jordan-millard/heroesrogue/archive/refs/heads/dev.zip) instead.
 
 - Extract the zip and copy its `maps` and `mods` folders into your Heroes of the Storm installation folder (e.g. `C:/Program Files (x86)/Heroes of the Storm`), merging with the folders already there. The `maps` and `mods` folders must end up next to the Heroes of the Storm executable's folders (`Support64`, `Versions`, ...).
 
