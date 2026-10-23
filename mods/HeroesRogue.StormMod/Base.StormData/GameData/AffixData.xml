@@ -20933,6 +20933,7 @@
             </String>
         </Instances>
 
+
         <Instances Id="OrpheaShadowDancer">
             <String String="Assets/Textures/storm_ui_icon_orphea_q.dds">
                 <Field Id="Icon" />
@@ -20976,14 +20977,17 @@
             <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,MinScanRange 1.1">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+            <String String="1 1 Add Abil,OrpheaShadowWaltz,Cost.Vital[Energy] -17.5">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+            <String String="1 1 Set Effect,OrpheaShadowWaltzDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+            <String String="1 1 Set Effect,OrpheaEnPointeDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaBondOfAnguishDamage,MultiplicativeModifierArray[OrpheaWaltzPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
             </String>
             <String String="AffixAdded libAffx_OrpheaStart">
                 <Field Id="Trigger" />
@@ -21152,8 +21156,11 @@
             <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,MinScanRange 1.1">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
+            <String String="1 1 Add Abil,OrpheaChomp,Cost.Vital[Energy] -30">
                 <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaChompDamage,MultiplicativeModifierArray[OrpheaChompPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
             </String>
             <String String="AffixAdded libAffx_OrpheaStart">
                 <Field Id="Trigger" />
@@ -21316,11 +21323,14 @@
             <String String="1 1 Add Weapon,OrpheaOverflowingChaosWeapon,MinScanRange 1.1">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+            <String String="1 1 Add Abil,OrpheaDread,Cost.Vital[Energy] -25">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+            <String String="1 1 Set Effect,OrpheaDreadLineDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,OrpheaDreadFinalDamage,MultiplicativeModifierArray[OrpheaDreadPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
             </String>
             <String String="AffixAdded libAffx_OrpheaStart">
                 <Field Id="Trigger" />
