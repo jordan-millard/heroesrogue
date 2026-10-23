@@ -22082,6 +22082,7 @@
 
 
 
+
         <Instances Id="AzmodanLordOfAnnihilation">
             <String String="Assets/Textures/storm_ui_icon_azmodan_globeofannihilation.dds">
                 <Field Id="Icon" />
@@ -22328,32 +22329,20 @@
             <String String="1 1 Add Actor,AzmodanAllShallBurnActiveRange,Range 2.25">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.CountMax 2">
+            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Cooldown.TimeUse 4">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.CountStart 2">
+            <String String="1 1 Set Effect,AzmodanAllShallBurnDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.CountUse 1">
+            <String String="1 1 Set Effect,AzmodanAllShallBurnFinalExplosionDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Charge.TimeUse 6">
+            <String String="1 1 Set Effect,AzmodanAllShallBurnMasterOfDestructionTalentDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Abil,AzmodanAllShallBurn,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="1 1 Set Effect,AzmodanAllShallBurnDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
-                <Field Id="CatalogModification" Index="8" />
-            </String>
-            <String String="1 1 Set Effect,AzmodanAllShallBurnFinalExplosionDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
-                <Field Id="CatalogModification" Index="9" />
-            </String>
-            <String String="1 1 Set Effect,AzmodanAllShallBurnMasterOfDestructionTalentDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
-                <Field Id="CatalogModification" Index="10" />
-            </String>
             <String String="1 1 Set Effect,AzmodanGoldenForkDamage,MultiplicativeModifierArray[AzmodanSinPower].Modifier 0.25">
-                <Field Id="CatalogModification" Index="11" />
+                <Field Id="CatalogModification" Index="7" />
             </String>
             <String String="AffixAdded libAffx_AzmodanStart">
                 <Field Id="Trigger" />
@@ -22407,7 +22396,7 @@
             <User Type="Affix" Instance="AzmodanLordOfSin">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 3 Add Abil,AzmodanAllShallBurn,Cost.Charge.TimeUse -0.5">
+            <String String="1 3 Add Abil,AzmodanAllShallBurn,Cost.Cooldown.TimeUse -0.5">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
