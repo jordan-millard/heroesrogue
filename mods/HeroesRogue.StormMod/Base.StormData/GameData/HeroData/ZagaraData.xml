@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ZagaraTwinBroodMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hive Mother ===== -->
-  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 2 seconds to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second (map bosses half) and stops Hydralisk and Roachling decay (tumor pulses). Creep Tumors have double Health and 50 Armor. Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
+  <!-- No Basic Attacks or Baneling Barrage; Endless Creep, Nydus Network (Devouring Maw disabled) and Infest (key 1: channel 1 second to take an enemy Minion, 2 charges, 30 second recharge). Creep heals allied units 2% of maximum Health per second (map bosses half) and stops Hydralisk and Roachling decay (tumor pulses). Creep Tumors have double Health and 50 Armor. Summons deal 50% more damage. Infestation quest (50% kept): 0.1% summon damage per summon hit on an enemy Hero. Spreading Blight quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 18 second Creep Tumor recharge each, 41-80 add 0.025% to the creep heal each (2% to 3%), then 3% summon damage each. -->
   <CBehaviorTokenCounter id="ZagaraInfestationTokenCounter" parent="StormQuestToken">
     <Face value="ZagaraInfestationTokenCounter" />
     <Max value="100000" />
@@ -235,7 +235,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="ZagaraHiveTargetDecays" />
     <Behavior value="ZagaraHiveNoDecay" />
   </CEffectApplyBehavior>
-  <!-- Infest (Hive Mother, key 1): channel 2 seconds on an enemy Minion (Catapults too, for one charge) to take it, as
+  <!-- Infest (Hive Mother, key 1): channel 1 second on an enemy Minion (Catapults too, for one charge) to take it, as
        Possession (SylvanasPossessionTarget: the rewire in GameDataHelperLib gives it to the player's team and it keeps
        its enemy buffs). 2 charges, 30 second recharge. -->
   <CAbilEffectTarget id="ZagaraHiveInfest">
@@ -254,7 +254,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Range value="6" />
     <RangeSlop value="2" />
     <Arc value="360" />
-    <CastIntroTime value="2" />
+    <CastIntroTime value="1" />
     <ShowProgressArray index="Cast" value="1" />
     <Flags index="AllowMovement" value="0" />
     <CmdButtonArray index="Execute" DefaultButtonFace="ZagaraHiveInfest" />
