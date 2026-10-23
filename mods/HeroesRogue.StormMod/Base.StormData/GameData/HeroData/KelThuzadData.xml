@@ -12,7 +12,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="KelThuzadLichKingsGraspMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Lord of Decay ===== -->
-  <!-- Pestilence quest (50% kept): 0.5% Death and Decay damage per enemy Hero hit by its explosion. Plague quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 5 second cooldown each, 41-80 make the explosion and pool 1% larger each, then 3% damage each (Heroics too). -->
+  <!-- Death and Decay costs half Mana. Pestilence quest (50% kept): 0.5% Death and Decay damage per enemy Hero hit by its explosion or pool. Plague quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 5 second cooldown each, 41-80 make the explosion and pool 1% larger each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="KelThuzadPestilenceTokenCounter" parent="StormQuestToken">
     <Face value="KelThuzadPestilenceTokenCounter" />
     <Max value="100000" />
@@ -52,12 +52,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KelThuzadDecayHit" Accumulator="KelThuzadPestilenceTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="KelThuzadDecayLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="KelThuzadDecayHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="KelThuzadPestilenceTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kel'thuzad_deathanddecay.dds" />
   </CButton>
@@ -66,7 +60,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Frostbinder ===== -->
-  <!-- Rime quest (50% kept): 0.5% Frost Nova damage per enemy Hero hit. Winter quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 8 second cooldown each, 41-80 make it 1% larger each, then 3% damage each (Heroics too). -->
+  <!-- Frost Nova is 30% larger and costs half Mana. Rime quest (50% kept): 1% Frost Nova damage per enemy Hero hit, 5% in the center (script adds 4 more tokens). Winter quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 8 second cooldown each, 41-80 make its Root 2% longer each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="KelThuzadRimeTokenCounter" parent="StormQuestToken">
     <Face value="KelThuzadRimeTokenCounter" />
     <Max value="100000" />
@@ -80,7 +74,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="KelThuzadRimeTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="KelThuzadFrostNovaDamage">
     <MultiplicativeModifierArray index="KelThuzadNovaPower" Modifier="0" />
@@ -100,12 +94,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KelThuzadNovaHit" Accumulator="KelThuzadRimeTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="KelThuzadNovaLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectModifyUnit id="KelThuzadNovaHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
-    </VitalArray>
-  </CEffectModifyUnit>
   <CButton id="KelThuzadRimeTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kel'thuzad_frostnova.dds" />
   </CButton>
@@ -114,7 +102,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chains of the Lich ===== -->
-  <!-- Shackle quest (50% kept): 1% Chains damage per enemy Hero hit. Bondage quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 make the chains 2% wider each, then 3% damage each (Heroics too). -->
+  <!-- Chains costs half Mana. Shackle quest (50% kept): 10% Chains damage per enemy Hero hit. Bondage quest: takedowns within 3 seconds of a hit; stacks 1-40 cut 1% of the 10 second cooldown each, 41-80 make the chains 2% wider each, then 3% damage each (Heroics too). -->
   <CBehaviorTokenCounter id="KelThuzadShackleTokenCounter" parent="StormQuestToken">
     <Face value="KelThuzadShackleTokenCounter" />
     <Max value="100000" />
@@ -128,7 +116,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="KelThuzadShackleTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.1" />
   </CAccumulatorToken>
   <CEffectDamage id="KelThuzadChainsDamage">
     <MultiplicativeModifierArray index="KelThuzadChainsPower" Modifier="0" />
@@ -145,7 +133,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectModifyUnit id="KelThuzadChainsHeal">
     <ImpactUnit Value="Caster" />
     <VitalArray index="Life">
-      <ChangeFraction value="0.02" />
+      <ChangeFraction value="0.1" />
     </VitalArray>
   </CEffectModifyUnit>
   <CButton id="KelThuzadShackleTokenCounter" parent="StormButtonParent">

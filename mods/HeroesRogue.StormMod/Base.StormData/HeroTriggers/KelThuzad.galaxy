@@ -75,7 +75,7 @@ void libAffx_KelThuzadSyncDecay () {
     CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadFrozenTombExplosionDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "KelThuzadShadowFissureDamage", "MultiplicativeModifierArray[KelThuzadDecayLegacy].Modifier", libAffx_player, bonus);
 }
-// KelThuzadWinterTokenCounter: stacks 1-40: 1% of the 8 second cooldown each; 41-80: 1% larger (outer 3, center 1.5) each; then 3% damage each, Heroics too
+// KelThuzadWinterTokenCounter: stacks 1-40: 1% of the 8 second cooldown each; 41-80: 2% of the 1 second Root each; then 3% damage each, Heroics too
 void libAffx_KelThuzadSyncNova () {
     unit hero = libAffx_KelThuzadHero();
     int stacks;
@@ -90,13 +90,10 @@ void libAffx_KelThuzadSyncNova () {
         libAffx_CatalogReferenceModify("Abil,KelThuzadFrostNova,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KelThuzadNovaAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 1% of the outer (3) and center (1.5) radius each
+    // stage 2 (stacks 41 to 80): 2% of the 1 second Root each
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_KelThuzadNovaAdded2) {
-        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaSlowSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaOuterDamageSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaRootSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Effect,KelThuzadFrostNovaInnerDamageSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,KelThuzadFrostNovaRoot,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KelThuzadNovaAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KelThuzadNovaAdded2 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
@@ -151,10 +148,7 @@ bool libAffx_KelThuzadDecayHit_Func (bool testConds, bool runActions) {
     }
     libAffx_KelThuzadDecayTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "KelThuzadPestilenceTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "KelThuzadDecayHeal", hero);
-    }
-    if (UnitHasBehavior2(hero, "KelThuzadGripOfDeathMarker")) {
+    if (UnitHasBehavior2(hero, "KelThuzadGripOfDeathMarker") && (EventUnitDamageEffect() == "KelThuzadDeathAndDecayDamage" || EventUnitDamageEffect() == "KelThuzadDeathAndDecayShadeDamage")) {
         UnitCreateEffectUnit(hero, "KelThuzadFrostNovaApplyRoot", victim);
     }
     return true;
@@ -168,8 +162,8 @@ bool libAffx_KelThuzadNovaHit_Func (bool testConds, bool runActions) {
     }
     libAffx_KelThuzadNovaTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "KelThuzadRimeTokenCounter", hero);
-    if (UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, "KelThuzadNovaHeal", hero);
+    if (EventUnitDamageEffect() == "KelThuzadFrostNovaRootDamage") {
+        libGame_gf_ModifyTokenCount(4, "KelThuzadRimeTokenCounter", hero);
     }
     return true;
 }
@@ -234,7 +228,9 @@ bool libAffx_KelThuzadStart (bool testConds, bool runActions) {
     libAffx_KelThuzadStarted = true;
     trig = TriggerCreate("libAffx_KelThuzadDecayHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadDeathAndDecayDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadDeathAndDecayRotDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadDeathAndDecayShadeDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadDeathAndDecayShadeRotDamage");
     trig = TriggerCreate("libAffx_KelThuzadNovaHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadFrostNovaDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "KelThuzadFrostNovaRootDamage");
