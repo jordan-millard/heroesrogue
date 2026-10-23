@@ -2248,6 +2248,16 @@
         </Instances>
         <!-- Reverse Hex: each stack flips a random stat curse onto the other team (LibAffx.galaxy, libAffx_FlipCurse).
              Unlimited stacks; only offered while a stat curse is left to flip. -->
+        <!-- Grand Reversal (Mythic boon, rarer than Legendary): flips one Mythic curse onto the other team. Mythic boon
+             slots are a share of Legendary rolls (libAffx_legendaryToMythic). -->
+        <Instances Id="GrandReversal">
+            <String String="Assets/Textures/storm_ui_icon_samuro_mirrorimage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Mythic">
+                <Field Id="Rarity" />
+            </String>
+        </Instances>
         <Instances Id="ReverseHex">
             <Int Int="0">
                 <Field Id="Max" />
