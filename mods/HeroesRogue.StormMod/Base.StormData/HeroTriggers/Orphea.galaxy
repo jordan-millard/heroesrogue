@@ -149,6 +149,20 @@ bool libAffx_OrpheaOrpheaDreadFinalSearchAreaEcho_Func (bool testConds, bool run
     UnitCreateEffectPoint(hero, "OrpheaDreadFinalSearchArea", target);
     return true;
 }
+// Insatiable on a charged Chomp (Abyssal Maw): a Chomp hit on a Hero cuts the recharge in progress to 2 seconds.
+// The talent's effect only fires when it hits a Hero with the talent (its validators), so its use is the signal.
+bool libAffx_OrpheaInsatiable_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_OrpheaHero();
+    fixed left;
+    if (hero == null || !UnitHasBehavior2(hero, "OrpheaChompMarker")) {
+        return false;
+    }
+    left = UnitGetChargeRegen(hero, "Abil/OrpheaChomp");
+    if (left > 2.0) {
+        UnitAddChargeRegen(hero, "Abil/OrpheaChomp", 2.0 - left);
+    }
+    return true;
+}
 // Shadow Dancer hit on an enemy Hero: takedown window, OrpheaPirouetteTokenCounter, the heal, and on-hit boons
 bool libAffx_OrpheaWaltzHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -241,6 +255,7 @@ bool libAffx_OrpheaStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaDreadLineDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "OrpheaDreadFinalDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaOrpheaDreadFinalSearchAreaEcho_Func"), libAffx_player, "OrpheaDreadFinalSearchArea");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_OrpheaInsatiable_Func"), libAffx_player, "OrpheaInsatiableReduceChompCooldown");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_OrpheaSync_Func"), 1.0, c_timeGame);
     return true;

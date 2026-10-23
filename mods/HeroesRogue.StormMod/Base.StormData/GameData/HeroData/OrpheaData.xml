@@ -145,9 +145,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Boons ===== -->
   <!-- Abyssal Maw gives Chomp charges, so effects that change its cooldown also change the recharge.
-       Insatiable sets the recharge to 2 seconds; its cooldown Set becomes the 0.5 second charge lockout, not 2 -->
+       Insatiable: its cooldown Set is only the 0.5 second charge lockout (not 2); the script cuts the recharge to 2 seconds
+       (libAffx_OrpheaInsatiable_Func) -->
   <CEffectModifyUnit id="OrpheaInsatiableReduceChompCooldown">
-    <Cost index="0" CooldownTimeUse="0.5" ChargeTimeUse="2" />
+    <Cost index="0" CooldownTimeUse="0.5" />
   </CEffectModifyUnit>
   <CEffectModifyUnit id="OrpheaEternalFeastMonsterWithinCooldownReduction">
     <Cost index="1" ChargeTimeUse="-0.0937" />
