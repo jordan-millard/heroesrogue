@@ -3514,6 +3514,10 @@ void libAffx_AddAffix(int affix, int count) {
             if (libAffx_flipTarget == 0 || !libAffx_FlipIsEligible(libAffx_flipTarget)) {
                 libAffx_flipTarget = libAffx_FlipPickRandom();
             }
+            if (libAffx_flipTarget == 0) {
+                // only reachable through the add cheat: the boon is not offered without a stat curse to flip
+                libAffx_DisplayChatMessage(StringExternal("Message/ReverseHexNone"));
+            }
             libAffx_FlipCurse(libAffx_flipTarget);
             libAffx_flipTarget = 0;
         }
