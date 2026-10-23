@@ -1042,7 +1042,9 @@ text libAffx_GetAffixTooltip(int affix) {
         TextExpressionSetToken("Param/Expression/AffixReverseHexTarget", "A", StringExternal("Affix/Name/" + libAffx_affixes[libAffx_flipTarget].name));
         tooltip += TextExpressionAssemble("Param/Expression/AffixReverseHexTarget");
     }
-    if (libAffx_affixes[affix].flipped) {
+    if (libAffx_affixes[affix].flipped && libAffx_FlipHasScript(name)) {
+        tooltip += StringExternal("Affix/Tooltip/Reversed/" + name);
+    } else if (libAffx_affixes[affix].flipped) {
         tooltip += TextExpressionAssemble("Param/Expression/AffixReversed");
     }
     return tooltip;
@@ -3045,6 +3047,10 @@ void libAffx_ApplyCatalogModifications(int affix, int amount) {
             if (libAffx_affixes[affix].catalogModifications[i].stringValue != "") {
                 catalogValueString = libAffx_affixes[affix].catalogModifications[i].stringValue;
             }
+            // a flipped curse's changes for one computer team go to the other (Sappers: enemy 12 -> allied 11)
+            if (libAffx_affixes[affix].flipped && (catalogPlayer == 11 || catalogPlayer == 12)) {
+                catalogPlayer = 23 - catalogPlayer;
+            }
             if (catalogPlayer == 0) {
                 for (i2 = 1; i2 <= 12; i2 += 1) {
                     if ((i2 == libAffx_choPlayer || i2 == libAffx_gallPlayer) && libAffx_affixes[affix].excludeChoGall) {
@@ -3149,6 +3155,10 @@ bool libAffx_FlipIsEligible(int affix) {
     if (name == "SlowStart" || name == "Eternal") {
         return false;
     }
+    // curses with their own flip script (AffixTriggers.galaxy, Grand Reversal)
+    if (libAffx_FlipHasScript(name)) {
+        return true;
+    }
     for (i = 1; i <= libAffx_maxBehaviors; i += 1) {
         if (libAffx_affixes[affix].behaviors[i].behavior != "" && libAffx_affixes[affix].behaviors[i].behavior != null) {
             if (libAffx_affixes[affix].behaviors[i].player < 1 || libAffx_affixes[affix].behaviors[i].player > 10) {
@@ -3249,9 +3259,27 @@ void libAffx_FlipCurse(int affix) {
             libAffx_ForgetAffixBehavior(player, behavior);
         }
     }
+    // catalog changes for a computer team go back to the base value before they are made for the other team
+    for (i = 1; i <= libAffx_maxCatalogModifications; i += 1) {
+        player = libAffx_affixes[affix].catalogModifications[i].player;
+        behavior = libAffx_affixes[affix].catalogModifications[i].reference;
+        if (behavior != "" && behavior != null && (player == 11 || player == 12)) {
+            CatalogReferenceModify(behavior, player, libAffx_GetCatalogDefaultValue(behavior), c_upgradeOperationSet);
+        }
+    }
     libAffx_affixes[affix].flipped = true;
     libAffx_ApplyBehaviors(affix, libAffx_affixes[affix].count);
     libAffx_ApplyAffixBehaviors(affix, libAffx_affixes[affix].count);
+    if (libAffx_FlipHasScript(libAffx_affixes[affix].name)) {
+        for (i = 1; i <= libAffx_maxCatalogModifications; i += 1) {
+            player = libAffx_affixes[affix].catalogModifications[i].player;
+            if (player == 11 || player == 12) {
+                libAffx_ApplyCatalogModifications(affix, libAffx_affixes[affix].count);
+                break;
+            }
+        }
+        libAffx_FlipCurseScript(libAffx_affixes[affix].name);
+    }
     libAffx_DisplayChatMessage(StringExternal("Message/ReverseHex") + TextWithColor(StringExternal("Affix/Name/" + libAffx_affixes[affix].name), libAffx_GetAffixColor(affix)) + StringToText("."));
 }
 void libAffx_ApplyBehaviors(int affix, int amount) {

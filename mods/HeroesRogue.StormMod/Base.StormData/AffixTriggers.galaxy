@@ -2770,13 +2770,64 @@ bool libAffx_SabotageUnitChangeOwner (bool testConds, bool runActions) {
     return true;
 }
 // ============================================================
+// Grand Reversal: Mythic curses flipped onto the other team
+// ============================================================
+// Each Mythic curse below checks libAffx_<Name>Flipped() and aims its script at the other team. Bleeding flips through
+// its Behavior entries alone; Eternal never flips. libAffx_FlipCurseScript moves a curse mid-game when it is flipped.
+int[8] libAffx_flipCurseIds;
+bool libAffx_CurseIsFlipped(int slot, string name) {
+    if (libAffx_flipCurseIds[slot] == 0) {
+        libAffx_flipCurseIds[slot] = libAffx_GetAffixId(name);
+    }
+    return libAffx_flipCurseIds[slot] != 0 && libAffx_affixes[libAffx_flipCurseIds[slot]].flipped;
+}
+bool libAffx_SappersFlipped() { return libAffx_CurseIsFlipped(1, "Sappers"); }
+bool libAffx_CitadelFlipped() { return libAffx_CurseIsFlipped(2, "Citadel"); }
+bool libAffx_LevelDisadvantageFlipped() { return libAffx_CurseIsFlipped(3, "LevelDisadvantage"); }
+bool libAffx_CursedFlipped() { return libAffx_CurseIsFlipped(4, "Cursed"); }
+bool libAffx_ArmoredUpFlipped() { return libAffx_CurseIsFlipped(5, "ArmoredUp"); }
+bool libAffx_WeakPointFlipped() { return libAffx_CurseIsFlipped(6, "WeakPoint"); }
+bool libAffx_InvasionFlipped() { return libAffx_CurseIsFlipped(7, "Invasion"); }
+// curses whose flip needs their own script (libAffx_FlipCurseScript)
+bool libAffx_FlipHasScript(string name) {
+    return name == "Sappers" || name == "Citadel" || name == "LevelDisadvantage" || name == "Cursed" || name == "ArmoredUp" || name == "WeakPoint" || name == "Invasion";
+}
+// CopyFilter only appends unit types, so a filter is emptied before it is pointed at the other team
+void libAffx_FlipResetFilter(structref<libAffx_Filter> filter) {
+    int i;
+    for (i = 1; i <= libAffx_maxFilters; i += 1) {
+        filter.requiredUnitTypes[i] = "";
+        filter.excludedUnitTypes[i] = "";
+    }
+    filter.requiredUnitTypeIndex = 0;
+    filter.excludedUnitTypeIndex = 0;
+}
+// minions on the curse's side
+void libAffx_FlipCopyMinions(bool flipped, structref<libAffx_Filter> copyTo) {
+    libAffx_FlipResetFilter(copyTo);
+    if (flipped) {
+        libAffx_CopyFilter(libAffx_filterAlliedMinions, copyTo);
+    } else {
+        libAffx_CopyFilter(libAffx_filterEnemyMinions, copyTo);
+    }
+}
+
+// ============================================================
 // Citadel
 // ============================================================
-bool libAffx_CitadelExecuteOncePerGame (bool testConds, bool runActions) {
-    libAffx_CopyFilter(libAffx_filterEnemyStructures, libAffx_filterCitadel);
+void libAffx_CitadelSetFilter() {
+    libAffx_FlipResetFilter(libAffx_filterCitadel);
+    if (libAffx_CitadelFlipped()) {
+        libAffx_CopyFilter(libAffx_filterAlliedStructures, libAffx_filterCitadel);
+    } else {
+        libAffx_CopyFilter(libAffx_filterEnemyStructures, libAffx_filterCitadel);
+    }
     if (libAffx_currentMap == libAffx_mapTowersofDoom) {
         libAffx_AddExcludedUnitTypeFilter(libAffx_filterCitadel, "KingsCore");
     }
+}
+bool libAffx_CitadelExecuteOncePerGame (bool testConds, bool runActions) {
+    libAffx_CitadelSetFilter();
     libAffx_AddUnitBehaviorToAllFilter("CitadelBuff", 1, libAffx_filterCitadel);
 
     return true;
@@ -2789,16 +2840,24 @@ bool libAffx_LevelDisadvantageOncePerGame (bool testConds, bool runActions) {
     int i2;
     int heroLevel;
     unit heroUnit;
+    int first = 6;
+    if (libAffx_LevelDisadvantageFlipped()) {
+        first = 1;
+    }
     for (i = 1; i <= 4; i += 1) {
-        for (i2 = 6; i2 <= 10; i2 += 1) {
+        for (i2 = first; i2 <= first + 4; i2 += 1) {
             heroUnit = libGame_gv_players[i2].lv_heroUnit;
             heroLevel = UnitLevel(heroUnit);
-            if (heroLevel < 4) {
+            if (heroUnit != null && heroLevel < 4) {
                 UnitXPAddXP(heroUnit, null, StringToFixed(CatalogReferenceGet("Behavior,HeroXPCurve,VeterancyLevelArray[" + IntToString(heroLevel) +"].MinVeterancyXP", i2)) + 1);
             }
         }
     }
-    libGame_xpModifier[libGame_gv_teamChaosIndex_C] += 0.25;
+    if (libAffx_LevelDisadvantageFlipped()) {
+        libGame_xpModifier[libGame_gv_teamOrderIndex_C] += 0.25;
+    } else {
+        libGame_xpModifier[libGame_gv_teamChaosIndex_C] += 0.25;
+    }
 
     return true;
 }
@@ -2810,8 +2869,21 @@ bool libAffx_CursedAffixAdded (bool testConds, bool runActions) {
     return true;
 }
 bool libAffx_CursedOncePerGame (bool testConds, bool runActions) {
-    libAffx_maxAffixesFromObjectives -= 1;
+    // flipped: winning the Objective swaps one more curse instead of none
+    if (libAffx_CursedFlipped()) {
+        libAffx_maxAffixesFromObjectives += 1;
+    } else {
+        libAffx_maxAffixesFromObjectives -= 1;
+    }
     return true;
+}
+// Cursed's armor loss: allies, or enemies once flipped
+void libAffx_CursedDebuffAll() {
+    if (libAffx_CursedFlipped()) {
+        libAffx_AddUnitBehaviorToAllFilter("CursedDebuff", 1, libAffx_filterAllEnemies);
+    } else {
+        libAffx_AddUnitBehaviorToAllFilter("CursedDebuff", 1, libAffx_filterAllAllies);
+    }
 }
 bool libAffx_CursedHeroKilled (bool testConds, bool runActions) {
     unit deadUnit = libGame_gf_HeroKilledUnit();
@@ -2822,7 +2894,11 @@ bool libAffx_CursedHeroKilled (bool testConds, bool runActions) {
         if (libGame_gv_gameOver) {
             return false;
         }
-        if (deadPlayer != libAffx_player) {
+        // flipped: every 3 enemy Hero deaths give a Boon instead of the player's deaths giving a Curse
+        if (!libAffx_CursedFlipped() && deadPlayer != libAffx_player) {
+            return false;
+        }
+        if (libAffx_CursedFlipped() && (deadPlayer < libAffx_enemy || deadPlayer > 10)) {
             return false;
         }
         if (!(UnitTestState(deadUnit, c_unitStateHallucination) == false)) {
@@ -2835,8 +2911,13 @@ bool libAffx_CursedHeroKilled (bool testConds, bool runActions) {
     libAffx_affixes[libAffx_CursedIndex].customInt += 1;
     if (libAffx_affixes[libAffx_CursedIndex].customInt >= 3) {
         libAffx_affixes[libAffx_CursedIndex].customInt = 0;
-        UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringExternal("Message/CurseCursed"));
-        libAffx_QueueCurse(1, false);
+        if (libAffx_CursedFlipped()) {
+            UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringExternal("Message/CurseCursedReversed"));
+            libAffx_QueueBoon(libAffx_rarityCommon, 1, false, false);
+        } else {
+            UIDisplayMessage(PlayerGroupAll(), c_messageAreaChat, StringExternal("Message/CurseCursed"));
+            libAffx_QueueCurse(1, false);
+        }
     }
     return true;
 }
@@ -2862,7 +2943,7 @@ bool libAffx_CursedLevelUp (bool testConds, bool runActions) {
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_CursedPeriodic"), 0.0625, c_timeGame);
     TriggerAddEventUnitCreated(TriggerCreate("libAffx_CursedUnitCreated"), null, null, null);
     TriggerAddEventUnitChangeOwner(TriggerCreate("libAffx_CursedUnitChangeOwner"), null);
-    libAffx_AddUnitBehaviorToAllFilter("CursedDebuff", 1, libAffx_filterAllAllies);
+    libAffx_CursedDebuffAll();
     
     return true;
 }
@@ -2872,7 +2953,11 @@ bool libAffx_CursedUnitCreated (bool testConds, bool runActions) {
             return false;
         }
     }
-    libAffx_AddUnitBehaviorFilter(EventUnitCreatedUnit(), "CursedDebuff", 1, libAffx_filterAllAllies);
+    if (libAffx_CursedFlipped()) {
+        libAffx_AddUnitBehaviorFilter(EventUnitCreatedUnit(), "CursedDebuff", 1, libAffx_filterAllEnemies);
+    } else {
+        libAffx_AddUnitBehaviorFilter(EventUnitCreatedUnit(), "CursedDebuff", 1, libAffx_filterAllAllies);
+    }
     return true;
 }
 bool libAffx_CursedUnitChangeOwner (bool testConds, bool runActions) {
@@ -2881,7 +2966,11 @@ bool libAffx_CursedUnitChangeOwner (bool testConds, bool runActions) {
             return false;
         }
     }
-    libAffx_UpdateUnitBehaviorFilter(EventUnit(), "CursedDebuff", 1, libAffx_filterAllAllies);
+    if (libAffx_CursedFlipped()) {
+        libAffx_UpdateUnitBehaviorFilter(EventUnit(), "CursedDebuff", 1, libAffx_filterAllEnemies);
+    } else {
+        libAffx_UpdateUnitBehaviorFilter(EventUnit(), "CursedDebuff", 1, libAffx_filterAllAllies);
+    }
     return true;
 }
 bool libAffx_CursedPeriodic (bool testConds, bool runActions) {
@@ -3563,9 +3652,14 @@ bool libAffx_NotYourGlobesAffixAdded (bool testConds, bool runActions) {
 // Sappers
 // ============================================================
 
-bool libAffx_SappersOncePerGame (bool testConds, bool runActions) {
-    libAffx_CopyFilter(libAffx_filterEnemyMinions, libAffx_filterSappers);
+// leader minions on the curse's side (the enemy's, or the player's once flipped; its catalog changes then go to
+// player 11 instead of 12, see libAffx_ApplyCatalogModifications)
+void libAffx_SappersSetFilter() {
+    libAffx_FlipCopyMinions(libAffx_SappersFlipped(), libAffx_filterSappers);
     libAffx_AddRequiredUnitTypeFilter(libAffx_filterSappers, "WizardMinion");
+}
+bool libAffx_SappersOncePerGame (bool testConds, bool runActions) {
+    libAffx_SappersSetFilter();
 
     libAffx_AddUnitBehaviorToAllFilter("AffixSappersBehavior", 1, libAffx_filterSappers);
     libAffx_AddUnitBehaviorToAllFilter("AffixSappersAARangeBehavior", 1, libAffx_filterSappers);
@@ -3588,10 +3682,21 @@ bool libAffx_SappersUnitChangeOwner (bool testConds, bool runActions) {
 // Armored Up
 // ============================================================
 
+// the side Armored Up helps: enemy Heroes and minions scaling with the enemy's level, or the player's once flipped
+int libAffx_ArmoredUpLevelPlayer() {
+    if (libAffx_ArmoredUpFlipped()) {
+        return libAffx_player;
+    }
+    return libAffx_enemy;
+}
 bool libAffx_ArmoredUpAffixAdded (bool testConds, bool runActions) {
     int i;
-    int level = UnitLevel(libGame_gv_players[libAffx_enemy].lv_heroUnit);
-    libAffx_AddUnitBehaviorToAllFilter("AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+    int level = UnitLevel(libGame_gv_players[libAffx_ArmoredUpLevelPlayer()].lv_heroUnit);
+    if (libAffx_ArmoredUpFlipped()) {
+        libAffx_AddUnitBehaviorToAllFilter("AffixArmoredUpBehavior", 1, libAffx_filterAlliedMinions);
+    } else {
+        libAffx_AddUnitBehaviorToAllFilter("AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+    }
     libAffx_CatalogSetFixedForAllPlayers(c_gameCatalogBehavior, "AffixArmoredUpBehavior", "ArmorModification.AllArmorBonus", 15 + 1 * level);
     return true;
 }
@@ -3600,7 +3705,7 @@ bool libAffx_ArmoredUpLevelUp (bool testConds, bool runActions) {
     int level = libGame_gf_HeroLevelUpLevel();
     int player = libGame_gf_HeroLevelUpPlayer();
     if (testConds) {
-        if (player != libAffx_enemy) {
+        if (player != libAffx_ArmoredUpLevelPlayer()) {
             return false;
         }
     }
@@ -3609,12 +3714,20 @@ bool libAffx_ArmoredUpLevelUp (bool testConds, bool runActions) {
 }
 bool libAffx_ArmoredUpUnitCreated (bool testConds, bool runActions) {
     unit eventUnit = EventUnitCreatedUnit();
-    libAffx_AddUnitBehaviorFilter(eventUnit, "AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+    if (libAffx_ArmoredUpFlipped()) {
+        libAffx_AddUnitBehaviorFilter(eventUnit, "AffixArmoredUpBehavior", 1, libAffx_filterAlliedMinions);
+    } else {
+        libAffx_AddUnitBehaviorFilter(eventUnit, "AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+    }
     return true;
 }
 bool libAffx_ArmoredUpUnitChangeOwner (bool testConds, bool runActions) {
     unit eventUnit = EventUnit();
-    libAffx_UpdateUnitBehaviorFilter(eventUnit, "AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+    if (libAffx_ArmoredUpFlipped()) {
+        libAffx_UpdateUnitBehaviorFilter(eventUnit, "AffixArmoredUpBehavior", 1, libAffx_filterAlliedMinions);
+    } else {
+        libAffx_UpdateUnitBehaviorFilter(eventUnit, "AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+    }
     return true;
 }
 
@@ -3631,15 +3744,31 @@ int libAffx_AffixWeakPointGetHeroIndex(unit hero) {
         return 1;
     }
 }
-bool libAffx_WeakPointOncePerGame (bool testConds, bool runActions) {
-    unitgroup unitGroup = libGame_gv_players[libAffx_player].lv_heroUnitGroup;
+// Weak Point's damage counters on a player's Heroes (added, or removed when Grand Reversal moves the curse)
+void libAffx_WeakPointSetTokens(int player, bool add) {
+    unitgroup unitGroup = libGame_gv_players[player].lv_heroUnitGroup;
     unit heroUnit;
     int groupCount = UnitGroupCount(unitGroup, c_unitCountAll);
     for (;; groupCount -= 1) {
         if (groupCount <= 0) { break; }
         heroUnit = UnitGroupUnitFromEnd(unitGroup, groupCount);
-        if (UnitGetType(heroUnit) == "HeroLostVikingsController") { continue; }
-        libAffx_AddUnitBehavior(heroUnit, "AffixWeakPointTokenCounter" + IntToString(libAffx_AffixWeakPointGetHeroIndex(heroUnit)), heroUnit, 1);
+        if (heroUnit == null || UnitGetType(heroUnit) == "HeroLostVikingsController") { continue; }
+        if (add) {
+            libAffx_AddUnitBehavior(heroUnit, "AffixWeakPointTokenCounter" + IntToString(libAffx_AffixWeakPointGetHeroIndex(heroUnit)), heroUnit, 1);
+        } else {
+            UnitBehaviorRemove(heroUnit, "AffixWeakPointTokenCounter" + IntToString(libAffx_AffixWeakPointGetHeroIndex(heroUnit)), 1);
+        }
+    }
+}
+bool libAffx_WeakPointOncePerGame (bool testConds, bool runActions) {
+    int i;
+    // flipped: every enemy Hero takes its direct damage again (the controller goes to them through the Behavior entry)
+    if (libAffx_WeakPointFlipped()) {
+        for (i = libAffx_enemy; i <= 10; i += 1) {
+            libAffx_WeakPointSetTokens(i, true);
+        }
+    } else {
+        libAffx_WeakPointSetTokens(libAffx_player, true);
     }
     return true;
 }
@@ -3688,39 +3817,65 @@ bool libAffx_WeakPointUnitDamaged (bool testConds, bool runActions) {
 // Invasion
 // ============================================================
 
+// Invasion's side: enemy waves come faster and the player's team gets less minion XP, scaling with the enemy's
+// level; once flipped, the player's waves come faster and the enemy gets less, scaling with the player's level
+int libAffx_InvasionLevelPlayer() {
+    if (libAffx_InvasionFlipped()) {
+        return libAffx_player;
+    }
+    return libAffx_enemy;
+}
+void libAffx_InvasionSetRates(int level) {
+    int spawnTeam = libGame_gv_teamChaosIndex_C;
+    int xpTeam = libGame_gv_teamOrderIndex_C;
+    if (libAffx_InvasionFlipped()) {
+        spawnTeam = libGame_gv_teamOrderIndex_C;
+        xpTeam = libGame_gv_teamChaosIndex_C;
+    }
+    libCore_minionWaveInterval[spawnTeam] = libCore_gv_bALMinionWaveInterval / (1 + (0.25 + (0.75 * (MinI(level, 20) - 1) / 19)));
+    libAffx_InvasionSpawnRateDisplay = (libCore_gv_bALMinionWaveInterval / libCore_minionWaveInterval[spawnTeam]) - 1;
+    libGame_xpModifierMinion[xpTeam] = -0.2 + (-0.3 * (MinI(level, 20) - 1) / 19);
+    libAffx_InvasionExpDisplay = -libGame_xpModifierMinion[xpTeam];
+}
 bool libAffx_InvasionAffixAdded (bool testConds, bool runActions) {
-    int level = UnitLevel(libAffx_GetPlayerHeroUnit(libAffx_enemy));
+    int level = UnitLevel(libAffx_GetPlayerHeroUnit(libAffx_InvasionLevelPlayer()));
     libAffx_InvasionIndex = libAffx_EventAffix();
     
-    libCore_minionWaveInterval[libGame_gv_teamChaosIndex_C] = libCore_gv_bALMinionWaveInterval / (1 + (0.25 + (0.75 * (MinI(level, 20) - 1) / 19)));
-    libAffx_InvasionSpawnRateDisplay = (libCore_gv_bALMinionWaveInterval / libCore_minionWaveInterval[libGame_gv_teamChaosIndex_C]) - 1;
-    libGame_xpModifierMinion[libGame_gv_teamOrderIndex_C] = -0.2 + (-0.3 * (MinI(level, 20) - 1) / 19);
-    libAffx_InvasionExpDisplay = -libGame_xpModifierMinion[libGame_gv_teamOrderIndex_C];
-    libAffx_AddUnitBehaviorToAllFilter("AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+    libAffx_InvasionSetRates(level);
+    if (libAffx_InvasionFlipped()) {
+        libAffx_AddUnitBehaviorToAllFilter("AffixInvasionBehavior", 1, libAffx_filterAlliedMinions);
+    } else {
+        libAffx_AddUnitBehaviorToAllFilter("AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+    }
     return true;
 }
 bool libAffx_InvasionUnitCreated (bool testConds, bool runActions) {
     unit eventUnit = EventUnitCreatedUnit();
-    libAffx_AddUnitBehaviorFilter(eventUnit, "AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+    if (libAffx_InvasionFlipped()) {
+        libAffx_AddUnitBehaviorFilter(eventUnit, "AffixInvasionBehavior", 1, libAffx_filterAlliedMinions);
+    } else {
+        libAffx_AddUnitBehaviorFilter(eventUnit, "AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+    }
     return true;
 }
 bool libAffx_InvasionUnitChangeOwner (bool testConds, bool runActions) {
     unit eventUnit = EventUnit();
-    libAffx_UpdateUnitBehaviorFilter(eventUnit, "AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+    if (libAffx_InvasionFlipped()) {
+        libAffx_UpdateUnitBehaviorFilter(eventUnit, "AffixInvasionBehavior", 1, libAffx_filterAlliedMinions);
+    } else {
+        libAffx_UpdateUnitBehaviorFilter(eventUnit, "AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+    }
     return true;
 }
 bool libAffx_InvasionLevelUp (bool testConds, bool runActions) {
     int level = libGame_gf_HeroLevelUpLevel();
     int player = libGame_gf_HeroLevelUpPlayer();
     if (testConds) {
-        if (player != libAffx_enemy) {
+        if (player != libAffx_InvasionLevelPlayer()) {
             return false;
         }
     }
-    libCore_minionWaveInterval[libGame_gv_teamChaosIndex_C] = libCore_gv_bALMinionWaveInterval / (1 + (0.25 + (0.75 * (MinI(level, 20) - 1) / 19)));
-    libAffx_InvasionSpawnRateDisplay = (libCore_gv_bALMinionWaveInterval / libCore_minionWaveInterval[libGame_gv_teamChaosIndex_C]) - 1;
-    libGame_xpModifierMinion[libGame_gv_teamOrderIndex_C] = -0.2 + (-0.3 * (MinI(level, 20) - 1) / 19);
-    libAffx_InvasionExpDisplay = -libGame_xpModifierMinion[libGame_gv_teamOrderIndex_C];
+    libAffx_InvasionSetRates(level);
     if (level >= 20 && !libAffx_InvasionActive) {
         libAffx_InvasionActive = true;
     }
@@ -3755,6 +3910,57 @@ bool libAffx_InvasionPeriodic (bool testConds, bool runActions) {
     }
 
     return true;
+}
+
+// ============================================================
+// Grand Reversal: move a Mythic curse to the other team mid-game (its flipped flag is already set)
+// ============================================================
+void libAffx_FlipCurseScript(string name) {
+    int i;
+    int level;
+    if (name == "Sappers") {
+        // the filter still holds the enemy leaders
+        libAffx_RemoveUnitBehaviorFromAllFilter("AffixSappersBehavior", 1, libAffx_filterSappers);
+        libAffx_RemoveUnitBehaviorFromAllFilter("AffixSappersAARangeBehavior", 1, libAffx_filterSappers);
+        libAffx_SappersSetFilter();
+        libAffx_AddUnitBehaviorToAllFilter("AffixSappersBehavior", 1, libAffx_filterSappers);
+        libAffx_AddUnitBehaviorToAllFilter("AffixSappersAARangeBehavior", 1, libAffx_filterSappers);
+    } else if (name == "Citadel") {
+        libAffx_RemoveUnitBehaviorFromAllFilter("CitadelBuff", 1, libAffx_filterCitadel);
+        libAffx_CitadelSetFilter();
+        libAffx_AddUnitBehaviorToAllFilter("CitadelBuff", 1, libAffx_filterCitadel);
+    } else if (name == "LevelDisadvantage") {
+        // the enemy keeps this game's levels; the XP bonus and the next games' levels change sides
+        libGame_xpModifier[libGame_gv_teamChaosIndex_C] -= 0.25;
+        libAffx_LevelDisadvantageOncePerGame(true, true);
+    } else if (name == "Cursed") {
+        libAffx_maxAffixesFromObjectives += 2;
+        if (libAffx_CursedIndex != 0) {
+            libAffx_affixes[libAffx_CursedIndex].customInt = 0;
+            if (libAffx_affixes[libAffx_CursedIndex].customBool) {
+                libAffx_RemoveUnitBehaviorFromAllFilter("CursedDebuff", 100, libAffx_filterAllAllies);
+                libAffx_CursedDebuffAll();
+            }
+        }
+    } else if (name == "ArmoredUp") {
+        libAffx_RemoveUnitBehaviorFromAllFilter("AffixArmoredUpBehavior", 1, libAffx_filterEnemyMinions);
+        libAffx_AddUnitBehaviorToAllFilter("AffixArmoredUpBehavior", 1, libAffx_filterAlliedMinions);
+        level = UnitLevel(libGame_gv_players[libAffx_player].lv_heroUnit);
+        libAffx_CatalogSetFixedForAllPlayers(c_gameCatalogBehavior, "AffixArmoredUpBehavior", "ArmorModification.AllArmorBonus", 15 + 1 * level);
+    } else if (name == "WeakPoint") {
+        libAffx_WeakPointSetTokens(libAffx_player, false);
+        for (i = libAffx_enemy; i <= 10; i += 1) {
+            libAffx_WeakPointSetTokens(i, true);
+        }
+    } else if (name == "Invasion") {
+        libCore_minionWaveInterval[libGame_gv_teamChaosIndex_C] = libCore_gv_bALMinionWaveInterval;
+        libGame_xpModifierMinion[libGame_gv_teamOrderIndex_C] = 0.0;
+        libAffx_RemoveUnitBehaviorFromAllFilter("AffixInvasionBehavior", 1, libAffx_filterEnemyMinions);
+        libAffx_AddUnitBehaviorToAllFilter("AffixInvasionBehavior", 1, libAffx_filterAlliedMinions);
+        level = UnitLevel(libGame_gv_players[libAffx_player].lv_heroUnit);
+        libAffx_InvasionSetRates(level);
+        libAffx_InvasionActive = level >= 20;
+    }
 }
 
 // ============================================================

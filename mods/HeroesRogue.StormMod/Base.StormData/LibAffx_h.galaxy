@@ -1053,6 +1053,9 @@ void libAffx_AddSaveBankInt(int affix, string key, int value); // Add a int bank
 void libAffx_AddSaveBankFixed(int affix, string key, fixed value); // Add a fixed bank value to be saved for the affix at the end of the game.
 int libAffx_RollRarity(int baseRarity, bool curse); // Roll rarity to upgrade.
 bool libAffx_AffixFailsRequirements(int affix);
+// Grand Reversal (defined in AffixTriggers.galaxy, which LibAffx.galaxy includes at its end)
+bool libAffx_FlipHasScript(string name);
+void libAffx_FlipCurseScript(string name);
 int libAffx_RollAffix(int rarity, bool curse, int level, bool lockRarity); // Returns an affix that matches the criteria and all requirements.
 void libAffx_ShowRolledAffixes();
 void libAffx_RollForSlot(int slot);

@@ -17,7 +17,7 @@ Param/Value/lib_PBU2_E99FE310=Ranged
 Param/Value/lib_PBU2_FF5E7DD7=Warrior
 Param/Expression/AffixStacksUpTo=<n/><n/>Stacks up to <c val="#TooltipNumbers">~A~</c> times.
 Param/Expression/AffixReverseHexTarget=<n/><n/>Flips: <c val="FFDE36">~A~</c>
-Param/Expression/AffixReversed=<n/><n/><c val="FFDE36">Reversed by Reverse Hex: affects the other team.</c>
+Param/Expression/AffixReversed=<n/><n/><c val="FFDE36">Reversed: now affects the other team.</c>
 Param/Expression/AffixCurseSkips=<n/><n/><c val="FFDE36">Skips the next Curse.</c>
 Param/Expression/AffixCurseSkipsMultiple=<n/><n/><c val="FFDE36">Skips the next ~A~ Curses.</c>
 Param/Expression/AffixCurseSkipsEachStack=<n/><n/><c val="FFDE36">Each stack skips the next Curse.</c>
@@ -315,6 +315,7 @@ Message/CurseNextGame3=<c val="FC4747">Obtained 3 Curses for missing the level 4
 Message/BoonNextGame1=<c val="FFDE36">Obtained a Boon for missing a level 10 Boon last game.</c>
 Message/BoonNextGame2=<c val="FFDE36">Obtained 2 Boons for missing the level 7 and level 10 Boons last game.</c>
 Message/BoonNextGame3=<c val="FFDE36">Obtained 3 Boons for missing the level 4, level 7, and level 10 Boons last game.</c>
+Message/CurseCursedReversed=<c val="FFDE36">Obtained a Boon from 3 enemy Hero deaths (Cursed, reversed).</c>
 Message/CurseCursed=<c val="FC4747">Obtained a Curse from dying 3 times.</c>
 Message/MilestoneReached=<c val="FFDE36">Obtained a Milestone Boon for reaching Round 7!</c>
 Message/Pacifism=<c val="FFDE36">Obtained Boons from Pacifism!</c>
@@ -565,6 +566,13 @@ Affix/Tooltip/EmergencyMeasure/Gall=On fatal damage, AI teammates gain a Shield 
 Affix/Tooltip/Append/EmergencyMeasure=
 Affix/Name/CriticalMass=Critical Mass
 Affix/Name/GrandReversal=Grand Reversal
+Affix/Tooltip/Reversed/Sappers=<n/><n/><c val="FFDE36">Reversed: your leader Minions get these bonuses against enemy Structures instead.</c>
+Affix/Tooltip/Reversed/Citadel=<n/><n/><c val="FFDE36">Reversed: your Structures and allied Heroes get these bonuses instead.</c>
+Affix/Tooltip/Reversed/LevelDisadvantage=<n/><n/><c val="FFDE36">Reversed: allied Heroes start with the extra levels and gain the extra Experience instead.</c>
+Affix/Tooltip/Reversed/Cursed=<n/><n/><c val="FFDE36">Reversed: winning an Objective swaps an extra Curse to a Boon, every 3 enemy Hero deaths grant a Boon, and enemies lose the Armor instead.</c>
+Affix/Tooltip/Reversed/ArmoredUp=<n/><n/><c val="FFDE36">Reversed: allied Heroes and Minions get the Armor instead, scaling with your level.</c>
+Affix/Tooltip/Reversed/WeakPoint=<n/><n/><c val="FFDE36">Reversed: enemy Heroes take their direct damage again over 4 seconds instead.</c>
+Affix/Tooltip/Reversed/Invasion=<n/><n/><c val="FFDE36">Reversed: your Minions spawn faster and get the stats, and enemies gain less Minion Experience, scaling with your level.</c>
 Affix/Tooltip/GrandReversal=Flip one of your Mythic Curses: its effect now applies to the other team, so a buff for the enemy helps your team and a hindrance on you hinders the enemy Heroes instead.<n/><n/>A flipped Mythic Curse is no longer handed out; Mythic rounds give the next lower one instead. Only offered while a Mythic Curse can be flipped.
 Affix/Name/ReverseHex=Reverse Hex
 Affix/Tooltip/ReverseHex=Flip one of your non-Mythic stat Curses: its effect now applies to the other team, so a buff for the enemy helps your team and a hindrance on you hinders the enemy Heroes instead.<n/><n/>Each stack flips another Curse. Only offered while a stat Curse is left to flip.
