@@ -267,7 +267,8 @@ bool libAffx_ChromieSandCast_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "ChromieSandBlastLaunchMissile", target);
     return true;
 }
-// Chronomancer: a Dragon's Breath cast with a critical one ready crits (a marker on Chromie until its blasts land)
+// Chronomancer: a Dragon's Breath cast with a critical one ready crits (a marker on Chromie for 2.5 seconds, until its
+// three blasts, 0.6875, 1.4375 and 2.1875 seconds after the cast, have landed)
 bool libAffx_ChromieBreathCast_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChromieHero();
     if (hero == null || !UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") || !UnitHasBehavior2(hero, "ChromieGoldenCritBreathReady")) {
@@ -277,7 +278,7 @@ bool libAffx_ChromieBreathCast_Func (bool testConds, bool runActions) {
     UnitBehaviorAdd(hero, "ChromieGoldenBreathCritting", hero, 1);
     libAffx_ChromieBreathCrits += 1;
     libAffx_CatalogReferenceSet("Effect,ChromieDragonsBreathDamage,Flags[Crit]", libAffx_player, "1");
-    libAffx_Wait(1.25, c_timeGame);
+    libAffx_Wait(2.5, c_timeGame);
     libAffx_ChromieBreathCrits -= 1;
     if (libAffx_ChromieBreathCrits == 0) {
         libAffx_CatalogReferenceSet("Effect,ChromieDragonsBreathDamage,Flags[Crit]", libAffx_player, "0");
