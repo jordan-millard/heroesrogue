@@ -7,9 +7,9 @@ include "AffixTriggers"
 // for half damage, then 2.5% all damage each.
 // Bronze Breath: Dragonflight stacks 1-40 recharge, 41-80 a shorter delay, 81-100 area, 100 each blast
 // erupts again for half damage, then 2.5% all damage each.
-// Chronomancer: Sand Blast, each Dragon's Breath blast and (Paradox) Time Trap echo after 1.5 seconds for
-// 40% (Resonance: up to 70%); cooldowns are 40% longer. Timeline stacks 1-40 make echoes sooner, 41-80 cut
-// the cooldown penalty, then 2.5% all damage each.
+// Chronomancer: an enemy Hero setting off a Time Trap makes the next Sand Blast or Dragon's Breath echo
+// 0.5 seconds later for 130% (Resonance: more). Timeline stacks 1-40 heal per trap set off, 41-80 a stronger
+// Slow, 100 traps twice the radius and Health, then 1% Spell Power each.
 // ============================================================
 
 const fixed libAffx_ChromieTakedownWindow = 3.0;
@@ -28,6 +28,8 @@ int libAffx_ChromieChronoAdded; // Chronomancer: takedown stacks already applied
 int libAffx_ChromieChronoAdded2; // Chronomancer: takedown quest stage 2 stacks already applied to the catalog this game
 fixed libAffx_ChromieSandEchoTime = -1.0; // when the script launched the last echo Sand Blast
 fixed libAffx_ChromieBreathEchoTime = -1.0; // when the script ran the last echo blast of Dragon's Breath
+fixed libAffx_ChromieBreathEchoUntil = -1.0; // Chronomancer: blasts until then echo (a cast that used an echo)
+bool libAffx_ChromieTrapsDoubled; // Chronomancer: the 100 Timeline stack trap upgrade is applied
 fixed libAffx_ChromieBreathHitTime = -1.0; // Infinite Breath: the blast being counted
 int libAffx_ChromieBreathHeroes; // Infinite Breath: enemy Heroes hit by that blast
 
@@ -86,6 +88,7 @@ void libAffx_ChromieSyncSniper () {
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastPastAndFutureMeDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieHeroWeaponDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandEchoWeaponDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
 }
@@ -125,10 +128,11 @@ void libAffx_ChromieSyncBreath () {
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastPastAndFutureMeDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieHeroWeaponDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandEchoWeaponDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
 }
-// ChromieGoldenTimelineTokenCounter: stacks 1-40: echoes 0.015 seconds sooner each (script); 41-80: 0.5% less cooldown penalty each; then 2.5% all damage each
+// ChromieGoldenTimelineTokenCounter: stacks 1-40: 0.25% of maximum Health healed per trap set off each; 41-80: Chronic Conditions' Slow 0.25% stronger each; 100: traps twice the radius and Health (script); then 1% Spell Power each
 void libAffx_ChromieSyncChrono () {
     unit hero = libAffx_ChromieHero();
     int stacks;
@@ -140,24 +144,21 @@ void libAffx_ChromieSyncChrono () {
     stacks = libAffx_ChromieStacks("ChromieGoldenTimelineTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_ChromieChronoAdded) {
+        libAffx_CatalogReferenceModify("Effect,ChromieGoldenTrapHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieChronoAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 0.5% of each base cooldown each (the 40% penalty down to 20%)
+    // stage 2 (stacks 41 to 80): 0.25% more Slow each, on top of the 25%
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_ChromieChronoAdded2) {
-        libAffx_CatalogReferenceModify("Abil,ChromieSandBlast,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Abil,ChromieDragonsBreath,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Abil,ChromieTimeTrap,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.075, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Abil,ChromieTemporalLoop,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.25, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,ChromieTimeTrapChronicConditionsSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieChronoAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.025, c_fixedPrecisionAny);
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.01, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastPastAndFutureMeDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieHeroWeaponDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandEchoWeaponDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
 }
 bool libAffx_ChromieSync_Func (bool testConds, bool runActions) {
     libAffx_ChromieSyncSniper();
@@ -165,25 +166,53 @@ bool libAffx_ChromieSync_Func (bool testConds, bool runActions) {
     libAffx_ChromieSyncChrono();
     return true;
 }
-// Temporal Shards follow Sand Blast (level scaling): copy its Amount each second
+// Temporal Shards and Time Bomb follow Sand Blast (level scaling): copy its Amount each second
 bool libAffx_ChromieAmounts_Func (bool testConds, bool runActions) {
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "Amount", libAffx_player,
-                         CatalogFieldValueGet(c_gameCatalogEffect, "ChromieSandBlastDamage", "Amount", libAffx_player));
+    string amount = CatalogFieldValueGet(c_gameCatalogEffect, "ChromieSandBlastDamage", "Amount", libAffx_player);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "Amount", libAffx_player, amount);
+    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "Amount", libAffx_player, amount);
     return true;
 }
-// Chronomancer: echoes come 1.5 seconds after the cast, 0.015 seconds sooner per Timeline stack (up to 40) and 0.1
-// seconds sooner per Shorter Loop
-fixed libAffx_ChromieChronoDelay () {
+// Chronomancer at 100 Timeline stacks (checked each second, so stacks loaded from the bank count): Time Traps have twice
+// the trigger radius (1.5 to 3; detonating, 2 to 4) and twice the Health
+bool libAffx_ChromieTrapUnlock_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChromieHero();
-    fixed delay = 1.5 - 0.015 * IntToFixed(MinI(40, libAffx_ChromieStacks("ChromieGoldenTimelineTokenCounter")));
-    if (hero != null) {
-        delay -= 0.1 * IntToFixed(UnitBehaviorCount(hero, "ChromieGoldenShorterLoop"));
+    if (libAffx_ChromieTrapsDoubled || hero == null || !UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") || libAffx_ChromieStacks("ChromieGoldenTimelineTokenCounter") < 100) {
+        return true;
     }
-    return MaxF(0.5, delay);
+    libAffx_ChromieTrapsDoubled = true;
+    libAffx_CatalogReferenceModify("Effect,ChromieTimeTrapProximitySearchArea,AreaArray[0].Radius", libAffx_player, "1.5", c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,ChromieTimeTrapSearchArea,AreaArray[0].Radius", libAffx_player, "2", c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Unit,ChromieTimeTrap,LifeMax", libAffx_player, "250", c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Unit,ChromieTimeTrap,LifeStart", libAffx_player, "250", c_upgradeOperationAdd);
+    return true;
+}
+// Chronomancer: an enemy Hero walked into one of Chromie's Time Traps. Readies an echo (one stored, three with Timeline
+// Split), adds Resonance, opens the takedown window, heals (Timeline stacks 1-40) and, with Time Bomb, explodes.
+bool libAffx_ChromieTrapTriggered_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ChromieHero();
+    unit source = UnitBehaviorEffectUnit(victim, "ChromieGoldenTrapTriggered", c_effectUnitCaster, 0);
+    if (hero == null || source == null || UnitGetOwner(source) != libAffx_player || !libAffx_ChromieIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ChromieGoldenChronoMarker")) {
+        return false;
+    }
+    libAffx_ChromieChronoTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ChromieGoldenResonanceTokenCounter", hero);
+    libAffx_ChromieQuestDing();
+    if (!UnitHasBehavior2(hero, "ChromieGoldenEchoReady") || UnitHasBehavior2(hero, "ChromieGoldenTimelineSplitMarker")) {
+        UnitBehaviorAdd(hero, "ChromieGoldenEchoReady", hero, 1);
+    }
+    if (UnitIsAlive(hero) && libAffx_ChromieStacks("ChromieGoldenTimelineTokenCounter") > 0) {
+        UnitCreateEffectUnit(hero, "ChromieGoldenTrapHeal", hero);
+    }
+    if (UnitHasBehavior2(hero, "ChromieGoldenTimeBombMarker")) {
+        UnitCreateEffectPoint(hero, "ChromieGoldenTimeBombSearch", UnitGetPosition(victim));
+    }
+    return true;
 }
 // Sand Blast casts. Sand Sniper at 100 Sands of Time stacks: a second Sand Blast 0.5 seconds later along the same line
-// for 50% damage. Chronomancer: every Sand Blast echoes. The echo is thrown from where Chromie is then, toward the same
-// point; its marker (the damage cut) is on Chromie while it flies.
+// for 50% damage. Chronomancer with an echo ready: the Sand Blast echoes 0.5 seconds later for 130%. The echo is thrown
+// from where Chromie is then, toward the same point; its marker (the damage change) is on Chromie while it flies.
 bool libAffx_ChromieSandCast_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChromieHero();
     point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
@@ -199,8 +228,9 @@ bool libAffx_ChromieSandCast_Func (bool testConds, bool runActions) {
         delay = 0.5;
         echoMarker = "ChromieGoldenSniperEchoMarker";
     }
-    else if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker")) {
-        delay = libAffx_ChromieChronoDelay();
+    else if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && UnitHasBehavior2(hero, "ChromieGoldenEchoReady")) {
+        UnitBehaviorRemove(hero, "ChromieGoldenEchoReady", 1);
+        delay = 0.5;
         echoMarker = "ChromieGoldenChronoEchoMarker";
     }
     else {
@@ -218,9 +248,19 @@ bool libAffx_ChromieSandCast_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "ChromieSandBlastLaunchMissile", target);
     return true;
 }
-// Dragon's Breath blasts (each of the three). Bronze Breath at 100 Dragonflight stacks: the blast erupts again at the
-// same spot 1 second later for 50% damage. Chronomancer: every blast echoes. The echo marker is on Chromie only while the
-// echo blast runs.
+// Chronomancer: a Dragon's Breath cast with an echo ready uses it; its blasts in the next 3 seconds echo
+bool libAffx_ChromieBreathCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ChromieHero();
+    if (hero == null || !UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") || !UnitHasBehavior2(hero, "ChromieGoldenEchoReady")) {
+        return false;
+    }
+    UnitBehaviorRemove(hero, "ChromieGoldenEchoReady", 1);
+    libAffx_ChromieBreathEchoUntil = GameGetMissionTime() + 3.0;
+    return true;
+}
+// Dragon's Breath blasts. Bronze Breath at 100 Dragonflight stacks: the blast erupts again at the same spot 1 second
+// later for 50% damage. Chronomancer: blasts of a cast that used an echo erupt again 0.5 seconds later for 130%. The echo
+// marker is on Chromie only while the echo blast runs.
 bool libAffx_ChromieBreathBlast_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChromieHero();
     point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
@@ -234,8 +274,8 @@ bool libAffx_ChromieBreathBlast_Func (bool testConds, bool runActions) {
         delay = 1.0;
         echoMarker = "ChromieGoldenBreathEchoMarker";
     }
-    else if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker")) {
-        delay = libAffx_ChromieChronoDelay();
+    else if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && now <= libAffx_ChromieBreathEchoUntil) {
+        delay = 0.5;
         echoMarker = "ChromieGoldenChronoEchoMarker";
     }
     else {
@@ -250,28 +290,6 @@ bool libAffx_ChromieBreathBlast_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "ChromieDragonsBreathSet", target);
     UnitBehaviorRemove(hero, echoMarker, 1);
     return true;
-}
-// Time Trap casts. Chronomancer with Paradox: the echo places a second trap at the same spot.
-bool libAffx_ChromieTrapCast_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_ChromieHero();
-    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
-    if (hero == null || target == null || !UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") || !UnitHasBehavior2(hero, "ChromieGoldenParadoxMarker")) {
-        return false;
-    }
-    libAffx_Wait(libAffx_ChromieChronoDelay(), c_timeGame);
-    if (!UnitIsAlive(hero)) {
-        return true;
-    }
-    UnitCreateEffectPoint(hero, "ChromieTimeTrapCreateUnit", target);
-    return true;
-}
-// Resonance quest gate: only echo hits count (an echo Sand Blast in flight, or an echo blast of Dragon's Breath)
-bool libAffx_ChromieChronoEchoHit () {
-    unit hero = libAffx_ChromieHero();
-    if (hero != null && UnitHasBehavior2(hero, "ChromieGoldenChronoEchoMarker")) {
-        return true;
-    }
-    return GameGetMissionTime() == libAffx_ChromieBreathEchoTime;
 }
 // Infinite Breath (Legendary): the 2nd enemy Hero hit by one blast gives back half a Dragon's Breath charge
 void libAffx_ChromieInfiniteBreathHit (unit hero) {
@@ -325,7 +343,7 @@ bool libAffx_ChromieChronoHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_ChromieChronoTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    if (libAffx_ChromieChronoEchoHit()) {
+    if (false) {
         libGame_gf_ModifyTokenCount(1, "ChromieGoldenResonanceTokenCounter", hero);
     }
     return true;
@@ -377,10 +395,13 @@ bool libAffx_ChromieStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_ChromieChronoHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ChromieSandBlastDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ChromieDragonsBreathDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ChromieGoldenTimeBombDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChromieAmounts_Func"), 1.0, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChromieTrapUnlock_Func"), 1.0, c_timeGame);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_ChromieTrapTriggered_Func"), null, "ChromieGoldenTrapTriggered", c_unitBehaviorChangeCreate);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieSandCast_Func"), libAffx_player, "ChromieSandBlastLaunchMissile");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieBreathCast_Func"), libAffx_player, "ChromieDragonsBreathInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieBreathBlast_Func"), libAffx_player, "ChromieDragonsBreathSet");
-    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieTrapCast_Func"), libAffx_player, "ChromieTimeTrapInitialSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChromieSync_Func"), 1.0, c_timeGame);
     return true;

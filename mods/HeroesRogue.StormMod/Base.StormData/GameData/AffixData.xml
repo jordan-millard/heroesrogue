@@ -23228,543 +23228,6 @@
         </Instances>
 
 
-        <Instances Id="ChromieSandSniper">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="ChromieSandBlastBronzeTalons">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="ChromieSandBlastPiercingSands">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 ChromieGoldenSniperMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 ChromieGoldenPinpointTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 ChromieGoldenSandsOfTimeTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="ChromieGoldenSandsOfTimeTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="ChromieGoldenPinpointTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Add Abil,ChromieSandBlast,Cost.Vital[Energy] -10">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.CountMax 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.CountStart 2">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.TimeUse 3">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Add Effect,ChromieSandBlastLaunchMissile,ImpactLocation.ProjectionDistanceScale 3">
-                <Field Id="CatalogModification" Index="6" />
-            </String>
-            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieSniperPower].Modifier 0.2">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="1 1 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieSniperPower].Modifier 0.2">
-                <Field Id="CatalogModification" Index="8" />
-            </String>
-            <String String="1 1 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieSniperPower].Modifier 0.2">
-                <Field Id="CatalogModification" Index="9" />
-            </String>
-            <String String="AffixAdded libAffx_ChromieStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_ChromieTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieGrit">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieSandSniper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieSniperCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieSniperCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieSniperCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieQuickGrains">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieSandSniper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,ChromieSandBlast,Cost.Charge.TimeUse -0.25">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieShiftingSandsBoon">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieSandSniper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="ChromieSandBlastShiftingSands">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieFastForwardBoon">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon_A.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieSandSniper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="ChromieSandBlastFastForward">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieTemporalShards">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieSandSniper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 ChromieGoldenTemporalShardsMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieHourglass">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieSandSniper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 ChromieGoldenHourglassMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieBronzeBreath">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="ChromieDragonsBreathDeepBreathing">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="ChromieDragonsBreathMobiusLoop">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 ChromieGoldenBreathMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 ChromieGoldenBronzeFireTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 ChromieGoldenDragonflightTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="ChromieGoldenDragonflightTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="ChromieGoldenBronzeFireTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="ChromieDragonsBreathDeepBreathingQuestToken 0.5">
-                <Field Id="QuestRetain" Index="2" />
-            </String>
-            <String String="1 1 Add Abil,ChromieDragonsBreath,Cost.Vital[Energy] -32.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.CountMax 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.CountStart 2">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.TimeUse 14">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Add Effect,ChromieDragonsBreathSearchArea,AreaArray[0].Radius 0.4">
-                <Field Id="CatalogModification" Index="6" />
-            </String>
-            <String String="1 1 Add Effect,ChromieDragonsBreathMobiusLoopSearch,AreaArray[0].Radius 0.15">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="1 1 Add Actor,ChromieDragonsBreathGround,Scale 0.2">
-                <Field Id="CatalogModification" Index="8" />
-            </String>
-            <String String="1 1 Add Actor,ChromieDragonsBreathAllyWarningSplat,Scale 0.2">
-                <Field Id="CatalogModification" Index="9" />
-            </String>
-            <String String="1 1 Add Actor,ChromieDragonsBreathEnemyWarningSplat,Scale 0.2">
-                <Field Id="CatalogModification" Index="10" />
-            </String>
-            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieBreathPower].Modifier 0.2">
-                <Field Id="CatalogModification" Index="11" />
-            </String>
-            <String String="AffixAdded libAffx_ChromieStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_ChromieTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieBlazingSands">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieBronzeBreath">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieBreathCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieShortDelay">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieBronzeBreath">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Effect,ChromieDragonsBreathOffsetPersistent,PeriodicPeriodArray[1] -0.1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieTimeOutBoon">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeBlock.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieBronzeBreath">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="ChromieTimeOut">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieQuantumOverdriveBoon">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_HyperdrivesReach.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieBronzeBreath">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="ChromieQuantumOverdrive">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieBronzeRing">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieBronzeBreath">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 ChromieGoldenBronzeRingMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieInfiniteBreath">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieBronzeBreath">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 ChromieGoldenInfiniteBreathMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieChronomancer">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="ChromieHeroicAbilityTemporalLoop">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="ChromieHeroicAbilitySlowingSands">
-                <Field Id="TalentsDisable" />
-            </String>
-            <String String="1 0 ChromieGoldenChronoMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 ChromieGoldenResonanceTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 ChromieGoldenTimelineTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="ChromieGoldenTimelineTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="ChromieGoldenResonanceTokenCounter 0.5">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Add Abil,ChromieSandBlast,Cost.Cooldown.TimeUse 1.2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,ChromieDragonsBreath,Cost.Cooldown.TimeUse 5.6">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Add Abil,ChromieTimeTrap,Cost.Charge.TimeUse 6">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Add Abil,ChromieTemporalLoop,Cost.Cooldown.TimeUse 20">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="AffixAdded libAffx_ChromieStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_ChromieTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieEchoingTime">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieChronomancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieShorterLoop">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieChronomancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 ChromieGoldenShorterLoop">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieAndorhalAnomalyBoon">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeTrap_B.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieChronomancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="ChromieTimeTrapAndorhalAnomaly">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieStuckInALoopBoon">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieChronomancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="ChromieTemporalLoopStuckInALoop">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieParadox">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeTrap.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieChronomancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 ChromieGoldenParadoxMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 1 Add Behavior,ChromieTimeTrapUnitTracker,MaxTrackedUnits 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="ChromieTimelineSplit">
-            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Chromie">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="ChromieChronomancer">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 ChromieGoldenTimelineSplitMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
 
         <Instances Id="FenixPlasmaExecutor">
             <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
@@ -24303,6 +23766,541 @@
                 <Field Id="AffixesRequired" />
             </User>
             <String String="1 0 FenixGoldenExecutorsBarrageMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
+        <Instances Id="ChromieSandSniper">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ChromieSandBlastBronzeTalons">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ChromieSandBlastPiercingSands">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ChromieGoldenSniperMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ChromieGoldenPinpointTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ChromieGoldenSandsOfTimeTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ChromieGoldenSandsOfTimeTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ChromieGoldenPinpointTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Abil,ChromieSandBlast,Cost.Vital[Energy] -10">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Charge.TimeUse 3">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,ChromieSandBlast,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Effect,ChromieSandBlastLaunchMissile,ImpactLocation.ProjectionDistanceScale 3">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieSniperPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieSniperPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieSniperPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="AffixAdded libAffx_ChromieStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ChromieTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieGrit">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieSandSniper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieSniperCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieSniperCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieSniperCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieQuickGrains">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieSandSniper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ChromieSandBlast,Cost.Charge.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieShiftingSandsBoon">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieSandSniper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ChromieSandBlastShiftingSands">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieFastForwardBoon">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon_A.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieSandSniper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ChromieSandBlastFastForward">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieTemporalShards">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieSandSniper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChromieGoldenTemporalShardsMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieHourglass">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieSandSniper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChromieGoldenHourglassMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieBronzeBreath">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ChromieDragonsBreathDeepBreathing">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ChromieDragonsBreathMobiusLoop">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ChromieGoldenBreathMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ChromieGoldenBronzeFireTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ChromieGoldenDragonflightTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ChromieGoldenDragonflightTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ChromieGoldenBronzeFireTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="ChromieDragonsBreathDeepBreathingQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Add Abil,ChromieDragonsBreath,Cost.Vital[Energy] -32.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Charge.TimeUse 14">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,ChromieDragonsBreath,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Effect,ChromieDragonsBreathSearchArea,AreaArray[0].Radius 0.4">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Add Effect,ChromieDragonsBreathMobiusLoopSearch,AreaArray[0].Radius 0.15">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Add Actor,ChromieDragonsBreathGround,Scale 0.2">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Add Actor,ChromieDragonsBreathAllyWarningSplat,Scale 0.2">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Add Actor,ChromieDragonsBreathEnemyWarningSplat,Scale 0.2">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieBreathPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="AffixAdded libAffx_ChromieStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ChromieTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieBlazingSands">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieBronzeBreath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieBreathCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieShortDelay">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieBronzeBreath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Effect,ChromieDragonsBreathOffsetPersistent,PeriodicPeriodArray[1] -0.1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieTimeOutBoon">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeBlock.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieBronzeBreath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ChromieTimeOut">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieQuantumOverdriveBoon">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_HyperdrivesReach.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieBronzeBreath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ChromieQuantumOverdrive">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieBronzeRing">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieBronzeBreath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChromieGoldenBronzeRingMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieInfiniteBreath">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_SandStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieBronzeBreath">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChromieGoldenInfiniteBreathMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieChronomancer">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ChromieTimeTrapChronicConditions">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 0 ChromieGoldenChronoMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ChromieGoldenResonanceTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ChromieGoldenTimelineTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ChromieGoldenTimelineTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ChromieGoldenResonanceTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Abil,ChromieTimeTrap,Cost.Vital[Energy] -20">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,ChromieTimeTrapUnitTracker,MaxTrackedUnits 9">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_ChromieStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ChromieTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieEchoingTime">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieChronomancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieQuickTraps">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeTrap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieChronomancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,ChromieTimeTrap,Cost.Charge.TimeUse -1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieTimeTroublesBoon">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeTrap_B.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieChronomancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ChromieTimeTrapTimeTroubles">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieTimewalkersPursuitBoon">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieChronomancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ChromieTimewalkersPursuit">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ChromieTimewalkersPursuitQuestToken 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieTimeBomb">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_TimeTrap.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieChronomancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChromieGoldenTimeBombMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ChromieTimelineSplit">
+            <String String="Assets/Textures/storm_ui_icon_Chromie_Looper.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Chromie">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ChromieChronomancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 ChromieGoldenTimelineSplitMarker">
                 <Field Id="Behavior" />
             </String>
         </Instances>
