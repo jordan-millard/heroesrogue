@@ -218,6 +218,26 @@ bool libAffx_ChromieTrapTriggered_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Temporal Reset (any Chromie): an enemy Hero Time Stopped by one of Chromie's Time Traps (set off or detonated)
+// resets her basic abilities' cooldowns and charges
+void libAffx_ChromieResetAbil (unit hero, string abil) {
+    UnitModifyCooldown(hero, "Abil/" + abil, 0.0, c_cooldownOperationSet);
+    if (UnitGetChargeUsed(hero, "Abil/" + abil) > 0.0) {
+        UnitAddChargeUsed(hero, "Abil/" + abil, -UnitGetChargeUsed(hero, "Abil/" + abil));
+    }
+}
+bool libAffx_ChromieTemporalReset_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ChromieHero();
+    unit source = UnitBehaviorEffectUnit(victim, "ChromieTimeTrapTargetBehavior", c_effectUnitCaster, 0);
+    if (hero == null || source == null || UnitGetOwner(source) != libAffx_player || !libAffx_ChromieIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ChromieGoldenTemporalResetMarker")) {
+        return false;
+    }
+    libAffx_ChromieResetAbil(hero, "ChromieSandBlast");
+    libAffx_ChromieResetAbil(hero, "ChromieDragonsBreath");
+    libAffx_ChromieResetAbil(hero, "ChromieTimeTrap");
+    return true;
+}
 // Sand Blast casts. Sand Sniper at 100 Sands of Time stacks: a second Sand Blast 0.5 seconds later along the same line
 // for 50% damage. Chronomancer with an echo ready: the Sand Blast echoes 0.5 seconds later for 130%. The echo is thrown
 // from where Chromie is then, toward the same point; its marker (the damage change) is on Chromie while it flies.
@@ -452,6 +472,7 @@ bool libAffx_ChromieStart (bool testConds, bool runActions) {
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChromieTrapUnlock_Func"), 1.0, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ChromieEchoFlash_Func"), 0.125, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_ChromieTrapTriggered_Func"), null, "ChromieGoldenTrapTriggered", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_ChromieTemporalReset_Func"), null, "ChromieTimeTrapTargetBehavior", c_unitBehaviorChangeCreate);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieSandCast_Func"), libAffx_player, "ChromieSandBlastLaunchMissile");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieBreathCast_Func"), libAffx_player, "ChromieDragonsBreathInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ChromieBreathBlast_Func"), libAffx_player, "ChromieDragonsBreathSet");
