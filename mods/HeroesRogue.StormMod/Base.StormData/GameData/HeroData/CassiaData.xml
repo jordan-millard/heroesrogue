@@ -118,7 +118,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Skirmisher ===== -->
-  <!-- Basic Attack range +2.1 (4.5 to 6.6); Valkyrie at level 1 (Ball Lightning disabled), Charged Strikes and War Matron. Skirmish quest (50% kept): 0.2% Fend damage per Basic Attack on an enemy Hero; every 10 empower the next Fend to Root each enemy it hits for 1.5 seconds (counter: script; Root: data). Hit and Run quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each, 41-80 1% shorter Slows and Stuns on Cassia each (script), 100 Basic Attacks on Heroes add 1% of their maximum Health (script), then 1.5% all damage past 100. -->
+  <!-- Basic Attack range +2.1 (4.5 to 6.6); Valkyrie at level 1 (Ball Lightning disabled), Charged Strikes (bounces to all nearby enemies but buildings) and War Matron. Skirmish quest (50% kept): 0.2% Fend damage per Basic Attack on an enemy Hero; every 10 empower the next Fend to Root enemies within 4 at once and each enemy it hits, for 1.5 seconds (counter: script; Root: data). Hit and Run quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each, 41-80 1% shorter Slows and Stuns on Cassia each (script), 100 Basic Attacks on Heroes add 1% of their maximum Health (script), then 1.5% all damage past 100. -->
   <CBehaviorTokenCounter id="AmazonGoldenSkirmishTokenCounter" parent="StormQuestToken">
     <Face value="AmazonGoldenSkirmishTokenCounter" />
     <Max value="100000" />
@@ -348,6 +348,30 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
+  <!-- Charged Strikes bounces to every nearby enemy, not just Heroes: a second search for the other enemies (not
+       buildings), with Charged Strikes' bounce visuals -->
+  <CEffectSet id="AmazonChargedStrikesMeleeSet">
+    <EffectArray value="AmazonGoldenChargedStrikesAllSearch" />
+  </CEffectSet>
+  <CEffectSet id="AmazonChargedStrikesRangedSet">
+    <EffectArray value="AmazonGoldenChargedStrikesAllSearch" />
+  </CEffectSet>
+  <CEffectEnumArea id="AmazonGoldenChargedStrikesAllSearch">
+    <ValidatorArray value="AmazonGoldenCasterIsSkirmisher" />
+    <ExcludeArray Value="Target" />
+    <SearchFilters value="Visible;Self,Player,Ally,Neutral,Heroic,Structure,Missile,Item,Stasis,Dead,Hidden,Invulnerable,Benign" />
+    <AreaArray Effect="AmazonHeroWeaponChargedStrikesImpactSet">
+      <Radius value="3.5" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+    <ValidatorArray value="TargetNotEvading" />
+  </CEffectEnumArea>
+  <CActorSite id="AmazonHeroWeaponChargedStrikesLaunchSite">
+    <On Terms="Effect.AmazonGoldenChargedStrikesAllSearch.Start; At Target" Send="Create" />
+  </CActorSite>
+  <CActorModel id="AmazonHeroWeaponChargedStrikesImpact">
+    <On Terms="Effect.AmazonGoldenChargedStrikesAllSearch.Start; At Target" Send="Create" />
+  </CActorModel>
   <!-- Takedown quest 1-40: 0.5% Attack Speed per stack (the script sets the stack count) -->
   <CBehaviorBuff id="AmazonGoldenSkirmisherAttackSpeed" parent="CarryBehaviorParent">
     <InfoFlags index="Hidden" value="1" />
@@ -383,7 +407,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="AmazonGoldenCasterEmpoweredFendReady" />
     <EffectArray value="AmazonGoldenEmpoweredFendChannelApply" />
     <EffectArray value="AmazonGoldenEmpoweredFendConsume" />
+    <EffectArray value="AmazonGoldenEmpoweredFendRootSearch" />
   </CEffectSet>
+  <!-- the empowered Fend Roots every enemy within 4 of Cassia right away (Fend's first strike lands before the set
+       above runs) -->
+  <CEffectEnumArea id="AmazonGoldenEmpoweredFendRootSearch">
+    <ImpactLocation Value="CasterUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="AmazonGoldenEmpoweredFendRootSet">
+      <Radius value="4" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
   <CEffectRemoveBehavior id="AmazonGoldenEmpoweredFendConsume">
     <WhichUnit Value="Caster" />
     <BehaviorLink value="AmazonGoldenEmpoweredFendReady" />
@@ -419,6 +454,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="AmazonGoldenEmpoweredFendRootApply" />
     <EffectArray value="AmazonGoldenEmpoweredFendRootedApply" />
   </CEffectSet>
+  <!-- the game only stops a Rooted unit from moving if its Root is in this list -->
+  <CValidatorUnitHasBehavior id="AmazonGoldenTargetHasEmpoweredFendRootIncludeDisabled">
+    <Behavior value="AmazonGoldenEmpoweredFendRoot" />
+    <IncludeDisabled value="1" />
+  </CValidatorUnitHasBehavior>
+  <CValidatorCombine id="StormTargetHasRootCombineIncludeDisabled">
+    <CombineArray value="AmazonGoldenTargetHasEmpoweredFendRootIncludeDisabled" />
+  </CValidatorCombine>
   <CBehaviorBuff id="AmazonGoldenEmpoweredFendRoot" parent="StormRoot">
     <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
     <Duration value="1.5" />
