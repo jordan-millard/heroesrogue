@@ -23227,6 +23227,7 @@
             </String>
         </Instances>
 
+
         <Instances Id="ChromieSandSniper">
             <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
                 <Field Id="Icon" />
@@ -23761,6 +23762,547 @@
                 <Field Id="AffixesRequired" />
             </User>
             <String String="1 0 ChromieGoldenTimelineSplitMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
+        <Instances Id="FenixPlasmaExecutor">
+            <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="FenixDivertPowerWeaponsTalent">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="FenixSecondaryFire">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 FenixGoldenPlasmaMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 FenixGoldenFocusedPlasmaTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 FenixGoldenExecutionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="FenixGoldenExecutionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="FenixGoldenFocusedPlasmaTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,FenixPlasmaCutter,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,FenixPlasmaCutter,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,FenixPlasmaCutter,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,FenixPlasmaCutter,Cost.Charge.TimeUse 12">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,FenixPlasmaCutter,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Effect,FenixPlasmaCutterScan,AreaArray[0].Radius 0.14">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Effect,FenixPlasmaCutterScan,AreaArray[0].InnerRadius -0.14">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,FenixPlasmaCutterDamage,MultiplicativeModifierArray[FenixPlasmaPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,FenixGoldenCutterEchoDamage,MultiplicativeModifierArray[FenixPlasmaPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,FenixGoldenSearingArcDamage,MultiplicativeModifierArray[FenixPlasmaPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,FenixPurificationSalvoSecondaryFireDamage,MultiplicativeModifierArray[FenixPlasmaPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="AffixAdded libAffx_FenixStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_FenixTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="FenixOverchargedPlasma">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixPlasmaExecutor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,FenixPlasmaCutterDamage,MultiplicativeModifierArray[FenixPlasmaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,FenixGoldenCutterEchoDamage,MultiplicativeModifierArray[FenixPlasmaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,FenixGoldenSearingArcDamage,MultiplicativeModifierArray[FenixPlasmaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,FenixPurificationSalvoSecondaryFireDamage,MultiplicativeModifierArray[FenixPlasmaCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="FenixCoolingCoils">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixPlasmaExecutor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,FenixPlasmaCutter,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="FenixAdvancedTargetingBoon">
+            <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixPlasmaExecutor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="FenixAdvancedTargeting">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="FenixPlasmaCutterAdvancedTargetingQuestToken 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+        </Instances>
+        <Instances Id="FenixCombatAdvantageBoon">
+            <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixPlasmaExecutor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="FenixCombatAdvantage">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="FenixSearingArc">
+            <String String="Assets/Textures/storm_ui_icon_fenix_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixPlasmaExecutor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 FenixGoldenSearingArcMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="FenixTwinSuns">
+            <String String="Assets/Textures/storm_ui_icon_fenix_r_scan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixPlasmaExecutor">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 FenixGoldenTwinSunsMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="FenixWarpStriker">
+            <String String="Assets/Textures/storm_ui_icon_fenix_teleport.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="FenixWarpWarfare">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="FenixMobileOffense">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 FenixGoldenWarpMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 FenixGoldenWarpStrikesTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 FenixGoldenWarpDoctrineTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="FenixGoldenWarpDoctrineTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="FenixGoldenWarpStrikesTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,FenixWarp,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,FenixWarp,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,FenixWarp,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,FenixWarp,Cost.Charge.TimeUse 17">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,FenixWarp,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,FenixWarp,InterruptCost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Abil,FenixWarp,Range 1.8">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Add Effect,FenixWarpTeleport,Range 1.8">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Add Effect,FenixWarpTeleport,PlacementRange 1.8">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Add Actor,FenixWarpRangeSplat,Scale 1.8">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,FenixGoldenWarpShotDamage,MultiplicativeModifierArray[FenixWarpPower].Modifier 0">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,FenixGoldenWarpShotBombDamage,MultiplicativeModifierArray[FenixWarpPower].Modifier 0">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="AffixAdded libAffx_FenixStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_FenixTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="FenixPhaseStrike">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_fenix_teleport.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixWarpStriker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,FenixGoldenWarpShotDamage,MultiplicativeModifierArray[FenixWarpCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,FenixGoldenWarpShotBombDamage,MultiplicativeModifierArray[FenixWarpCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="FenixQuickWarp">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_fenix_teleport.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixWarpStriker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,FenixWarp,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="FenixTargetAcquiredBoon">
+            <String String="Assets/Textures/storm_ui_icon_fenix_w_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixWarpStriker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="FenixTargetAcquired">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="FenixOffensiveCadenceBoon">
+            <String String="Assets/Textures/storm_ui_icon_fenix_w_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixWarpStriker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="FenixOffensiveCadence">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="FenixShieldPhase">
+            <String String="Assets/Textures/storm_ui_icon_fenix_shield_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixWarpStriker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 FenixGoldenShieldPhaseMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="FenixBlinkAssault">
+            <String String="Assets/Textures/storm_ui_icon_fenix_teleport.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixWarpStriker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 FenixGoldenBlinkAssaultMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="FenixTwinArsenal">
+            <String String="Assets/Textures/storm_ui_icon_fenix_w_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="FenixHeroicAbilityPurificationSalvo">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="FenixHeroicAbilityPlanetCracker">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 FenixGoldenTwinMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 FenixGoldenBombardmentTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 FenixGoldenArsenalMasteryTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 FenixGoldenTwinArsenal">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="FenixGoldenArsenalMasteryTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="FenixGoldenBombardmentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,FenixHeroWeaponDamage,MultiplicativeModifierArray[FenixTwinPower].Modifier 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,FenixHeroPhaseBombWeaponDamage,MultiplicativeModifierArray[FenixTwinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,FenixHeroPhaseBombSplashDamage,MultiplicativeModifierArray[FenixTwinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_FenixStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_FenixTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="FenixArsenalUpgrade">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_fenix_w_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixTwinArsenal">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,FenixHeroWeaponDamage,MultiplicativeModifierArray[FenixTwinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,FenixHeroPhaseBombWeaponDamage,MultiplicativeModifierArray[FenixTwinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,FenixHeroPhaseBombSplashDamage,MultiplicativeModifierArray[FenixTwinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="FenixCapacitors">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_fenix_shield_3.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixTwinArsenal">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 FenixGoldenCapacitors">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="FenixArsenalSynergyBoon">
+            <String String="Assets/Textures/storm_ui_icon_fenix_w_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixTwinArsenal">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="FenixArsenalSynergy">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="FenixPhotonicWeaponryBoon">
+            <String String="Assets/Textures/storm_ui_icon_fenix_shield_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixTwinArsenal">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="FenixPhotonicWeaponry">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="FenixOverloadShells">
+            <String String="Assets/Textures/storm_ui_icon_fenix_w_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixTwinArsenal">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 FenixGoldenOverloadShellsMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="FenixExecutorsBarrage">
+            <String String="Assets/Textures/storm_ui_icon_fenix_r_scan.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Fenix">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="FenixTwinArsenal">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 FenixGoldenExecutorsBarrageMarker">
                 <Field Id="Behavior" />
             </String>
         </Instances>

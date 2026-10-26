@@ -1,0 +1,351 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Fenix. Each starter: hits on enemy Heroes open a 3 second takedown window and add the hit quest
+// token; takedowns in the window add the takedown token.
+// Plasma Executor: Execution stacks 1-40 recharge, 41-80 a longer beam, 81-100 a faster sweep, 100 every hit
+// is cut again for half damage, then 2.5% all damage each.
+// Warp Striker: Warp Doctrine stacks 1-40 recharge, 41-80 reach, 81-100 more empowered attacks, 100 Warp
+// blasts where Fenix leaves and arrives, then 2.5% all damage each.
+// Twin Arsenal: Arsenal Mastery stacks 1-40 more extra Phase Bombs, 41-80 attack range, then 2.5% all damage
+// each.
+// ============================================================
+
+const fixed libAffx_FenixTakedownWindow = 3.0;
+const fixed libAffx_FenixPastCapDamagePerStack = 0.01;
+bool libAffx_FenixStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_FenixPlasmaTime; // per enemy player, last Plasma Executor hit
+int libAffx_FenixPlasmaAdded; // Plasma Executor: takedown stacks already applied to the catalog this game
+int libAffx_FenixPlasmaAdded2; // Plasma Executor: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_FenixPlasmaAdded3; // Plasma Executor: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_FenixWarpTime; // per enemy player, last Warp Striker hit
+int libAffx_FenixWarpAdded; // Warp Striker: takedown stacks already applied to the catalog this game
+int libAffx_FenixWarpAdded2; // Warp Striker: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_FenixWarpAdded3; // Warp Striker: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_FenixTwinTime; // per enemy player, last Twin Arsenal hit
+int libAffx_FenixTwinAdded; // Twin Arsenal: takedown stacks already applied to the catalog this game
+int libAffx_FenixTwinAdded2; // Twin Arsenal: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_FenixBombProgress; // Twin Arsenal: progress toward the next extra Phase Bomb (120 = one)
+int libAffx_FenixBarrageCount; // Executor's Barrage: attacks since the last Purification Salvo missile
+
+unit libAffx_FenixHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_FenixIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_FenixStacks(string tokenId) {
+    unit hero = libAffx_FenixHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_FenixQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_FenixInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_FenixTakedownWindow;
+}
+// FenixGoldenExecutionTokenCounter: stacks 1-40: 1% of the 12 second recharge each; 41-80: 1% beam length each; 81-100: 1% faster sweep each; then 2.5% all damage each
+void libAffx_FenixSyncPlasma () {
+    unit hero = libAffx_FenixHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "FenixGoldenPlasmaMarker")) {
+        return;
+    }
+    stacks = libAffx_FenixStacks("FenixGoldenExecutionTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_FenixPlasmaAdded) {
+        libAffx_CatalogReferenceModify("Abil,FenixPlasmaCutter,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded) * -0.12, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_FenixPlasmaAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 1.4 beam each, half on each end
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_FenixPlasmaAdded2) {
+        libAffx_CatalogReferenceModify("Effect,FenixPlasmaCutterScan,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded2) * 0.007, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,FenixPlasmaCutterScan,AreaArray[0].InnerRadius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded2) * -0.007, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_FenixPlasmaAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% of each turn's 1.5 seconds each, and of the beam's life
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_FenixPlasmaAdded3) {
+        libAffx_CatalogReferenceModify("Kinetic,FenixPlasmaCutterRotateKinetic,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded3) * -0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Kinetic,FenixPlasmaCutterFollowCasterKinetic,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded3) * -0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Kinetic,FenixPlasmaCutterAdvancedTargetingTier2RotateKinetic,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded3) * -0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Kinetic,FenixPlasmaCutterAdvancedTargetingTier2FollowCasterKinetic,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded3) * -0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,FenixPlasmaCutterUnitBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded3) * -0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_FenixPlasmaAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlasmaCutterDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenCutterEchoDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenSearingArcDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPurificationSalvoSecondaryFireDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotBombDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroWeaponDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroPhaseBombWeaponDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroPhaseBombSplashDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpBlastDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPurificationSalvoDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlanetCrackerDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixOffensiveCadenceDamage", "MultiplicativeModifierArray[FenixPlasmaLegacy].Modifier", libAffx_player, bonus);
+}
+// FenixGoldenWarpDoctrineTokenCounter: stacks 1-40: 1% of the 17 second recharge each; 41-80: 1% reach each; 81-100: 1 more empowered attack per 5 (script); then 2.5% all damage each
+void libAffx_FenixSyncWarp () {
+    unit hero = libAffx_FenixHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "FenixGoldenWarpMarker")) {
+        return;
+    }
+    stacks = libAffx_FenixStacks("FenixGoldenWarpDoctrineTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_FenixWarpAdded) {
+        libAffx_CatalogReferenceModify("Abil,FenixWarp,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixWarpAdded) * -0.17, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_FenixWarpAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% of the 9 reach each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_FenixWarpAdded2) {
+        libAffx_CatalogReferenceModify("Abil,FenixWarp,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixWarpAdded2) * 0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,FenixWarpTeleport,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixWarpAdded2) * 0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,FenixWarpTeleport,PlacementRange", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixWarpAdded2) * 0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,FenixWarpRangeSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixWarpAdded2) * 0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_FenixWarpAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): more empowered attacks, set by libAffx_FenixAmounts_Func
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_FenixWarpAdded3) {
+        libAffx_FenixWarpAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotBombDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlasmaCutterDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenCutterEchoDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenSearingArcDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPurificationSalvoSecondaryFireDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroWeaponDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroPhaseBombWeaponDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroPhaseBombSplashDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpBlastDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPurificationSalvoDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlanetCrackerDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixOffensiveCadenceDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
+}
+// FenixGoldenArsenalMasteryTokenCounter: stacks 1-40: more extra Phase Bombs (script); 41-80: 1% attack range each; then 2.5% all damage each
+void libAffx_FenixSyncTwin () {
+    unit hero = libAffx_FenixHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "FenixGoldenTwinMarker")) {
+        return;
+    }
+    stacks = libAffx_FenixStacks("FenixGoldenArsenalMasteryTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_FenixTwinAdded) {
+        libAffx_FenixTwinAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): about 1% of the attack range each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_FenixTwinAdded2) {
+        libAffx_CatalogReferenceModify("Weapon,FenixHeroWeapon,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixTwinAdded2) * 0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Weapon,FenixHeroWeapon,MinScanRange", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixTwinAdded2) * 0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_FenixTwinAdded2 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.025, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroWeaponDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroPhaseBombWeaponDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixHeroPhaseBombSplashDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlasmaCutterDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenCutterEchoDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenSearingArcDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPurificationSalvoSecondaryFireDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotBombDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpBlastDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPurificationSalvoDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlanetCrackerDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixOffensiveCadenceDamage", "MultiplicativeModifierArray[FenixTwinLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_FenixSync_Func (bool testConds, bool runActions) {
+    libAffx_FenixSyncPlasma();
+    libAffx_FenixSyncWarp();
+    libAffx_FenixSyncTwin();
+    return true;
+}
+// Fenix's level-scaled damage, copied each second: Plasma Executor's second cut (50%) and Searing Arc ticks (10% of
+// Plasma Cutter), Warp Striker's empowered attack halves and Warp blasts (a Phase Bomb). Also how many attacks a Warp
+// empowers: 3, plus 1 per 5 Warp Doctrine stacks past 80 (up to 7).
+bool libAffx_FenixAmounts_Func (bool testConds, bool runActions) {
+    fixed cutter = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "FenixPlasmaCutterDamage", "Amount", libAffx_player));
+    fixed shot = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "FenixHeroWeaponDamage", "Amount", libAffx_player));
+    fixed bomb = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "FenixHeroPhaseBombWeaponDamage", "Amount", libAffx_player));
+    int extra = MinI(4, MaxI(0, libAffx_FenixStacks("FenixGoldenWarpDoctrineTokenCounter") - 80) / 5);
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenCutterEchoDamage", "Amount", libAffx_player, FixedToString(cutter * 0.5, c_fixedPrecisionAny));
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenSearingArcDamage", "Amount", libAffx_player, FixedToString(cutter * 0.1, c_fixedPrecisionAny));
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotDamage", "Amount", libAffx_player, FixedToString(shot * 0.5, c_fixedPrecisionAny));
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotBombDamage", "Amount", libAffx_player, FixedToString(bomb * 0.5, c_fixedPrecisionAny));
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpBlastDamage", "Amount", libAffx_player, FixedToString(bomb, c_fixedPrecisionAny));
+    CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpEmpoweredApply", "Count", libAffx_player, IntToString(3 + extra));
+    return true;
+}
+// Twin Suns (Legendary): each Plasma Cutter also starts a second beam on the opposite side of Fenix
+bool libAffx_FenixCutterCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_FenixHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    point here;
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "FenixGoldenTwinSunsMarker")) {
+        return false;
+    }
+    here = UnitGetPosition(hero);
+    UnitCreateEffectPoint(hero, "FenixPlasmaCutterInitialPersistent", PointWithOffsetPolar(here, DistanceBetweenPoints(here, target), AngleBetweenPoints(target, here)));
+    return true;
+}
+// Twin Arsenal: each Repeater Cannon attack adds 40 (up to 60 with Arsenal Mastery) toward an extra Phase Bomb at 120,
+// so every 3rd attack launches one (every 2nd at 40 stacks). Executor's Barrage (Legendary): every 10th attack also fires
+// a Purification Salvo missile.
+bool libAffx_FenixTwinAttack_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_FenixHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "FenixGoldenTwinMarker")) {
+        return false;
+    }
+    libAffx_FenixBombProgress += 40 + MinI(40, libAffx_FenixStacks("FenixGoldenArsenalMasteryTokenCounter")) / 2;
+    if (libAffx_FenixBombProgress >= 120) {
+        libAffx_FenixBombProgress -= 120;
+        UnitCreateEffectUnit(hero, "FenixGoldenFreeBombSet", target);
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenExecutorsBarrageMarker")) {
+        libAffx_FenixBarrageCount += 1;
+        if (libAffx_FenixBarrageCount >= 10) {
+            libAffx_FenixBarrageCount = 0;
+            UnitCreateEffectUnit(hero, "FenixSecondaryFirePurificationSalvoLaunchMissile", target);
+        }
+    }
+    return true;
+}
+// Plasma Executor hit on an enemy Hero: takedown window, FenixGoldenFocusedPlasmaTokenCounter, the heal, and on-hit boons
+bool libAffx_FenixPlasmaHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_FenixHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_FenixIsEnemyHero(victim) || !UnitHasBehavior2(hero, "FenixGoldenPlasmaMarker")) {
+        return false;
+    }
+    libAffx_FenixPlasmaTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "FenixGoldenFocusedPlasmaTokenCounter", hero);
+    return true;
+}
+// Warp Striker hit on an enemy Hero: takedown window, FenixGoldenWarpStrikesTokenCounter, the heal, and on-hit boons
+bool libAffx_FenixWarpHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_FenixHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_FenixIsEnemyHero(victim) || !UnitHasBehavior2(hero, "FenixGoldenWarpMarker")) {
+        return false;
+    }
+    libAffx_FenixWarpTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "FenixGoldenWarpStrikesTokenCounter", hero);
+    return true;
+}
+// Twin Arsenal: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_FenixTwinHits;
+// Twin Arsenal hit on an enemy Hero: takedown window, FenixGoldenBombardmentTokenCounter, the heal, and on-hit boons
+bool libAffx_FenixTwinHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_FenixHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_FenixIsEnemyHero(victim) || !UnitHasBehavior2(hero, "FenixGoldenTwinMarker")) {
+        return false;
+    }
+    libAffx_FenixTwinTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libAffx_FenixTwinHits += 1;
+    if (libAffx_FenixTwinHits >= 10) {
+        libAffx_FenixTwinHits = 0;
+        libGame_gf_ModifyTokenCount(10, "FenixGoldenBombardmentTokenCounter", hero);
+    }
+    return true;
+}
+// Twin Arsenal: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_FenixTwinWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_FenixHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_FenixIsEnemyHero(victim) || !UnitHasBehavior2(hero, "FenixGoldenTwinMarker")) {
+        return false;
+    }
+    libAffx_FenixTwinTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_FenixTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_FenixHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenWarpMarker")) {
+        if (UnitHasBehavior2(hero, "FenixGoldenBlinkAssaultMarker")) {
+            UnitAddChargeUsed(hero, "Abil/FenixWarp", -UnitGetChargeUsed(hero, "Abil/FenixWarp"));
+        }
+        else if (PlayerHasTalent(libAffx_player, "FenixWarpWarfare") && UnitGetChargeUsed(hero, "Abil/FenixWarp") > 0.0) {
+            UnitAddChargeUsed(hero, "Abil/FenixWarp", -1.0);
+        }
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenPlasmaMarker") && libAffx_FenixInWindow(libAffx_FenixPlasmaTime[killedPlayer], now)) {
+        libAffx_FenixPlasmaTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "FenixGoldenExecutionTokenCounter", hero);
+        libAffx_FenixSyncPlasma();
+        libAffx_FenixQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenWarpMarker") && libAffx_FenixInWindow(libAffx_FenixWarpTime[killedPlayer], now)) {
+        libAffx_FenixWarpTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "FenixGoldenWarpDoctrineTokenCounter", hero);
+        libAffx_FenixSyncWarp();
+        libAffx_FenixQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenTwinMarker") && libAffx_FenixInWindow(libAffx_FenixTwinTime[killedPlayer], now)) {
+        libAffx_FenixTwinTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "FenixGoldenArsenalMasteryTokenCounter", hero);
+        libAffx_FenixSyncTwin();
+        libAffx_FenixQuestDing();
+    }
+    return true;
+}
+bool libAffx_FenixStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_FenixStarted) {
+        return true;
+    }
+    libAffx_FenixStarted = true;
+    trig = TriggerCreate("libAffx_FenixPlasmaHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixPlasmaCutterDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixGoldenCutterEchoDamage");
+    trig = TriggerCreate("libAffx_FenixWarpHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixGoldenWarpShotDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixGoldenWarpShotBombDamage");
+    trig = TriggerCreate("libAffx_FenixTwinHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixHeroPhaseBombWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixHeroPhaseBombSplashDamage");
+    trig = TriggerCreate("libAffx_FenixTwinWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "FenixHeroWeaponDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_FenixAmounts_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_FenixCutterCast_Func"), libAffx_player, "FenixPlasmaCutterInitialSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_FenixTwinAttack_Func"), libAffx_player, "FenixHeroWeaponLaunchMissile");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_FenixSync_Func"), 1.0, c_timeGame);
+    return true;
+}

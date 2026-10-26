@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Fenix. Starters: Plasma Executor (Plasma Cutter), Warp Striker (Warp empowers the next Basic Attacks) and Twin Arsenal (no weapon swap; Phase Bombs come with the Repeater Cannon). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Fenix.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="FenixGoldenPlasmaMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenWarpMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenTwinMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenSearingArcMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenTwinSunsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenShieldPhaseMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenBlinkAssaultMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenOverloadShellsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="FenixGoldenExecutorsBarrageMarker" parent="CarryBehaviorParent" />
+  <!-- New damage effects. The script copies their Amounts from Fenix's level-scaled ones each second. -->
+  <!-- Plasma Executor at 100 Execution stacks: the second cut (50% of Plasma Cutter) -->
+  <CEffectDamage id="FenixGoldenCutterEchoDamage" parent="StormSpell">
+    <Amount value="67.5" />
+    <MultiplicativeModifierArray index="CombatAdvantage" Validator="FenixHasCombatAdvantageAndTargetIsSlowed" Modifier="0.35" Crit="1" />
+    <SourceButtonFace value="FenixPlasmaCutter" />
+  </CEffectDamage>
+  <!-- Searing Arc: each burn tick (10% of Plasma Cutter) -->
+  <CEffectDamage id="FenixGoldenSearingArcDamage" parent="StormSpell">
+    <Amount value="13.5" />
+    <MultiplicativeModifierArray index="CombatAdvantage" Validator="FenixHasCombatAdvantageAndTargetIsSlowed" Modifier="0.35" Crit="1" />
+    <SourceButtonFace value="FenixPlasmaCutter" />
+  </CEffectDamage>
+  <!-- Warp Striker: an empowered attack's extra half (Repeater Cannon, Phase Bomb's main target) -->
+  <CEffectDamage id="FenixGoldenWarpShotDamage" parent="StormWeapon">
+    <ValidatorArray value="FenixGoldenSourceIsWarpShot" />
+    <Amount value="41.5" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenWarpShotBombDamage" parent="StormWeapon">
+    <ValidatorArray value="FenixGoldenSourceIsWarpShot" />
+    <Amount value="51.875" />
+  </CEffectDamage>
+  <!-- Warp Striker at 100 Warp Doctrine stacks: the Warp blasts (a Phase Bomb's damage) -->
+  <CEffectDamage id="FenixGoldenWarpBlastDamage" parent="StormSpell">
+    <Amount value="103.75" />
+    <SourceButtonFace value="FenixWarp" />
+  </CEffectDamage>
+
+  <!-- ===== Plasma Executor ===== -->
+  <!-- Plasma Cutter has 2 charges (12 second recharge), deals 20% more damage and its beam is 20% longer (1.4 to 1.68); Divert Power: Weapons and Secondary Fire. Focused Plasma quest (50% kept): 1% Plasma Cutter damage per enemy Hero hit. Execution quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% beam length each, 81-100 1% faster sweep each, 100 every hit is cut again 0.5 seconds later for 50%, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="FenixGoldenFocusedPlasmaTokenCounter" parent="StormQuestToken">
+    <Face value="FenixGoldenFocusedPlasmaTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="FenixGoldenExecutionTokenCounter" parent="StormQuestToken">
+    <Face value="FenixGoldenExecutionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="FenixGoldenFocusedPlasmaTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="FenixGoldenFocusedPlasmaTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="FenixPlasmaCutterDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaHit" Accumulator="FenixGoldenFocusedPlasmaTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenCutterEchoDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaHit" Accumulator="FenixGoldenFocusedPlasmaTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenSearingArcDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaHit" Accumulator="FenixGoldenFocusedPlasmaTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixPurificationSalvoSecondaryFireDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixPlasmaHit" Accumulator="FenixGoldenFocusedPlasmaTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="FenixGoldenFocusedPlasmaTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_fenix_q.dds" />
+  </CButton>
+  <CButton id="FenixGoldenExecutionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_fenix_q.dds" />
+  </CButton>
+
+  <!-- ===== Warp Striker ===== -->
+  <!-- Warp has 2 charges (17 second recharge) and reaches 20% farther (9 to 10.8); after a Warp the next 3 Basic Attacks deal 50% more damage (a second damage of half the attack); Warp Warfare and Mobile Offense. Warp Strikes quest (50% kept): 0.5% Basic Attack damage per empowered attack on an enemy Hero. Warp Doctrine quest: takedowns within 3 seconds of an empowered attack; stacks 1-40 1% of the recharge each, 41-80 1% reach each, 81-100 1 more empowered attack per 5 (script), 100 Phase Bomb blasts where Fenix leaves and arrives, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="FenixGoldenWarpStrikesTokenCounter" parent="StormQuestToken">
+    <Face value="FenixGoldenWarpStrikesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="FenixGoldenWarpDoctrineTokenCounter" parent="StormQuestToken">
+    <Face value="FenixGoldenWarpDoctrineTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="FenixGoldenWarpStrikesTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="FenixGoldenWarpStrikesTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="FenixGoldenWarpShotDamage">
+    <MultiplicativeModifierArray index="FenixWarpPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenWarpShotBombDamage">
+    <MultiplicativeModifierArray index="FenixWarpPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroWeaponDamage">
+    <MultiplicativeModifierArray index="FenixWarpHit" Accumulator="FenixGoldenWarpStrikesTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombWeaponDamage">
+    <MultiplicativeModifierArray index="FenixWarpHit" Accumulator="FenixGoldenWarpStrikesTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombSplashDamage">
+    <MultiplicativeModifierArray index="FenixWarpHit" Accumulator="FenixGoldenWarpStrikesTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenWarpShotDamage">
+    <MultiplicativeModifierArray index="FenixWarpHit" Accumulator="FenixGoldenWarpStrikesTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenWarpShotBombDamage">
+    <MultiplicativeModifierArray index="FenixWarpHit" Accumulator="FenixGoldenWarpStrikesTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="FenixGoldenWarpStrikesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_fenix_teleport.dds" />
+  </CButton>
+  <CButton id="FenixGoldenWarpDoctrineTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_fenix_teleport.dds" />
+  </CButton>
+
+  <!-- ===== Twin Arsenal ===== -->
+  <!-- No weapon swap: Fenix stays on the Repeater Cannon and every 3rd attack also launches a Phase Bomb (script); Shield Capacitor regenerates twice as fast; Purification Salvo at level 1 (Planet Cracker disabled). Bombardment quest (50% kept): 0.2% Basic Attack damage per Phase Bomb hit on an enemy Hero, dinged every 10. Arsenal Mastery quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 more Phase Bombs (every 2nd attack at 40, script), 41-80 1% attack range each, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="FenixGoldenBombardmentTokenCounter" parent="StormQuestToken">
+    <Face value="FenixGoldenBombardmentTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="FenixGoldenArsenalMasteryTokenCounter" parent="StormQuestToken">
+    <Face value="FenixGoldenArsenalMasteryTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="FenixGoldenBombardmentTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="FenixGoldenBombardmentTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="FenixHeroWeaponDamage">
+    <MultiplicativeModifierArray index="FenixTwinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombWeaponDamage">
+    <MultiplicativeModifierArray index="FenixTwinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombSplashDamage">
+    <MultiplicativeModifierArray index="FenixTwinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroWeaponDamage">
+    <MultiplicativeModifierArray index="FenixTwinHit" Accumulator="FenixGoldenBombardmentTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombWeaponDamage">
+    <MultiplicativeModifierArray index="FenixTwinHit" Accumulator="FenixGoldenBombardmentTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombSplashDamage">
+    <MultiplicativeModifierArray index="FenixTwinHit" Accumulator="FenixGoldenBombardmentTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="FenixGoldenBombardmentTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_fenix_w_1.dds" />
+  </CButton>
+  <CButton id="FenixGoldenArsenalMasteryTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_fenix_w_1.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="FenixGoldenWarpShotDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenWarpShotBombDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroWeaponDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombWeaponDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixHeroPhaseBombSplashDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenWarpBlastDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixPurificationSalvoDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixPlanetCrackerDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixOffensiveCadenceDamage">
+    <MultiplicativeModifierArray index="FenixPlasmaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixPlasmaCutterDamage">
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenCutterEchoDamage">
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixGoldenSearingArcDamage">
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="FenixPurificationSalvoSecondaryFireDamage">
+    <MultiplicativeModifierArray index="FenixWarpLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="FenixTwinLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <CValidatorUnitCompareBehaviorCount id="FenixGoldenCasterHasSearingArc">
+    <WhichUnit Value="Caster" />
+    <Behavior value="FenixGoldenSearingArcMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="FenixGoldenCasterIsWarpStriker">
+    <WhichUnit Value="Caster" />
+    <Behavior value="FenixGoldenWarpMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="FenixGoldenCasterHasShieldPhase">
+    <WhichUnit Value="Caster" />
+    <Behavior value="FenixGoldenShieldPhaseMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="FenixGoldenCasterHasOverloadShells">
+    <WhichUnit Value="Caster" />
+    <Behavior value="FenixGoldenOverloadShellsMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="FenixGoldenCasterIsEmpowered">
+    <WhichUnit Value="Caster" />
+    <Behavior value="FenixGoldenWarpEmpowered" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="FenixGoldenSourceIsWarpShot">
+    <WhichUnit Value="Source" />
+    <Behavior value="FenixGoldenWarpShotMissile" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareTokenCount id="FenixGoldenExecutionAt100">
+    <WhichUnit Value="Caster" />
+    <TokenId value="FenixGoldenExecutionTokenCounter" />
+    <Compare value="GE" />
+    <Value value="100" />
+  </CValidatorUnitCompareTokenCount>
+  <CValidatorUnitCompareTokenCount id="FenixGoldenWarpDoctrineAt100">
+    <WhichUnit Value="Caster" />
+    <TokenId value="FenixGoldenWarpDoctrineTokenCounter" />
+    <Compare value="GE" />
+    <Value value="100" />
+  </CValidatorUnitCompareTokenCount>
+
+  <!-- Arsenal Overcharge's cooldown cuts do nothing on an ability with charges: cut the recharges too -->
+  <CEffectModifyUnit id="FenixArsenalOverchargeModifyCooldowns">
+    <Cost Abil="FenixPlasmaCutter,Execute" ChargeTimeUse="-0.5" />
+    <Cost Abil="FenixWarp,Execute" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+
+  <!-- ===== Plasma Executor ===== -->
+  <!-- Plasma Cutter's own hit effects, plus the Plasma Executor ones -->
+  <CEffectSet id="FenixPlasmaCutterImpactSet">
+    <EffectArray value="FenixGoldenCutterEchoPersistent" />
+    <EffectArray value="FenixGoldenSearingArcApply" />
+  </CEffectSet>
+  <!-- 100 Execution stacks: every enemy hit by Plasma Cutter is cut again 0.5 seconds later for 50% -->
+  <CEffectCreatePersistent id="FenixGoldenCutterEchoPersistent">
+    <ValidatorArray value="FenixGoldenExecutionAt100" />
+    <WhichLocation Value="TargetUnit" />
+    <InitialDelay value="0.5" />
+    <PeriodCount value="1" />
+    <PeriodicEffectArray value="FenixGoldenCutterEchoDamage" />
+  </CEffectCreatePersistent>
+  <!-- Searing Arc (Epic): enemies hit burn for 40% of Plasma Cutter's damage over 2 seconds (4 ticks of 10%) -->
+  <CBehaviorBuff id="FenixGoldenSearingArcBurn">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_fenix_q.dds" />
+    <Alignment value="Negative" />
+    <Duration value="2.0625" />
+    <Period value="0.5" />
+    <PeriodicEffect value="FenixGoldenSearingArcDamage" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="FenixGoldenSearingArcApply">
+    <ValidatorArray value="FenixGoldenCasterHasSearingArc" />
+    <Behavior value="FenixGoldenSearingArcBurn" />
+  </CEffectApplyBehavior>
+
+  <!-- ===== Warp Striker ===== -->
+  <!-- After a Warp, the next 3 Basic Attacks (up to 7 with Warp Doctrine) deal 50% more damage: each attack fired while
+       empowered tags its missile, and a tagged missile's hit adds a second damage of half the attack's (the script copies
+       the attacks' Amounts) -->
+  <CBehaviorBuff id="FenixGoldenWarpEmpowered">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_fenix_teleport.dds" />
+    <Alignment value="Positive" />
+    <MaxStackCount value="7" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="FenixGoldenWarpShotMissile" />
+  <CEffectRemoveBehavior id="FenixGoldenWarpEmpoweredClear">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="FenixGoldenWarpEmpowered" />
+  </CEffectRemoveBehavior>
+  <CEffectApplyBehavior id="FenixGoldenWarpEmpoweredApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="FenixGoldenWarpEmpowered" />
+    <Count value="3" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="FenixGoldenWarpShotTag">
+    <ValidatorArray value="FenixGoldenCasterIsEmpowered" />
+    <WhichUnit Value="Source" />
+    <Behavior value="FenixGoldenWarpShotMissile" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="FenixGoldenWarpShotConsume">
+    <ValidatorArray value="FenixGoldenCasterIsEmpowered" />
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="FenixGoldenWarpEmpowered" />
+    <Count value="1" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="FenixHeroWeaponLaunchMissileSet">
+    <EffectArray value="FenixGoldenWarpShotTag" />
+    <EffectArray value="FenixGoldenWarpShotConsume" />
+  </CEffectSet>
+  <CEffectSet id="FenixPhaseBombLaunchMissileSet">
+    <EffectArray value="FenixGoldenWarpShotTag" />
+    <EffectArray value="FenixGoldenWarpShotConsume" />
+  </CEffectSet>
+  <CEffectSet id="FenixHeroWeaponMissileImpactSet">
+    <EffectArray value="FenixGoldenWarpShotDamage" />
+  </CEffectSet>
+  <CEffectSet id="FenixHeroWeaponPhaseBombMissileImpactSet">
+    <EffectArray value="FenixGoldenWarpShotBombDamage" />
+  </CEffectSet>
+  <!-- Leaving (Fenix is still at the start when Warp's cast ends) and arriving -->
+  <CEffectSet id="FenixWarpInitialSet">
+    <EffectArray value="FenixGoldenWarpDepartBlast" />
+  </CEffectSet>
+  <CEffectSet id="FenixWarpWarpingInExpireSet">
+    <EffectArray value="FenixGoldenWarpArriveSet" />
+  </CEffectSet>
+  <CEffectSet id="FenixGoldenWarpArriveSet">
+    <ValidatorArray value="FenixGoldenCasterIsWarpStriker" />
+    <EffectArray value="FenixGoldenWarpEmpoweredClear" />
+    <EffectArray value="FenixGoldenWarpEmpoweredApply" />
+    <EffectArray value="FenixGoldenShieldPhaseRestore" />
+    <EffectArray value="FenixGoldenWarpArriveBlast" />
+  </CEffectSet>
+  <!-- 100 Warp Doctrine stacks: a Phase Bomb blast (radius 3) where Fenix leaves and where he arrives -->
+  <CEffectEnumArea id="FenixGoldenWarpDepartBlast">
+    <ValidatorArray value="FenixGoldenWarpDoctrineAt100" />
+    <ImpactLocation Value="CasterUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="FenixGoldenWarpBlastDamage">
+      <Radius value="3" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectEnumArea id="FenixGoldenWarpArriveBlast">
+    <ValidatorArray value="FenixGoldenWarpDoctrineAt100" />
+    <ImpactLocation Value="CasterUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="FenixGoldenWarpBlastDamage">
+      <Radius value="3" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <!-- Shield Phase (Epic): arriving with Warp restores 25% of Fenix's Shields -->
+  <CEffectModifyUnit id="FenixGoldenShieldPhaseRestore">
+    <ValidatorArray value="FenixGoldenCasterHasShieldPhase" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Shields">
+      <ChangeFraction value="0.25" />
+    </VitalArray>
+  </CEffectModifyUnit>
+
+  <!-- ===== Twin Arsenal ===== -->
+  <!-- No weapon swap (Fenix stays on the Repeater Cannon), Shield Capacitor regenerates twice as fast. The script adds a
+       Phase Bomb to every 3rd attack (every 2nd at 40 Arsenal Mastery stacks). -->
+  <CBehaviorBuff id="FenixGoldenTwinArsenal" parent="CarryBehaviorParent">
+    <Modification>
+      <AbilLinkDisableArray value="FenixPhaseBomb" />
+      <VitalRegenMultiplier index="Shields" value="1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- the extra Phase Bomb: Phase Bomb's own launch, without the attack's launch effects -->
+  <CEffectSet id="FenixGoldenFreeBombSet">
+    <EffectArray value="FenixHeroWeaponPhaseBombLaunchMissile" />
+    <EffectArray value="FenixPhaseBombRemoveArsenalSynergyBehavior" />
+    <EffectArray value="FenixPhaseBombArsenalSynergyDecrementToken" />
+    <EffectArray value="FenixPhaseBombInhibitingEnergyTalentApplyCooldown" />
+  </CEffectSet>
+  <!-- Capacitors (Common, up to 3): 2% Attack Speed each -->
+  <CBehaviorBuff id="FenixGoldenCapacitors" parent="CarryBehaviorParent">
+    <MaxStackCount value="3" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.02" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Overload Shells (Epic): Phase Bombs Slow by 25% for 1 second -->
+  <CEffectSet id="FenixPhaseBombPrimaryWeaponPostImpactSet">
+    <EffectArray value="FenixGoldenOverloadSlowApply" />
+  </CEffectSet>
+  <CEffectSet id="FenixPhaseBombSplashWeaponPostImpactSet">
+    <EffectArray value="FenixGoldenOverloadSlowApply" />
+  </CEffectSet>
+  <CBehaviorBuff id="FenixGoldenOverloadSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_fenix_w_2.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.25" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="FenixGoldenOverloadSlowApply" parent="StormSlowApply">
+    <ValidatorArray value="FenixGoldenCasterHasOverloadShells" />
+    <Behavior value="FenixGoldenOverloadSlow" />
+  </CEffectApplyBehavior>
+</Catalog>
