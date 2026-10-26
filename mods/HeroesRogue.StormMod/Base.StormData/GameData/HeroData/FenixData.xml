@@ -140,7 +140,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Twin Arsenal ===== -->
-  <!-- No weapon swap: Fenix stays on the Repeater Cannon and every 3rd attack also launches a Phase Bomb (script); Shield Capacitor regenerates twice as fast; Purification Salvo at level 1 (Planet Cracker disabled). Bombardment quest (50% kept): 0.2% Basic Attack damage per Phase Bomb hit on an enemy Hero, dinged every 10. Arsenal Mastery quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each (up to 20%, script), 41-80 1% attack range each, then 2.5% all damage each. -->
+  <!-- No weapon swap: Fenix stays on the Repeater Cannon and every 3rd attack also launches a Phase Bomb (script); Shield Capacitor regenerates twice as fast; Purification Salvo at level 1 (Planet Cracker disabled). Bombardment quest (50% kept): 0.4% Basic Attack damage per Phase Bomb hit on an enemy Hero, dinged every 10. Arsenal Mastery quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each (up to 20%, script), 41-80 1% attack range each, then 2.5% all damage each. -->
   <CBehaviorTokenCounter id="FenixGoldenBombardmentTokenCounter" parent="StormQuestToken">
     <Face value="FenixGoldenBombardmentTokenCounter" />
     <Max value="100000" />
@@ -154,7 +154,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="FenixGoldenBombardmentTokenCounter" />
-    <Scale value="0.002" />
+    <Scale value="0.004" />
   </CAccumulatorToken>
   <CEffectDamage id="FenixHeroWeaponDamage">
     <MultiplicativeModifierArray index="FenixTwinPower" Modifier="0" />
