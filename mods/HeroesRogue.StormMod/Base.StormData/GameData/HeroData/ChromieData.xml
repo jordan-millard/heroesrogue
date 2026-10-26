@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves and Slow them after the Time Stop; Time Troubles; Andorhal Anomaly). The Slow is 65% (25% + 40%) and lasts 4 seconds (3 + 1). All of Chromie's damage to slowed enemy Heroes is 50% higher (SLOWED: Modifier 0 in data, set to 0.5 for this player). An enemy Hero Time Stopped by a trap (seen by the script) resets Sand Blast, Dragon's Breath and Time Trap. Resonance quest (50% kept): 0.25% more damage to slowed Heroes per enemy Hero Time Stopped. Timeline quest: takedowns within 6 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 each Time Stop heals 0.25% of maximum Health each, 41-80 the Slow 0.25% stronger each (to 75%), 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
+  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves and Slow them after the Time Stop; Time Troubles; Andorhal Anomaly). The Slow is 65% (25% + 40%) and lasts 4 seconds (3 + 1). All of Chromie's damage to slowed enemy Heroes is 50% higher (SLOWED: Modifier 0 in data, set to 0.5 for this player). An enemy Hero Time Stopped by a trap (seen by the script) resets Sand Blast, Dragon's Breath and Time Trap and restores 5% of maximum Mana. Resonance quest (50% kept): 1% more damage to slowed Heroes per enemy Hero Time Stopped. Timeline quest: takedowns within 6 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 each Time Stop heals 0.25% of maximum Health each, 41-80 the Slow 0.25% stronger each (to 75%), 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
   <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenResonanceTokenCounter" />
     <Max value="100000" />
@@ -118,7 +118,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ChromieGoldenResonanceTokenCounter" />
-    <Scale value="0.0025" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="ChromieSandBlastDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
