@@ -22645,6 +22645,7 @@
 
 
 
+
         <Instances Id="CassiaValkyriesJavelin">
             <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
                 <Field Id="Icon" />
@@ -22995,6 +22996,12 @@
             <String String="AmazonValkyrie">
                 <Field Id="TalentsAdd" />
             </String>
+            <String String="AmazonChargedStrikes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="AmazonFendWarMatron">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
             <String String="AmazonBallLightning">
                 <Field Id="TalentsDisable" />
             </String>
@@ -23010,7 +23017,7 @@
             <String String="1 0 AmazonGoldenSkirmisherGuard">
                 <Field Id="Behavior" Index="3" />
             </String>
-            <String String="1 0 AmazonGoldenVolleyTokenCounter">
+            <String String="1 0 AmazonGoldenEmpoweredFendTokenCounter">
                 <Field Id="Behavior" Index="4" />
             </String>
             <String String="AmazonGoldenSkirmisherTokenCounter 1.0">
@@ -23040,11 +23047,8 @@
             <String String="1 1 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,AmazonGoldenBounceDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
             <String String="1 1 Set Effect,AmazonGoldenSkirmishMaxHealthDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="8" />
+                <Field Id="CatalogModification" Index="7" />
             </String>
             <String String="AffixAdded libAffx_CassiaStart">
                 <Field Id="Trigger" />
@@ -23084,11 +23088,8 @@
             <String String="1 2 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 2 Set Effect,AmazonGoldenBounceDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
             <String String="1 2 Set Effect,AmazonGoldenSkirmishMaxHealthDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
-                <Field Id="CatalogModification" Index="6" />
+                <Field Id="CatalogModification" Index="5" />
             </String>
         </Instances>
         <Instances Id="CassiaLightFeet">
@@ -23111,8 +23112,8 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
-        <Instances Id="CassiaChargedStrikesBoon">
-            <String String="Assets/Textures/storm_ui_icon_cassia_new_chargedstrikes.dds">
+        <Instances Id="CassiaGlovesOfAlacrityBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_new_gloves.dds">
                 <Field Id="Icon" />
             </String>
             <String String="Uncommon">
@@ -23124,7 +23125,7 @@
             <User Type="Affix" Instance="CassiaSkirmisher">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="AmazonChargedStrikes">
+            <String String="AmazonFendGlovesOfAlacrity">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>

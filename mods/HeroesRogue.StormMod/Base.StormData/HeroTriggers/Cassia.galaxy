@@ -7,8 +7,8 @@ include "AffixTriggers"
 // 41-80 width, 81-100 a Slow, 100 an echo throw for half damage, then 2.5% all damage each.
 // Warden of Arreat: Fend Strikes counts each enemy Hero once per Fend; Fend Mastery stacks 1-40 cooldown, 41-80
 // arc, 81-100 strike speed, 100 a final strike, then 2.5% all damage each. A full Fend heals 5% (data).
-// Skirmisher: Basic Attacks bounce (data). Skirmish counts Basic Attacks on Heroes for Fend damage; every 10
-// empower the next Fend. Hit and Run stacks 1-40 Attack Speed, 41-80 shorter Slows and Stuns, 100 maximum
+// Skirmisher: Skirmish counts Basic Attacks on Heroes for Fend damage; every 10 empower the next Fend to
+// Root (data). Hit and Run stacks 1-40 Attack Speed, 41-80 shorter Slows and Stuns, 100 maximum
 // Health damage on Basic Attacks, then 1.5% all damage each.
 // ============================================================
 
@@ -100,7 +100,6 @@ void libAffx_CassiaSyncJavelin () {
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenBounceDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenSkirmishMaxHealthDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonAvoidanceSurgeOfLightDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBlindingLightDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
@@ -148,7 +147,6 @@ void libAffx_CassiaSyncFend () {
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenBounceDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenSkirmishMaxHealthDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonAvoidanceSurgeOfLightDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBlindingLightDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
@@ -178,7 +176,6 @@ void libAffx_CassiaSyncSkirm () {
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenBounceDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenSkirmishMaxHealthDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryLightningDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
@@ -199,8 +196,7 @@ bool libAffx_CassiaSync_Func (bool testConds, bool runActions) {
     libAffx_CassiaSyncSkirm();
     return true;
 }
-// Kiting Shot and Storm Spear follow Lightning Fury, and the Skirmisher bounce follows the Basic Attack (level scaling):
-// copy their Amount each second. The Fend blast (Warden of Arreat at 100 Fend Mastery stacks) is turned on here too.
+// Kiting Shot and Storm Spear follow Lightning Fury (level scaling): copy their Amount each second. The Fend blast (Warden of Arreat at 100 Fend Mastery stacks) is turned on here too.
 bool libAffx_CassiaAmounts_Func (bool testConds, bool runActions) {
     unit hero = libAffx_CassiaHero();
     string blast = "0";
@@ -208,8 +204,6 @@ bool libAffx_CassiaAmounts_Func (bool testConds, bool runActions) {
                          CatalogFieldValueGet(c_gameCatalogEffect, "AmazonLightningFuryLightningDamage", "Amount", libAffx_player));
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "Amount", libAffx_player,
                          CatalogFieldValueGet(c_gameCatalogEffect, "AmazonLightningFuryDamage", "Amount", libAffx_player));
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenBounceDamage", "Amount", libAffx_player,
-                         CatalogFieldValueGet(c_gameCatalogEffect, "AmazonHeroWeaponDamage", "Amount", libAffx_player));
     if (hero != null && UnitHasBehavior2(hero, "AmazonGoldenWardenMarker") && libAffx_CassiaStacks("AmazonGoldenFendMasteryTokenCounter") >= 100) {
         blast = "1";
     }
@@ -298,12 +292,12 @@ bool libAffx_CassiaFendCast_Func (bool testConds, bool runActions) {
     return true;
 }
 // Skirmisher: an empowered Fend was cast (its data removes the buff), so the counter starts again from 0
-bool libAffx_CassiaVolleyUsed_Func (bool testConds, bool runActions) {
+bool libAffx_CassiaEmpoweredFendUsed_Func (bool testConds, bool runActions) {
     unit hero = libAffx_CassiaHero();
     if (hero == null || EventUnit() != hero) {
         return false;
     }
-    libGame_gf_ModifyTokenCount(-libAffx_CassiaStacks("AmazonGoldenVolleyTokenCounter"), "AmazonGoldenVolleyTokenCounter", hero);
+    libGame_gf_ModifyTokenCount(-libAffx_CassiaStacks("AmazonGoldenEmpoweredFendTokenCounter"), "AmazonGoldenEmpoweredFendTokenCounter", hero);
     return true;
 }
 // Fend Strikes quest gate: an enemy Hero counts once per Fend
@@ -455,10 +449,10 @@ bool libAffx_CassiaSkirmHit_Func (bool testConds, bool runActions) {
             UnitCreateEffectUnit(hero, "AmazonGoldenKitingShotDamage", victim);
         }
     }
-    if (!UnitHasBehavior2(hero, "AmazonGoldenVolleyReady")) {
-        libGame_gf_ModifyTokenCount(1, "AmazonGoldenVolleyTokenCounter", hero);
-        if (libAffx_CassiaStacks("AmazonGoldenVolleyTokenCounter") >= 10) {
-            UnitBehaviorAdd(hero, "AmazonGoldenVolleyReady", hero, 1);
+    if (!UnitHasBehavior2(hero, "AmazonGoldenEmpoweredFendReady")) {
+        libGame_gf_ModifyTokenCount(1, "AmazonGoldenEmpoweredFendTokenCounter", hero);
+        if (libAffx_CassiaStacks("AmazonGoldenEmpoweredFendTokenCounter") >= 10) {
+            UnitBehaviorAdd(hero, "AmazonGoldenEmpoweredFendReady", hero, 1);
         }
     }
     if (libAffx_CassiaStacks("AmazonGoldenSkirmisherTokenCounter") >= 100) {
@@ -521,7 +515,7 @@ bool libAffx_CassiaStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_CassiaFendCast_Func"), libAffx_player, "AmazonFendChannelCreatePersistent");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_CassiaSkirmish_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_CassiaHurt_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
-    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_CassiaVolleyUsed_Func"), null, "AmazonGoldenVolleyReady", c_unitBehaviorChangeDestroy);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_CassiaEmpoweredFendUsed_Func"), null, "AmazonGoldenEmpoweredFendReady", c_unitBehaviorChangeDestroy);
     trig = TriggerCreate("libAffx_CassiaTenacity_Func");
     TriggerAddEventUnitBehaviorChangeFromCategory(trig, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChangeFromCategory(trig, null, c_behaviorCategoryStun, c_unitBehaviorChangeRefresh);

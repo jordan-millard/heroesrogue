@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Skirmisher (Basic Attacks: range, bounces, empowered Fend; Valkyrie at level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
+  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Skirmisher (Basic Attack range, an empowered Fend that Roots; Valkyrie, Charged Strikes and War Matron). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="AmazonGoldenJavelinMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AmazonGoldenWardenMarker" parent="CarryBehaviorParent" />
@@ -26,12 +26,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="KitingShot" Modifier="-0.5" />
     <Amount value="158" />
     <SourceButtonFace value="AmazonLightningFury" />
-  </CEffectDamage>
-  <!-- Skirmisher bounce: 50% of a Basic Attack. The script copies the Basic Attack's Amount (level scaling). -->
-  <CEffectDamage id="AmazonGoldenBounceDamage" parent="StormWeapon">
-    <MultiplicativeModifierArray index="Bounce" Modifier="-0.5" />
-    <Amount value="125" />
-    <SourceButtonFace value="Attack" />
   </CEffectDamage>
   <!-- Takedown quest 100: Basic Attacks on enemy Heroes also deal 1% of their maximum Health (script) -->
   <CEffectDamage id="AmazonGoldenSkirmishMaxHealthDamage" parent="StormSpellPercentDamage">
@@ -124,7 +118,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Skirmisher ===== -->
-  <!-- Basic Attack range +2.1 (4.5 to 6.6); Basic Attacks bounce to the 2 nearest other enemies within 3.5 for 50% damage; Valkyrie at level 1 (Ball Lightning disabled). Skirmish quest (50% kept): 0.2% Fend damage per Basic Attack on an enemy Hero; every 10 empower the next Fend to fire a Basic Attack at every enemy within 6.6 (script). Hit and Run quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each, 41-80 1% shorter Slows and Stuns on Cassia each (script), 100 Basic Attacks on Heroes add 1% of their maximum Health (script), then 1.5% all damage past 100. -->
+  <!-- Basic Attack range +2.1 (4.5 to 6.6); Valkyrie at level 1 (Ball Lightning disabled), Charged Strikes and War Matron. Skirmish quest (50% kept): 0.2% Fend damage per Basic Attack on an enemy Hero; every 10 empower the next Fend to Root each enemy it hits for 1.5 seconds (counter: script; Root: data). Hit and Run quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each, 41-80 1% shorter Slows and Stuns on Cassia each (script), 100 Basic Attacks on Heroes add 1% of their maximum Health (script), then 1.5% all damage past 100. -->
   <CBehaviorTokenCounter id="AmazonGoldenSkirmishTokenCounter" parent="StormQuestToken">
     <Face value="AmazonGoldenSkirmishTokenCounter" />
     <Max value="100000" />
@@ -169,11 +163,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
   </CEffectDamage>
-  <CEffectDamage id="AmazonGoldenBounceDamage">
-    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
-  </CEffectDamage>
   <CEffectDamage id="AmazonGoldenSkirmishMaxHealthDamage">
     <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
@@ -211,10 +200,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="AmazonGoldenKitingShotDamage">
-    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="AmazonGoldenBounceDamage">
     <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
   </CEffectDamage>
@@ -302,15 +287,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
 
   <!-- ===== Warden of Arreat ===== -->
-  <!-- A full Fend (every strike) heals Cassia for 5% of her maximum Health (Warden) and fires the empowered Fend's
-       volley again (Skirmisher) -->
+  <!-- A full Fend (every strike) heals Cassia for 5% of her maximum Health -->
   <CEffectCreatePersistent id="AmazonFendChannelCreatePersistent">
-    <ExpireEffect value="AmazonGoldenFendFinishSet" />
+    <ExpireEffect value="AmazonGoldenFendFinishHeal" />
   </CEffectCreatePersistent>
-  <CEffectSet id="AmazonGoldenFendFinishSet">
-    <EffectArray value="AmazonGoldenFendFinishHeal" />
-    <EffectArray value="AmazonGoldenVolleyFinishSet" />
-  </CEffectSet>
   <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterIsWarden">
     <WhichUnit Value="Caster" />
     <Behavior value="AmazonGoldenWardenMarker" />
@@ -368,31 +348,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
-  <!-- Basic Attacks bounce to the 2 nearest other enemies within 3.5 for 50% damage (Charged Strikes' bounce visuals) -->
-  <CEffectSet id="AmazonWeaponPrimaryPostImpactSet">
-    <EffectArray value="AmazonGoldenBounceSearch" />
-  </CEffectSet>
-  <CEffectEnumArea id="AmazonGoldenBounceSearch">
-    <ValidatorArray value="AmazonGoldenCasterIsSkirmisher" />
-    <ExcludeArray Value="Target" />
-    <SearchFilters value="Visible;Self,Player,Ally,Neutral,Structure,Missile,Item,Stasis,Dead,Hidden,Invulnerable,Benign" />
-    <TargetSorts>
-      <SortArray value="TSDistance" />
-    </TargetSorts>
-    <AreaArray Effect="AmazonGoldenBounceImpactSet" MaxCount="2">
-      <Radius value="3.5" />
-    </AreaArray>
-    <SearchFlags index="ExtendByUnitRadius" value="1" />
-  </CEffectEnumArea>
-  <CEffectSet id="AmazonGoldenBounceImpactSet">
-    <EffectArray value="AmazonGoldenBounceDamage" />
-  </CEffectSet>
-  <CActorSite id="AmazonHeroWeaponChargedStrikesLaunchSite">
-    <On Terms="Effect.AmazonGoldenBounceSearch.Start; At Target" Send="Create" />
-  </CActorSite>
-  <CActorSite id="AmazonHeroWeaponChargedStrikesImpactSite">
-    <On Terms="Effect.AmazonGoldenBounceImpactSet.Start; At Target" Send="Create" />
-  </CActorSite>
   <!-- Takedown quest 1-40: 0.5% Attack Speed per stack (the script sets the stack count) -->
   <CBehaviorBuff id="AmazonGoldenSkirmisherAttackSpeed" parent="CarryBehaviorParent">
     <InfoFlags index="Hidden" value="1" />
@@ -401,77 +356,83 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <AdditiveAttackSpeedFactor value="0.005" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Skirmish quest: every 10 Basic Attacks on enemy Heroes empower the next Fend to fire a Basic Attack at every enemy
-       within 6.6 of Cassia, and again when that Fend is fully channeled. The counter shows progress (script; its Max is
-       high so it never shows the quest complete banner); casting an empowered Fend uses it up (data). -->
-  <CBehaviorTokenCounter id="AmazonGoldenVolleyTokenCounter" parent="StormQuestToken">
-    <Face value="AmazonGoldenVolleyTokenCounter" />
+  <!-- Skirmish quest: every 10 Basic Attacks on enemy Heroes empower the next Fend: each enemy it hits is Rooted for 1.5
+       seconds (once per enemy). The counter shows progress (script; its Max is high so it never shows the quest complete
+       banner); casting an empowered Fend uses it up (data). -->
+  <CBehaviorTokenCounter id="AmazonGoldenEmpoweredFendTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenEmpoweredFendTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
-  <CButton id="AmazonGoldenVolleyTokenCounter" parent="StormButtonParent">
+  <CButton id="AmazonGoldenEmpoweredFendTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
   </CButton>
-  <CBehaviorBuff id="AmazonGoldenVolleyReady">
+  <CBehaviorBuff id="AmazonGoldenEmpoweredFendReady">
     <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
     <BehaviorFlags index="Permanent" value="1" />
   </CBehaviorBuff>
-  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterVolleyReady">
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterEmpoweredFendReady">
     <WhichUnit Value="Caster" />
-    <Behavior value="AmazonGoldenVolleyReady" />
+    <Behavior value="AmazonGoldenEmpoweredFendReady" />
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
   <CEffectSet id="AmazonFendChannelInitialSet">
-    <EffectArray value="AmazonGoldenVolleySet" />
+    <EffectArray value="AmazonGoldenEmpoweredFendSet" />
   </CEffectSet>
-  <CEffectSet id="AmazonGoldenVolleySet">
-    <ValidatorArray value="AmazonGoldenCasterVolleyReady" />
-    <EffectArray value="AmazonGoldenVolleyChannelApply" />
-    <EffectArray value="AmazonGoldenVolleyConsume" />
-    <EffectArray value="AmazonGoldenVolleySearch" />
+  <CEffectSet id="AmazonGoldenEmpoweredFendSet">
+    <ValidatorArray value="AmazonGoldenCasterEmpoweredFendReady" />
+    <EffectArray value="AmazonGoldenEmpoweredFendChannelApply" />
+    <EffectArray value="AmazonGoldenEmpoweredFendConsume" />
   </CEffectSet>
-  <!-- marks the empowered Fend while it channels; a full channel fires the volley again -->
-  <CBehaviorBuff id="AmazonGoldenVolleyChannel">
+  <CEffectRemoveBehavior id="AmazonGoldenEmpoweredFendConsume">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="AmazonGoldenEmpoweredFendReady" />
+  </CEffectRemoveBehavior>
+  <!-- marks Cassia while the empowered Fend channels (longer than the channel) -->
+  <CBehaviorBuff id="AmazonGoldenEmpoweredFendChannel">
     <InfoFlags index="Hidden" value="1" />
-    <Duration value="3" />
+    <Duration value="2.5" />
   </CBehaviorBuff>
-  <CEffectApplyBehavior id="AmazonGoldenVolleyChannelApply">
+  <CEffectApplyBehavior id="AmazonGoldenEmpoweredFendChannelApply">
     <WhichUnit Value="Caster" />
-    <Behavior value="AmazonGoldenVolleyChannel" />
+    <Behavior value="AmazonGoldenEmpoweredFendChannel" />
   </CEffectApplyBehavior>
-  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterVolleyChanneling">
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterEmpoweredFendChanneling">
     <WhichUnit Value="Caster" />
-    <Behavior value="AmazonGoldenVolleyChannel" />
+    <Behavior value="AmazonGoldenEmpoweredFendChannel" />
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
-  <CEffectSet id="AmazonGoldenVolleyFinishSet">
-    <ValidatorArray value="AmazonGoldenCasterVolleyChanneling" />
-    <EffectArray value="AmazonGoldenVolleyChannelRemove" />
-    <EffectArray value="AmazonGoldenVolleySearch" />
+  <!-- each Fend hit: Root the enemy unless this Fend already Rooted it -->
+  <CEffectSet id="AmazonFendChannelImpactSet">
+    <EffectArray value="AmazonGoldenEmpoweredFendRootSet" />
   </CEffectSet>
-  <CEffectRemoveBehavior id="AmazonGoldenVolleyChannelRemove">
-    <WhichUnit Value="Caster" />
-    <BehaviorLink value="AmazonGoldenVolleyChannel" />
-  </CEffectRemoveBehavior>
-  <CEffectRemoveBehavior id="AmazonGoldenVolleyConsume">
-    <WhichUnit Value="Caster" />
-    <BehaviorLink value="AmazonGoldenVolleyReady" />
-  </CEffectRemoveBehavior>
-  <CEffectEnumArea id="AmazonGoldenVolleySearch">
-    <ImpactLocation Value="CasterUnit" />
-    <SearchFilters value="Visible;Self,Player,Ally,Neutral,Missile,Item,Stasis,Dead,Hidden,Invulnerable,Benign" />
-    <AreaArray Effect="AmazonGoldenVolleyMissile">
-      <Radius value="6.6" />
-    </AreaArray>
-    <SearchFlags index="ExtendByUnitRadius" value="1" />
-  </CEffectEnumArea>
-  <CEffectLaunchMissile id="AmazonGoldenVolleyMissile">
-    <ValidatorArray value="TargetNotDead" />
-    <LaunchLocation Value="CasterUnit" />
-    <ImpactEffect value="AmazonChargedStrikesWeaponDamageSwitch" />
-    <AmmoUnit value="AmazonHeroWeaponMissile" />
-  </CEffectLaunchMissile>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenTargetNotRootedByFend">
+    <WhichUnit Value="Target" />
+    <Behavior value="AmazonGoldenEmpoweredFendRooted" />
+    <Compare value="EQ" />
+    <Value value="0" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="AmazonGoldenEmpoweredFendRootSet">
+    <ValidatorArray value="AmazonGoldenCasterEmpoweredFendChanneling" />
+    <ValidatorArray value="AmazonGoldenTargetNotRootedByFend" />
+    <EffectArray value="AmazonGoldenEmpoweredFendRootApply" />
+    <EffectArray value="AmazonGoldenEmpoweredFendRootedApply" />
+  </CEffectSet>
+  <CBehaviorBuff id="AmazonGoldenEmpoweredFendRoot" parent="StormRoot">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+    <Duration value="1.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenEmpoweredFendRootApply">
+    <Behavior value="AmazonGoldenEmpoweredFendRoot" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="AmazonGoldenEmpoweredFendRooted">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="2.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenEmpoweredFendRootedApply">
+    <Behavior value="AmazonGoldenEmpoweredFendRooted" />
+  </CEffectApplyBehavior>
   <!-- Gloves of Alacrity resets the Basic Attack range by setting it (4.5, or 5.5 with the talent), which would drop
        Skirmisher's 2.1; add it back after each reset -->
   <CBehaviorBuff id="AmazonGlovesOfAlacrityBaseAttackRangeBehavior">
