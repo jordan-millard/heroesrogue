@@ -397,12 +397,38 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <!-- Skirmish quest: every 10 Basic Attacks on enemy Heroes empower the next Fend to fire a Basic Attack at every enemy
-       within 6.6 (the script fires it when Fend is cast) -->
+       within 6.6 of Cassia. The counter shows progress (script); casting an empowered Fend uses it up (data). -->
+  <CBehaviorTokenCounter id="AmazonGoldenVolleyTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenVolleyTokenCounter" />
+    <Max value="10" />
+  </CBehaviorTokenCounter>
+  <CButton id="AmazonGoldenVolleyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+  </CButton>
   <CBehaviorBuff id="AmazonGoldenVolleyReady">
     <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
     <BehaviorFlags index="Permanent" value="1" />
   </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterVolleyReady">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenVolleyReady" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="AmazonFendChannelInitialSet">
+    <EffectArray value="AmazonGoldenVolleySet" />
+  </CEffectSet>
+  <CEffectSet id="AmazonGoldenVolleySet">
+    <ValidatorArray value="AmazonGoldenCasterVolleyReady" />
+    <EffectArray value="AmazonGoldenVolleyConsume" />
+    <EffectArray value="AmazonGoldenVolleySearch" />
+  </CEffectSet>
+  <CEffectRemoveBehavior id="AmazonGoldenVolleyConsume">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="AmazonGoldenVolleyReady" />
+  </CEffectRemoveBehavior>
   <CEffectEnumArea id="AmazonGoldenVolleySearch">
+    <ImpactLocation Value="CasterUnit" />
     <SearchFilters value="Visible;Self,Player,Ally,Neutral,Missile,Item,Stasis,Dead,Hidden,Invulnerable,Benign" />
     <AreaArray Effect="AmazonGoldenVolleyMissile">
       <Radius value="6.6" />
@@ -411,6 +437,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectEnumArea>
   <CEffectLaunchMissile id="AmazonGoldenVolleyMissile">
     <ValidatorArray value="TargetNotDead" />
+    <LaunchLocation Value="CasterUnit" />
     <ImpactEffect value="AmazonHeroWeaponDamageSwitch" />
     <AmmoUnit value="AmazonHeroWeaponMissile" />
   </CEffectLaunchMissile>

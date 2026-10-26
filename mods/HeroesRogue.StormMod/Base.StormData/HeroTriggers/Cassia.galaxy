@@ -35,7 +35,6 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaFendCounted; // per enemy play
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaFendHitTime; // per enemy player, last Fend hit
 int[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaFendHits; // per enemy player, hits by the current Fend
 int libAffx_CassiaKiting; // Basic Attacks on Heroes toward the next Kiting Shot
-int libAffx_CassiaVolley; // Basic Attacks on Heroes toward the next empowered Fend
 fixed libAffx_CassiaMovingSince = -1.0; // Untouchable: when Cassia started moving unhurt
 fixed libAffx_CassiaHurtTime; // Untouchable: when Cassia last took damage
 
@@ -292,16 +291,19 @@ bool libAffx_CassiaStormSpear_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Fend casts: each Fend starts new counts (Fend Strikes gate, Hold the Line, Static Field shields). An empowered Fend
-// (Skirmisher) also fires a Basic Attack at every enemy within 6.6.
+// Fend casts: each Fend starts new counts (Fend Strikes gate, Hold the Line, Static Field shields)
 bool libAffx_CassiaFendCast_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_CassiaHero();
     libAffx_CassiaFendCast = GameGetMissionTime();
     libAffx_CassiaFendShields = 0;
-    if (hero != null && UnitHasBehavior2(hero, "AmazonGoldenVolleyReady")) {
-        UnitBehaviorRemove(hero, "AmazonGoldenVolleyReady", 1);
-        UnitCreateEffectUnit(hero, "AmazonGoldenVolleySearch", hero);
+    return true;
+}
+// Skirmisher: an empowered Fend was cast (its data removes the buff), so the counter starts again from 0
+bool libAffx_CassiaVolleyUsed_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_CassiaHero();
+    if (hero == null || EventUnit() != hero) {
+        return false;
     }
+    libGame_gf_ModifyTokenCount(-libAffx_CassiaStacks("AmazonGoldenVolleyTokenCounter"), "AmazonGoldenVolleyTokenCounter", hero);
     return true;
 }
 // Fend Strikes quest gate: an enemy Hero counts once per Fend
@@ -454,9 +456,8 @@ bool libAffx_CassiaSkirmHit_Func (bool testConds, bool runActions) {
         }
     }
     if (!UnitHasBehavior2(hero, "AmazonGoldenVolleyReady")) {
-        libAffx_CassiaVolley += 1;
-        if (libAffx_CassiaVolley >= 10) {
-            libAffx_CassiaVolley = 0;
+        libGame_gf_ModifyTokenCount(1, "AmazonGoldenVolleyTokenCounter", hero);
+        if (libAffx_CassiaStacks("AmazonGoldenVolleyTokenCounter") >= 10) {
             UnitBehaviorAdd(hero, "AmazonGoldenVolleyReady", hero, 1);
         }
     }
@@ -520,6 +521,7 @@ bool libAffx_CassiaStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_CassiaFendCast_Func"), libAffx_player, "AmazonFendChannelCreatePersistent");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_CassiaSkirmish_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_CassiaHurt_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_CassiaVolleyUsed_Func"), null, "AmazonGoldenVolleyReady", c_unitBehaviorChangeDestroy);
     trig = TriggerCreate("libAffx_CassiaTenacity_Func");
     TriggerAddEventUnitBehaviorChangeFromCategory(trig, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChangeFromCategory(trig, null, c_behaviorCategoryStun, c_unitBehaviorChangeRefresh);

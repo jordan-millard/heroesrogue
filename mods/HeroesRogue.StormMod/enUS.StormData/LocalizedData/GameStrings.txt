@@ -2175,8 +2175,10 @@ Behavior/Name/AmazonGoldenHoldTheLineSlow=Hold the Line
 Behavior/Tooltip/AmazonGoldenHoldTheLineSlow=Slowed by Cassia's Fend.
 Behavior/Name/AmazonGoldenStaticFieldShield=Static Field
 Behavior/Tooltip/AmazonGoldenStaticFieldShield=Shielded by Fend hits.
-Behavior/Name/AmazonGoldenVolleyReady=Skirmish
-Behavior/Tooltip/AmazonGoldenVolleyReady=The next Fend also fires a Basic Attack at every nearby enemy.
+Behavior/Name/AmazonGoldenVolleyReady=Empowered Fend
+Behavior/Tooltip/AmazonGoldenVolleyReady=The next Fend also fires a Basic Attack at every enemy within 6.6.
+Button/Name/AmazonGoldenVolleyTokenCounter=Empowered Fend
+Button/Tooltip/AmazonGoldenVolleyTokenCounter=<c val="#TooltipQuest">Basic Attacks on enemy Heroes: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:AmazonGoldenVolleyTokenCounter$" precision="0"/>/10</c></c><n/>At 10, your next Fend also fires a Basic Attack at every enemy within 6.6.
 Behavior/Name/AmazonGoldenUntouchableReady=Untouchable
 Behavior/Tooltip/AmazonGoldenUntouchableReady=The next Basic Attack deals triple damage and Stuns an enemy Hero.
 Behavior/Name/AmazonGoldenUntouchableStun=Untouchable
