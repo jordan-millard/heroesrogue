@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Chromie. Starters: Sand Sniper (Sand Blast), Bronze Breath (Dragon's Breath) and Chronomancer (every Sand Blast, Dragon's Breath blast and, with Paradox, Time Trap echoes). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests, echoes and script boons are in HeroTriggers/Chromie.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ChromieGoldenSniperMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenBreathMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenChronoMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenTemporalShardsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenHourglassMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenBronzeRingMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenInfiniteBreathMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenParadoxMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ChromieGoldenTimelineSplitMarker" parent="CarryBehaviorParent" />
+  <!-- Temporal Shards (Epic): the shard's explosion -->
+  <CEffectDamage id="ChromieGoldenShardDamage" parent="StormSpell">
+    <MultiplicativeModifierArray index="TemporalShards" Modifier="-0.6" />
+    <Amount value="305" />
+    <SourceButtonFace value="ChromieSandBlast" />
+    <AttributeFactor index="Structure" value="-0.5" />
+  </CEffectDamage>
+
+  <!-- ===== Sand Sniper ===== -->
+  <!-- Sand Blast has 2 charges (3 second recharge), costs half Mana (10), deals 20% more damage and reaches 20% farther (15 to 18); Bronze Talons and Piercing Sands. Pinpoint quest (50% kept): 0.5% Sand Blast damage per enemy Hero hit. Sands of Time quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% missile acceleration each, 81-100 1% width each, 100 a second Sand Blast for 50% (script), then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="ChromieGoldenPinpointTokenCounter" parent="StormQuestToken">
+    <Face value="ChromieGoldenPinpointTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ChromieGoldenSandsOfTimeTokenCounter" parent="StormQuestToken">
+    <Face value="ChromieGoldenSandsOfTimeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ChromieGoldenPinpointTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ChromieGoldenPinpointTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ChromieSandBlastDamage">
+    <MultiplicativeModifierArray index="ChromieSniperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieSniperCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieSniperHit" Accumulator="ChromieGoldenPinpointTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ChromieSniperLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieGoldenSniperEcho" Validator="ChromieGoldenSniperEchoing" Modifier="-0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieSandBlastPastAndFutureMeDamage">
+    <MultiplicativeModifierArray index="ChromieSniperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieSniperCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieSniperHit" Accumulator="ChromieGoldenPinpointTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ChromieSniperLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieGoldenShardDamage">
+    <MultiplicativeModifierArray index="ChromieSniperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieSniperCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieSniperHit" Accumulator="ChromieGoldenPinpointTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ChromieSniperLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ChromieGoldenPinpointTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Chromie_AetherCannon.dds" />
+  </CButton>
+  <CButton id="ChromieGoldenSandsOfTimeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Chromie_AetherCannon.dds" />
+  </CButton>
+
+  <!-- ===== Bronze Breath ===== -->
+  <!-- Dragon's Breath has 2 charges (14 second recharge), costs half Mana (32.5), deals 20% more damage and its blasts are 20% larger (radius 2 to 2.4, visuals too); Deep Breathing and Mobius Loop. Bronze Fire quest (50% kept): 1.5% Dragon's Breath damage per enemy Hero hit. Dragonflight quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% of the 0.6875 second delay each, 81-100 1% area each, 100 each blast erupts again for 50% (script), then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="ChromieGoldenBronzeFireTokenCounter" parent="StormQuestToken">
+    <Face value="ChromieGoldenBronzeFireTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ChromieGoldenDragonflightTokenCounter" parent="StormQuestToken">
+    <Face value="ChromieGoldenDragonflightTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ChromieGoldenBronzeFireTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ChromieGoldenBronzeFireTokenCounter" />
+    <Scale value="0.015" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ChromieDragonsBreathDamage">
+    <MultiplicativeModifierArray index="ChromieBreathPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieBreathCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieBreathHit" Accumulator="ChromieGoldenBronzeFireTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ChromieBreathLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieGoldenBreathEcho" Validator="ChromieGoldenBreathEchoing" Modifier="-0.5" />
+  </CEffectDamage>
+  <CButton id="ChromieGoldenBronzeFireTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Chromie_SandStrike.dds" />
+  </CButton>
+  <CButton id="ChromieGoldenDragonflightTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Chromie_SandStrike.dds" />
+  </CButton>
+
+  <!-- ===== Chronomancer ===== -->
+  <!-- Sand Blast, each blast of Dragon's Breath and (with Paradox) Time Trap echo 1.5 seconds later from the script: Sand Blast is thrown again from where Chromie is toward the same point, blasts erupt again at the same spot. Echoes deal 40% (an echo marker on Chromie). All basic cooldowns and Temporal Loop's are 40% longer; Temporal Loop at level 1 (Slowing Sands disabled). Resonance quest (50% kept): 0.5% echo damage per echo hit on an enemy Hero, up to 60 stacks (70% echoes). Timeline quest: takedowns within 3 seconds of a hit; stacks 1-40 echoes 0.015 seconds sooner each (script), 41-80 cut the penalty by 0.5% each, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
+    <Face value="ChromieGoldenResonanceTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ChromieGoldenTimelineTokenCounter" parent="StormQuestToken">
+    <Face value="ChromieGoldenTimelineTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ChromieGoldenResonanceTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ChromieGoldenResonanceTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ChromieSandBlastDamage">
+    <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoEchoing" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoEcho" Validator="ChromieGoldenChronoEchoReduced" Modifier="-0.6" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoEchoHit" Validator="ChromieGoldenChronoEchoReduced" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieDragonsBreathDamage">
+    <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoEchoing" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoEcho" Validator="ChromieGoldenChronoEchoReduced" Modifier="-0.6" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoEchoHit" Validator="ChromieGoldenChronoEchoReduced" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="ChromieGoldenResonanceTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Chromie_Looper.dds" />
+  </CButton>
+  <CButton id="ChromieGoldenTimelineTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Chromie_Looper.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="ChromieDragonsBreathDamage">
+    <MultiplicativeModifierArray index="ChromieSniperLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieHeroWeaponDamage">
+    <MultiplicativeModifierArray index="ChromieSniperLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieBreathLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieSandEchoWeaponDamage">
+    <MultiplicativeModifierArray index="ChromieSniperLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieBreathLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieSandBlastDamage">
+    <MultiplicativeModifierArray index="ChromieBreathLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieSandBlastPastAndFutureMeDamage">
+    <MultiplicativeModifierArray index="ChromieBreathLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieGoldenShardDamage">
+    <MultiplicativeModifierArray index="ChromieBreathLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Echo markers: while one is on Chromie (an echo Sand Blast in flight, or one echo blast of Dragon's Breath)
+       the matching damage modifier applies. The script adds them. -->
+  <CBehaviorBuff id="ChromieGoldenSniperEchoMarker">
+    <InfoFlags index="Hidden" value="1" />
+    <MaxStackCount value="5" />
+    <Duration value="1.25" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenSniperEchoing">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenSniperEchoMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="ChromieGoldenBreathEchoMarker">
+    <InfoFlags index="Hidden" value="1" />
+    <MaxStackCount value="5" />
+    <Duration value="1.25" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenBreathEchoing">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenBreathEchoMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="ChromieGoldenChronoEchoMarker">
+    <InfoFlags index="Hidden" value="1" />
+    <MaxStackCount value="5" />
+    <Duration value="1.25" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenChronoEchoing">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenChronoEchoMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterIsSniper">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenSniperMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterHasShards">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenTemporalShardsMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterHasHourglass">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenHourglassMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterHasBronzeRing">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenBronzeRingMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterHasTimelineSplit">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenTimelineSplitMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+
+  <!-- ===== Sand Sniper ===== -->
+  <!-- Sand Blast's own hit effects, plus the Sand Sniper and boon ones -->
+  <CEffectSet id="ChromieSandBlastImpactSet">
+    <EffectArray value="ChromieGoldenFastForwardCharge" />
+    <EffectArray value="ChromieGoldenShardPersistent" />
+    <EffectArray value="ChromieGoldenHourglassCooldown" />
+  </CEffectSet>
+  <!-- Fast Forward lowers Sand Blast's cooldown to 0.5 seconds, which does nothing with charges: Sand Sniper takes 2.5
+       seconds off the recharge instead -->
+  <CEffectModifyUnit id="ChromieGoldenFastForwardCharge">
+    <ValidatorArray value="ChromieGoldenCasterIsSniper" />
+    <ValidatorArray value="ChromieFastForwardCombine" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ChromieSandBlast,Execute" ChargeTimeUse="-2.5" />
+  </CEffectModifyUnit>
+  <!-- Temporal Shards (Epic): a Sand Blast hit on an enemy Hero leaves a shard at that spot that explodes 1.5 seconds later
+       in a 1.5 radius for 40% of Sand Blast's damage (the script copies Sand Blast's Amount) -->
+  <CEffectCreatePersistent id="ChromieGoldenShardPersistent">
+    <ValidatorArray value="ChromieGoldenCasterHasShards" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichLocation Value="TargetPoint" />
+    <ExpireDelay value="1.5" />
+    <ExpireEffect value="ChromieGoldenShardSearch" />
+  </CEffectCreatePersistent>
+  <CEffectEnumArea id="ChromieGoldenShardSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="ChromieGoldenShardDamage">
+      <Radius value="1.5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <!-- Hourglass (Legendary): a Sand Blast hit on an enemy Hero takes 2 seconds off Dragon's Breath's cooldown -->
+  <CEffectModifyUnit id="ChromieGoldenHourglassCooldown">
+    <ValidatorArray value="ChromieGoldenCasterHasHourglass" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ChromieDragonsBreath,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+
+  <!-- ===== Bronze Breath ===== -->
+  <!-- Deep Breathing's reward cuts Dragon's Breath's cooldown, which does nothing with charges: cut the recharge too -->
+  <CEffectModifyPlayer id="ChromieDragonsBreathDeepBreathingFinalModifyUnit">
+    <EffectArray Reference="Abil,ChromieDragonsBreath,Cost.Charge.TimeUse" Value="-4" />
+  </CEffectModifyPlayer>
+  <!-- Bronze Ring (Epic): each blast leaves a ring for 2 seconds that Slows enemies in it by 40% -->
+  <CEffectSet id="ChromieDragonsBreathSet">
+    <EffectArray value="ChromieGoldenBronzeRingPersistent" />
+  </CEffectSet>
+  <CEffectCreatePersistent id="ChromieGoldenBronzeRingPersistent">
+    <ValidatorArray value="ChromieGoldenCasterHasBronzeRing" />
+    <WhichLocation Value="TargetPoint" />
+    <PeriodCount value="8" />
+    <PeriodicPeriodArray value="0.25" />
+    <PeriodicEffectArray value="ChromieGoldenBronzeRingSearch" />
+  </CEffectCreatePersistent>
+  <CEffectEnumArea id="ChromieGoldenBronzeRingSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="ChromieGoldenBronzeRingSlowApply">
+      <Radius value="2.4" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CBehaviorBuff id="ChromieGoldenBronzeRingSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\\Textures\\storm_ui_icon_Chromie_SandStrike.dds" />
+    <Duration value="0.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.4" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChromieGoldenBronzeRingSlowApply">
+    <Behavior value="ChromieGoldenBronzeRingSlow" />
+  </CEffectApplyBehavior>
+
+  <!-- ===== Chronomancer ===== -->
+  <!-- Echoes deal 40% (up to 70% with Resonance); Timeline Split makes them full strength on Heroes below 30% Health -->
+  <CValidatorUnitCompareVital id="ChromieGoldenTargetLifeLT30Percent">
+    <Compare value="LT" />
+    <Type value="Fraction" />
+    <Value value="0.3" />
+  </CValidatorUnitCompareVital>
+  <CValidatorCombine id="ChromieGoldenTimelineSplitApplies">
+    <Type value="And" />
+    <CombineArray value="ChromieGoldenCasterHasTimelineSplit" />
+    <CombineArray value="TargetIsHero" />
+    <CombineArray value="ChromieGoldenTargetLifeLT30Percent" />
+  </CValidatorCombine>
+  <CValidatorCombine id="ChromieGoldenTimelineSplitDoesNotApply">
+    <CombineArray value="ChromieGoldenTimelineSplitApplies" />
+    <Negate value="1" />
+  </CValidatorCombine>
+  <CValidatorCombine id="ChromieGoldenChronoEchoReduced">
+    <Type value="And" />
+    <CombineArray value="ChromieGoldenChronoEchoing" />
+    <CombineArray value="ChromieGoldenTimelineSplitDoesNotApply" />
+  </CValidatorCombine>
+  <!-- Resonance caps at 60 stacks (30%, for 70% echoes) -->
+  <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter">
+    <Max value="60" />
+  </CBehaviorTokenCounter>
+  <!-- Shorter Loop (Common, up to 3): each makes echoes 0.1 seconds sooner (the script counts the stacks) -->
+  <CBehaviorBuff id="ChromieGoldenShorterLoop" parent="CarryBehaviorParent">
+    <MaxStackCount value="3" />
+  </CBehaviorBuff>
+</Catalog>
