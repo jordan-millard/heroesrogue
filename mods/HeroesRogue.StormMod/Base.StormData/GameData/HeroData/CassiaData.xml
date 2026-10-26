@@ -302,10 +302,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
 
   <!-- ===== Warden of Arreat ===== -->
-  <!-- A full Fend (every strike) heals Cassia for 5% of her maximum Health -->
+  <!-- A full Fend (every strike) heals Cassia for 5% of her maximum Health (Warden) and fires the empowered Fend's
+       volley again (Skirmisher) -->
   <CEffectCreatePersistent id="AmazonFendChannelCreatePersistent">
-    <ExpireEffect value="AmazonGoldenFendFinishHeal" />
+    <ExpireEffect value="AmazonGoldenFendFinishSet" />
   </CEffectCreatePersistent>
+  <CEffectSet id="AmazonGoldenFendFinishSet">
+    <EffectArray value="AmazonGoldenFendFinishHeal" />
+    <EffectArray value="AmazonGoldenVolleyFinishSet" />
+  </CEffectSet>
   <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterIsWarden">
     <WhichUnit Value="Caster" />
     <Behavior value="AmazonGoldenWardenMarker" />
@@ -397,10 +402,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <!-- Skirmish quest: every 10 Basic Attacks on enemy Heroes empower the next Fend to fire a Basic Attack at every enemy
-       within 6.6 of Cassia. The counter shows progress (script); casting an empowered Fend uses it up (data). -->
+       within 6.6 of Cassia, and again when that Fend is fully channeled. The counter shows progress (script; its Max is
+       high so it never shows the quest complete banner); casting an empowered Fend uses it up (data). -->
   <CBehaviorTokenCounter id="AmazonGoldenVolleyTokenCounter" parent="StormQuestToken">
     <Face value="AmazonGoldenVolleyTokenCounter" />
-    <Max value="10" />
+    <Max value="100000" />
   </CBehaviorTokenCounter>
   <CButton id="AmazonGoldenVolleyTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
@@ -420,9 +426,34 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
   <CEffectSet id="AmazonGoldenVolleySet">
     <ValidatorArray value="AmazonGoldenCasterVolleyReady" />
+    <EffectArray value="AmazonGoldenVolleyChannelApply" />
     <EffectArray value="AmazonGoldenVolleyConsume" />
     <EffectArray value="AmazonGoldenVolleySearch" />
   </CEffectSet>
+  <!-- marks the empowered Fend while it channels; a full channel fires the volley again -->
+  <CBehaviorBuff id="AmazonGoldenVolleyChannel">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="3" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenVolleyChannelApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenVolleyChannel" />
+  </CEffectApplyBehavior>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterVolleyChanneling">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenVolleyChannel" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="AmazonGoldenVolleyFinishSet">
+    <ValidatorArray value="AmazonGoldenCasterVolleyChanneling" />
+    <EffectArray value="AmazonGoldenVolleyChannelRemove" />
+    <EffectArray value="AmazonGoldenVolleySearch" />
+  </CEffectSet>
+  <CEffectRemoveBehavior id="AmazonGoldenVolleyChannelRemove">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="AmazonGoldenVolleyChannel" />
+  </CEffectRemoveBehavior>
   <CEffectRemoveBehavior id="AmazonGoldenVolleyConsume">
     <WhichUnit Value="Caster" />
     <BehaviorLink value="AmazonGoldenVolleyReady" />
