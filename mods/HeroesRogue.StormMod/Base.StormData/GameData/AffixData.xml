@@ -22648,6 +22648,7 @@
 
 
 
+
         <Instances Id="CassiaValkyriesJavelin">
             <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
                 <Field Id="Icon" />
@@ -23198,6 +23199,26 @@
             </User>
             <String String="1 0 AmazonGoldenUntouchableMarker">
                 <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaSteadfast">
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 AmazonGoldenSteadfastMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Add Effect,AmazonFendChannelCreatePersistent,PeriodCount 8">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,AmazonFendChanneling,Duration 1">
+                <Field Id="CatalogModification" Index="1" />
             </String>
         </Instances>
 

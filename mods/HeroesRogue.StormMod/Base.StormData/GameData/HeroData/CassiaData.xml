@@ -14,6 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="AmazonGoldenStaticFieldMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AmazonGoldenKitingShotMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AmazonGoldenUntouchableMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenSteadfastMarker" parent="CarryBehaviorParent" />
   <!-- Storm Spear (Epic): a split bolt that hits an enemy Hero chains to the nearest other enemy Hero within 4. The
        script copies the bolt's Amount (level scaling) into this effect. -->
   <CEffectDamage id="AmazonGoldenStormSpearDamage" parent="AmazonSpellDamageParent">
@@ -289,8 +290,92 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Warden of Arreat ===== -->
   <!-- A full Fend (every strike) heals Cassia for 5% of her maximum Health -->
   <CEffectCreatePersistent id="AmazonFendChannelCreatePersistent">
+    <InitialEffect value="AmazonGoldenFendInitialSet" />
     <ExpireEffect value="AmazonGoldenFendFinishHeal" />
   </CEffectCreatePersistent>
+  <!-- Fend's first strike, plus Steadfast's setup -->
+  <CEffectSet id="AmazonGoldenFendInitialSet">
+    <EffectArray value="AmazonGoldenSteadfastBrokenRemove" />
+    <EffectArray value="AmazonGoldenSteadfastEarlyApply" />
+    <EffectArray value="AmazonFendChannelSearchArea" />
+    <EffectArray value="AmazonGoldenSteadfastPersistent" />
+  </CEffectSet>
+
+  <!-- ===== Steadfast (Legendary, any starter) ===== -->
+  <!-- Fend lasts 1 second longer (boon: 8 more strikes, the channel behavior 1 second longer). Once Fend has been
+       channeled for 0.5 seconds it keeps striking to the end: a second persistent, a child of Fend's so the strikes
+       use Fend's own area and direction, strikes only while Cassia is no longer channeling. Stopping before 0.5
+       seconds (Early still on Cassia when the channel ends) marks the Fend Broken and the extra strikes are skipped. -->
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterHasSteadfast">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSteadfastMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="AmazonGoldenSteadfastEarly">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="AmazonGoldenSteadfastBroken">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="3" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenSteadfastEarlyApply">
+    <ValidatorArray value="AmazonGoldenCasterHasSteadfast" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSteadfastEarly" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="AmazonGoldenSteadfastBrokenRemove">
+    <ValidatorArray value="AmazonGoldenCasterHasSteadfast" />
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="AmazonGoldenSteadfastBroken" />
+  </CEffectRemoveBehavior>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterSteadfastEarly">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSteadfastEarly" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterNotSteadfastEarly">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSteadfastEarly" />
+    <Compare value="EQ" />
+    <Value value="0" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterNotSteadfastBroken">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSteadfastBroken" />
+    <Compare value="EQ" />
+    <Value value="0" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- the channel ends: before 0.5 seconds, this Fend is Broken -->
+  <CBehaviorBuff id="AmazonFendChanneling">
+    <FinalEffect value="AmazonGoldenFendChannelEndSet" />
+  </CBehaviorBuff>
+  <CEffectSet id="AmazonGoldenFendChannelEndSet">
+    <EffectArray value="AmazonAvoidanceApplyStationaryTimer" />
+    <EffectArray value="AmazonGoldenSteadfastBrokenApply" />
+  </CEffectSet>
+  <CEffectApplyBehavior id="AmazonGoldenSteadfastBrokenApply">
+    <ValidatorArray value="AmazonGoldenCasterSteadfastEarly" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSteadfastBroken" />
+  </CEffectApplyBehavior>
+  <!-- 19 strikes: the 20 strikes of a 2.5 second Fend but the last, which the channel itself lands when it ends
+       naturally -->
+  <CEffectCreatePersistent id="AmazonGoldenSteadfastPersistent">
+    <ValidatorArray value="AmazonGoldenCasterHasSteadfast" />
+    <PeriodCount value="19" />
+    <PeriodicEffectArray value="AmazonGoldenSteadfastStrike" />
+    <PeriodicPeriodArray value="0.125" />
+    <TimeScaleSource Value="Caster" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="AmazonGoldenSteadfastStrike">
+    <ValidatorArray value="AmazonFendCasterIsNotChanneling" />
+    <ValidatorArray value="AmazonGoldenCasterNotSteadfastEarly" />
+    <ValidatorArray value="AmazonGoldenCasterNotSteadfastBroken" />
+    <EffectArray value="AmazonFendChannelSearchArea" />
+  </CEffectSet>
   <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterIsWarden">
     <WhichUnit Value="Caster" />
     <Behavior value="AmazonGoldenWardenMarker" />

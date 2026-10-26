@@ -134,6 +134,7 @@ void libAffx_CassiaSyncFend () {
     wanted = MaxI(0, MinI(stacks - 80, 20));
     if (wanted != libAffx_CassiaFendAdded3) {
         libAffx_CatalogReferenceModify("Effect,AmazonFendChannelCreatePersistent,PeriodicPeriodArray[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaFendAdded3) * -0.00125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,AmazonGoldenSteadfastPersistent,PeriodicPeriodArray[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaFendAdded3) * -0.00125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CassiaFendAdded3 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
