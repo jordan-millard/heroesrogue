@@ -390,7 +390,7 @@ bool libAffx_ChromieTakedown (bool testConds, bool runActions) {
         libAffx_ChromieSyncBreath();
         libAffx_ChromieQuestDing();
     }
-    if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && libAffx_ChromieInWindow(libAffx_ChromieChronoTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && libAffx_ChromieChronoTime[killedPlayer] > 0.0 && now - libAffx_ChromieChronoTime[killedPlayer] <= 5.0) {
         libAffx_ChromieChronoTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ChromieGoldenTimelineTokenCounter", hero);
         libAffx_ChromieSyncChrono();
