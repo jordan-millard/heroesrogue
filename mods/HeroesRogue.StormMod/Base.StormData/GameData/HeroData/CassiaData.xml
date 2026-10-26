@@ -88,7 +88,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Warden of Arreat ===== -->
-  <!-- Fend keeps its base 10 second cooldown, costs half Mana (25), deals 20% more damage and has a 20% wider arc (45 to 54 degrees); a full Fend heals 5% of maximum Health; War Matron and Gloves of Alacrity. Fend Strikes quest (50% kept): 1% Fend damage per enemy Hero hit, once per Hero per Fend. Fend Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the cooldown each, 41-80 1% arc each, 81-100 1% faster strikes each, 100 a final strike, then 2.5% all damage each. -->
+  <!-- Fend has 2 charges (10 second recharge, 0.5 second cooldown), costs half Mana (25), deals 20% more damage and has a 20% wider arc (45 to 54 degrees); a full Fend heals 5% of maximum Health; War Matron and Grounding Rod, its Slow 30% instead of 20%. Fend Strikes quest (50% kept): 1% Fend damage per enemy Hero hit, once per Hero per Fend. Fend Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% arc each, 81-100 1% faster strikes each, 100 a final strike, then 2.5% all damage each. -->
   <CBehaviorTokenCounter id="AmazonGoldenFendStrikesTokenCounter" parent="StormQuestToken">
     <Face value="AmazonGoldenFendStrikesTokenCounter" />
     <Max value="100000" />

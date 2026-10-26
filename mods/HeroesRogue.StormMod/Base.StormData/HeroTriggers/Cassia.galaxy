@@ -5,7 +5,7 @@ include "AffixTriggers"
 // quest token; takedowns in the window add the takedown token.
 // Valkyrie's Javelin: Thunderbolt counts each enemy Hero once per throw; Javelin Mastery stacks 1-40 recharge,
 // 41-80 width, 81-100 a Slow, 100 an echo throw for half damage, then 2.5% all damage each.
-// Warden of Arreat: Fend Strikes counts each enemy Hero once per Fend; Fend Mastery stacks 1-40 cooldown, 41-80
+// Warden of Arreat: Fend Strikes counts each enemy Hero once per Fend; Fend Mastery stacks 1-40 recharge, 41-80
 // arc, 81-100 strike speed, 100 a final strike, then 2.5% all damage each. A full Fend heals 5% (data).
 // Skirmisher: Skirmish counts Basic Attacks on Heroes for Fend damage; every 10 empower the next Fend to
 // Root (data). Hit and Run stacks 1-40 Attack Speed, 41-80 shorter Slows and Stuns, 100 maximum
@@ -109,7 +109,7 @@ void libAffx_CassiaSyncJavelin () {
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImpaleDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBallLightningBounceToEnemyDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
 }
-// AmazonGoldenFendMasteryTokenCounter: stacks 1-40: 1% of the 10 second cooldown each; 41-80: 1% arc each; 81-100: 1% faster strikes each; then 2.5% all damage each
+// AmazonGoldenFendMasteryTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% arc each; 81-100: 1% faster strikes each; then 2.5% all damage each
 void libAffx_CassiaSyncFend () {
     unit hero = libAffx_CassiaHero();
     int stacks;
@@ -121,7 +121,7 @@ void libAffx_CassiaSyncFend () {
     stacks = libAffx_CassiaStacks("AmazonGoldenFendMasteryTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_CassiaFendAdded) {
-        libAffx_CatalogReferenceModify("Abil,AmazonFend,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaFendAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,AmazonFend,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaFendAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CassiaFendAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 1% of the 45 degree arc each
