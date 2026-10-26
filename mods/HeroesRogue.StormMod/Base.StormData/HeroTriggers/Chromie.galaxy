@@ -7,7 +7,8 @@ include "AffixTriggers"
 // for half damage, then 2.5% all damage each.
 // Bronze Breath: Dragonflight stacks 1-40 recharge, 41-80 a shorter delay, 81-100 area, 100 each blast
 // erupts again for half damage, then 2.5% all damage each.
-// Chronomancer: Time Traps Slow 65% for 4 seconds, and Chromie deals 50% more damage to slowed Heroes (data;
+// Chronomancer: Time Traps Slow 65% for 4 seconds, a Time Stop resets Q, W and E (script), and Chromie deals
+// 50% more damage to slowed Heroes (data;
 // Resonance: 0.25% more per Time Stop). Timeline stacks 1-40 heal per Time Stop, 41-80 a stronger Slow (to 75%),
 // 100 traps twice the radius and Health, then 1% Spell Power each.
 // ============================================================
@@ -193,8 +194,15 @@ bool libAffx_ChromieTrapUnlock_Func (bool testConds, bool runActions) {
     libAffx_CatalogReferenceModify("Unit,ChromieTimeTrap,LifeStart", libAffx_player, "250", c_upgradeOperationAdd);
     return true;
 }
-// Chronomancer: an enemy Hero Time Stopped by one of Chromie's Time Traps (set off or detonated). Adds Resonance, opens
-// the takedown window, heals (Timeline stacks 1-40) and, with Time Bomb, explodes.
+// Chronomancer: an enemy Hero Time Stopped by one of Chromie's Time Traps (set off or detonated). Resets Sand Blast,
+// Dragon's Breath and Time Trap, adds Resonance, opens the takedown window, heals (Timeline stacks 1-40) and, with Time
+// Bomb, explodes.
+void libAffx_ChromieResetAbil (unit hero, string abil) {
+    UnitModifyCooldown(hero, "Abil/" + abil, 0.0, c_cooldownOperationSet);
+    if (UnitGetChargeUsed(hero, "Abil/" + abil) > 0.0) {
+        UnitAddChargeUsed(hero, "Abil/" + abil, -UnitGetChargeUsed(hero, "Abil/" + abil));
+    }
+}
 bool libAffx_ChromieTimeStop_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit hero = libAffx_ChromieHero();
@@ -205,6 +213,9 @@ bool libAffx_ChromieTimeStop_Func (bool testConds, bool runActions) {
     libAffx_ChromieChronoTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "ChromieGoldenResonanceTokenCounter", hero);
     libAffx_ChromieQuestDing();
+    libAffx_ChromieResetAbil(hero, "ChromieSandBlast");
+    libAffx_ChromieResetAbil(hero, "ChromieDragonsBreath");
+    libAffx_ChromieResetAbil(hero, "ChromieTimeTrap");
     if (UnitIsAlive(hero) && libAffx_ChromieStacks("ChromieGoldenTimelineTokenCounter") > 0) {
         UnitCreateEffectUnit(hero, "ChromieGoldenTrapHeal", hero);
     }
