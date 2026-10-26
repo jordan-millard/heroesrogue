@@ -305,6 +305,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
        sees the Time Stop and adds it). Up to 5 (8 with Timeline Split), all refreshed to 10 seconds by each new one. -->
   <CBehaviorBuff id="ChromieGoldenTemporalSurge">
     <InfoIcon value="Assets\Textures\storm_ui_icon_Chromie_Looper.dds" />
+    <InfoFlags index="Hidden" value="0" />
+    <DisplayDuration index="Self" value="1" />
     <Alignment value="Positive" />
     <Duration value="10" />
     <MaxStackCount value="5" />
