@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Chromie. Starters: Sand Sniper (Sand Blast), Bronze Breath (Dragon's Breath) and Chronomancer (an enemy Hero setting off a Time Trap makes the next Sand Blast or Dragon's Breath echo). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests, echoes and script boons are in HeroTriggers/Chromie.galaxy. -->
+  <!-- Golden Chromie. Starters: Sand Sniper (Sand Blast), Bronze Breath (Dragon's Breath) and Chronomancer (an enemy Hero Time Stopped by a Time Trap resets Sand Blast, Dragon's Breath and Time Trap and makes the next of each of the first two critical). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests, echoes, critical hits and script boons are in HeroTriggers/Chromie.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="ChromieGoldenSniperMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ChromieGoldenBreathMarker" parent="CarryBehaviorParent" />
@@ -14,7 +14,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ChromieGoldenInfiniteBreathMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ChromieGoldenTimeBombMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ChromieGoldenTimelineSplitMarker" parent="CarryBehaviorParent" />
-  <CBehaviorBuff id="ChromieGoldenTemporalResetMarker" parent="CarryBehaviorParent" />
   <!-- Temporal Shards (Epic): the shard's explosion -->
   <CEffectDamage id="ChromieGoldenShardDamage" parent="StormSpell">
     <MultiplicativeModifierArray index="TemporalShards" Modifier="-0.6" />
@@ -105,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves; Time Troubles; Andorhal Anomaly). Echoes have twice the area: Sand Blast twice as wide while an echo flies, echo blasts twice the radius (script). An enemy Hero setting off a trap (the ChromieGoldenTrapTriggered marker, seen by the script) readies an echo: the next Sand Blast is thrown again 0.5 seconds later from where Chromie is toward the same point, or the next Dragon's Breath's blasts erupt again at the same spots, for 130% (an echo marker on Chromie). Resonance quest (50% kept): 0.25% echo damage per trap set off by an enemy Hero. Timeline quest: takedowns within 3 seconds of a trap going off or a Sand Blast or Dragon's Breath hit; stacks 1-40 each trap set off heals 0.25% of maximum Health each, 41-80 Chronic Conditions' Slow 0.25% stronger each, 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
+  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves; Time Troubles; Andorhal Anomaly). An enemy Hero Time Stopped by one of the traps, set off or detonated (seen by the script), resets Sand Blast, Dragon's Breath and Time Trap and readies a critical Sand Blast and a critical Dragon's Breath: the next cast of each deals 20% more as a critical hit (a marker on Chromie while it flies or its blasts land). Resonance quest (50% kept): 1% critical damage per enemy Hero Time Stopped. Timeline quest: takedowns within 3 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 each Time Stop heals 0.25% of maximum Health each, 41-80 Chronic Conditions' Slow 0.25% stronger each, 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
   <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenResonanceTokenCounter" />
     <Max value="100000" />
@@ -119,25 +118,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ChromieGoldenResonanceTokenCounter" />
-    <Scale value="0.0025" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="ChromieSandBlastDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoEchoing" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoCritting" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenChronoEcho" Validator="ChromieGoldenChronoEchoing" Modifier="0.3" Crit="1" />
-    <MultiplicativeModifierArray index="ChromieGoldenChronoEchoHit" Validator="ChromieGoldenChronoEchoing" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" Crit="1" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoCrit" Validator="ChromieGoldenSandCrit" Modifier="0.2" Crit="1" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoCritHit" Validator="ChromieGoldenSandCrit" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" Crit="1" />
   </CEffectDamage>
   <CEffectDamage id="ChromieDragonsBreathDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoEchoing" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoCritting" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenChronoEcho" Validator="ChromieGoldenChronoEchoing" Modifier="0.3" Crit="1" />
-    <MultiplicativeModifierArray index="ChromieGoldenChronoEchoHit" Validator="ChromieGoldenChronoEchoing" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" Crit="1" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoCrit" Validator="ChromieGoldenBreathCrit" Modifier="0.2" Crit="1" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoCritHit" Validator="ChromieGoldenBreathCrit" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" Crit="1" />
   </CEffectDamage>
   <CEffectDamage id="ChromieGoldenTimeBombDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoEchoing" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoCritting" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
   </CEffectDamage>
   <CButton id="ChromieGoldenResonanceTokenCounter" parent="StormButtonParent">
@@ -200,17 +199,33 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
-  <CBehaviorBuff id="ChromieGoldenChronoEchoMarker">
+  <!-- Chronomancer: while one is on Chromie, Sand Blast or Dragon's Breath damage is critical. The script adds them. -->
+  <CBehaviorBuff id="ChromieGoldenSandCritting">
     <InfoFlags index="Hidden" value="1" />
-    <MaxStackCount value="5" />
     <Duration value="1.25" />
   </CBehaviorBuff>
-  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenChronoEchoing">
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenSandCrit">
     <WhichUnit Value="Caster" />
-    <Behavior value="ChromieGoldenChronoEchoMarker" />
+    <Behavior value="ChromieGoldenSandCritting" />
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="ChromieGoldenBreathCritting">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="1.25" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ChromieGoldenBreathCrit">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ChromieGoldenBreathCritting" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- the Common boon (Critical Timing) applies to either -->
+  <CValidatorCombine id="ChromieGoldenChronoCritting">
+    <Type value="Or" />
+    <CombineArray value="ChromieGoldenSandCrit" />
+    <CombineArray value="ChromieGoldenBreathCrit" />
+  </CValidatorCombine>
   <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterIsSniper">
     <WhichUnit Value="Caster" />
     <Behavior value="ChromieGoldenSniperMarker" />
@@ -309,25 +324,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- An enemy Hero setting off a trap by walking into it (Chronic Conditions) gets this marker; the script sees it, readies
-       an echo and runs the quests -->
-  <CBehaviorBuff id="ChromieGoldenTrapTriggered">
-    <InfoFlags index="Hidden" value="1" />
-    <Duration value="0.125" />
-  </CBehaviorBuff>
-  <CEffectApplyBehavior id="ChromieGoldenTrapTriggeredApply">
-    <Behavior value="ChromieGoldenTrapTriggered" />
-  </CEffectApplyBehavior>
-  <CEffectSet id="ChromieTimeTrapProximityImpactSet">
-    <EffectArray value="ChromieGoldenTrapTriggeredApply" />
-  </CEffectSet>
-  <!-- the next Sand Blast or Dragon's Breath echoes (one stored, three with Timeline Split) -->
-  <CBehaviorBuff id="ChromieGoldenEchoReady">
-    <InfoIcon value="Assets\Textures\storm_ui_icon_Chromie_TimeTrap.dds" />
+  <!-- An enemy Hero Time Stopped by one of Chromie's traps (set off or detonated; the script sees the Time Stop) readies a
+       critical Sand Blast and a critical Dragon's Breath (one each stored, three with Timeline Split) -->
+  <CBehaviorBuff id="ChromieGoldenCritSandReady">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Chromie_AetherCannon.dds" />
     <Alignment value="Positive" />
     <MaxStackCount value="3" />
   </CBehaviorBuff>
-  <!-- Timeline stacks 1-40: each trap set off by an enemy Hero heals 0.25% of maximum Health per stack (the script raises
+  <CBehaviorBuff id="ChromieGoldenCritBreathReady">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Chromie_SandStrike.dds" />
+    <Alignment value="Positive" />
+    <MaxStackCount value="3" />
+  </CBehaviorBuff>
+  <!-- Timeline stacks 1-40: each enemy Hero Time Stopped heals 0.25% of maximum Health per stack (the script raises
        the fraction) -->
   <CEffectModifyUnit id="ChromieGoldenTrapHeal">
     <ImpactUnit Value="Caster" />
@@ -335,7 +344,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <ChangeFraction value="0" />
     </VitalArray>
   </CEffectModifyUnit>
-  <!-- Time Bomb (Epic): a trap set off by an enemy Hero explodes around them for 50% of Sand Blast's damage -->
+  <!-- Time Bomb (Epic): an enemy Hero Time Stopped by a trap explodes for 50% of Sand Blast's damage -->
   <CEffectEnumArea id="ChromieGoldenTimeBombSearch">
     <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
     <AreaArray Effect="ChromieGoldenTimeBombDamage">
@@ -344,7 +353,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectEnumArea>
 
   <!-- ===== Echo blast visuals ===== -->
-  <!-- Echo blasts of Dragon's Breath (Chronomancer, Bronze Breath at 100) run its blast directly, without the delay
+  <!-- Echo blasts of Dragon's Breath (Bronze Breath at 100) run its blast directly, without the delay
        persistent that makes the eruption and the warning circles. The script starts this persistent at the spot 0.6875
        seconds (the real delay) before the echo blast; copies of those actors follow it instead. -->
   <CEffectCreatePersistent id="ChromieGoldenEchoBreathFX">
@@ -362,22 +371,5 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CActorModel id="ChromieGoldenEchoBreathEnemyWarningSplat" parent="ChromieDragonsBreathEnemyWarningSplat">
     <On index="0" Terms="Effect.ChromieGoldenEchoBreathFX.Start; At Effect" Send="Create" />
     <On index="1" Terms="Effect.ChromieGoldenEchoBreathFX.Stop; At Effect" Send="Destroy Immediate" />
-  </CActorModel>
-  <!-- the same for Chronomancer's echo blasts, which have twice the radius: visuals at twice the size -->
-  <CEffectCreatePersistent id="ChromieGoldenChronoEchoBreathFX" parent="ChromieGoldenEchoBreathFX" />
-  <CActorModel id="ChromieGoldenChronoEchoBreathGround" parent="ChromieDragonsBreathGround">
-    <On index="0" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Start; At Effect" Send="Create" />
-    <Model value="ChromieDragonsBreathGround" />
-    <Scale value="2" />
-  </CActorModel>
-  <CActorModel id="ChromieGoldenChronoEchoBreathAllyWarningSplat" parent="ChromieDragonsBreathAllyWarningSplat">
-    <On index="0" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Start; At Effect" Send="Create" />
-    <On index="1" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Stop; At Effect" Send="Destroy Immediate" />
-    <Scale value="2" />
-  </CActorModel>
-  <CActorModel id="ChromieGoldenChronoEchoBreathEnemyWarningSplat" parent="ChromieDragonsBreathEnemyWarningSplat">
-    <On index="0" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Start; At Effect" Send="Create" />
-    <On index="1" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Stop; At Effect" Send="Destroy Immediate" />
-    <Scale value="2" />
   </CActorModel>
 </Catalog>
