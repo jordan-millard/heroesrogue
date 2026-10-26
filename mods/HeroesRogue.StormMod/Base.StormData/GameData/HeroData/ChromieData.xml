@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves; Time Troubles; Andorhal Anomaly). An enemy Hero Time Stopped by one of the traps, set off or detonated (seen by the script), resets Sand Blast, Dragon's Breath and Time Trap and readies a critical Sand Blast and a critical Dragon's Breath: the next cast of each deals 20% more as a critical hit (a marker on Chromie while it flies or its blasts land). Resonance quest (50% kept): 1% critical damage per enemy Hero Time Stopped. Timeline quest: takedowns within 5 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 each Time Stop heals 0.25% of maximum Health each, 41-80 Chronic Conditions' Slow 0.25% stronger each, 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
+  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves; Time Troubles; Andorhal Anomaly); Chronic Conditions' Slow 30% stronger (25% to 55%). An enemy Hero Time Stopped by one of the traps, set off or detonated (seen by the script), resets Sand Blast, Dragon's Breath and Time Trap and readies a critical Sand Blast and a critical Dragon's Breath: the next cast of each deals 50% more as a critical hit (a marker on Chromie while it flies or its blasts land; crit numbers from the modifier Crit and from the damage Crit flag, which the script sets meanwhile). Resonance quest (50% kept): 1% critical damage per enemy Hero Time Stopped. Timeline quest: takedowns within 5 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 each Time Stop heals 0.25% of maximum Health each, 41-80 Chronic Conditions' Slow 0.25% stronger each, 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
   <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenResonanceTokenCounter" />
     <Max value="100000" />
@@ -124,14 +124,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoCritting" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenChronoCrit" Validator="ChromieGoldenSandCrit" Modifier="0.2" Crit="1" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoCrit" Validator="ChromieGoldenSandCrit" Modifier="0.5" Crit="1" />
     <MultiplicativeModifierArray index="ChromieGoldenChronoCritHit" Validator="ChromieGoldenSandCrit" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" Crit="1" />
   </CEffectDamage>
   <CEffectDamage id="ChromieDragonsBreathDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenChronoCritting" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenChronoCrit" Validator="ChromieGoldenBreathCrit" Modifier="0.2" Crit="1" />
+    <MultiplicativeModifierArray index="ChromieGoldenChronoCrit" Validator="ChromieGoldenBreathCrit" Modifier="0.5" Crit="1" />
     <MultiplicativeModifierArray index="ChromieGoldenChronoCritHit" Validator="ChromieGoldenBreathCrit" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" Crit="1" />
   </CEffectDamage>
   <CEffectDamage id="ChromieGoldenTimeBombDamage">

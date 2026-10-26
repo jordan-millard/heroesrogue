@@ -8,7 +8,7 @@ include "AffixTriggers"
 // Bronze Breath: Dragonflight stacks 1-40 recharge, 41-80 a shorter delay, 81-100 area, 100 each blast
 // erupts again for half damage, then 2.5% all damage each.
 // Chronomancer: an enemy Hero Time Stopped by a Time Trap resets Q, W and E and makes the next Sand Blast and
-// the next Dragon's Breath critical for 20% more (Resonance: more). Timeline stacks 1-40 heal per Time Stop,
+// the next Dragon's Breath critical for 50% more (Resonance: more). Timeline stacks 1-40 heal per Time Stop,
 // 41-80 a stronger Slow, 100 traps twice the radius and Health, then 1% Spell Power each.
 // ============================================================
 
@@ -30,6 +30,8 @@ fixed libAffx_ChromieSandEchoTime = -1.0; // when the script launched the last e
 fixed libAffx_ChromieBreathEchoTime = -1.0; // when the script ran the last echo blast of Dragon's Breath
 bool libAffx_ChromieTrapsDoubled; // Chronomancer: the 100 Timeline stack trap upgrade is applied
 bool libAffx_ChromieSandFlashing; // Chronomancer: Q is flashing (a critical Sand Blast is ready)
+int libAffx_ChromieSandCrits; // Chronomancer: critical Sand Blasts out (Sand Blast damage shows as critical meanwhile)
+int libAffx_ChromieBreathCrits; // Chronomancer: critical Dragon's Breaths out (its damage shows as critical meanwhile)
 bool libAffx_ChromieBreathFlashing; // Chronomancer: W is flashing (a critical Dragon's Breath is ready)
 fixed libAffx_ChromieBreathHitTime = -1.0; // Infinite Breath: the blast being counted
 int libAffx_ChromieBreathHeroes; // Infinite Breath: enemy Heroes hit by that blast
@@ -148,7 +150,7 @@ void libAffx_ChromieSyncChrono () {
         libAffx_CatalogReferenceModify("Effect,ChromieGoldenTrapHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieChronoAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 0.25% more Slow each, on top of the 25%
+    // stage 2 (stacks 41 to 80): 0.25% more Slow each, on top of the 55%
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_ChromieChronoAdded2) {
         libAffx_CatalogReferenceModify("Behavior,ChromieTimeTrapChronicConditionsSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
@@ -244,6 +246,13 @@ bool libAffx_ChromieSandCast_Func (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && UnitHasBehavior2(hero, "ChromieGoldenCritSandReady")) {
         UnitBehaviorRemove(hero, "ChromieGoldenCritSandReady", 1);
         UnitBehaviorAdd(hero, "ChromieGoldenSandCritting", hero, 1);
+        libAffx_ChromieSandCrits += 1;
+        libAffx_CatalogReferenceSet("Effect,ChromieSandBlastDamage,Flags[Crit]", libAffx_player, "1");
+        libAffx_Wait(1.25, c_timeGame);
+        libAffx_ChromieSandCrits -= 1;
+        if (libAffx_ChromieSandCrits == 0) {
+            libAffx_CatalogReferenceSet("Effect,ChromieSandBlastDamage,Flags[Crit]", libAffx_player, "0");
+        }
         return true;
     }
     if (!UnitHasBehavior2(hero, "ChromieGoldenSniperMarker") || libAffx_ChromieStacks("ChromieGoldenSandsOfTimeTokenCounter") < 100 || target == null) {
@@ -266,6 +275,13 @@ bool libAffx_ChromieBreathCast_Func (bool testConds, bool runActions) {
     }
     UnitBehaviorRemove(hero, "ChromieGoldenCritBreathReady", 1);
     UnitBehaviorAdd(hero, "ChromieGoldenBreathCritting", hero, 1);
+    libAffx_ChromieBreathCrits += 1;
+    libAffx_CatalogReferenceSet("Effect,ChromieDragonsBreathDamage,Flags[Crit]", libAffx_player, "1");
+    libAffx_Wait(1.25, c_timeGame);
+    libAffx_ChromieBreathCrits -= 1;
+    if (libAffx_ChromieBreathCrits == 0) {
+        libAffx_CatalogReferenceSet("Effect,ChromieDragonsBreathDamage,Flags[Crit]", libAffx_player, "0");
+    }
     return true;
 }
 // Dragon's Breath blasts. Bronze Breath at 100 Dragonflight stacks: the blast erupts again at the same spot 1 second
