@@ -7,8 +7,8 @@ include "AffixTriggers"
 // 41-80 width, 81-100 a Slow, 100 an echo throw for half damage, then 2.5% all damage each.
 // Warden of Arreat: Fend Strikes counts each enemy Hero once per Fend; Fend Mastery stacks 1-40 recharge, 41-80
 // arc, 81-100 strike speed, 100 a final strike, then 2.5% all damage each. A full Fend heals 5% (data).
-// Skirmisher: Skirmish counts Basic Attacks on Heroes for Fend damage; every 10 empower the next Fend to
-// Root (data). Hit and Run stacks 1-40 Attack Speed, 41-80 shorter Slows and Stuns, 100 maximum
+// Lightning Strike (Skirm): Pinning Strikes counts Basic Attacks on Heroes for Fend damage; every 10 empower the next Fend to
+// Root (data). Penetrate stacks 1-40 Attack Speed, 41-80 shorter Slows and Stuns, 100 maximum
 // Health damage on Basic Attacks, then 1.5% all damage each.
 // ============================================================
 
@@ -23,8 +23,8 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaFendTime; // per enemy player,
 int libAffx_CassiaFendAdded; // Warden of Arreat: takedown stacks already applied to the catalog this game
 int libAffx_CassiaFendAdded2; // Warden of Arreat: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_CassiaFendAdded3; // Warden of Arreat: takedown quest stage 3 stacks already applied to the catalog this game
-fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaSkirmTime; // per enemy player, last Skirmisher hit
-int libAffx_CassiaSkirmAdded; // Skirmisher: takedown stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaSkirmTime; // per enemy player, last Lightning Strike hit
+int libAffx_CassiaSkirmAdded; // Lightning Strike: takedown stacks already applied to the catalog this game
 fixed libAffx_CassiaJavelinCast; // last Lightning Fury throw (real or echo)
 fixed libAffx_CassiaJavelinEchoTime = -1.0; // when the script threw the last echo
 int libAffx_CassiaJavelinHeroes; // enemy Heroes hit by the current throw
@@ -434,7 +434,7 @@ bool libAffx_CassiaFendHit_Func (bool testConds, bool runActions) {
     libAffx_CassiaFendOnHit(hero, victim);
     return true;
 }
-// Skirmisher hit on an enemy Hero: takedown window, AmazonGoldenSkirmishTokenCounter, the heal, and on-hit boons
+// Lightning Strike hit on an enemy Hero: takedown window, AmazonGoldenSkirmishTokenCounter, the heal, and on-hit boons
 bool libAffx_CassiaSkirmHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit hero = libAffx_CassiaHero();

@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Skirmisher (Basic Attack range, an empowered Fend that Roots; Valkyrie, Charged Strikes and War Matron). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
+  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Lightning Strike (affix CassiaSkirmisher: Basic Attack range, an empowered Fend that Roots; Valkyrie, Charged Strikes and War Matron). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="AmazonGoldenJavelinMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AmazonGoldenWardenMarker" parent="CarryBehaviorParent" />
@@ -118,7 +118,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
   </CButton>
 
-  <!-- ===== Skirmisher ===== -->
+  <!-- ===== Lightning Strike ===== -->
   <!-- Basic Attack range +2.1 (4.5 to 6.6); Valkyrie at level 1 (Ball Lightning disabled), Charged Strikes (bounces to all nearby enemies but buildings) and War Matron. Skirmish quest (50% kept): 0.2% Fend damage per Basic Attack on an enemy Hero; every 10 empower the next Fend to Root enemies within 4 at once and each enemy it hits, for 1.5 seconds (counter: script; Root: data). Hit and Run quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each, 41-80 1% shorter Slows and Stuns on Cassia each (script), 100 Basic Attacks on Heroes add 1% of their maximum Health (script), then 1.5% all damage past 100. -->
   <CBehaviorTokenCounter id="AmazonGoldenSkirmishTokenCounter" parent="StormQuestToken">
     <Face value="AmazonGoldenSkirmishTokenCounter" />
