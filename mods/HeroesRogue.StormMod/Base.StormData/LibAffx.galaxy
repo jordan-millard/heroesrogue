@@ -603,6 +603,8 @@ void libAffx_Pause(bool pause) {
             TriggerExecute(libAffx_pauseBBAY, false, false);
         } else if (libCore_gv_mAPMapStringID == "ControlPoints" && libAffx_pauseMLCP != null) {
             TriggerExecute(libAffx_pauseMLCP, false, false);
+        } else if (libAffx_currentMap == libAffx_mapBraxisHoldout && libAffx_pauseSCHO != null) {
+            TriggerExecute(libAffx_pauseSCHO, false, false); // MapBraxisHoldout.galaxy
         } else if (libCore_gv_mAPMapStringID == "DragonShire") {
             if (TimerGetRemaining(libMapM_gv_mMGardensDragonDragonTowerStartTimer) > 0.0) {
                 TimerPause(libMapM_gv_mMGardensDragonDragonTowerStartTimer, true);
@@ -672,6 +674,8 @@ void libAffx_Pause(bool pause) {
             TriggerExecute(libAffx_pauseBBAY, false, false);
         } else if (libCore_gv_mAPMapStringID == "ControlPoints" && libAffx_pauseMLCP != null) {
             TriggerExecute(libAffx_pauseMLCP, false, false);
+        } else if (libAffx_currentMap == libAffx_mapBraxisHoldout && libAffx_pauseSCHO != null) {
+            TriggerExecute(libAffx_pauseSCHO, false, false); // MapBraxisHoldout.galaxy
         } else if (libCore_gv_mAPMapStringID == "DragonShire") {
             if (TimerGetRemaining(libMapM_gv_mMGardensDragonDragonTowerStartTimer) > 0.0) {
                 TimerPause(libMapM_gv_mMGardensDragonDragonTowerStartTimer, false);
@@ -5631,6 +5635,7 @@ void libAffx_InitTriggers () {
     libAffx_pauseGRDN = TriggerCreate("libGRDN_PauseTrigger_Func");
     libAffx_pauseBBAY = TriggerCreate("libBBAY_PauseTrigger_Func");
     libAffx_pauseMLCP = TriggerCreate("libMLCP_PauseTrigger_Func");
+    libAffx_pauseSCHO = TriggerCreate("libAffx_BraxisPause_Func");
 }
 
 int libAffx_GetAchievementId(string achievementName) {

@@ -1,5 +1,5 @@
 // ============================================================
-// Braxis Holdout: objective results.
+// Braxis Holdout: objective results, and pausing the map's timers while the game is paused (boon picks).
 // Included by the Braxis Holdout map script only, since it uses that map's Zerg wave data.
 // ============================================================
 
@@ -21,6 +21,38 @@ bool libAffx_BraxisZergReleased_Func (bool testConds, bool runActions) {
         libAffx_MapObjectiveReport(libGame_gv_teamOrderIndex_C);
     } else if (libSCHO_gv_mMHO_TeamProgress[libGame_gv_teamChaosIndex_C] >= 100.0) {
         libAffx_MapObjectiveReport(libGame_gv_teamChaosIndex_C);
+    }
+    return true;
+}
+
+bool libAffx_braxisPaused;
+
+void libAffx_BraxisPauseTimer (timer t, bool pause) {
+    if (TimerGetRemaining(t) > 0.0) {
+        TimerPause(t, pause);
+    }
+}
+
+// Run by libAffx_Pause each time the game pauses or unpauses: beacons, Zerg waves, scaling, the boss elevator and the
+// camp factories
+bool libAffx_BraxisPause_Func (bool testConds, bool runActions) {
+    int i;
+    if (!runActions) {
+        return true;
+    }
+    libAffx_braxisPaused = !libAffx_braxisPaused;
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_AttackEventTimer, libAffx_braxisPaused);
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_AttackEventWarningTimer, libAffx_braxisPaused);
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_AttackWaveTimer, libAffx_braxisPaused);
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_ScalingTimer, libAffx_braxisPaused);
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Elevator.lv_elevatorInitialRaiseTimer, libAffx_braxisPaused);
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Elevator.lv_elevatorRaiseTimer, libAffx_braxisPaused);
+    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Elevator.lv_elevatorLowerTimer, libAffx_braxisPaused);
+    for (i = 0; i <= 6; i += 1) {
+        libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Factory_Timer[i].lv_animationTimer, libAffx_braxisPaused);
+    }
+    for (i = 0; i <= libCore_gv_bALMaxTeams; i += 1) {
+        libAffx_BraxisPauseTimer(libSCHO_gv_zergDropPodCooldowns[i], libAffx_braxisPaused);
     }
     return true;
 }
