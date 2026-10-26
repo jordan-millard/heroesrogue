@@ -8,7 +8,7 @@ include "AffixTriggers"
 // Bronze Breath: Dragonflight stacks 1-40 recharge, 41-80 a shorter delay, 81-100 area, 100 each blast
 // erupts again for half damage, then 2.5% all damage each.
 // Chronomancer: an enemy Hero Time Stopped by a Time Trap resets Q, W and E and adds a Temporal Surge stack
-// (20 seconds, all refreshed, up to 5): Sand Blast and Dragon's Breath deal 10% more per stack, shown as
+// (20 seconds, all refreshed, up to 5): Sand Blast and Dragon's Breath deal 20% more per stack, shown as
 // critical (Resonance: 0.25% more per stack each). Timeline stacks 1-40 heal per Time Stop, 41-80 a stronger
 // Slow, 100 traps twice the radius and Health, then 1% Spell Power each.
 // ============================================================
@@ -201,9 +201,9 @@ void libAffx_ChromieResetAbil (unit hero, string abil) {
         UnitAddChargeUsed(hero, "Abil/" + abil, -UnitGetChargeUsed(hero, "Abil/" + abil));
     }
 }
-// Temporal Surge's damage: stacks x (10% + 0.25% per Resonance stack) on Sand Blast and Dragon's Breath
+// Temporal Surge's damage: stacks x (20% + 0.25% per Resonance stack) on Sand Blast and Dragon's Breath
 void libAffx_ChromieSurgeUpdate (unit hero) {
-    fixed perStack = 0.1 + 0.0025 * IntToFixed(libAffx_ChromieStacks("ChromieGoldenResonanceTokenCounter"));
+    fixed perStack = 0.2 + 0.0025 * IntToFixed(libAffx_ChromieStacks("ChromieGoldenResonanceTokenCounter"));
     string bonus = FixedToString(IntToFixed(UnitBehaviorCount(hero, "ChromieGoldenTemporalSurge")) * perStack, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieGoldenSurge].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieGoldenSurge].Modifier", libAffx_player, bonus);
