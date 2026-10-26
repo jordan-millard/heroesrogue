@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Skirmisher (Basic Attacks while moving, Valkyrie at level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="AmazonGoldenJavelinMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenWardenMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenSkirmisherMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenStormSpearMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenJavelinMasteryMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenHoldTheLineMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenStaticFieldMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenKitingShotMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="AmazonGoldenUntouchableMarker" parent="CarryBehaviorParent" />
+  <!-- Storm Spear (Epic): a split bolt that hits an enemy Hero chains to the nearest other enemy Hero within 4. The
+       script copies the bolt's Amount (level scaling) into this effect. -->
+  <CEffectDamage id="AmazonGoldenStormSpearDamage" parent="AmazonSpellDamageParent">
+    <Amount value="158" />
+    <SourceButtonFace value="AmazonLightningFury" />
+  </CEffectDamage>
+  <!-- Kiting Shot (Epic): every 4th Basic Attack on an enemy Hero while moving adds a bolt for 50% of Lightning Fury's
+       damage. The script copies Lightning Fury's Amount (level scaling) into this effect. -->
+  <CEffectDamage id="AmazonGoldenKitingShotDamage" parent="AmazonSpellDamageParent">
+    <MultiplicativeModifierArray index="KitingShot" Modifier="-0.5" />
+    <Amount value="158" />
+    <SourceButtonFace value="AmazonLightningFury" />
+  </CEffectDamage>
+
+  <!-- ===== Valkyrie's Javelin ===== -->
+  <!-- Lightning Fury costs half Mana (10), deals 20% more damage and is 20% wider (0.6 to 0.72, javelin and bolts); Thunderstroke and Power Strike. Thunderbolt quest (50% kept): 1% Lightning Fury damage per enemy Hero hit, once per Hero per throw. Javelin Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the 5 second recharge each, 41-80 1% width each, 81-100 a 1% Slow each (1 second), 100 an echo throw for 50%, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="AmazonGoldenThunderboltTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenThunderboltTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AmazonGoldenJavelinTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenJavelinTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AmazonGoldenThunderboltTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AmazonGoldenThunderboltTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AmazonLightningFuryDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinHit" Accumulator="AmazonGoldenThunderboltTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenEcho" Validator="AmazonGoldenJavelinEchoing" Modifier="-0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonLightningFuryLightningDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinHit" Accumulator="AmazonGoldenThunderboltTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenEcho" Validator="AmazonGoldenJavelinEchoing" Modifier="-0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonLightningFuryStaticElectricityLightningDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinHit" Accumulator="AmazonGoldenThunderboltTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenEcho" Validator="AmazonGoldenJavelinEchoing" Modifier="-0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenStormSpearDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaJavelinHit" Accumulator="AmazonGoldenThunderboltTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenEcho" Validator="AmazonGoldenJavelinEchoing" Modifier="-0.5" />
+  </CEffectDamage>
+  <CButton id="AmazonGoldenThunderboltTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_lightningfury.dds" />
+  </CButton>
+  <CButton id="AmazonGoldenJavelinTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_lightningfury.dds" />
+  </CButton>
+
+  <!-- ===== Warden of Arreat ===== -->
+  <!-- Fend keeps its base 10 second cooldown, costs half Mana (25), deals 20% more damage and has a 20% wider arc (45 to 54 degrees); a full Fend heals 5% of maximum Health; War Matron and Gloves of Alacrity. Fend Strikes quest (50% kept): 1% Fend damage per enemy Hero hit, once per Hero per Fend. Fend Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the cooldown each, 41-80 1% arc each, 81-100 1% faster strikes each, 100 a final strike, then 2.5% all damage each. -->
+  <CBehaviorTokenCounter id="AmazonGoldenFendStrikesTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenFendStrikesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AmazonGoldenFendMasteryTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenFendMasteryTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AmazonGoldenFendStrikesTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AmazonGoldenFendStrikesTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AmazonFendChannelDamage">
+    <MultiplicativeModifierArray index="CassiaFendPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendHit" Accumulator="AmazonGoldenFendStrikesTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="AmazonGoldenFendStrikesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+  </CButton>
+  <CButton id="AmazonGoldenFendMasteryTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+  </CButton>
+
+  <!-- ===== Skirmisher ===== -->
+  <!-- Cassia Basic Attacks while moving (both weapons: AllowedMovement Moving, no attack order needed, 360 arc) for 25% less damage while Avoidance is active; Avoidance is always fully charged while moving (script) and Abilities deal 25% less damage to her while moving; Valkyrie at level 1 (Ball Lightning disabled). Skirmish quest (50% kept): 0.1% Basic Attack damage per Basic Attack on an enemy Hero, added 10 at a time. Skirmisher quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Movement Speed while moving each, 41-80 shrink the moving penalty by 0.5% each, then 2.5% all damage past 100. -->
+  <CBehaviorTokenCounter id="AmazonGoldenSkirmishTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenSkirmishTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="AmazonGoldenSkirmisherTokenCounter" parent="StormQuestToken">
+    <Face value="AmazonGoldenSkirmisherTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="AmazonGoldenSkirmishTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="AmazonGoldenSkirmishTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="AmazonHeroWeaponDamage">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonHeroWeaponDamageTitansRevenge">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonChargedStrikesWeaponDamage">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonChargedStrikesWeaponDamageTitansRevenge">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
+    <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenKitingShotDamage">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="AmazonGoldenSkirmishTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_avoidance.dds" />
+  </CButton>
+  <CButton id="AmazonGoldenSkirmisherTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_cassia_avoidance.dds" />
+  </CButton>
+
+  <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
+  <CEffectDamage id="AmazonFendChannelDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonHeroWeaponDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonHeroWeaponDamageTitansRevenge">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonChargedStrikesWeaponDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonChargedStrikesWeaponDamageTitansRevenge">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenKitingShotDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonAvoidanceSurgeOfLightDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonBlindingLightDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonMartialLawDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonMartialLawBaseDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonValkyrieImprisoningLightDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonValkyrieImpaleDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonBallLightningBounceToEnemyDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonLightningFuryDamage">
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonLightningFuryLightningDamage">
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonLightningFuryStaticElectricityLightningDamage">
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenStormSpearDamage">
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Valkyrie's Javelin ===== -->
+  <!-- Javelin echo (takedown quest 100): the javelin is thrown again 0.5 seconds later toward the same point. While the
+       echo flies (1 second, or until the next real throw) this marker on Cassia halves Lightning Fury damage. -->
+  <CBehaviorBuff id="AmazonGoldenJavelinEchoMarker">
+    <InfoFlags index="Hidden" value="1" />
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenJavelinEchoing">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenJavelinEchoMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Takedown quest 81-100: Lightning Fury hits on Heroes Slow them by 1% per stack for 1 second (the script applies it
+       past 80 stacks and sets the amount per player) -->
+  <CBehaviorBuff id="AmazonGoldenJavelinSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_lightningfury.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenJavelinSlowApply">
+    <Behavior value="AmazonGoldenJavelinSlow" />
+  </CEffectApplyBehavior>
+
+  <!-- ===== Warden of Arreat ===== -->
+  <!-- A full Fend (every strike) heals Cassia for 5% of her maximum Health -->
+  <CEffectCreatePersistent id="AmazonFendChannelCreatePersistent">
+    <ExpireEffect value="AmazonGoldenFendFinishHeal" />
+  </CEffectCreatePersistent>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterIsWarden">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenWardenMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectModifyUnit id="AmazonGoldenFendFinishHeal">
+    <ValidatorArray value="AmazonGoldenCasterIsWarden" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.05" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <!-- Takedown quest 100: Fend ends with one more strike on everything in front of Cassia (the script turns it on) -->
+  <CEffectSet id="AmazonGoldenFendBlastSet">
+    <Chance value="0" />
+    <EffectArray value="AmazonFendChannelSearchArea" />
+  </CEffectSet>
+  <CEffectSet id="AmazonFendChannelFinalSet">
+    <EffectArray value="AmazonGoldenFendBlastSet" />
+  </CEffectSet>
+  <!-- Hold the Line (Epic): an enemy Hero hit 4 times by one Fend is Slowed by 30% for 2 seconds -->
+  <CBehaviorBuff id="AmazonGoldenHoldTheLineSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenHoldTheLineApply">
+    <Behavior value="AmazonGoldenHoldTheLineSlow" />
+  </CEffectApplyBehavior>
+  <!-- Static Field (Legendary): 25% less damage taken while Fending, and each Fend hit on an enemy Hero adds a 1% maximum
+       Health shield for 4 seconds (up to 10 per Fend, script) -->
+  <CBehaviorBuff id="AmazonGoldenStaticFieldGuard" parent="CarryBehaviorParent">
+    <DisableValidatorArray value="AmazonFendCasterIsChanneling" />
+    <DamageResponse>
+      <Chance value="1" />
+      <ModifyFraction value="0.75" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="AmazonGoldenStaticFieldShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+    <MaxStackCount value="10" />
+    <Duration value="4" />
+    <DamageResponse>
+      <ModifyLimitVitalMaxFractionArray index="Life" value="0.01" />
+    </DamageResponse>
+  </CBehaviorBuff>
+
+  <!-- ===== Skirmisher ===== -->
+  <!-- While moving: 25% less damage from Abilities, and the Skirmish quest's Movement Speed -->
+  <CBehaviorBuff id="AmazonGoldenSkirmisherGuard" parent="CarryBehaviorParent">
+    <DisableValidatorArray value="AmazonAvoidanceMovementCheckIsActive" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+    <DamageResponse>
+      <Chance value="1" />
+      <ModifyFraction value="0.75" />
+      <Kind index="Melee" value="0" />
+      <Kind index="Ranged" value="0" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <!-- Untouchable (Legendary): after 3 seconds of moving without taking damage, the next Basic Attack deals triple damage;
+       on an enemy Hero it also Stuns for 0.5 seconds (script) -->
+  <CBehaviorBuff id="AmazonGoldenUntouchableReady">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_avoidance.dds" />
+    <BehaviorFlags index="Permanent" value="1" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenUntouchableIsReady">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenUntouchableReady" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="AmazonGoldenUntouchableStun" parent="StormStun">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="AmazonGoldenUntouchableStunApply">
+    <Behavior value="AmazonGoldenUntouchableStun" />
+  </CEffectApplyBehavior>
+</Catalog>

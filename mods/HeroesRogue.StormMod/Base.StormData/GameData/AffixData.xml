@@ -22640,6 +22640,554 @@
             </String>
         </Instances>
 
+
+        <Instances Id="CassiaValkyriesJavelin">
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AmazonThunderstroke">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AmazonPowerStrike">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AmazonGoldenJavelinMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AmazonGoldenThunderboltTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AmazonGoldenJavelinTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AmazonGoldenJavelinTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AmazonGoldenThunderboltTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="AmazonLightningFuryThunderstrokeQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Add Abil,AmazonLightningFury,Cost.Vital[Energy] -10">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,AmazonLightningFuryMissileSearch,AreaArray[0].RectangleWidth 0.12">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Effect,AmazonLightningFuryLightningMissileSearch,AreaArray[0].RectangleWidth 0.12">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,AmazonLightningFuryDamage,MultiplicativeModifierArray[CassiaJavelinPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,AmazonLightningFuryLightningDamage,MultiplicativeModifierArray[CassiaJavelinPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,AmazonLightningFuryStaticElectricityLightningDamage,MultiplicativeModifierArray[CassiaJavelinPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,AmazonGoldenStormSpearDamage,MultiplicativeModifierArray[CassiaJavelinPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_CassiaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_CassiaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaChargedJavelin">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaValkyriesJavelin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AmazonLightningFuryDamage,MultiplicativeModifierArray[CassiaJavelinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AmazonLightningFuryLightningDamage,MultiplicativeModifierArray[CassiaJavelinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,AmazonLightningFuryStaticElectricityLightningDamage,MultiplicativeModifierArray[CassiaJavelinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,AmazonGoldenStormSpearDamage,MultiplicativeModifierArray[CassiaJavelinCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaQuickThrow">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaValkyriesJavelin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AmazonLightningFury,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaGroundingRodBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaValkyriesJavelin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AmazonFendGroundingRod">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaInnerLightBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_innerlight.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaValkyriesJavelin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AmazonInnerLight">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaStormSpear">
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaValkyriesJavelin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AmazonGoldenStormSpearMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaJavelinMastery">
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaValkyriesJavelin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AmazonGoldenJavelinMasteryMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaWardenOfArreat">
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AmazonFendWarMatron">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AmazonFendGlovesOfAlacrity">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 AmazonGoldenWardenMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AmazonGoldenFendStrikesTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AmazonGoldenFendMasteryTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="AmazonGoldenFendMasteryTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AmazonGoldenFendStrikesTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Abil,AmazonFend,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Effect,AmazonFendChannelSearchArea,AreaArray[0].Arc 9">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,AmazonFendChannelDamage,MultiplicativeModifierArray[CassiaFendPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_CassiaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_CassiaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaBarbedSpear">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaWardenOfArreat">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AmazonFendChannelDamage,MultiplicativeModifierArray[CassiaFendCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaSteadyStance">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaWardenOfArreat">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,AmazonFend,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaImpaleBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaWardenOfArreat">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AmazonImpale">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaStaticElectricityBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaWardenOfArreat">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AmazonStaticElectricity">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaHoldTheLine">
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaWardenOfArreat">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AmazonGoldenHoldTheLineMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaStaticField">
+            <String String="Assets/Textures/storm_ui_icon_cassia_fend.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaWardenOfArreat">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AmazonGoldenStaticFieldMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AmazonGoldenStaticFieldGuard">
+                <Field Id="Behavior" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaSkirmisher">
+            <String String="Assets/Textures/storm_ui_icon_cassia_avoidance.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="AmazonValkyrie">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="AmazonBallLightning">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 AmazonGoldenSkirmisherMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 AmazonGoldenSkirmishTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 AmazonGoldenSkirmisherTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 AmazonGoldenSkirmisherGuard">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="AmazonGoldenSkirmisherTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="AmazonGoldenSkirmishTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 String Weapon,AmazonHeroWeaponRanged,AllowedMovement Moving">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 String Weapon,AmazonHeroWeaponMelee,AllowedMovement Moving">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Weapon,AmazonHeroWeaponRanged,Options[OnlyFireWhileInAttackOrder] 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Weapon,AmazonHeroWeaponMelee,Options[OnlyFireWhileInAttackOrder] 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Weapon,AmazonHeroWeaponRanged,Options[CanInitiateAttackOrder] 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Weapon,AmazonHeroWeaponMelee,Options[CanInitiateAttackOrder] 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Weapon,AmazonHeroWeaponRanged,Arc 360">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,AmazonHeroWeaponDamage,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,AmazonHeroWeaponDamageTitansRevenge,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamage,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamageTitansRevenge,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,AmazonHeroWeaponDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Set Effect,AmazonHeroWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="13" />
+            </String>
+            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="14" />
+            </String>
+            <String String="1 1 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="15" />
+            </String>
+            <String String="AffixAdded libAffx_CassiaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_CassiaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaRunningStrikes">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_cassia_avoidance.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaSkirmisher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,AmazonHeroWeaponDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,AmazonHeroWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,AmazonChargedStrikesWeaponDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,AmazonChargedStrikesWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaLightFeet">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_cassia_avoidance.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaSkirmisher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,AmazonGoldenSkirmisherGuard,Modification.UnifiedMoveSpeedFactor 0.02">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaChargedStrikesBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_new_chargedstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaSkirmisher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AmazonChargedStrikes">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaMartialLawBoon">
+            <String String="Assets/Textures/storm_ui_icon_cassia_avoidance.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaSkirmisher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="AmazonMartialLaw">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaKitingShot">
+            <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaSkirmisher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AmazonGoldenKitingShotMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="CassiaUntouchable">
+            <String String="Assets/Textures/storm_ui_icon_cassia_avoidance.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Amazon">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="CassiaSkirmisher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 AmazonGoldenUntouchableMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
