@@ -259,7 +259,8 @@ bool libAffx_ChromieBreathCast_Func (bool testConds, bool runActions) {
     return true;
 }
 // Dragon's Breath blasts. Bronze Breath at 100 Dragonflight stacks: the blast erupts again at the same spot 1 second
-// later for 50% damage. Chronomancer: blasts of a cast that used an echo erupt again 0.5 seconds later for 130%. The echo
+// later for 50% damage. Chronomancer: blasts of a cast that used an echo erupt again 0.6875 seconds (Dragon's Breath's own
+// delay) later for 130%. The echo
 // marker is on Chromie only while the echo blast runs.
 bool libAffx_ChromieBreathBlast_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChromieHero();
@@ -275,13 +276,18 @@ bool libAffx_ChromieBreathBlast_Func (bool testConds, bool runActions) {
         echoMarker = "ChromieGoldenBreathEchoMarker";
     }
     else if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && now <= libAffx_ChromieBreathEchoUntil) {
-        delay = 0.5;
+        delay = 0.6875;
         echoMarker = "ChromieGoldenChronoEchoMarker";
     }
     else {
         return true;
     }
-    libAffx_Wait(delay, c_timeGame);
+    // the eruption and warning visuals, timed to the echo blast
+    if (delay > 0.6875) {
+        libAffx_Wait(delay - 0.6875, c_timeGame);
+    }
+    UnitCreateEffectPoint(hero, "ChromieGoldenEchoBreathFX", target);
+    libAffx_Wait(0.6875, c_timeGame);
     if (!UnitIsAlive(hero)) {
         return true;
     }
