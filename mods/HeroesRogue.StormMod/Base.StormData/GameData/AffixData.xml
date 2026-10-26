@@ -22641,6 +22641,7 @@
         </Instances>
 
 
+
         <Instances Id="CassiaValkyriesJavelin">
             <String String="Assets/Textures/storm_ui_icon_cassia_lightningfury.dds">
                 <Field Id="Icon" />
@@ -23012,53 +23013,32 @@
             <String String="AmazonGoldenSkirmishTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="1 1 String Weapon,AmazonHeroWeaponRanged,AllowedMovement Moving">
+            <String String="1 1 Add Weapon,AmazonHeroWeaponRanged,Range 2.1">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 String Weapon,AmazonHeroWeaponMelee,AllowedMovement Moving">
+            <String String="1 1 Add Weapon,AmazonHeroWeaponRanged,MinScanRange 2.1">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Weapon,AmazonHeroWeaponRanged,Options[OnlyFireWhileInAttackOrder] 0">
+            <String String="1 1 Set Effect,AmazonHeroWeaponDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Weapon,AmazonHeroWeaponMelee,Options[OnlyFireWhileInAttackOrder] 0">
+            <String String="1 1 Set Effect,AmazonHeroWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Weapon,AmazonHeroWeaponRanged,Options[CanInitiateAttackOrder] 0">
+            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Weapon,AmazonHeroWeaponMelee,Options[CanInitiateAttackOrder] 0">
+            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Weapon,AmazonHeroWeaponRanged,Arc 360">
+            <String String="1 1 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,AmazonHeroWeaponDamage,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
+            <String String="1 1 Set Effect,AmazonGoldenBounceDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,AmazonHeroWeaponDamageTitansRevenge,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
+            <String String="1 1 Set Effect,AmazonGoldenSkirmishMaxHealthDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
                 <Field Id="CatalogModification" Index="8" />
-            </String>
-            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamage,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
-                <Field Id="CatalogModification" Index="9" />
-            </String>
-            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamageTitansRevenge,MultiplicativeModifierArray[AmazonGoldenMovingShot].Modifier -0.25">
-                <Field Id="CatalogModification" Index="10" />
-            </String>
-            <String String="1 1 Set Effect,AmazonHeroWeaponDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="11" />
-            </String>
-            <String String="1 1 Set Effect,AmazonHeroWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="12" />
-            </String>
-            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="13" />
-            </String>
-            <String String="1 1 Set Effect,AmazonChargedStrikesWeaponDamageTitansRevenge,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="14" />
-            </String>
-            <String String="1 1 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmPower].Modifier 0">
-                <Field Id="CatalogModification" Index="15" />
             </String>
             <String String="AffixAdded libAffx_CassiaStart">
                 <Field Id="Trigger" />
@@ -23097,6 +23077,12 @@
             </String>
             <String String="1 2 Set Effect,AmazonGoldenKitingShotDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,AmazonGoldenBounceDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,AmazonGoldenSkirmishMaxHealthDamage,MultiplicativeModifierArray[CassiaSkirmCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="6" />
             </String>
         </Instances>
         <Instances Id="CassiaLightFeet">

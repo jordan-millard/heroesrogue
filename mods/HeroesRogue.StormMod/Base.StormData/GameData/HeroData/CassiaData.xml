@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Skirmisher (Basic Attacks while moving, Valkyrie at level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
+  <!-- Golden Cassia (Amazon). Starters: Valkyrie's Javelin (Lightning Fury), Warden of Arreat (Fend) and Skirmisher (Basic Attacks: range, bounces, empowered Fend; Valkyrie at level 1). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests and script boons are in HeroTriggers/Cassia.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="AmazonGoldenJavelinMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="AmazonGoldenWardenMarker" parent="CarryBehaviorParent" />
@@ -20,12 +20,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Amount value="158" />
     <SourceButtonFace value="AmazonLightningFury" />
   </CEffectDamage>
-  <!-- Kiting Shot (Epic): every 4th Basic Attack on an enemy Hero while moving adds a bolt for 50% of Lightning Fury's
-       damage. The script copies Lightning Fury's Amount (level scaling) into this effect. -->
+  <!-- Kiting Shot (Epic): every 4th Basic Attack on an enemy Hero adds a bolt for 50% of Lightning Fury's damage. The
+       script copies Lightning Fury's Amount (level scaling) into this effect. -->
   <CEffectDamage id="AmazonGoldenKitingShotDamage" parent="AmazonSpellDamageParent">
     <MultiplicativeModifierArray index="KitingShot" Modifier="-0.5" />
     <Amount value="158" />
     <SourceButtonFace value="AmazonLightningFury" />
+  </CEffectDamage>
+  <!-- Skirmisher bounce: 50% of a Basic Attack. The script copies the Basic Attack's Amount (level scaling). -->
+  <CEffectDamage id="AmazonGoldenBounceDamage" parent="StormWeapon">
+    <MultiplicativeModifierArray index="Bounce" Modifier="-0.5" />
+    <Amount value="125" />
+    <SourceButtonFace value="Attack" />
+  </CEffectDamage>
+  <!-- Takedown quest 100: Basic Attacks on enemy Heroes also deal 1% of their maximum Health (script) -->
+  <CEffectDamage id="AmazonGoldenSkirmishMaxHealthDamage" parent="StormSpellPercentDamage">
+    <Visibility value="Hidden" />
+    <VitalFractionMax index="Life" value="0.01" />
+    <ValidatorArray value="TargetIsHero" />
+    <SourceButtonFace value="Attack" />
   </CEffectDamage>
 
   <!-- ===== Valkyrie's Javelin ===== -->
@@ -111,7 +124,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Skirmisher ===== -->
-  <!-- Cassia Basic Attacks while moving (both weapons: AllowedMovement Moving, no attack order needed, 360 arc) for 25% less damage while Avoidance is active; Avoidance is always fully charged while moving (script) and Abilities deal 25% less damage to her while moving; Valkyrie at level 1 (Ball Lightning disabled). Skirmish quest (50% kept): 0.1% Basic Attack damage per Basic Attack on an enemy Hero, added 10 at a time. Skirmisher quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Movement Speed while moving each, 41-80 shrink the moving penalty by 0.5% each, then 2.5% all damage past 100. -->
+  <!-- Basic Attack range +2.1 (4.5 to 6.6); Basic Attacks bounce to the 2 nearest other enemies within 3.5 for 50% damage; Valkyrie at level 1 (Ball Lightning disabled). Skirmish quest (50% kept): 0.2% Fend damage per Basic Attack on an enemy Hero; every 10 empower the next Fend to fire a Basic Attack at every enemy within 6.6 (script). Hit and Run quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each, 41-80 1% shorter Slows and Stuns on Cassia each (script), 100 Basic Attacks on Heroes add 1% of their maximum Health (script), then 1.5% all damage past 100. -->
   <CBehaviorTokenCounter id="AmazonGoldenSkirmishTokenCounter" parent="StormQuestToken">
     <Face value="AmazonGoldenSkirmishTokenCounter" />
     <Max value="100000" />
@@ -125,45 +138,49 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="AmazonGoldenSkirmishTokenCounter" />
-    <Scale value="0.001" />
+    <Scale value="0.002" />
   </CAccumulatorToken>
   <CEffectDamage id="AmazonHeroWeaponDamage">
     <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
     <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
   </CEffectDamage>
   <CEffectDamage id="AmazonHeroWeaponDamageTitansRevenge">
     <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
     <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
   </CEffectDamage>
   <CEffectDamage id="AmazonChargedStrikesWeaponDamage">
     <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
     <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
   </CEffectDamage>
   <CEffectDamage id="AmazonChargedStrikesWeaponDamageTitansRevenge">
     <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="AmazonGoldenMovingShot" Validator="AmazonAvoidanceIsActive" Modifier="0" />
     <MultiplicativeModifierArray index="AmazonGoldenUntouchable" Validator="AmazonGoldenUntouchableIsReady" Modifier="2" />
   </CEffectDamage>
   <CEffectDamage id="AmazonGoldenKitingShotDamage">
     <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenBounceDamage">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenSkirmishMaxHealthDamage">
+    <MultiplicativeModifierArray index="CassiaSkirmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaSkirmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonFendChannelDamage">
+    <MultiplicativeModifierArray index="CassiaSkirmHit" Accumulator="AmazonGoldenSkirmishTokenCounterAccumulator" />
   </CEffectDamage>
   <CButton id="AmazonGoldenSkirmishTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_cassia_avoidance.dds" />
@@ -194,6 +211,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="AmazonGoldenKitingShotDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenBounceDamage">
+    <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="AmazonGoldenSkirmishMaxHealthDamage">
     <MultiplicativeModifierArray index="CassiaJavelinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="CassiaFendLegacy" Modifier="0" />
   </CEffectDamage>
@@ -332,18 +357,69 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
 
   <!-- ===== Skirmisher ===== -->
-  <!-- While moving: 25% less damage from Abilities, and the Skirmish quest's Movement Speed -->
+  <CValidatorUnitCompareBehaviorCount id="AmazonGoldenCasterIsSkirmisher">
+    <WhichUnit Value="Caster" />
+    <Behavior value="AmazonGoldenSkirmisherMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Basic Attacks bounce to the 2 nearest other enemies within 3.5 for 50% damage (Charged Strikes' bounce visuals) -->
+  <CEffectSet id="AmazonWeaponPrimaryPostImpactSet">
+    <EffectArray value="AmazonGoldenBounceSearch" />
+  </CEffectSet>
+  <CEffectEnumArea id="AmazonGoldenBounceSearch">
+    <ValidatorArray value="AmazonGoldenCasterIsSkirmisher" />
+    <ExcludeArray Value="Target" />
+    <SearchFilters value="Visible;Self,Player,Ally,Neutral,Structure,Missile,Item,Stasis,Dead,Hidden,Invulnerable,Benign" />
+    <TargetSorts>
+      <SortArray value="TSDistance" />
+    </TargetSorts>
+    <AreaArray Effect="AmazonGoldenBounceImpactSet" MaxCount="2">
+      <Radius value="3.5" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
+  <CEffectSet id="AmazonGoldenBounceImpactSet">
+    <EffectArray value="AmazonGoldenBounceDamage" />
+  </CEffectSet>
+  <CActorSite id="AmazonHeroWeaponChargedStrikesLaunchSite">
+    <On Terms="Effect.AmazonGoldenBounceSearch.Start; At Target" Send="Create" />
+  </CActorSite>
+  <CActorSite id="AmazonHeroWeaponChargedStrikesImpactSite">
+    <On Terms="Effect.AmazonGoldenBounceImpactSet.Start; At Target" Send="Create" />
+  </CActorSite>
+  <!-- Takedown quest 1-40: 0.5% Attack Speed per stack (the script sets the stack count) -->
+  <CBehaviorBuff id="AmazonGoldenSkirmisherAttackSpeed" parent="CarryBehaviorParent">
+    <InfoFlags index="Hidden" value="1" />
+    <MaxStackCount value="40" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.005" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Skirmish quest: every 10 Basic Attacks on enemy Heroes empower the next Fend to fire a Basic Attack at every enemy
+       within 6.6 (the script fires it when Fend is cast) -->
+  <CBehaviorBuff id="AmazonGoldenVolleyReady">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_cassia_fend.dds" />
+    <BehaviorFlags index="Permanent" value="1" />
+  </CBehaviorBuff>
+  <CEffectEnumArea id="AmazonGoldenVolleySearch">
+    <SearchFilters value="Visible;Self,Player,Ally,Neutral,Missile,Item,Stasis,Dead,Hidden,Invulnerable,Benign" />
+    <AreaArray Effect="AmazonGoldenVolleyMissile">
+      <Radius value="6.6" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
+  <CEffectLaunchMissile id="AmazonGoldenVolleyMissile">
+    <ValidatorArray value="TargetNotDead" />
+    <ImpactEffect value="AmazonHeroWeaponDamageSwitch" />
+    <AmmoUnit value="AmazonHeroWeaponMissile" />
+  </CEffectLaunchMissile>
+  <!-- Light Feet (Common): Movement Speed while moving -->
   <CBehaviorBuff id="AmazonGoldenSkirmisherGuard" parent="CarryBehaviorParent">
     <DisableValidatorArray value="AmazonAvoidanceMovementCheckIsActive" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />
     </Modification>
-    <DamageResponse>
-      <Chance value="1" />
-      <ModifyFraction value="0.75" />
-      <Kind index="Melee" value="0" />
-      <Kind index="Ranged" value="0" />
-    </DamageResponse>
   </CBehaviorBuff>
   <!-- Untouchable (Legendary): after 3 seconds of moving without taking damage, the next Basic Attack deals triple damage;
        on an enemy Hero it also Stuns for 0.5 seconds (script) -->
