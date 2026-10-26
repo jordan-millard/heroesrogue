@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Chromie. Starters: Sand Sniper (Sand Blast), Bronze Breath (Dragon's Breath) and Chronomancer (Time Traps Slow 65% for 4 seconds and a Time Stop resets Sand Blast, Dragon's Breath and Time Trap; Chromie deals 50% more damage to slowed Heroes). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests, echoes and script boons are in HeroTriggers/Chromie.galaxy. -->
+  <!-- Golden Chromie. Starters: Sand Sniper (Sand Blast), Bronze Breath (Dragon's Breath) and Chronomancer (Time Traps Slow 90% decaying to 15% over 6 seconds; a Time Stop resets Sand Blast and Dragon's Breath and adds Momentum: Sand Blast range and Dragon's Breath damage). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (Modifier set by the script). Hits, quests, echoes and script boons are in HeroTriggers/Chromie.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="ChromieGoldenSniperMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ChromieGoldenBreathMarker" parent="CarryBehaviorParent" />
@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves and Slow them after the Time Stop; Time Troubles; Andorhal Anomaly). The Slow is 65% (25% + 40%) and lasts 4 seconds (3 + 1). All of Chromie's damage to slowed enemy Heroes is 50% higher (SLOWED: Modifier 0 in data, set to 0.5 for this player). An enemy Hero Time Stopped by a trap (seen by the script) resets Sand Blast, Dragon's Breath and Time Trap and restores 5% of maximum Mana. Resonance quest (50% kept): 1% more damage to slowed Heroes per enemy Hero Time Stopped. Timeline quest: takedowns within 6 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 each Time Stop heals 0.25% of maximum Health each, 41-80 the Slow 0.25% stronger each (to 75%), 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
+  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves and Slow them after the Time Stop; Time Troubles; Andorhal Anomaly). The Slow decays from 90% to 15% over 6 seconds (Chronic Conditions' Slow 90% for 1 second plus ChromieGoldenTrapSlow2-6). An enemy Hero Time Stopped by a trap (seen by the script) resets Sand Blast and Dragon's Breath. Momentum (the hit quest, nothing kept): +1 per Time Stop; Dragon's Breath +20% damage each (accumulator) and Sand Blast +1 range each (script); 20 seconds after the last takedown it resets (script). Timeline quest: takedowns within 6 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 a never-expiring Shield of 0.5% of maximum Health each (script, refilled on takedowns, respawns and map start), 41-80 1% lower Mana costs each, 100 Momentum is halved instead of reset, then 2.5% all damage each. -->
   <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenResonanceTokenCounter" />
     <Max value="100000" />
@@ -118,56 +118,45 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ChromieGoldenResonanceTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.2" />
   </CAccumulatorToken>
   <CEffectDamage id="ChromieSandBlastDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="ChromieSandBlastPastAndFutureMeDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="ChromieGoldenShardDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="ChromieDragonsBreathDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="ChromieGoldenTimeBombDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="ChromieHeroWeaponDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="ChromieSandEchoWeaponDamage">
     <MultiplicativeModifierArray index="ChromieChronoPower" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieChronoCommon" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
+    <MultiplicativeModifierArray index="ChromieChronoCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ChromieChronoLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowed" Validator="ChromieGoldenTargetSlowedHero" Modifier="0" />
-    <MultiplicativeModifierArray index="ChromieGoldenSlowedHit" Validator="ChromieGoldenTargetSlowedHero" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="ChromieDragonsBreathDamage">
+    <MultiplicativeModifierArray index="ChromieChronoHit" Accumulator="ChromieGoldenResonanceTokenCounterAccumulator" />
   </CEffectDamage>
   <CButton id="ChromieGoldenResonanceTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Chromie_Looper.dds" />
@@ -227,12 +216,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GE" />
     <Value value="1" />
   </CValidatorUnitCompareBehaviorCount>
-  <!-- Chronomancer: the target is a slowed enemy Hero (the base game's own validators) -->
-  <CValidatorCombine id="ChromieGoldenTargetSlowedHero">
-    <Type value="And" />
-    <CombineArray value="TargetIsSlowed" />
-    <CombineArray value="TargetIsHero" />
-  </CValidatorCombine>
   <CValidatorUnitCompareBehaviorCount id="ChromieGoldenCasterIsSniper">
     <WhichUnit Value="Caster" />
     <Behavior value="ChromieGoldenSniperMarker" />
@@ -331,14 +314,68 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Timeline stacks 1-40: each enemy Hero Time Stopped heals 0.25% of maximum Health per stack (the script raises
-       the fraction) -->
-  <CEffectModifyUnit id="ChromieGoldenTrapHeal">
-    <ImpactUnit Value="Caster" />
-    <VitalArray index="Life">
-      <ChangeFraction value="0" />
-    </VitalArray>
-  </CEffectModifyUnit>
+  <!-- The trap Slow decays from 90% to 15% over 6 seconds: Chronic Conditions' own Slow (90% for 1 second for this player,
+       set by the starter) and these five (2 to 6 seconds), all applied at once. The strongest Slow is the one that counts,
+       so it steps 90, 75, 60, 45, 30, 15%. Their amounts are 0 except for Chronomancer (set by the starter). -->
+  <CBehaviorBuff id="ChromieGoldenTrapSlow2" parent="ChromieTimeTrapChronicConditionsSlow">
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChromieGoldenTrapSlow2Apply" parent="ChromieTimeTrapChronicConditionsSlowApplyBehavior">
+    <Behavior value="ChromieGoldenTrapSlow2" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ChromieGoldenTrapSlow3" parent="ChromieTimeTrapChronicConditionsSlow">
+    <Duration value="3" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChromieGoldenTrapSlow3Apply" parent="ChromieTimeTrapChronicConditionsSlowApplyBehavior">
+    <Behavior value="ChromieGoldenTrapSlow3" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ChromieGoldenTrapSlow4" parent="ChromieTimeTrapChronicConditionsSlow">
+    <Duration value="4" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChromieGoldenTrapSlow4Apply" parent="ChromieTimeTrapChronicConditionsSlowApplyBehavior">
+    <Behavior value="ChromieGoldenTrapSlow4" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ChromieGoldenTrapSlow5" parent="ChromieTimeTrapChronicConditionsSlow">
+    <Duration value="5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChromieGoldenTrapSlow5Apply" parent="ChromieTimeTrapChronicConditionsSlowApplyBehavior">
+    <Behavior value="ChromieGoldenTrapSlow5" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ChromieGoldenTrapSlow6" parent="ChromieTimeTrapChronicConditionsSlow">
+    <Duration value="6" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ChromieGoldenTrapSlow6Apply" parent="ChromieTimeTrapChronicConditionsSlowApplyBehavior">
+    <Behavior value="ChromieGoldenTrapSlow6" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ChromieTimeTrapChronicConditionsSet">
+    <EffectArray value="ChromieGoldenTrapSlow2Apply" />
+    <EffectArray value="ChromieGoldenTrapSlow3Apply" />
+    <EffectArray value="ChromieGoldenTrapSlow4Apply" />
+    <EffectArray value="ChromieGoldenTrapSlow5Apply" />
+    <EffectArray value="ChromieGoldenTrapSlow6Apply" />
+  </CEffectSet>
+  <!-- Timeline stacks 1-40: a Shield of 0.5% of maximum Health per stack (up to 20%) that never expires; the script sets
+       its size and refills it on each takedown, respawn and map start -->
+  <CBehaviorBuff id="ChromieGoldenTimelineShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Chromie_Looper.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Time Bomb (Epic): an enemy Hero Time Stopped by a trap explodes for 50% of Sand Blast's damage -->
   <CEffectEnumArea id="ChromieGoldenTimeBombSearch">
     <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
