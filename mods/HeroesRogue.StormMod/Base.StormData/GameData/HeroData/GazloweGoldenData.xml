@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Gazlowe. Starter: Turret Engineer (Rock-It! Turrets never decay, Firin' Mah Lazorz). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulators) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and turret buffs are in HeroTriggers/GazloweGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="GazloweEngineerMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Turret Engineer ===== -->
+  <!-- Rock-It! Turrets never lose Health over time; gain Firin' Mah Lazorz. Targeting quest (50% kept): 1% turret damage per turret Deth Lazor hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets leech 50% and have 50% more Health (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="GazloweGoldenTargetingTokenCounter" parent="StormQuestToken">
+    <Face value="GazloweGoldenTargetingTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GazloweGoldenUpgradesTokenCounter" parent="StormQuestToken">
+    <Face value="GazloweGoldenUpgradesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GazloweGoldenTargetingTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GazloweGoldenTargetingTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="RockItTurretWeaponDamage">
+    <MultiplicativeModifierArray index="GazloweEngineerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerHit" Accumulator="GazloweGoldenTargetingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GazloweEngineerHitCreator" Accumulator="GazloweGoldenTargetingCreatorAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="RockItTurretWeaponRelicSideDamage">
+    <MultiplicativeModifierArray index="GazloweEngineerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerHit" Accumulator="GazloweGoldenTargetingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GazloweEngineerHitCreator" Accumulator="GazloweGoldenTargetingCreatorAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="TinkerDethLazorFirinMahLazorzTalentDamage">
+    <MultiplicativeModifierArray index="GazloweEngineerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweEngineerHit" Accumulator="GazloweGoldenTargetingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GazloweEngineerHitCreator" Accumulator="GazloweGoldenTargetingCreatorAccumulator" />
+  </CEffectDamage>
+  <CButton id="GazloweGoldenTargetingTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Gazlowe_RockItTurret.dds" />
+  </CButton>
+  <CButton id="GazloweGoldenUpgradesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Gazlowe_RockItTurret.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Turret Engineer: the hit quest's damage read from the turret's creator (Gazlowe has the tokens, the turret attacks) -->
+  <CAccumulatorToken id="GazloweGoldenTargetingCreatorAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GazloweGoldenTargetingTokenCounter" />
+    <Scale value="0.01" />
+    <UnitSource Value="Creator" />
+  </CAccumulatorToken>
+  <!-- Turret Engineer: turrets never lose Health over time (cancels their Health decay) -->
+  <CBehaviorBuff id="GazloweGoldenTurretFrame" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalRegenMultiplier index="Life" value="-1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Upgrades stacks 41-80 Attack Speed and past 100 damage (the script sets the amounts and re-adds it to every turret) -->
+  <CBehaviorBuff id="GazloweGoldenTurretTuning" parent="CarryBehaviorParent">
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Upgrades at 100 stacks: turrets have 50% more Health (the script turns on its apply effect and adds it to every turret) -->
+  <CBehaviorBuff id="GazloweGoldenTurretHull" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Upgrades past 100 stacks: Gazlowe's own damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="GazloweGoldenOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- on each new turret (Turret Engineer turns it on) -->
+  <CEffectApplyBehavior id="GazloweGoldenTurretFrameApply">
+    <Chance value="0" />
+    <Behavior value="GazloweGoldenTurretFrame" />
+  </CEffectApplyBehavior>
+  <!-- on each new turret (Turret Engineer turns it on) -->
+  <CEffectApplyBehavior id="GazloweGoldenTurretTuningApply">
+    <Chance value="0" />
+    <Behavior value="GazloweGoldenTurretTuning" />
+  </CEffectApplyBehavior>
+  <!-- on each new turret (the script turns it on at 100 Upgrades stacks) -->
+  <CEffectApplyBehavior id="GazloweGoldenTurretHullApply">
+    <Chance value="0" />
+    <Behavior value="GazloweGoldenTurretHull" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="GazloweRockItTurretCreateUnitSet">
+    <EffectArray value="GazloweGoldenTurretFrameApply" />
+    <EffectArray value="GazloweGoldenTurretTuningApply" />
+    <EffectArray value="GazloweGoldenTurretHullApply" />
+  </CEffectSet>
+</Catalog>

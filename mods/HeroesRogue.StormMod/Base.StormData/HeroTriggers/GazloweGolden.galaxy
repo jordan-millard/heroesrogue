@@ -1,0 +1,184 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Gazlowe. Turret Engineer: turret and turret Deth Lazor hits on enemy Heroes open a 6 second takedown window
+// (Gazlowe's own Deth Lazor too); turret Deth Lazor hits add the hit quest token. Takedowns in the window add
+// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 leech and Health, then 2% damage per stack.
+// ============================================================
+
+const fixed libAffx_GazloweTakedownWindow = 3.0;
+const fixed libAffx_GazlowePastCapDamagePerStack = 0.01;
+bool libAffx_GazloweStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GazloweEngineerTime; // per enemy player, last Turret Engineer hit
+int libAffx_GazloweEngineerAdded; // Turret Engineer: takedown stacks already applied to the catalog this game
+int libAffx_GazloweSpeedApplied; // Turret Engineer: Upgrades stacks applied as turret Attack Speed
+int libAffx_GazlowePowerApplied; // Turret Engineer: Upgrades stacks past 100 applied as damage
+bool libAffx_GazloweHullOn; // Turret Engineer: 100 Upgrades stacks reached this game (leech and Health turned on)
+
+unit libAffx_GazloweHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_GazloweIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_GazloweStacks(string tokenId) {
+    unit hero = libAffx_GazloweHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_GazloweQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_GazloweInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_GazloweTakedownWindow;
+}
+// GazloweGoldenUpgradesTokenCounter: stacks 1-40: 1% of the 3.94 second Scrap regeneration each; 41-80 turret Attack Speed, 100 leech and Health, then damage (libAffx_GazloweEngineerSync)
+void libAffx_GazloweSyncEngineer () {
+    unit hero = libAffx_GazloweHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return;
+    }
+    stacks = libAffx_GazloweStacks("GazloweGoldenUpgradesTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_GazloweEngineerAdded) {
+        libAffx_CatalogReferenceModify("Behavior,GazloweReduceReuseRecycleTraitScrapRegenerationCooldown,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GazloweEngineerAdded) * -0.039375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GazloweEngineerAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "RockItTurretWeaponDamage", "MultiplicativeModifierArray[GazloweEngineerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "RockItTurretWeaponRelicSideDamage", "MultiplicativeModifierArray[GazloweEngineerLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "TinkerDethLazorFirinMahLazorzTalentDamage", "MultiplicativeModifierArray[GazloweEngineerLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_GazloweSync_Func (bool testConds, bool runActions) {
+    libAffx_GazloweSyncEngineer();
+    return true;
+}
+// Turret Engineer: Upgrades stacks 41-80 give turrets 1% Attack Speed each; at 100 turrets leech 50% and have 50% more
+// Health; each stack past 100 adds 2% to all damage (turrets and Gazlowe). Amounts are set in the catalog (new turrets get
+// them on creation) and re-added to the existing turrets when they change.
+void libAffx_GazloweEngineerSync () {
+    unit hero = libAffx_GazloweHero();
+    int stacks;
+    int speed;
+    int power;
+    bool hull = false;
+    bool tune = false;
+    unitgroup turrets;
+    unit turret;
+    int i;
+    if (hero == null || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return;
+    }
+    stacks = libAffx_GazloweStacks("GazloweGoldenUpgradesTokenCounter");
+    speed = MaxI(0, MinI(stacks - 40, 40));
+    power = MaxI(0, stacks - 100);
+    if (stacks >= 100 && !libAffx_GazloweHullOn) {
+        libAffx_GazloweHullOn = true;
+        hull = true;
+        libAffx_CatalogReferenceModify("Effect,GazloweGoldenTurretHullApply,Chance", libAffx_player, "1", c_upgradeOperationSet);
+        libAffx_CatalogReferenceModify("Effect,RockItTurretWeaponDamage,LeechFraction[Life]", libAffx_player, "0.5", c_upgradeOperationSet);
+        libAffx_CatalogReferenceModify("Effect,RockItTurretWeaponRelicSideDamage,LeechFraction[Life]", libAffx_player, "0.5", c_upgradeOperationSet);
+    }
+    if (speed != libAffx_GazloweSpeedApplied || power != libAffx_GazlowePowerApplied) {
+        libAffx_GazloweSpeedApplied = speed;
+        libAffx_GazlowePowerApplied = power;
+        tune = true;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.01 * IntToFixed(speed));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        UnitBehaviorRemove(hero, "GazloweGoldenOverdrive", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GazloweGoldenOverdrive")) {
+        UnitBehaviorAdd(hero, "GazloweGoldenOverdrive", hero, 1);
+    }
+    if (!hull && !tune) {
+        return;
+    }
+    turrets = UnitGroup("TinkerRockItTurret", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+    for (i = UnitGroupCount(turrets, c_unitCountAll); i > 0; i -= 1) {
+        turret = UnitGroupUnitFromEnd(turrets, i);
+        if (hull && UnitIsAlive(turret) && !UnitHasBehavior2(turret, "GazloweGoldenTurretHull")) {
+            UnitBehaviorAdd(turret, "GazloweGoldenTurretHull", hero, 1);
+        }
+        if (tune && UnitIsAlive(turret)) {
+            UnitBehaviorRemove(turret, "GazloweGoldenTurretTuning", 1);
+            UnitBehaviorAdd(turret, "GazloweGoldenTurretTuning", hero, 1);
+        }
+    }
+}
+bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
+    libAffx_GazloweEngineerSync();
+    return true;
+}
+// Turret Engineer hit on an enemy Hero: takedown window, GazloweGoldenTargetingTokenCounter, the heal, and on-hit boons
+bool libAffx_GazloweEngineerHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GazloweHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GazloweIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return false;
+    }
+    libAffx_GazloweEngineerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (EventUnitDamageEffect() == "TinkerDethLazorFirinMahLazorzTalentDamage") {
+        libGame_gf_ModifyTokenCount(1, "GazloweGoldenTargetingTokenCounter", hero);
+    }
+    return true;
+}
+// Turret Engineer: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_GazloweEngineerWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GazloweHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GazloweIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return false;
+    }
+    libAffx_GazloweEngineerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_GazloweHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "GazloweEngineerMarker") && libAffx_GazloweEngineerTime[killedPlayer] > 0.0 && now - libAffx_GazloweEngineerTime[killedPlayer] <= 6.0) {
+        libAffx_GazloweEngineerTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GazloweGoldenUpgradesTokenCounter", hero);
+        libAffx_GazloweSyncEngineer();
+        libAffx_GazloweQuestDing();
+        libAffx_GazloweEngineerSync();
+    }
+    return true;
+}
+bool libAffx_GazloweStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_GazloweStarted) {
+        return true;
+    }
+    libAffx_GazloweStarted = true;
+    trig = TriggerCreate("libAffx_GazloweEngineerHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RockItTurretWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RockItTurretWeaponRelicSideDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TinkerDethLazorFirinMahLazorzTalentDamage");
+    trig = TriggerCreate("libAffx_GazloweEngineerWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DethLazorCharged1Damage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GazloweEngineerTick_Func"), 1.0, c_timeGame);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GazloweSync_Func"), 1.0, c_timeGame);
+    return true;
+}
