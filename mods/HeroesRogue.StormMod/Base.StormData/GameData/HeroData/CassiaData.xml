@@ -469,9 +469,30 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectLaunchMissile id="AmazonGoldenVolleyMissile">
     <ValidatorArray value="TargetNotDead" />
     <LaunchLocation Value="CasterUnit" />
-    <ImpactEffect value="AmazonHeroWeaponDamageSwitch" />
+    <ImpactEffect value="AmazonChargedStrikesWeaponDamageSwitch" />
     <AmmoUnit value="AmazonHeroWeaponMissile" />
   </CEffectLaunchMissile>
+  <!-- Gloves of Alacrity resets the Basic Attack range by setting it (4.5, or 5.5 with the talent), which would drop
+       Skirmisher's 2.1; add it back after each reset -->
+  <CBehaviorBuff id="AmazonGlovesOfAlacrityBaseAttackRangeBehavior">
+    <FinalEffect value="AmazonGoldenGlovesBaseResetSet" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="AmazonGlovesOfAlacrityAvoidanceMaxedAttackRangeBehavior">
+    <DisableEffect value="AmazonGoldenGlovesBonusResetSet" />
+  </CBehaviorBuff>
+  <CEffectSet id="AmazonGoldenGlovesBaseResetSet">
+    <EffectArray value="AmazonAvoidanceGlovesOfAlacrityBaseResetPlayerRange" />
+    <EffectArray value="AmazonGoldenSkirmisherRestoreRange" />
+  </CEffectSet>
+  <CEffectSet id="AmazonGoldenGlovesBonusResetSet">
+    <EffectArray value="AmazonAvoidanceGlovesOfAlacrityBonusResetPlayerRange" />
+    <EffectArray value="AmazonGoldenSkirmisherRestoreRange" />
+  </CEffectSet>
+  <CEffectModifyPlayer id="AmazonGoldenSkirmisherRestoreRange">
+    <ValidatorArray value="AmazonGoldenCasterIsSkirmisher" />
+    <EffectArray Reference="Weapon,AmazonHeroWeaponRanged,MinScanRange" Value="2.1" />
+    <EffectArray Reference="Weapon,AmazonHeroWeaponRanged,Range" Value="2.1" />
+  </CEffectModifyPlayer>
   <!-- Light Feet (Common): Movement Speed while moving -->
   <CBehaviorBuff id="AmazonGoldenSkirmisherGuard" parent="CarryBehaviorParent">
     <DisableValidatorArray value="AmazonAvoidanceMovementCheckIsActive" />
