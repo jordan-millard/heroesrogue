@@ -1,0 +1,18 @@
+// ============================================================
+// Battlefield of Eternity: pausing the map's timers while the game is paused (boon picks).
+// Included by the Battlefield of Eternity map script only, since it uses that map's libraries.
+// ============================================================
+
+// Run by libAffx_Pause each time the game pauses or unpauses: the Immortals event (first delay, warnings, lane prep, cooldown)
+bool libAffx_MapPause_Func (bool testConds, bool runActions) {
+    bool pause = libAffx_gamePaused;
+    if (!runActions) {
+        return true;
+    }
+    libAffx_PauseTimerIfRunning(libMLBD_gv_mMBOEEventInitDelayTimer, pause);
+    libAffx_PauseTimerIfRunning(libMLBD_gv_mMBOEEventWarningTimer, pause);
+    libAffx_PauseTimerIfRunning(libMLBD_gv_mMBOEEventPrepLaningTimer, pause);
+    libAffx_PauseTimerIfRunning(libMLBD_gv_mMBOEEventCooldownTimer, pause);
+    libAffx_PauseTimerIfRunning(libMLBD_gv_mMBOEEventLongWarningTimeTimer, pause);
+    return true;
+}

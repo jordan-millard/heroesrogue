@@ -1,0 +1,24 @@
+// ============================================================
+// Hanamura: pausing the map's timers while the game is paused (boon picks).
+// Included by the Hanamura map script only, since it uses that map's libraries.
+// ============================================================
+
+// Run by libAffx_Pause each time the game pauses or unpauses: the payload preview and countdown, the boss elevator and the pushers
+bool libAffx_MapPause_Func (bool testConds, bool runActions) {
+    int i;
+    bool pause = libAffx_gamePaused;
+    if (!runActions) {
+        return true;
+    }
+    libAffx_PauseTimerIfRunning(libMHmu_gv_hanamura.lv_mapMechanic_ObjectivePreviewTimer, pause);
+    libAffx_PauseTimerIfRunning(libMHmu_gv_hanamura.lv_mapMechanic_ObjectivePreviewDelay, pause);
+    libAffx_PauseTimerIfRunning(libMHmu_gv_hanamuraMM10secondcountdownTimer, pause);
+    libAffx_PauseTimerIfRunning(libMHmu_gv_elevator.lv_elevatorInitialRaiseTimer, pause);
+    libAffx_PauseTimerIfRunning(libMHmu_gv_elevator.lv_elevatorRaiseTimer, pause);
+    libAffx_PauseTimerIfRunning(libMHmu_gv_elevator.lv_elevatorLowerTimer, pause);
+    libAffx_PauseTimerIfRunning(libMHmu_gv_elevator_Forced_Lower_Timer, pause);
+    for (i = 0; i <= libCore_gv_bALMaxPlayers; i += 1) {
+        libAffx_PauseTimerIfRunning(libMHmu_gv_eOMPusherTimer[i], pause);
+    }
+    return true;
+}

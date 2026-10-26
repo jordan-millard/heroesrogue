@@ -25,34 +25,27 @@ bool libAffx_BraxisZergReleased_Func (bool testConds, bool runActions) {
     return true;
 }
 
-bool libAffx_braxisPaused;
-
-void libAffx_BraxisPauseTimer (timer t, bool pause) {
-    if (TimerGetRemaining(t) > 0.0) {
-        TimerPause(t, pause);
-    }
-}
-
-// Run by libAffx_Pause each time the game pauses or unpauses: beacons, Zerg waves, scaling, the boss elevator and the
-// camp factories
-bool libAffx_BraxisPause_Func (bool testConds, bool runActions) {
+// Run by libAffx_Pause each time the game pauses or unpauses: beacons, Zerg waves, scaling, the boss elevator, the
+// camp factories and drop pods
+bool libAffx_MapPause_Func (bool testConds, bool runActions) {
     int i;
+    bool pause = libAffx_gamePaused;
     if (!runActions) {
         return true;
     }
-    libAffx_braxisPaused = !libAffx_braxisPaused;
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_AttackEventTimer, libAffx_braxisPaused);
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_AttackEventWarningTimer, libAffx_braxisPaused);
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_AttackWaveTimer, libAffx_braxisPaused);
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_ScalingTimer, libAffx_braxisPaused);
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Elevator.lv_elevatorInitialRaiseTimer, libAffx_braxisPaused);
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Elevator.lv_elevatorRaiseTimer, libAffx_braxisPaused);
-    libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Elevator.lv_elevatorLowerTimer, libAffx_braxisPaused);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_AttackEventTimer, pause);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_AttackEventWarningTimer, pause);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_AttackWaveTimer, pause);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_ScalingTimer, pause);
+    libAffx_PauseTimerIfRunning(lib566061C9_gv_mMSC_ScalingTimer, pause);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_Elevator.lv_elevatorInitialRaiseTimer, pause);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_Elevator.lv_elevatorRaiseTimer, pause);
+    libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_Elevator.lv_elevatorLowerTimer, pause);
     for (i = 0; i <= 6; i += 1) {
-        libAffx_BraxisPauseTimer(libSCHO_gv_mMHO_Factory_Timer[i].lv_animationTimer, libAffx_braxisPaused);
+        libAffx_PauseTimerIfRunning(libSCHO_gv_mMHO_Factory_Timer[i].lv_animationTimer, pause);
     }
     for (i = 0; i <= libCore_gv_bALMaxTeams; i += 1) {
-        libAffx_BraxisPauseTimer(libSCHO_gv_zergDropPodCooldowns[i], libAffx_braxisPaused);
+        libAffx_PauseTimerIfRunning(libSCHO_gv_zergDropPodCooldowns[i], pause);
     }
     return true;
 }

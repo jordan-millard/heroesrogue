@@ -1,0 +1,25 @@
+// ============================================================
+// Alterac Pass: pausing the map's timers while the game is paused (boon picks).
+// Included by the Alterac Pass map script only, since it uses that map's libraries.
+// ============================================================
+
+// Run by libAffx_Pause each time the game pauses or unpauses: the prisoner event, its warning and preview, cavalry and the camp defenders
+bool libAffx_MapPause_Func (bool testConds, bool runActions) {
+    int i;
+    int j;
+    bool pause = libAffx_gamePaused;
+    if (!runActions) {
+        return true;
+    }
+    libAffx_PauseTimerIfRunning(libMMAP_gv_eventTimer, pause);
+    libAffx_PauseTimerIfRunning(libMMAP_gv_eventWarningTimer, pause);
+    libAffx_PauseTimerIfRunning(libMMAP_gv_eventObjectivePreviewTimer, pause);
+    libAffx_PauseTimerIfRunning(libMMAP_gv_aVTransmissions.lv_campTransmissionCDTimer, pause);
+    for (i = 0; i <= libCore_gv_bALMaxTeams; i += 1) {
+        libAffx_PauseTimerIfRunning(libMMAP_gv_aVMechanics[i].lv_cavalrySpawnTimer, pause);
+        for (j = 0; j <= libMMAP_gv_defenderCountMaximum_C; j += 1) {
+            libAffx_PauseTimerIfRunning(libMMAP_gv_aVMechanics[i].lv_defenderSpawnTimer[j], pause);
+        }
+    }
+    return true;
+}
