@@ -7,7 +7,7 @@ include "AffixTriggers"
 // is cut again for half damage, then 2.5% all damage each.
 // Warp Striker: Warp Doctrine stacks 1-40 recharge, 41-80 reach, 81-100 more empowered attacks, 100 Warp
 // blasts where Fenix leaves and arrives, then 2.5% all damage each.
-// Twin Arsenal: Arsenal Mastery stacks 1-40 more extra Phase Bombs, 41-80 attack range, then 2.5% all damage
+// Twin Arsenal: Arsenal Mastery stacks 1-40 Attack Speed, 41-80 attack range, then 2.5% all damage
 // each.
 // ============================================================
 
@@ -25,6 +25,7 @@ int libAffx_FenixWarpAdded3; // Warp Striker: takedown quest stage 3 stacks alre
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_FenixTwinTime; // per enemy player, last Twin Arsenal hit
 int libAffx_FenixTwinAdded; // Twin Arsenal: takedown stacks already applied to the catalog this game
 int libAffx_FenixTwinAdded2; // Twin Arsenal: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_FenixTwinSpeedApplied; // Twin Arsenal: Attack Speed stacks applied to FenixGoldenTwinSpeed
 int libAffx_FenixBombProgress; // Twin Arsenal: progress toward the next extra Phase Bomb (120 = one)
 int libAffx_FenixBarrageCount; // Executor's Barrage: attacks since the last Purification Salvo missile
 
@@ -142,7 +143,7 @@ void libAffx_FenixSyncWarp () {
     CatalogFieldValueSet(c_gameCatalogEffect, "FenixPlanetCrackerDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "FenixOffensiveCadenceDamage", "MultiplicativeModifierArray[FenixWarpLegacy].Modifier", libAffx_player, bonus);
 }
-// FenixGoldenArsenalMasteryTokenCounter: stacks 1-40: more extra Phase Bombs (script); 41-80: 1% attack range each; then 2.5% all damage each
+// FenixGoldenArsenalMasteryTokenCounter: stacks 1-40: 0.5% Attack Speed each (script); 41-80: 1% attack range each; then 2.5% all damage each
 void libAffx_FenixSyncTwin () {
     unit hero = libAffx_FenixHero();
     int stacks;
@@ -187,6 +188,24 @@ bool libAffx_FenixSync_Func (bool testConds, bool runActions) {
 // Fenix's level-scaled damage, copied each second: Plasma Executor's second cut (50%) and Searing Arc ticks (10% of
 // Plasma Cutter), Warp Striker's empowered attack halves and Warp blasts (a Phase Bomb). Also how many attacks a Warp
 // empowers: 3, plus 1 per 5 Warp Doctrine stacks past 80 (up to 7).
+// Twin Arsenal: Arsenal Mastery stacks 1-40 add 0.5% Attack Speed each
+void libAffx_FenixTwinSpeedSync () {
+    unit hero = libAffx_FenixHero();
+    int n;
+    if (hero == null || !UnitHasBehavior2(hero, "FenixGoldenTwinMarker")) {
+        return;
+    }
+    n = MinI(libAffx_FenixStacks("FenixGoldenArsenalMasteryTokenCounter"), 40);
+    if (n == libAffx_FenixTwinSpeedApplied && (n == 0 || UnitHasBehavior2(hero, "FenixGoldenTwinSpeed"))) {
+        return;
+    }
+    libAffx_FenixTwinSpeedApplied = n;
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixGoldenTwinSpeed", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.005 * IntToFixed(n));
+    UnitBehaviorRemove(hero, "FenixGoldenTwinSpeed", 1);
+    if (n > 0) {
+        UnitBehaviorAdd(hero, "FenixGoldenTwinSpeed", hero, 1);
+    }
+}
 bool libAffx_FenixAmounts_Func (bool testConds, bool runActions) {
     fixed cutter = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "FenixPlasmaCutterDamage", "Amount", libAffx_player));
     fixed shot = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "FenixHeroWeaponDamage", "Amount", libAffx_player));
@@ -198,6 +217,7 @@ bool libAffx_FenixAmounts_Func (bool testConds, bool runActions) {
     CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpShotBombDamage", "Amount", libAffx_player, FixedToString(bomb * 0.5, c_fixedPrecisionAny));
     CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpBlastDamage", "Amount", libAffx_player, FixedToString(bomb, c_fixedPrecisionAny));
     CatalogFieldValueSet(c_gameCatalogEffect, "FenixGoldenWarpEmpoweredApply", "Count", libAffx_player, IntToString(3 + extra));
+    libAffx_FenixTwinSpeedSync();
     return true;
 }
 // Twin Suns (Legendary): each Plasma Cutter also starts a second beam on the opposite side of Fenix
@@ -212,8 +232,8 @@ bool libAffx_FenixCutterCast_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "FenixPlasmaCutterInitialPersistent", PointWithOffsetPolar(here, DistanceBetweenPoints(here, target), AngleBetweenPoints(target, here)));
     return true;
 }
-// Twin Arsenal: each Repeater Cannon attack adds 40 (up to 60 with Arsenal Mastery) toward an extra Phase Bomb at 120,
-// so every 3rd attack launches one (every 2nd at 40 stacks). Executor's Barrage (Legendary): every 10th attack also fires
+// Twin Arsenal: each Repeater Cannon attack adds 40 toward an extra Phase Bomb at 120, so every 3rd attack launches
+// one. Executor's Barrage (Legendary): every 10th attack also fires
 // a Purification Salvo missile.
 bool libAffx_FenixTwinAttack_Func (bool testConds, bool runActions) {
     unit hero = libAffx_FenixHero();
@@ -221,7 +241,7 @@ bool libAffx_FenixTwinAttack_Func (bool testConds, bool runActions) {
     if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "FenixGoldenTwinMarker")) {
         return false;
     }
-    libAffx_FenixBombProgress += 40 + MinI(40, libAffx_FenixStacks("FenixGoldenArsenalMasteryTokenCounter")) / 2;
+    libAffx_FenixBombProgress += 40;
     if (libAffx_FenixBombProgress >= 120) {
         libAffx_FenixBombProgress -= 120;
         UnitCreateEffectUnit(hero, "FenixGoldenFreeBombSet", target);
