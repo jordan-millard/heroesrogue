@@ -23772,6 +23772,7 @@
 
 
 
+
         <Instances Id="ChromieSandSniper">
             <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
                 <Field Id="Icon" />
@@ -24152,6 +24153,12 @@
             <String String="ChromieTimeTrapChronicConditions">
                 <Field Id="TalentsAdd" />
             </String>
+            <String String="ChromieTimeTrapTimeTroubles">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="ChromieTimeTrapAndorhalAnomaly">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
             <String String="1 0 ChromieGoldenChronoMarker">
                 <Field Id="Behavior" />
             </String>
@@ -24170,23 +24177,14 @@
             <String String="1 1 Add Abil,ChromieTimeTrap,Cost.Vital[Energy] -20">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Add Behavior,ChromieTimeTrapUnitTracker,MaxTrackedUnits 9">
+            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Add Abil,ChromieTimeTrap,Cost.Charge.TimeUse -5">
+            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Add Abil,ChromieTimeTrap,Cost.Charge.TimeStart -5">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
             <String String="1 1 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
-                <Field Id="CatalogModification" Index="6" />
+                <Field Id="CatalogModification" Index="3" />
             </String>
             <String String="AffixAdded libAffx_ChromieStart">
                 <Field Id="Trigger" />
@@ -24241,7 +24239,7 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
-        <Instances Id="ChromieTimeTroublesBoon">
+        <Instances Id="ChromieFrozenInTime">
             <String String="Assets/Textures/storm_ui_icon_Chromie_TimeTrap_B.dds">
                 <Field Id="Icon" />
             </String>
@@ -24254,8 +24252,8 @@
             <User Type="Affix" Instance="ChromieChronomancer">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="ChromieTimeTrapTimeTroubles">
-                <Field Id="TalentsAdd" />
+            <String String="1 1 Add Behavior,ChromieTimeTrapTargetBehavior,Duration 0.5">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
         <Instances Id="ChromieTimewalkersPursuitBoon">

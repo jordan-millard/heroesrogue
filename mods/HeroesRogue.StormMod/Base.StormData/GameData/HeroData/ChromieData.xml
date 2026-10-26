@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Time Trap costs no Mana, recharges in 10 seconds instead of 15, and up to 10 can be active; Chronic Conditions (traps go off on enemy Heroes by themselves). An enemy Hero setting off a trap (the ChromieGoldenTrapTriggered marker, seen by the script) readies an echo: the next Sand Blast is thrown again 0.5 seconds later from where Chromie is toward the same point, or the next Dragon's Breath's blasts erupt again at the same spots, for 130% (an echo marker on Chromie). Resonance quest (50% kept): 0.25% echo damage per trap set off by an enemy Hero. Timeline quest: takedowns within 3 seconds of a trap going off or a Sand Blast or Dragon's Breath hit; stacks 1-40 each trap set off heals 0.25% of maximum Health each, 41-80 Chronic Conditions' Slow 0.25% stronger each, 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
+  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves; Time Troubles; Andorhal Anomaly). Echoes have twice the area: Sand Blast twice as wide while an echo flies, echo blasts twice the radius (script). An enemy Hero setting off a trap (the ChromieGoldenTrapTriggered marker, seen by the script) readies an echo: the next Sand Blast is thrown again 0.5 seconds later from where Chromie is toward the same point, or the next Dragon's Breath's blasts erupt again at the same spots, for 130% (an echo marker on Chromie). Resonance quest (50% kept): 0.25% echo damage per trap set off by an enemy Hero. Timeline quest: takedowns within 3 seconds of a trap going off or a Sand Blast or Dragon's Breath hit; stacks 1-40 each trap set off heals 0.25% of maximum Health each, 41-80 Chronic Conditions' Slow 0.25% stronger each, 100 traps have twice the radius and Health (script), then 1% Spell Power each. -->
   <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenResonanceTokenCounter" />
     <Max value="100000" />
@@ -361,5 +361,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CActorModel id="ChromieGoldenEchoBreathEnemyWarningSplat" parent="ChromieDragonsBreathEnemyWarningSplat">
     <On index="0" Terms="Effect.ChromieGoldenEchoBreathFX.Start; At Effect" Send="Create" />
     <On index="1" Terms="Effect.ChromieGoldenEchoBreathFX.Stop; At Effect" Send="Destroy Immediate" />
+  </CActorModel>
+  <!-- the same for Chronomancer's echo blasts, which have twice the radius: visuals at twice the size -->
+  <CEffectCreatePersistent id="ChromieGoldenChronoEchoBreathFX" parent="ChromieGoldenEchoBreathFX" />
+  <CActorModel id="ChromieGoldenChronoEchoBreathGround" parent="ChromieDragonsBreathGround">
+    <On index="0" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Start; At Effect" Send="Create" />
+    <Model value="ChromieDragonsBreathGround" />
+    <Scale value="2" />
+  </CActorModel>
+  <CActorModel id="ChromieGoldenChronoEchoBreathAllyWarningSplat" parent="ChromieDragonsBreathAllyWarningSplat">
+    <On index="0" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Start; At Effect" Send="Create" />
+    <On index="1" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Stop; At Effect" Send="Destroy Immediate" />
+    <Scale value="2" />
+  </CActorModel>
+  <CActorModel id="ChromieGoldenChronoEchoBreathEnemyWarningSplat" parent="ChromieDragonsBreathEnemyWarningSplat">
+    <On index="0" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Start; At Effect" Send="Create" />
+    <On index="1" Terms="Effect.ChromieGoldenChronoEchoBreathFX.Stop; At Effect" Send="Destroy Immediate" />
+    <Scale value="2" />
   </CActorModel>
 </Catalog>
