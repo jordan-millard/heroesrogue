@@ -23785,6 +23785,7 @@
 
 
 
+
         <Instances Id="ChromieSandSniper">
             <String String="Assets/Textures/storm_ui_icon_Chromie_AetherCannon.dds">
                 <Field Id="Icon" />
@@ -24189,17 +24190,53 @@
             <String String="1 1 Add Abil,ChromieTimeTrap,Cost.Vital[Energy] -20">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Add Behavior,ChromieTimeTrapChronicConditionsSlow,Modification.UnifiedMoveSpeedFactor -0.3">
+            <String String="1 1 Add Behavior,ChromieTimeTrapChronicConditionsSlow,Modification.UnifiedMoveSpeedFactor -0.4">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+            <String String="1 1 Add Behavior,ChromieTimeTrapChronicConditionsSlow,Duration 1">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+            <String String="1 1 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
                 <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,ChromieHeroWeaponDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandEchoWeaponDamage,MultiplicativeModifierArray[ChromieGoldenSlowed].Modifier 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 1 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="13" />
+            </String>
+            <String String="1 1 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="14" />
+            </String>
+            <String String="1 1 Set Effect,ChromieHeroWeaponDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="15" />
+            </String>
+            <String String="1 1 Set Effect,ChromieSandEchoWeaponDamage,MultiplicativeModifierArray[ChromieChronoPower].Modifier 0">
+                <Field Id="CatalogModification" Index="16" />
             </String>
             <String String="AffixAdded libAffx_ChromieStart">
                 <Field Id="Trigger" />
@@ -24227,11 +24264,23 @@
             <String String="1 2 Set Effect,ChromieSandBlastDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 2 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+            <String String="1 2 Set Effect,ChromieSandBlastPastAndFutureMeDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 2 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+            <String String="1 2 Set Effect,ChromieGoldenShardDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,ChromieDragonsBreathDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,ChromieGoldenTimeBombDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,ChromieHeroWeaponDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,ChromieSandEchoWeaponDamage,MultiplicativeModifierArray[ChromieChronoCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="6" />
             </String>
         </Instances>
         <Instances Id="ChromieQuickTraps">
@@ -24324,7 +24373,7 @@
             <String String="1 0 ChromieGoldenTimelineSplitMarker">
                 <Field Id="Behavior" />
             </String>
-            <String String="1 1 Add Behavior,ChromieGoldenTemporalSurge,MaxStackCount 3">
+            <String String="1 1 Add Behavior,ChromieTimeTrapChronicConditionsSlow,Duration 2">
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
