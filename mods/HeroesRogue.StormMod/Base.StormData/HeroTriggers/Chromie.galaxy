@@ -201,12 +201,11 @@ void libAffx_ChromieResetAbil (unit hero, string abil) {
         UnitAddChargeUsed(hero, "Abil/" + abil, -UnitGetChargeUsed(hero, "Abil/" + abil));
     }
 }
-// Temporal Surge's damage: stacks x (20% + 0.25% per Resonance stack) on Sand Blast and Dragon's Breath
+// Temporal Surge's damage: stacks x (20% + 0.25% per Resonance stack) on Sand Blast and Dragon's Breath, as a hidden
+// token in ten-thousandths (its accumulator scales it by 0.0001)
 void libAffx_ChromieSurgeUpdate (unit hero) {
-    fixed perStack = 0.2 + 0.0025 * IntToFixed(libAffx_ChromieStacks("ChromieGoldenResonanceTokenCounter"));
-    string bonus = FixedToString(IntToFixed(UnitBehaviorCount(hero, "ChromieGoldenTemporalSurge")) * perStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieGoldenSurge].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieGoldenSurge].Modifier", libAffx_player, bonus);
+    int perStack = 2000 + 25 * libAffx_ChromieStacks("ChromieGoldenResonanceTokenCounter");
+    UnitSetTokenCount(hero, "ChromieGoldenSurgeToken", UnitBehaviorCount(hero, "ChromieGoldenTemporalSurge") * perStack, hero);
 }
 bool libAffx_ChromieSurgeEnd_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChromieHero();
