@@ -7,9 +7,21 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ============================================================ -->
   <CBehaviorBuff id="GreymaneAlchemistMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneJugularMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymaneWildfireMarker" parent="CarryBehaviorParent" />
+  <!-- Gilnean Alchemist burn ticks (10 over 10 seconds): 2.5% of maximum Health, or for Structures, Mercenaries and bosses a
+       tenth of the splash damage (the script sets the Amount) -->
+  <CEffectDamage id="GreymaneGoldenCocktailBurnDamage" parent="StormSpellDotPercentDamage">
+    <VitalFractionMax index="Life" value="0.025" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenCocktailBurnFlatDamage" parent="StormSpellDot">
+    <Amount value="22" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenCocktailEruptDamage" parent="StormSpell">
+    <Amount value="110" />
+  </CEffectDamage>
 
   <!-- ===== Gilnean Alchemist ===== -->
-  <!-- Gilnean Cocktail stores 2 charges (7 second recharge) and costs half Mana; it burns Heroes and Minions for 25% of maximum Health over 10 seconds; gain Perfect Aim and Incendiary Elixir. Kindling quest (50% kept): 1% damage to burning enemies per Cocktail hit on an enemy Hero (script). Distillation quest: takedowns within 3 seconds of a Cocktail hit or burn tick; stacks 1-40 a Shield per hit (script), 41-80 the flask flies 1% faster each, 81-100 the splash is 1% larger each, at 100 an eruption 1 second later for 50% (script), then 2% damage each (script). -->
+  <!-- Gilnean Cocktail stores 2 charges (7 second recharge) and costs half Mana; every enemy it damages burns for 25% of maximum Health over 10 seconds (Structures, Mercenaries and bosses for the splash damage, script); it always splashes at the end of its flight; gain Perfect Aim and Incendiary Elixir. Kindling quest (50% kept): 1% damage to burning enemies per Cocktail hit on an enemy Hero (script). Distillation quest: takedowns within 3 seconds of a Cocktail hit or burn tick; stacks 1-40 a Shield per hit (script), 41-80 the flask flies 1% faster each, 81-100 the splash is 1% larger each, at 100 an eruption 1 second later for 50% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="GreymaneGoldenKindlingTokenCounter" parent="StormQuestToken">
     <Face value="GreymaneGoldenKindlingTokenCounter" />
     <Max value="100000" />
@@ -40,6 +52,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
     <MultiplicativeModifierArray index="GreymaneAlchemistLegacy" Modifier="0" />
   </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenCocktailBurnFlatDamage">
+    <MultiplicativeModifierArray index="GreymaneAlchemistPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistLegacy" Modifier="0" />
+  </CEffectDamage>
   <CEffectDamage id="GreymaneGoldenCocktailEruptDamage">
     <MultiplicativeModifierArray index="GreymaneAlchemistPower" Modifier="0" />
     <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
@@ -53,16 +70,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Boons ===== -->
-  <!-- Gilnean Alchemist: Gilnean Cocktail burns Heroes and Minions it hits for 25% of their maximum Health over 10 seconds
-       (Chance 0: the starter turns it on). Wildfire (Epic) lets the burn stack instead of refresh. -->
-  <CValidatorUnitFilters id="GreymaneGoldenTargetHeroic">
-    <Filters value="Heroic;-" />
-  </CValidatorUnitFilters>
-  <CValidatorCombine id="GreymaneGoldenBurnTarget">
-    <Type value="Or" />
-    <CombineArray value="GreymaneGoldenTargetHeroic" />
-    <CombineArray value="TargetMinion" />
-  </CValidatorCombine>
+  <!-- Gilnean Alchemist: every enemy Gilnean Cocktail damages burns for 10 seconds (the script adds the burn on its damage
+       events). Wildfire (Epic) lets the burn stack instead of refresh. -->
   <CBehaviorBuff id="GreymaneGoldenCocktailBurn" parent="StormDot">
     <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
     <BehaviorCategories index="DebuffVulnerable" value="1" />
@@ -72,25 +81,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicEffect value="GreymaneGoldenCocktailBurnDamage" />
     <PeriodicDisplayEffect value="GreymaneGoldenCocktailBurnDamage" />
   </CBehaviorBuff>
-  <CEffectDamage id="GreymaneGoldenCocktailBurnDamage" parent="StormSpellDotPercentDamage">
-    <VitalFractionMax index="Life" value="0.025" />
-  </CEffectDamage>
-  <CEffectApplyBehavior id="GreymaneGoldenCocktailBurnApply">
-    <Chance value="0" />
-    <ValidatorArray value="GreymaneGoldenBurnTarget" />
-    <Behavior value="GreymaneGoldenCocktailBurn" />
-  </CEffectApplyBehavior>
-  <!-- the first enemy hit (its damage period becomes this set) and the cone splash -->
+  <CBehaviorBuff id="GreymaneGoldenCocktailBurnFlat" parent="StormDot">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="10.0625" />
+    <Period value="1" />
+    <PeriodCount value="10" />
+    <PeriodicEffect value="GreymaneGoldenCocktailBurnFlatDamage" />
+    <PeriodicDisplayEffect value="GreymaneGoldenCocktailBurnFlatDamage" />
+  </CBehaviorBuff>
+  <!-- the first enemy hit: its damage period becomes this set (damage, then the 100 stack eruption) -->
   <CEffectSet id="GreymaneGoldenCocktailPrimarySet">
     <EffectArray value="GreymaneGilneanCocktailDamage" />
-    <EffectArray value="GreymaneGoldenCocktailBurnApply" />
     <EffectArray value="GreymaneGoldenCocktailEruptPersistent" />
   </CEffectSet>
   <CEffectCreatePersistent id="GreymaneGilneanCocktailImpactSetPersistent">
     <PeriodicEffectArray index="1" value="GreymaneGoldenCocktailPrimarySet" />
   </CEffectCreatePersistent>
-  <!-- Volatile Mixture (Rare): a Cocktail that reaches the end of its flight without hitting anything still splashes
-       around that spot (the splash's own damage, burn and quest; Chance 0, the boon turns it on) -->
+  <!-- a Cocktail that reaches the end of its flight without hitting anything still splashes around that spot (the
+       splash's own damage and quest; Chance 0, the starter turns it on) -->
   <CEffectEnumArea id="GreymaneGoldenCocktailBurstSearch">
     <Chance value="0" />
     <ImpactLocation Value="TargetPoint" />
@@ -103,16 +112,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray index="0" value="GreymaneGoldenCocktailBurstSearch" />
     <EffectArray value="StormSuicide" />
   </CEffectSet>
-  <CEffectSet id="GreymaneGilneanCocktailSpreadImpactSet">
-    <EffectArray value="GreymaneGoldenCocktailBurnApply" />
-  </CEffectSet>
   <!-- Kindling quest: Greymane deals more damage to burning enemies (the script sets the fraction and re-adds it) -->
-  <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenTargetBurning">
+  <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenTargetBurningPercent">
     <WhichUnit Value="Target" />
     <Compare value="GE" />
     <Value value="1" />
     <Behavior value="GreymaneGoldenCocktailBurn" />
   </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenTargetBurningFlat">
+    <WhichUnit Value="Target" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="GreymaneGoldenCocktailBurnFlat" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="GreymaneGoldenTargetBurning">
+    <Type value="Or" />
+    <CombineArray value="GreymaneGoldenTargetBurningPercent" />
+    <CombineArray value="GreymaneGoldenTargetBurningFlat" />
+  </CValidatorCombine>
   <CBehaviorBuff id="GreymaneGoldenKindling" parent="CarryBehaviorParent">
     <DamageResponse Chance="1" Location="Attacker" ModifyFraction="1">
       <ValidatorArray value="GreymaneGoldenTargetBurning" />
@@ -139,9 +156,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <Radius value="2.5" />
     </AreaArray>
   </CEffectEnumArea>
-  <CEffectDamage id="GreymaneGoldenCocktailEruptDamage" parent="StormSpell">
-    <Amount value="110" />
-  </CEffectDamage>
   <CActorModel id="GreymaneGilneanCocktailImpact">
     <On Terms="Effect.GreymaneGoldenCocktailEruptDamage.Start; At Target" Send="Create" />
   </CActorModel>

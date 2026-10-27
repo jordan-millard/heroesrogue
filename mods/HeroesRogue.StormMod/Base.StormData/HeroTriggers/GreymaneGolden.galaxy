@@ -75,6 +75,7 @@ void libAffx_GreymaneSyncAlchemist () {
     CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGilneanCocktailDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGilneanCocktailSpreadDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailBurnDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailBurnFlatDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailEruptDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
 }
 bool libAffx_GreymaneSync_Func (bool testConds, bool runActions) {
@@ -117,6 +118,8 @@ void libAffx_GreymaneAlchemistSync () {
         }
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "GreymaneGoldenCocktailEruptDamage", "Amount", libAffx_player, 0.5 * StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "GreymaneGilneanCocktailSpreadDamage", "Amount", libAffx_player)));
     }
+    // Structures, Mercenaries and bosses burn for the splash damage over 10 seconds
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "GreymaneGoldenCocktailBurnFlatDamage", "Amount", libAffx_player, 0.1 * StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "GreymaneGilneanCocktailSpreadDamage", "Amount", libAffx_player)));
     power = MaxI(0, stacks - 100);
     if (power != libAffx_GreymanePowerApplied) {
         libAffx_GreymanePowerApplied = power;
@@ -130,6 +133,27 @@ void libAffx_GreymaneAlchemistSync () {
 }
 bool libAffx_GreymaneAlchemistTick_Func (bool testConds, bool runActions) {
     libAffx_GreymaneAlchemistSync();
+    return true;
+}
+// Gilnean Alchemist: every enemy the Cocktail damages (first hit, splash, flight-end splash) burns for 10 seconds:
+// 25% of maximum Health, or the splash damage for Structures, Mercenaries and bosses. The burn restarts on a new hit;
+// with Wildfire it stacks instead.
+bool libAffx_GreymaneBurn_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GreymaneHero();
+    unit victim = EventUnit();
+    string burn = "GreymaneGoldenCocktailBurn";
+    string kind;
+    if (hero == null || victim == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "GreymaneAlchemistMarker") || !UnitIsAlive(victim)) {
+        return false;
+    }
+    kind = UnitGetType(victim);
+    if (UnitTypeTestAttribute(kind, c_unitAttributeStructure) || UnitTypeTestAttribute(kind, c_unitAttributeMapBoss) || UnitTypeTestAttribute(kind, c_unitAttributeMerc) || UnitTypeTestAttribute(kind, c_unitAttributeMapCreature)) {
+        burn = "GreymaneGoldenCocktailBurnFlat";
+    }
+    if (!UnitHasBehavior2(hero, "GreymaneWildfireMarker")) {
+        UnitBehaviorRemove(victim, burn, 1);
+    }
+    UnitBehaviorAdd(victim, burn, hero, 1);
     return true;
 }
 // Gilnean Alchemist, Cocktail hit on an enemy Hero. Distillation stacks 1-40: the hit adds a Shield (no duration) of up to
@@ -213,6 +237,9 @@ bool libAffx_GreymaneStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailBurnDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailEruptDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneAlchemistTick_Func"), 1.0, c_timeGame);
+    trig = TriggerCreate("libAffx_GreymaneBurn_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailSpreadDamage");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneSync_Func"), 1.0, c_timeGame);
     return true;

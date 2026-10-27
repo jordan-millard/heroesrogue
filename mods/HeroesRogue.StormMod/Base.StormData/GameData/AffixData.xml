@@ -24722,6 +24722,7 @@
         </Instances>
 
 
+
         <Instances Id="GreymaneGilneanAlchemist">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -24756,7 +24757,7 @@
             <String String="GreymaneGilneanCocktailIncendiaryElixirQuestToken 0.5">
                 <Field Id="QuestRetain" Index="2" />
             </String>
-            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurnApply,Chance 1">
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurstSearch,Chance 1">
                 <Field Id="CatalogModification" />
             </String>
             <String String="1 1 Set Abil,GreymaneGilneanCocktail,Cost.Charge.CountMax 2">
@@ -24786,8 +24787,11 @@
             <String String="1 1 Set Effect,GreymaneGoldenCocktailBurnDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
                 <Field Id="CatalogModification" Index="9" />
             </String>
-            <String String="1 1 Set Effect,GreymaneGoldenCocktailEruptDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurnFlatDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
                 <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailEruptDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
+                <Field Id="CatalogModification" Index="11" />
             </String>
             <String String="AffixAdded libAffx_GreymaneStart">
                 <Field Id="Trigger" />
@@ -24821,8 +24825,11 @@
             <String String="1 2 Set Effect,GreymaneGoldenCocktailBurnDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 2 Set Effect,GreymaneGoldenCocktailEruptDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
+            <String String="1 2 Set Effect,GreymaneGoldenCocktailBurnFlatDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,GreymaneGoldenCocktailEruptDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
             </String>
         </Instances>
         <Instances Id="GreymaneQuickHands">
@@ -24879,23 +24886,6 @@
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
-        <Instances Id="GreymaneVolatileMixture">
-            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Greymane">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurstSearch,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
         <Instances Id="GreymaneWildfire">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -24909,8 +24899,14 @@
             <User Type="Affix" Instance="GreymaneGilneanAlchemist">
                 <Field Id="AffixesRequired" />
             </User>
+            <String String="1 0 GreymaneWildfireMarker">
+                <Field Id="Behavior" />
+            </String>
             <String String="1 1 Set Behavior,GreymaneGoldenCocktailBurn,MaxStackCount 50">
                 <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Behavior,GreymaneGoldenCocktailBurnFlat,MaxStackCount 50">
+                <Field Id="CatalogModification" Index="1" />
             </String>
         </Instances>
         <Instances Id="GreymaneGoForTheJugular">
