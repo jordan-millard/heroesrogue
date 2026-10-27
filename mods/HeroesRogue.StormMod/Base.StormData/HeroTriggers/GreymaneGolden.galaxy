@@ -146,7 +146,8 @@ void libAffx_GreymaneSyncSilver () {
         libAffx_GreymaneSilverAdded = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneCursedBulletDamagePercentDamage", "MultiplicativeModifierArray[GreymaneSilverLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenBulletCurrentDamage", "MultiplicativeModifierArray[GreymaneSilverLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenBulletMaxDamage", "MultiplicativeModifierArray[GreymaneSilverLegacy].Modifier", libAffx_player, bonus);
 }
 bool libAffx_GreymaneSync_Func (bool testConds, bool runActions) {
     libAffx_GreymaneSyncAlchemist();
@@ -241,7 +242,7 @@ bool libAffx_GreymaneBleed_Func (bool testConds, bool runActions) {
     UnitBehaviorAdd(victim, "GreymaneGoldenBleed", hero, 1);
     return true;
 }
-// Silver Hunter, every second and on hits and takedowns: Silvered (20% damage to non-Heroes per stack), Hunter's Resolve
+// Silver Hunter, every second and on hits and takedowns: Silvered (5% damage to non-Heroes per stack), Hunter's Resolve
 // Armor (stacks 1-40) and crowd control reduction (41-80, used by libAffx_GreymaneResolveCC_Func), the 100 ricochet and
 // past 100 2% damage per stack.
 void libAffx_GreymaneSilverSync () {
@@ -256,7 +257,7 @@ void libAffx_GreymaneSilverSync () {
     silver = libAffx_GreymaneStacks("GreymaneGoldenSilverTokenCounter");
     if (silver != libAffx_GreymaneSilverApplied) {
         libAffx_GreymaneSilverApplied = silver;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenSilverbane", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.2 * IntToFixed(silver));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenSilverbane", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.05 * IntToFixed(silver));
         UnitBehaviorRemove(hero, "GreymaneGoldenSilverbane", 1);
     }
     if (silver > 0 && !UnitHasBehavior2(hero, "GreymaneGoldenSilverbane")) {
@@ -435,6 +436,9 @@ bool libAffx_GreymaneSilverHit_Func (bool testConds, bool runActions) {
     }
     libAffx_GreymaneSilverTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "GreymaneGoldenSilverTokenCounter", hero);
+    if (UnitHasBehavior2(hero, "GreymaneSilverMarker")) {
+        UnitCreateEffectUnit(hero, "GreymaneGoldenBulletCooldownReset", hero);
+    }
     libAffx_GreymaneSilverSync();
     return true;
 }
@@ -494,7 +498,8 @@ bool libAffx_GreymaneStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_GreymaneRipperWindow_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenBleedDamage");
     trig = TriggerCreate("libAffx_GreymaneSilverHit_Func");
-    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneCursedBulletDamagePercentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenBulletCurrentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenBulletMaxDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneAlchemistTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GreymaneCocktailLaunch_Func"), libAffx_player, "GreymaneGilneanCocktailLaunchMissile");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GreymaneCocktailHit_Func"), libAffx_player, "GreymaneGilneanCocktailImpactSetPersistent");

@@ -24,6 +24,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="GreymaneGoldenCocktailEruptDamage" parent="StormSpell">
     <Amount value="110" />
   </CEffectDamage>
+  <!-- Silver Hunter: Cursed Bullet deals the larger of 35% of current Health (uncapped, unlike the base 1277.85 cap) and 20% of
+       maximum Health, and heals Greymane for the damage -->
+  <CEffectDamage id="GreymaneGoldenBulletCurrentDamage" parent="StormSpellPercentDamage">
+    <FlatModifierArray index="Current" Accumulator="GreymaneGoldenBulletCurrentAccumulator" />
+    <LeechFraction index="Life" value="1" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenBulletMaxDamage" parent="StormSpellPercentDamage">
+    <VitalFractionMax index="Life" value="0.2" />
+    <LeechFraction index="Life" value="1" />
+  </CEffectDamage>
   <!-- Feral Ripper, Bleed Out (Epic): 3 ticks of a tenth of Razor Swipe's damage (the script sets the Amount) -->
   <CEffectDamage id="GreymaneGoldenBleedDamage" parent="StormSpellDot">
     <Amount value="12.6" />
@@ -121,7 +131,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Silver Hunter ===== -->
-  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds and Greymane heals for its damage. Silvered quest (50% kept): 20% damage to non-Heroes per Cursed Bullet hit on an enemy Hero (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
+  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds, a hit on a Hero sets it to 4, it deals the larger of 35% of current and 20% of maximum Health and Greymane heals for its damage. Silvered quest (50% kept): 5% damage to non-Heroes per Cursed Bullet hit on an enemy Hero (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="GreymaneGoldenSilverTokenCounter" parent="StormQuestToken">
     <Face value="GreymaneGoldenSilverTokenCounter" />
     <Max value="100000" />
@@ -135,9 +145,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="GreymaneGoldenSilverTokenCounter" />
-    <Scale value="0.2" />
+    <Scale value="0.05" />
   </CAccumulatorToken>
-  <CEffectDamage id="GreymaneCursedBulletDamagePercentDamage">
+  <CEffectDamage id="GreymaneGoldenBulletCurrentDamage">
+    <MultiplicativeModifierArray index="GreymaneSilverPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneSilverCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneSilverLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenBulletMaxDamage">
     <MultiplicativeModifierArray index="GreymaneSilverPower" Modifier="0" />
     <MultiplicativeModifierArray index="GreymaneSilverCommon" Modifier="0" />
     <MultiplicativeModifierArray index="GreymaneSilverLegacy" Modifier="0" />
@@ -301,6 +316,38 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <!-- ===== Silver Hunter ===== -->
+  <CAccumulatorVitals id="GreymaneGoldenBulletCurrentAccumulator" parent="BaseVitalAccumulator">
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <Ratio value="0.35" />
+    <VitalType value="Life" />
+    <UnitSource Value="Target" />
+    <ModificationType value="PerUnit" />
+  </CAccumulatorVitals>
+  <!-- 35% of current is the larger at 4/7 of maximum Health or more -->
+  <CValidatorUnitCompareVital id="GreymaneGoldenTargetLifeGE4Sevenths">
+    <WhichUnit Value="Target" />
+    <Type value="Fraction" />
+    <Compare value="GE" />
+    <Value value="0.5714" />
+  </CValidatorUnitCompareVital>
+  <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenCasterNotSilver">
+    <WhichUnit Value="Caster" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="GreymaneSilverMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Cursed Bullet's damage (and the ricochet's): the base damage without Silver Hunter -->
+  <CEffectSwitch id="GreymaneGoldenBulletDamageSwitch">
+    <CaseArray Validator="GreymaneGoldenCasterNotSilver" Effect="GreymaneCursedBulletDamagePercentDamage" />
+    <CaseArray Validator="GreymaneGoldenTargetLifeGE4Sevenths" Effect="GreymaneGoldenBulletCurrentDamage" />
+    <CaseDefault value="GreymaneGoldenBulletMaxDamage" />
+  </CEffectSwitch>
+  <!-- Silver Hunter: a Cursed Bullet hit on an enemy Hero sets its cooldown to 4 seconds (the script runs it) -->
+  <CEffectModifyUnit id="GreymaneGoldenBulletCooldownReset">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="GreymaneCursedBullet,Execute" CooldownOperation="Set" CooldownTimeUse="4" />
+  </CEffectModifyUnit>
   <!-- Silvered quest: Greymane deals more damage to non-Heroes (the script sets the fraction and re-adds it) -->
   <CBehaviorBuff id="GreymaneGoldenSilverbane" parent="CarryBehaviorParent">
     <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1" />
@@ -335,9 +382,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectLaunchMissile>
   <CEffectSet id="GreymaneGoldenRicochetImpactSet">
     <ValidatorArray value="NotVehicle" />
-    <EffectArray value="GreymaneCursedBulletDamagePercentDamage" />
+    <EffectArray value="GreymaneGoldenBulletDamageSwitch" />
   </CEffectSet>
   <CEffectSet id="GreymaneCursedBulletImpactSet">
+    <EffectArray index="0" value="GreymaneGoldenBulletDamageSwitch" />
     <EffectArray index="3" value="GreymaneGoldenBulletStopSet" />
     <EffectArray value="GreymaneGoldenRicochetSearch" />
   </CEffectSet>

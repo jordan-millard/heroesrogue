@@ -24729,6 +24729,7 @@
 
 
 
+
         <Instances Id="GreymaneGilneanAlchemist">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -25154,10 +25155,10 @@
             <String String="1 1 Set Abil,GreymaneCursedBullet,Cost.Cooldown.TimeUse 15">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Set Effect,GreymaneCursedBulletDamagePercentDamage,LeechFraction[Life] 1">
+            <String String="1 1 Set Effect,GreymaneGoldenBulletCurrentDamage,MultiplicativeModifierArray[GreymaneSilverPower].Modifier 0">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,GreymaneCursedBulletDamagePercentDamage,MultiplicativeModifierArray[GreymaneSilverPower].Modifier 0">
+            <String String="1 1 Set Effect,GreymaneGoldenBulletMaxDamage,MultiplicativeModifierArray[GreymaneSilverPower].Modifier 0">
                 <Field Id="CatalogModification" Index="2" />
             </String>
             <String String="AffixAdded libAffx_GreymaneStart">
@@ -25183,8 +25184,11 @@
             <User Type="Affix" Instance="GreymaneSilverHunter">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 2 Set Effect,GreymaneCursedBulletDamagePercentDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.15">
+            <String String="1 2 Set Effect,GreymaneGoldenBulletCurrentDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.15">
                 <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GreymaneGoldenBulletMaxDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
             </String>
         </Instances>
         <Instances Id="GreymaneQuickDraw">
