@@ -190,7 +190,7 @@ bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
     return true;
 }
 // Turret Engineer: a Rock-It! Turret drop spends all of Gazlowe's Scrap (the cost is paid first). With at least 6 Scrap
-// spent the turret never loses Health over time; each Scrap past 6 adds 10% Attack Speed and range. Turrets dropped by
+// spent the turret never loses Health over time; each Scrap past 6 adds 10% Attack Speed, range and Health. Turrets dropped by
 // Lazor Specialist's quest also run this set, but only Turret Engineer has the marker.
 bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     unit hero = libAffx_GazloweHero();
@@ -210,6 +210,7 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     }
     if (used > 6) {
         UnitBehaviorAdd(turret, "GazloweGoldenTurretOverclock", hero, used - 6);
+        UnitSetPropertyFixed(turret, c_unitPropLifePercent, 100.0);
     }
     return true;
 }
