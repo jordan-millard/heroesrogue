@@ -25238,6 +25238,7 @@
 
 
 
+
         <Instances Id="HanzoStormArcher">
             <String String="Assets/Textures/storm_ui_icon_hanzo_stormbow.dds">
                 <Field Id="Icon" />
@@ -25388,6 +25389,9 @@
             </User>
             <String String="1 0 HanzoMachineBowMarker">
                 <Field Id="Behavior" />
+            </String>
+            <String String="1 1 String Effect,HanzoHeroWeaponDamage,FloaterCreation Force">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
         <Instances Id="HanzoScatterMaster">
@@ -25603,6 +25607,51 @@
             </String>
             <String String="1 1 Add Behavior,HanzoScatterArrowBounceCounter,Init 6">
                 <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowLaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetRelaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch1LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch2LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch3LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch4LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch5LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch6LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetLaunch7LaunchMissile,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenShard1Launch,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenShard2Launch,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenShard3Launch,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="13" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenShard4Launch,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="14" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenShard5Launch,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="15" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenShard6Launch,ImpactLocation.ProjectionDistanceScale 100">
+                <Field Id="CatalogModification" Index="16" />
             </String>
         </Instances>
 

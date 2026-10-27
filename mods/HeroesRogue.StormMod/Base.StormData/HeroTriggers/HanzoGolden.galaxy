@@ -217,7 +217,7 @@ bool libAffx_HanzoBowLaunch_Func (bool testConds, bool runActions) {
     return true;
 }
 // Machine Bow (Legendary): while aiming Storm Bow, Hanzo fires a Basic Attack at the nearest enemy in attack range every
-// 0.5 seconds
+// 0.5 seconds (only units he could attack: visible, not hidden, invulnerable, in stasis or benign)
 bool libAffx_HanzoMachineBow_Func (bool testConds, bool runActions) {
     unit hero = libAffx_HanzoHero();
     unitgroup nearby;
@@ -225,7 +225,7 @@ bool libAffx_HanzoMachineBow_Func (bool testConds, bool runActions) {
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "HanzoMachineBowMarker") || !UnitHasBehavior2(hero, "HanzoStormBowTargeting")) {
         return false;
     }
-    nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(hero), UnitWeaponRange(hero, 1) + 0.5), UnitFilter(0, 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32))), 0);
+    nearby = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(hero), UnitWeaponRange(hero, 1) + 0.5), UnitFilter((1 << c_targetFilterVisible), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterStasis - 32)) | (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32)) | (1 << (c_targetFilterBenign - 32))), 0);
     if (UnitGroupCount(nearby, c_unitCountAlive) == 0) {
         return true;
     }
