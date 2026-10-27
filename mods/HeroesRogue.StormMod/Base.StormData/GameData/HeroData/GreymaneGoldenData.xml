@@ -12,6 +12,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GreymaneWildfireMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneBleedOutMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneLordOfTheHuntMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymanePiercingMarker" parent="CarryBehaviorParent" />
   <!-- Gilnean Alchemist burn ticks (10 over 10 seconds): 2.5% of maximum Health, or for Structures, Mercenaries and bosses a
        tenth of the splash damage (the script sets the Amount) -->
   <CEffectDamage id="GreymaneGoldenCocktailBurnDamage" parent="StormSpellDotPercentDamage">
@@ -337,7 +338,20 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="GreymaneCursedBulletDamagePercentDamage" />
   </CEffectSet>
   <CEffectSet id="GreymaneCursedBulletImpactSet">
+    <EffectArray index="3" value="GreymaneGoldenBulletStopSet" />
     <EffectArray value="GreymaneGoldenRicochetSearch" />
+  </CEffectSet>
+  <!-- Silver Piercer (Uncommon): Cursed Bullet keeps flying through Heroes (its hit no longer destroys the missile, and the
+       scan takes up to 10 Heroes; the missile's marker keeps each Hero to one hit) -->
+  <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenCasterNotPiercing">
+    <WhichUnit Value="Caster" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="GreymanePiercingMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="GreymaneGoldenBulletStopSet">
+    <ValidatorArray value="GreymaneGoldenCasterNotPiercing" />
+    <EffectArray value="GreymaneCursedBulletDestroyMissileSet" />
   </CEffectSet>
   <!-- Hunter's Resolve past 100 stacks: Greymane's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="GreymaneGoldenSilverOverdrive" parent="CarryBehaviorParent">

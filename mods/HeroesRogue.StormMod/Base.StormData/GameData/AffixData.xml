@@ -24728,6 +24728,7 @@
 
 
 
+
         <Instances Id="GreymaneGilneanAlchemist">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -25132,6 +25133,9 @@
             <String String="GreymaneHeroicAbilityGoForTheThroat">
                 <Field Id="TalentsDisable" />
             </String>
+            <String String="GreymaneCursedBulletGilneanRoulette">
+                <Field Id="TalentsDisable" Index="1" />
+            </String>
             <String String="1 0 GreymaneSilverMarker">
                 <Field Id="Behavior" />
             </String>
@@ -25203,7 +25207,7 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
-        <Instances Id="GreymaneGilneanRouletteBoon">
+        <Instances Id="GreymaneSilverPiercer">
             <String String="Assets/Textures/storm_ui_icon_Greymane_Snapshot.dds">
                 <Field Id="Icon" />
             </String>
@@ -25216,8 +25220,11 @@
             <User Type="Affix" Instance="GreymaneSilverHunter">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="GreymaneCursedBulletGilneanRoulette">
-                <Field Id="TalentsAdd" />
+            <String String="1 0 GreymanePiercingMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneCursedBulletMissileScanSearch,AreaArray[0].MaxCount 10">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
 
