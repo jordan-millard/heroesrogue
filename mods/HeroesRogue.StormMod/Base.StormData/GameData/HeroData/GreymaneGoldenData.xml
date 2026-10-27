@@ -9,7 +9,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GreymaneJugularMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Gilnean Alchemist ===== -->
-  <!-- Gilnean Cocktail stores 2 charges (7 second recharge) and costs half Mana; it burns Heroes and Minions for 20% of maximum Health over 10 seconds; gain Perfect Aim and Incendiary Elixir. Kindling quest (50% kept): 1% damage to burning enemies per Cocktail hit on an enemy Hero (script). Distillation quest: takedowns within 3 seconds of a Cocktail hit or burn tick; stacks 1-40 a Shield per hit (script), 41-80 the flask flies 1% faster each, 81-100 the splash is 1% larger each, at 100 an eruption 1 second later for 50% (script), then 2% damage each (script). -->
+  <!-- Gilnean Cocktail stores 2 charges (7 second recharge) and costs half Mana; it burns Heroes and Minions for 25% of maximum Health over 10 seconds; gain Perfect Aim and Incendiary Elixir. Kindling quest (50% kept): 1% damage to burning enemies per Cocktail hit on an enemy Hero (script). Distillation quest: takedowns within 3 seconds of a Cocktail hit or burn tick; stacks 1-40 a Shield per hit (script), 41-80 the flask flies 1% faster each, 81-100 the splash is 1% larger each, at 100 an eruption 1 second later for 50% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="GreymaneGoldenKindlingTokenCounter" parent="StormQuestToken">
     <Face value="GreymaneGoldenKindlingTokenCounter" />
     <Max value="100000" />
@@ -53,7 +53,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Boons ===== -->
-  <!-- Gilnean Alchemist: Gilnean Cocktail burns Heroes and Minions it hits for 20% of their maximum Health over 10 seconds
+  <!-- Gilnean Alchemist: Gilnean Cocktail burns Heroes and Minions it hits for 25% of their maximum Health over 10 seconds
        (Chance 0: the starter turns it on). Wildfire (Epic) lets the burn stack instead of refresh. -->
   <CValidatorUnitFilters id="GreymaneGoldenTargetHeroic">
     <Filters value="Heroic;-" />
@@ -63,28 +63,46 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="GreymaneGoldenTargetHeroic" />
     <CombineArray value="TargetMinion" />
   </CValidatorCombine>
-  <CBehaviorBuff id="GreymaneGoldenCocktailBurn">
-    <Alignment value="Negative" />
+  <CBehaviorBuff id="GreymaneGoldenCocktailBurn" parent="StormDot">
     <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
     <BehaviorCategories index="DebuffVulnerable" value="1" />
     <Duration value="10.0625" />
     <Period value="1" />
+    <PeriodCount value="10" />
     <PeriodicEffect value="GreymaneGoldenCocktailBurnDamage" />
+    <PeriodicDisplayEffect value="GreymaneGoldenCocktailBurnDamage" />
   </CBehaviorBuff>
   <CEffectDamage id="GreymaneGoldenCocktailBurnDamage" parent="StormSpellDotPercentDamage">
-    <VitalFractionMax index="Life" value="0.02" />
+    <VitalFractionMax index="Life" value="0.025" />
   </CEffectDamage>
   <CEffectApplyBehavior id="GreymaneGoldenCocktailBurnApply">
     <Chance value="0" />
     <ValidatorArray value="GreymaneGoldenBurnTarget" />
     <Behavior value="GreymaneGoldenCocktailBurn" />
   </CEffectApplyBehavior>
-  <!-- the first enemy hit (one more period on the impact persistent) and the cone splash -->
+  <!-- the first enemy hit (its damage period becomes this set) and the cone splash -->
+  <CEffectSet id="GreymaneGoldenCocktailPrimarySet">
+    <EffectArray value="GreymaneGilneanCocktailDamage" />
+    <EffectArray value="GreymaneGoldenCocktailBurnApply" />
+    <EffectArray value="GreymaneGoldenCocktailEruptPersistent" />
+  </CEffectSet>
   <CEffectCreatePersistent id="GreymaneGilneanCocktailImpactSetPersistent">
-    <PeriodCount value="8" />
-    <PeriodicEffectArray value="GreymaneGoldenCocktailBurnApply" />
-    <PeriodicEffectArray value="GreymaneGoldenCocktailEruptPersistent" />
+    <PeriodicEffectArray index="1" value="GreymaneGoldenCocktailPrimarySet" />
   </CEffectCreatePersistent>
+  <!-- Volatile Mixture (Rare): a Cocktail that reaches the end of its flight without hitting anything still splashes
+       around that spot (the splash's own damage, burn and quest; Chance 0, the boon turns it on) -->
+  <CEffectEnumArea id="GreymaneGoldenCocktailBurstSearch">
+    <Chance value="0" />
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="GreymaneGilneanCocktailSpreadImpactSet">
+      <Radius value="3" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="GreymaneGilneanCocktailImpactDummy">
+    <EffectArray index="0" value="GreymaneGoldenCocktailBurstSearch" />
+    <EffectArray value="StormSuicide" />
+  </CEffectSet>
   <CEffectSet id="GreymaneGilneanCocktailSpreadImpactSet">
     <EffectArray value="GreymaneGoldenCocktailBurnApply" />
   </CEffectSet>

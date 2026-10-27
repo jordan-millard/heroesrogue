@@ -24721,6 +24721,7 @@
             </String>
         </Instances>
 
+
         <Instances Id="GreymaneGilneanAlchemist">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -24876,6 +24877,23 @@
             </User>
             <String String="GreymaneHuntersBlunderbuss">
                 <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneVolatileMixture">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurstSearch,Chance 1">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
         <Instances Id="GreymaneWildfire">
