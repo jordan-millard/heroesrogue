@@ -242,7 +242,8 @@ bool libAffx_GreymaneBleed_Func (bool testConds, bool runActions) {
     UnitBehaviorAdd(victim, "GreymaneGoldenBleed", hero, 1);
     return true;
 }
-// Silver Hunter, every second and on hits and takedowns: Silvered (5% damage to non-Heroes per stack), Hunter's Resolve
+// Silver Hunter, every second and on hits and takedowns: Silvered (5% damage to non-Heroes per stack, and to Heroes for 6
+// seconds after a hit), Hunter's Resolve
 // Armor (stacks 1-40) and crowd control reduction (41-80, used by libAffx_GreymaneResolveCC_Func), the 100 ricochet and
 // past 100 2% damage per stack.
 void libAffx_GreymaneSilverSync () {
@@ -258,6 +259,7 @@ void libAffx_GreymaneSilverSync () {
     if (silver != libAffx_GreymaneSilverApplied) {
         libAffx_GreymaneSilverApplied = silver;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenSilverbane", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.05 * IntToFixed(silver));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenSilverbaneHeroes", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.05 * IntToFixed(silver));
         UnitBehaviorRemove(hero, "GreymaneGoldenSilverbane", 1);
     }
     if (silver > 0 && !UnitHasBehavior2(hero, "GreymaneGoldenSilverbane")) {
@@ -440,6 +442,8 @@ bool libAffx_GreymaneSilverHit_Func (bool testConds, bool runActions) {
         UnitCreateEffectUnit(hero, "GreymaneGoldenBulletCooldownReset", hero);
     }
     libAffx_GreymaneSilverSync();
+    UnitBehaviorRemove(hero, "GreymaneGoldenSilverbaneHeroes", 1);
+    UnitBehaviorAdd(hero, "GreymaneGoldenSilverbaneHeroes", hero, 1);
     return true;
 }
 // HeroTakedown: the takedown quests and takedown boons

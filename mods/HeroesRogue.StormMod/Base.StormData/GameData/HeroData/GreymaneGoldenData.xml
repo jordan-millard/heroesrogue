@@ -131,7 +131,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Silver Hunter ===== -->
-  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds, a hit on a Hero sets it to 4, it deals the larger of 35% of current and 20% of maximum Health and Greymane heals for its damage. Silvered quest (50% kept): 5% damage to non-Heroes per Cursed Bullet hit on an enemy Hero (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
+  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds, a hit on a Hero sets it to 4, it deals the larger of 35% of current and 20% of maximum Health and Greymane heals for its damage. Silvered quest (50% kept): 5% damage to non-Heroes per Cursed Bullet hit on an enemy Hero, and to Heroes for 6 seconds after a hit (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="GreymaneGoldenSilverTokenCounter" parent="StormQuestToken">
     <Face value="GreymaneGoldenSilverTokenCounter" />
     <Max value="100000" />
@@ -351,6 +351,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- Silvered quest: Greymane deals more damage to non-Heroes (the script sets the fraction and re-adds it) -->
   <CBehaviorBuff id="GreymaneGoldenSilverbane" parent="CarryBehaviorParent">
     <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1" />
+  </CBehaviorBuff>
+  <!-- and to Heroes for 6 seconds after a Cursed Bullet hit on an enemy Hero (the script sets the fraction and re-adds it on
+       each hit) -->
+  <CBehaviorBuff id="GreymaneGoldenSilverbaneHeroes">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_Snapshot.dds" />
+    <Duration value="6" />
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="Heroic;-" ModifyFraction="1" />
   </CBehaviorBuff>
   <!-- Hunter's Resolve stacks 1-40: 1 Armor per behavior stack, on top of Worgen form's (the script sets the stack count) -->
   <CBehaviorBuff id="GreymaneGoldenSilverArmor" parent="StormArmor">
