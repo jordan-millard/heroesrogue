@@ -122,18 +122,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Period value="1" />
     <PeriodicEffect value="GazloweGoldenTurretSentryReveal" />
   </CBehaviorBuff>
-  <!-- Turret Engineer: each turret hit runs this (Turret Engineer turns it on); the script reads the turret's Scrap stacks:
-       past 12 a stacking slow, past 22 damage by maximum Health -->
-  <CEffectSet id="GazloweGoldenTurretHitHook">
-    <Chance value="0" />
-  </CEffectSet>
-  <CEffectSet id="RockItTurretWeaponSet">
-    <EffectArray value="GazloweGoldenTurretHitHook" />
-  </CEffectSet>
-  <CEffectSet id="RockItTurretWeaponRelicSideImpactSet">
-    <EffectArray value="GazloweGoldenTurretHitHook" />
-  </CEffectSet>
-  <!-- 1% slow per stack, up to 50%; each hit adds stacks and refreshes the duration -->
+  <!-- Turret Engineer, Scrap past 12 (the script adds it on turret hits): 1% slow per stack, up to 50%; each hit adds stacks and refreshes the duration -->
   <CBehaviorBuff id="GazloweGoldenTurretSlow" parent="StormSlowParent">
     <Duration value="1.5" />
     <MaxStackCount value="50" />
