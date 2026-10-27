@@ -765,7 +765,7 @@ int libAffx_skipCurseCounter;
 
 int libAffx_cursesSkipped;
 int libAffx_cursesSwapped;
-int libAffx_flipTarget; // Reverse Hex: the curse the boon on offer will flip (shown in its tooltip)
+int[3] libAffx_flipTarget; // the curse the flip boon on offer will flip (shown in its tooltip): [1] Reverse Hex, [2] Grand Reversal
 
 int[libCore_gv_bALMaxTeams + 1][libAffx_maxHeroes + 1] libAffx_heroCounter;
 
