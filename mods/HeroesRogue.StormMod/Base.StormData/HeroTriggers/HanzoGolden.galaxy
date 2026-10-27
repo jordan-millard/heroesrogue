@@ -4,6 +4,8 @@ include "AffixTriggers"
 // Golden Hanzo. Storm Archer: Storm Bow hits on enemy Heroes add Focus (Storm Bow and Basic Attack damage) and open a
 // 3 second takedown window. Takedowns add Mastery: recharge, then arrow speed and charge speed, then arrow width,
 // then at 100 an echo arrow, then 2% damage per stack. Storm Bow's range is in Hanzo's own script (libHHAN).
+// Scatter Master: shard hits on enemy Heroes add Volley (once per Hero per arrow); takedowns add Ricochet: recharge,
+// then more shards, then more bounces, then at 100 shards split on Heroes, then 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_HanzoTakedownWindow = 3.0;
@@ -13,9 +15,15 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HanzoArcherTime; // per enemy player
 int libAffx_HanzoArcherAdded; // Storm Archer: takedown stacks already applied to the catalog this game
 int libAffx_HanzoArcherAdded2; // Storm Archer: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_HanzoArcherAdded3; // Storm Archer: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HanzoScatterTime; // per enemy player, last Scatter Master hit
+int libAffx_HanzoScatterAdded; // Scatter Master: takedown stacks already applied to the catalog this game
 int libAffx_HanzoPowerApplied; // Storm Archer: Mastery stacks past 100 applied as damage
 fixed libAffx_HanzoChargeStart = -10.0; // Storm Archer: game time Storm Bow last started charging
 fixed libAffx_HanzoEchoLast = -1.0; // Storm Archer: game time of the last echo arrow
+int libAffx_HanzoBouncesApplied; // Scatter Master: Ricochet stacks applied as shard bounces
+bool libAffx_HanzoSplitOn; // Scatter Master: 100 Ricochet stacks reached this game (split turned on)
+int libAffx_HanzoScatterPowerApplied; // Scatter Master: Ricochet stacks past 100 applied as damage
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HanzoVolleyTime; // Scatter Master: per enemy player, last Volley count
 
 unit libAffx_HanzoHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -72,8 +80,28 @@ void libAffx_HanzoSyncArcher () {
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
     CatalogFieldValueSet(c_gameCatalogEffect, "HanzoStormBowDamage", "MultiplicativeModifierArray[HanzoArcherLegacy].Modifier", libAffx_player, bonus);
 }
+// HanzoGoldenRicochetTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 shards, 81-100 bounces, 100 split, then damage (libAffx_HanzoScatterSync)
+void libAffx_HanzoSyncScatter () {
+    unit hero = libAffx_HanzoHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "HanzoScatterMarker")) {
+        return;
+    }
+    stacks = libAffx_HanzoStacks("HanzoGoldenRicochetTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_HanzoScatterAdded) {
+        libAffx_CatalogReferenceModify("Abil,HanzoScatterArrow,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HanzoScatterAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_HanzoScatterAdded = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HanzoScatterArrowRicochetDamage", "MultiplicativeModifierArray[HanzoScatterLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "HanzoGoldenSplitDamage", "MultiplicativeModifierArray[HanzoScatterLegacy].Modifier", libAffx_player, bonus);
+}
 bool libAffx_HanzoSync_Func (bool testConds, bool runActions) {
     libAffx_HanzoSyncArcher();
+    libAffx_HanzoSyncScatter();
     return true;
 }
 // Storm Archer: Storm Bow's charged range (Hanzo's own script grows it from a base to a maximum per player) is 20% longer:
@@ -103,8 +131,56 @@ void libAffx_HanzoArcherSync () {
         UnitBehaviorAdd(hero, "HanzoGoldenOverdrive", hero, 1);
     }
 }
+// Scatter Master: extra shards (2, then 1 more per 10 Ricochet stacks 41-80), extra bounces (1 per 10 stacks 81-100), the
+// 100 split and past 100 2% damage per stack
+void libAffx_HanzoScatterSync () {
+    unit hero = libAffx_HanzoHero();
+    int stacks;
+    int wanted;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "HanzoScatterMarker")) {
+        return;
+    }
+    stacks = libAffx_HanzoStacks("HanzoGoldenRicochetTokenCounter");
+    wanted = 2 + MinI(4, MaxI(0, stacks - 40) / 10) - UnitBehaviorCount(hero, "HanzoGoldenExtraShards");
+    if (wanted > 0) {
+        UnitBehaviorAdd(hero, "HanzoGoldenExtraShards", hero, wanted);
+    } else if (wanted < 0) {
+        UnitBehaviorRemove(hero, "HanzoGoldenExtraShards", -wanted);
+    }
+    wanted = MinI(2, MaxI(0, stacks - 80) / 10);
+    if (wanted != libAffx_HanzoBouncesApplied) {
+        libAffx_CatalogReferenceModify("Behavior,HanzoScatterArrowBounceCounter,Max", libAffx_player, IntToString(wanted - libAffx_HanzoBouncesApplied), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,HanzoScatterArrowBounceCounter,Init", libAffx_player, IntToString(wanted - libAffx_HanzoBouncesApplied), c_upgradeOperationAdd);
+        libAffx_HanzoBouncesApplied = wanted;
+    }
+    if (stacks >= 100 && !libAffx_HanzoSplitOn) {
+        libAffx_HanzoSplitOn = true;
+        libAffx_CatalogReferenceModify("Effect,HanzoGoldenSplitSet,Chance", libAffx_player, "1", c_upgradeOperationSet);
+    }
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_HanzoScatterPowerApplied) {
+        libAffx_HanzoScatterPowerApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HanzoGoldenScatterOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HanzoGoldenScatterOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        UnitBehaviorRemove(hero, "HanzoGoldenScatterOverdrive", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "HanzoGoldenScatterOverdrive")) {
+        UnitBehaviorAdd(hero, "HanzoGoldenScatterOverdrive", hero, 1);
+    }
+}
+// Scatter Master, Volley quest: a Hero counts once per arrow (its shards land within a second), not once per shard
+bool libAffx_HanzoVolleyCounts (unit victim) {
+    int owner = UnitGetOwner(victim);
+    if (GameGetMissionTime() - libAffx_HanzoVolleyTime[owner] <= 1.0) {
+        return false;
+    }
+    libAffx_HanzoVolleyTime[owner] = GameGetMissionTime();
+    return true;
+}
 bool libAffx_HanzoArcherTick_Func (bool testConds, bool runActions) {
     libAffx_HanzoArcherSync();
+    libAffx_HanzoScatterSync();
     return true;
 }
 // Storm Bow starts charging: remembered for Headshot (fully charged = the charge ran its whole duration)
@@ -170,6 +246,19 @@ bool libAffx_HanzoArcherHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "HanzoGoldenFocusTokenCounter", hero);
     return true;
 }
+// Scatter Master hit on an enemy Hero: takedown window, HanzoGoldenVolleyTokenCounter, the heal, and on-hit boons
+bool libAffx_HanzoScatterHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_HanzoHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_HanzoIsEnemyHero(victim) || !UnitHasBehavior2(hero, "HanzoScatterMarker")) {
+        return false;
+    }
+    libAffx_HanzoScatterTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_HanzoVolleyCounts(victim)) {
+        libGame_gf_ModifyTokenCount(1, "HanzoGoldenVolleyTokenCounter", hero);
+    }
+    return true;
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_HanzoTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -190,6 +279,13 @@ bool libAffx_HanzoTakedown (bool testConds, bool runActions) {
         libAffx_HanzoQuestDing();
         libAffx_HanzoArcherSync();
     }
+    if (UnitHasBehavior2(hero, "HanzoScatterMarker") && libAffx_HanzoInWindow(libAffx_HanzoScatterTime[killedPlayer], now)) {
+        libAffx_HanzoScatterTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "HanzoGoldenRicochetTokenCounter", hero);
+        libAffx_HanzoSyncScatter();
+        libAffx_HanzoQuestDing();
+        libAffx_HanzoScatterSync();
+    }
     return true;
 }
 bool libAffx_HanzoStart (bool testConds, bool runActions) {
@@ -200,6 +296,8 @@ bool libAffx_HanzoStart (bool testConds, bool runActions) {
     libAffx_HanzoStarted = true;
     trig = TriggerCreate("libAffx_HanzoArcherHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HanzoStormBowDamage");
+    trig = TriggerCreate("libAffx_HanzoScatterHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HanzoScatterArrowRicochetDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HanzoArcherTick_Func"), 1.0, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_HanzoChargeStart_Func"), null, "HanzoStormBowCharging", c_unitBehaviorChangeCreate);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HanzoBowLaunch_Func"), libAffx_player, "HanzoStormBowLaunchMissile");

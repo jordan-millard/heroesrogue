@@ -3,11 +3,16 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Hanzo. Starters: Storm Archer (Storm Bow: half Mana, 20% range and damage, Piercing Arrows and Flawless Technique). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator, also on Basic Attacks) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/HanzoGolden.galaxy. -->
+  <!-- Golden Hanzo. Starters: Storm Archer (Storm Bow: half Mana, 20% range and damage, Piercing Arrows and Flawless Technique) and Scatter Master (Scatter Arrow: 2 charges, half Mana, 2 more shards, 20% damage, Explosive and Serrated Arrows). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator, also on Basic Attacks) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/HanzoGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="HanzoArcherMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="HanzoScatterMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="HanzoHeadshotMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="HanzoMachineBowMarker" parent="CarryBehaviorParent" />
+  <!-- Scatter Master, Ricochet at 100: the small shards a shard splits into when it hits a Hero, 30% damage -->
+  <CEffectDamage id="HanzoGoldenSplitDamage" parent="HanzoScatterArrowRicochetDamage">
+    <MultiplicativeModifierArray index="HanzoGoldenSplit" Modifier="-0.7" />
+  </CEffectDamage>
 
   <!-- ===== Storm Archer ===== -->
   <!-- Storm Bow keeps its 4 second cooldown, costs half Mana and has 20% more range (script) and damage; gain Piercing Arrows and Flawless Technique. Focus quest (50% kept): 2% Storm Bow and Basic Attack damage per Storm Bow hit on an enemy Hero. Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 make Storm Bow recharge 1% faster each, 41-80 make the arrow fly and Storm Bow charge 1% faster each, 81-100 make the arrow 1% wider each, at 100 an echo arrow 0.4 seconds later for 50% (script), then 2% damage each (script). -->
@@ -43,6 +48,43 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CButton id="HanzoGoldenMasteryTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_hanzo_stormbow.dds" />
+  </CButton>
+
+  <!-- ===== Scatter Master ===== -->
+  <!-- Scatter Arrow stores 2 charges (8 second recharge), costs half Mana, splits into 2 more shards and deals 20% more damage; gain Explosive Arrows and Serrated Arrows. Volley quest (50% kept): 1% Scatter Arrow damage per enemy Hero hit, once per Hero per arrow. Ricochet quest: takedowns within 3 seconds of a hit; stacks 1-40 make Scatter Arrow recharge 1% faster each, 41-80 add 1 shard per 10 (script), 81-100 add 1 bounce per 10 (script), at 100 shards that hit a Hero split into 2 small shards for 30% (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="HanzoGoldenVolleyTokenCounter" parent="StormQuestToken">
+    <Face value="HanzoGoldenVolleyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="HanzoGoldenRicochetTokenCounter" parent="StormQuestToken">
+    <Face value="HanzoGoldenRicochetTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="HanzoGoldenVolleyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="HanzoGoldenVolleyTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HanzoScatterArrowRicochetDamage">
+    <MultiplicativeModifierArray index="HanzoScatterPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoScatterCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoScatterHit" Accumulator="HanzoGoldenVolleyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HanzoScatterLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoGoldenBounced" Validator="HanzoGoldenIsBouncedShard" Modifier="0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="HanzoGoldenSplitDamage">
+    <MultiplicativeModifierArray index="HanzoScatterPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoScatterCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoScatterHit" Accumulator="HanzoGoldenVolleyTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HanzoScatterLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="HanzoGoldenVolleyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hanzo_scatterarrow.dds" />
+  </CButton>
+  <CButton id="HanzoGoldenRicochetTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hanzo_scatterarrow.dds" />
   </CButton>
 
   <!-- ===== Boons ===== -->
@@ -99,6 +141,160 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="HanzoStormBowImpactSet">
     <EffectArray value="HanzoGoldenHeadshotApply" />
   </CEffectSet>
+  <!-- ===== Scatter Master ===== -->
+  <!-- charges: Never Outmatched's Basic Attacks also shorten the recharge -->
+  <CEffectModifyUnit id="HanzoNeverOutmatchedReduceScatterArrowCooldown">
+    <Cost Abil="HanzoScatterArrow,Execute" CooldownOperation="Add" CooldownTimeUse="-3" ChargeTimeUse="-3" />
+  </CEffectModifyUnit>
+  <!-- extra shards when the arrow splits: one stack of this per shard (the script sets the count: 2, then 1 more per 10
+       Ricochet stacks 41-80) -->
+  <CBehaviorBuff id="HanzoGoldenExtraShards">
+    <MaxStackCount value="6" />
+    <BehaviorFlags index="Permanent" value="1" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenShards1">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="HanzoGoldenExtraShards" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectLaunchMissile id="HanzoGoldenShard1Launch" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ValidatorArray value="HanzoGoldenShards1" />
+    <ImpactLocation ProjectionAngle="6" />
+  </CEffectLaunchMissile>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenShards2">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="2" />
+    <Behavior value="HanzoGoldenExtraShards" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectLaunchMissile id="HanzoGoldenShard2Launch" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ValidatorArray value="HanzoGoldenShards2" />
+    <ImpactLocation ProjectionAngle="354" />
+  </CEffectLaunchMissile>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenShards3">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="3" />
+    <Behavior value="HanzoGoldenExtraShards" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectLaunchMissile id="HanzoGoldenShard3Launch" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ValidatorArray value="HanzoGoldenShards3" />
+    <ImpactLocation ProjectionAngle="18" />
+  </CEffectLaunchMissile>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenShards4">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="4" />
+    <Behavior value="HanzoGoldenExtraShards" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectLaunchMissile id="HanzoGoldenShard4Launch" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ValidatorArray value="HanzoGoldenShards4" />
+    <ImpactLocation ProjectionAngle="342" />
+  </CEffectLaunchMissile>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenShards5">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="5" />
+    <Behavior value="HanzoGoldenExtraShards" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectLaunchMissile id="HanzoGoldenShard5Launch" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ValidatorArray value="HanzoGoldenShards5" />
+    <ImpactLocation ProjectionAngle="30" />
+  </CEffectLaunchMissile>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenShards6">
+    <WhichUnit Value="Caster" />
+    <Compare value="GE" />
+    <Value value="6" />
+    <Behavior value="HanzoGoldenExtraShards" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectLaunchMissile id="HanzoGoldenShard6Launch" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ValidatorArray value="HanzoGoldenShards6" />
+    <ImpactLocation ProjectionAngle="330" />
+  </CEffectLaunchMissile>
+  <CEffectSet id="HanzoScatterArrowRicochetLaunchAllSet">
+    <EffectArray value="HanzoGoldenShard1Launch" />
+    <EffectArray value="HanzoGoldenShard2Launch" />
+    <EffectArray value="HanzoGoldenShard3Launch" />
+    <EffectArray value="HanzoGoldenShard4Launch" />
+    <EffectArray value="HanzoGoldenShard5Launch" />
+    <EffectArray value="HanzoGoldenShard6Launch" />
+  </CEffectSet>
+  <!-- Ricochet at 100: a shard that hits a Hero splits into 2 small shards (30% damage) once; they can't hit that Hero, don't
+       split or bounce (Chance 0: the script turns it on) -->
+  <CBehaviorBuff id="HanzoGoldenSplitOrigin">
+    <Duration value="0.375" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenNotSplitOrigin">
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="HanzoGoldenSplitOrigin" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="HanzoGoldenSplitMarkOrigin">
+    <Behavior value="HanzoGoldenSplitOrigin" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HanzoGoldenSplitSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectArray value="HanzoGoldenSplitMarkOrigin" />
+    <EffectArray value="HanzoGoldenSplitLaunchA" />
+    <EffectArray value="HanzoGoldenSplitLaunchB" />
+  </CEffectSet>
+  <CEffectSet id="HanzoScatterArrowRicochetImpactSet">
+    <EffectArray value="HanzoGoldenSplitSet" />
+  </CEffectSet>
+  <CEffectSet id="HanzoGoldenSplitLaunchSet">
+    <EffectArray value="HanzoScatterArrowApplyTargetsRemainingCounter" />
+    <EffectArray value="HanzoScatterArrowMarkerApplyUnitTracker" />
+  </CEffectSet>
+  <CEffectLaunchMissile id="HanzoGoldenSplitLaunchA" parent="HanzoScatterArrowRicochetLaunchParent">
+    <ImpactLocation ProjectionAngle="30">
+      <ProjectionSourceValue value="CasterPoint" />
+      <ProjectionDistanceScale value="8" />
+    </ImpactLocation>
+    <LaunchEffect value="HanzoGoldenSplitLaunchSet" />
+    <SearchEffect value="HanzoGoldenSplitSearch" />
+    <MeshCollisionEffect value="" />
+  </CEffectLaunchMissile>
+  <CEffectLaunchMissile id="HanzoGoldenSplitLaunchB" parent="HanzoGoldenSplitLaunchA">
+    <ImpactLocation ProjectionAngle="330" />
+  </CEffectLaunchMissile>
+  <CEffectEnumArea id="HanzoGoldenSplitSearch" parent="HanzoScatterArrowRicochetTargetSearch">
+    <AreaArray index="0" Effect="HanzoGoldenSplitImpactSet" />
+  </CEffectEnumArea>
+  <CEffectSet id="HanzoGoldenSplitImpactSet">
+    <ValidatorArray value="HanzoScatterArrowMarkerTargetIsNotTrackedOrNoBehavior" />
+    <ValidatorArray value="HanzoScatterArrowHasRemainingTargets" />
+    <ValidatorArray value="HanzoGoldenNotSplitOrigin" />
+    <EffectArray value="HanzoScatterArrowDecrementTargetsRemainingCounter" />
+    <EffectArray value="ApplyAbilityImpactReveal" />
+    <EffectArray value="HanzoScatterArrowMarkerTrackUnit" />
+    <EffectArray value="HanzoGoldenSplitDamage" />
+    <EffectArray value="HanzoScatterArrowMissileSuicide" />
+  </CEffectSet>
+  <!-- Ricochet Mastery (Epic): shards that bounced deal 50% more damage (a bounce tags the shard; Chance 0, the boon turns it
+       on) -->
+  <CBehaviorBuff id="HanzoGoldenBouncedShard" />
+  <CEffectApplyBehavior id="HanzoGoldenTagBouncedShard">
+    <Chance value="0" />
+    <WhichUnit Value="Source" />
+    <Behavior value="HanzoGoldenBouncedShard" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HanzoScatterArrowRicochetRelaunchSet">
+    <EffectArray value="HanzoGoldenTagBouncedShard" />
+  </CEffectSet>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenIsBouncedShard">
+    <WhichUnit Effect="HanzoScatterArrowRicochetImpactSet" Value="Source" />
+    <Compare value="GT" />
+    <Behavior value="HanzoGoldenBouncedShard" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Ricochet past 100 stacks: Hanzo's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="HanzoGoldenScatterOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
   <!-- Mastery past 100 stacks: Hanzo's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="HanzoGoldenOverdrive" parent="CarryBehaviorParent">
     <Modification>

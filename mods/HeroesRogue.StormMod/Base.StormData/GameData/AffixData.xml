@@ -25236,6 +25236,7 @@
             </String>
         </Instances>
 
+
         <Instances Id="HanzoStormArcher">
             <String String="Assets/Textures/storm_ui_icon_hanzo_stormbow.dds">
                 <Field Id="Icon" />
@@ -25386,6 +25387,221 @@
             </User>
             <String String="1 0 HanzoMachineBowMarker">
                 <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoScatterMaster">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_scatterarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="HanzoExplosiveArrows">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="HanzoSerratedArrows">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 HanzoScatterMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 HanzoGoldenVolleyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 HanzoGoldenRicochetTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="HanzoGoldenRicochetTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="HanzoGoldenVolleyTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,HanzoScatterArrow,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,HanzoScatterArrow,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,HanzoScatterArrow,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,HanzoScatterArrow,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,HanzoScatterArrow,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,HanzoScatterArrow,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,HanzoScatterArrowRicochetDamage,MultiplicativeModifierArray[HanzoScatterPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,HanzoGoldenSplitDamage,MultiplicativeModifierArray[HanzoScatterPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_HanzoStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_HanzoTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoScatterShot">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_hanzo_scatterarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoScatterMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,HanzoScatterArrowRicochetDamage,MultiplicativeModifierArray[HanzoScatterCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,HanzoGoldenSplitDamage,MultiplicativeModifierArray[HanzoScatterCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoLongBounce">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_hanzo_scatterarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoScatterMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetRelaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch1LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch2LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch3LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch4LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch5LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch6LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoScatterArrowRicochetLaunch7LaunchMissile,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoGoldenShard1Launch,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoGoldenShard2Launch,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoGoldenShard3Launch,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoGoldenShard4Launch,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoGoldenShard5Launch,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 3 Multiply Effect,HanzoGoldenShard6Launch,ImpactLocation.ProjectionDistanceScale 1.1">
+                <Field Id="CatalogModification" Index="13" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoIgnoreAllDistractionsBoon">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_fromonething.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoScatterMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="HanzoIgnoreAllDistractions">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoTheDragonHungersBoon">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_draconicadvantage.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoScatterMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="HanzoTheDragonHungers">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoRicochetMastery">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_scatterarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoScatterMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,HanzoGoldenTagBouncedShard,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoFlubberHeads">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_scatterarrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoScatterMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Add Behavior,HanzoScatterArrowBounceCounter,Max 6">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,HanzoScatterArrowBounceCounter,Init 6">
+                <Field Id="CatalogModification" Index="1" />
             </String>
         </Instances>
 
