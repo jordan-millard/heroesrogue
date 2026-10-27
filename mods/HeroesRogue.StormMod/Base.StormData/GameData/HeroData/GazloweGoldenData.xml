@@ -10,7 +10,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GazloweScrapGlobesMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Turret Engineer ===== -->
-  <!-- Turrets cost 6 Scrap and their drop spends all Scrap; they never lose Health over time and heal 1% per second, each Scrap past 6 adds 5% Attack Speed and range and 10% Health, 12 or more reveal enemies in attack range, each past 12 adds a 1% stacking slow per hit (up to 10% per hit, 50%), each past 22 0.2% maximum Health damage to Heroes (script). Targeting quest (50% kept): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets leech 50% and have 50% more Health (script), then 1% damage each (script). -->
+  <!-- Turrets cost 6 Scrap and their drop spends all Scrap; they never lose Health over time and heal 1% per second, each Scrap past 6 adds 5% Attack Speed, range and Health, 12 or more reveal enemies in attack range, each past 22 adds 0.2% maximum Health damage to Heroes (script). Targeting quest (50% kept): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets leech 50% and have 50% more Health (script), then 1% damage each (script). -->
   <CBehaviorTokenCounter id="GazloweGoldenTargetingTokenCounter" parent="StormQuestToken">
     <Face value="GazloweGoldenTargetingTokenCounter" />
     <Max value="100000" />
@@ -107,14 +107,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <ChangeFraction value="0.01" />
     </VitalArray>
   </CEffectModifyUnit>
-  <!-- Turret Engineer: one stack per Scrap spent past 6 on the turret's drop, 5% Attack Speed and range and 10% Health each (the script adds it) -->
+  <!-- Turret Engineer: one stack per Scrap spent past 6 on the turret's drop, 5% Attack Speed, range and Health each (the script adds it) -->
   <CBehaviorBuff id="GazloweGoldenTurretOverclock" parent="CarryBehaviorParent">
     <MaxStackCount value="100" />
     <Modification>
       <AdditiveAttackSpeedFactor value="0.05" />
       <WeaponRange value="0.3" />
       <WeaponScanBonus value="0.3" />
-      <VitalMaxFractionArray index="Life" value="0.1" />
+      <VitalMaxFractionArray index="Life" value="0.05" />
     </Modification>
   </CBehaviorBuff>
   <!-- Turret Engineer: a turret dropped with 12 or more Scrap reveals enemies in its attack range (the script adds it and
@@ -123,16 +123,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Period value="1" />
     <PeriodicEffect value="GazloweGoldenTurretSentryReveal" />
   </CBehaviorBuff>
-  <!-- Turret Engineer, Scrap past 12 (the script adds it on turret hits): 1% slow per stack, up to 50%; each hit adds stacks and refreshes the duration -->
-  <CBehaviorBuff id="GazloweGoldenTurretSlow" parent="StormSlowParent">
-    <Duration value="1.5" />
-    <MaxStackCount value="50" />
-    <BuffFlags index="RefreshStack" value="1" />
-    <Modification>
-      <UnifiedMoveSpeedFactor value="-0.01" />
-    </Modification>
-  </CBehaviorBuff>
-  <!-- the script sets the fraction (0.2% per Scrap past 22) before each hit -->
+  <!-- Turret Engineer, Scrap past 22: the script sets the fraction (0.2% per Scrap past 22) before each hit on a Hero -->
   <CEffectDamage id="GazloweGoldenTurretShredDamage" parent="StormSpellPercentDamage">
     <ValidatorArray value="TargetIsHero" />
     <VitalFractionMax index="Life" value="0" />
