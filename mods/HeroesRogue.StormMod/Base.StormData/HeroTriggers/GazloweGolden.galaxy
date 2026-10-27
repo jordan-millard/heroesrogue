@@ -21,6 +21,7 @@ bool libAffx_GazloweFortifyOn; // Turret Engineer: 100 Upgrades stacks reached t
 fixed libAffx_GazloweFreeDropTime = -10.0; // game time of the last Lazor Specialist hit turret (free for Turret Engineer)
 int libAffx_GazloweFreeDrops; // Lazor Specialist hit turrets not yet seen by libAffx_GazloweEngineerDrop_Func (free for 1 second)
 fixed libAffx_GazloweRelicBonus; // Turret Engineer: range added to Superior Schematics' side shot search (largest Scrap range bonus)
+int libAffx_GazlowePlatingApplied; // starters at 100 takedown stacks applied as turret damage reduction from Heroes (25% each)
 int libAffx_GazloweLazorPowerApplied; // Lazor Specialist: Amplification stacks past 100 applied as damage
 
 unit libAffx_GazloweHero() {
@@ -91,6 +92,40 @@ bool libAffx_GazloweSync_Func (bool testConds, bool runActions) {
     libAffx_GazloweSyncEngineer();
     libAffx_GazloweSyncLazor();
     return true;
+}
+// Turret Engineer at 100 Upgrades and Lazor Specialist at 100 Amplification: each makes turrets take 25% less damage
+// from Heroes (50% with both). The fraction is set in the catalog (new turrets get the behavior in
+// libAffx_GazloweEngineerDrop_Func) and re-added to the existing turrets when it changes.
+void libAffx_GazlowePlatingSync () {
+    unit hero = libAffx_GazloweHero();
+    int n = 0;
+    unitgroup turrets;
+    unit turret;
+    int i;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GazloweEngineerMarker") && libAffx_GazloweStacks("GazloweGoldenUpgradesTokenCounter") >= 100) {
+        n += 1;
+    }
+    if (UnitHasBehavior2(hero, "GazloweLazorMarker") && libAffx_GazloweStacks("GazloweGoldenAmplificationTokenCounter") >= 100) {
+        n += 1;
+    }
+    if (n == libAffx_GazlowePlatingApplied) {
+        return;
+    }
+    libAffx_GazlowePlatingApplied = n;
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretPlating", "DamageResponse.ModifyFraction", libAffx_player, 1.0 - 0.25 * IntToFixed(n));
+    turrets = UnitGroup("TinkerRockItTurret", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+    for (i = UnitGroupCount(turrets, c_unitCountAll); i > 0; i -= 1) {
+        turret = UnitGroupUnitFromEnd(turrets, i);
+        if (UnitIsAlive(turret)) {
+            UnitBehaviorRemove(turret, "GazloweGoldenTurretPlating", 1);
+            if (n > 0) {
+                UnitBehaviorAdd(turret, "GazloweGoldenTurretPlating", hero, 1);
+            }
+        }
+    }
 }
 // Lazor Specialist: Amplification stacks past 100 add 1% to all of Gazlowe's damage each
 void libAffx_GazloweLazorSync () {
@@ -251,15 +286,21 @@ bool libAffx_GazloweEngineerTurretHit_Func (bool testConds, bool runActions) {
 // Turret Engineer: a Rock-It! Turret costs 6 Scrap and its drop spends all of Gazlowe's Scrap (the cost is paid first). The
 // turret never loses Health over time and heals 1% per second; each Scrap spent past 6 adds 5% Attack Speed, range and
 // Health; with 12 or more it reveals enemies in its attack range. Turrets dropped by Lazor Specialist's quest also run
-// this set, but only Turret Engineer has the marker; with both starters those count as a 6 Scrap drop and spend no Scrap.
+// this set (they get GazloweGoldenTurretPlating here too), but only Turret Engineer has the marker; with both starters those count as a 6 Scrap drop and spend no Scrap.
 bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     unit hero = libAffx_GazloweHero();
     unit turret = EventPlayerEffectUsedUnit(c_effectUnitTarget);
     fixed scrap;
     int extra;
     int used;
-    if (hero == null || turret == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+    if (hero == null || turret == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero) {
         return false;
+    }
+    if (libAffx_GazlowePlatingApplied > 0) {
+        UnitBehaviorAdd(turret, "GazloweGoldenTurretPlating", hero, 1);
+    }
+    if (!UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return true;
     }
     if (libAffx_GazloweFreeDrops > 0 && GameGetMissionTime() - libAffx_GazloweFreeDropTime <= 1.0) {
         libAffx_GazloweFreeDrops -= 1;
@@ -344,6 +385,7 @@ bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
         libAffx_GazloweSyncEngineer();
         libAffx_GazloweQuestDing();
         libAffx_GazloweEngineerSync();
+        libAffx_GazlowePlatingSync();
     }
     if (UnitHasBehavior2(hero, "GazloweLazorMarker") && libAffx_GazloweLazorTime[killedPlayer] > 0.0 && now - libAffx_GazloweLazorTime[killedPlayer] <= 6.0) {
         libAffx_GazloweLazorTime[killedPlayer] = 0.0;
@@ -351,6 +393,7 @@ bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
         libAffx_GazloweSyncLazor();
         libAffx_GazloweQuestDing();
         libAffx_GazloweLazorSync();
+        libAffx_GazlowePlatingSync();
     }
     return true;
 }
