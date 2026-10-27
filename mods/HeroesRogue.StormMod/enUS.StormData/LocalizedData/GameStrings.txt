@@ -2403,6 +2403,26 @@ Behavior/Name/GreymaneGoldenCocktailBurn=Gilnean Fire
 Behavior/Tooltip/GreymaneGoldenCocktailBurn=Burning from Greymane's Gilnean Cocktail.
 Behavior/Name/GreymaneGoldenCocktailShield=Distillation
 Behavior/Tooltip/GreymaneGoldenCocktailShield=Shielded by Gilnean Cocktail hits.
+Affix/Name/HanzoStormArcher=Storm Archer
+Affix/Tooltip/HanzoStormArcher=Gain <c val="#TooltipNumbers">Piercing Arrows</c> and <c val="#TooltipNumbers">Flawless Technique</c>. Storm Bow costs half Mana and has <c val="#TooltipNumbers">20%</c> more range and damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Storm Bow hit on an enemy Hero adds <c val="#TooltipNumbers">2%</c> Storm Bow and Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Storm Bow hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make the arrow fly faster and Storm Bow charge faster (up to <c val="#TooltipNumbers">40%</c>), then make the arrow wider (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, a second arrow follows each Storm Bow <c val="#TooltipNumbers">0.4</c> seconds later for <c val="#TooltipNumbers">50%</c> damage. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all your damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/HanzoDragonFletching=Dragon Fletching
+Affix/Tooltip/HanzoDragonFletching=Storm Bow deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/HanzoSteadyDraw=Steady Draw
+Affix/Tooltip/HanzoSteadyDraw=Storm Bow charges <c val="#TooltipNumbers">5%</c> faster.
+Affix/Name/HanzoSharpenedArrowheadsBoon=Sharpened Arrowheads
+Affix/Tooltip/HanzoSharpenedArrowheadsBoon=Gain the talent <c val="#TooltipNumbers">Sharpened Arrowheads</c>: Storm Bow and Basic Attacks reduce enemy Armor.
+Affix/Name/HanzoGiantSlayerBoon=Giant Slayer
+Affix/Tooltip/HanzoGiantSlayerBoon=Gain the talent <c val="#TooltipNumbers">Giant Slayer</c>: Basic Attacks against Heroes deal bonus damage based on their maximum Health.
+Affix/Name/HanzoHeadshot=Headshot
+Affix/Tooltip/HanzoHeadshot=A fully charged Storm Bow Stuns enemy Heroes it hits for <c val="#TooltipNumbers">1.5</c> seconds.
+Affix/Name/HanzoMachineBow=Machine Bow
+Affix/Tooltip/HanzoMachineBow=While aiming Storm Bow, fire a Basic Attack at the nearest enemy in attack range every <c val="#TooltipNumbers">0.5</c> seconds.
+Button/Name/HanzoGoldenFocusTokenCounter=Focus
+Button/Tooltip/HanzoGoldenFocusTokenCounter=<c val="#TooltipQuest">Bonus Storm Bow and Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:HanzoGoldenFocusTokenCounter$*2" precision="1"/>%</c></c>
+Button/Name/HanzoGoldenMasteryTokenCounter=Mastery
+Button/Tooltip/HanzoGoldenMasteryTokenCounter=<c val="#TooltipQuest">Mastery stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:HanzoGoldenMasteryTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Storm Bow recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the arrow fly <c val="#TooltipNumbers">1%</c> faster and Storm Bow charge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make the arrow <c val="#TooltipNumbers">1%</c> wider. At <c val="#TooltipNumbers">100</c> stacks, a second arrow follows each Storm Bow <c val="#TooltipNumbers">0.4</c> seconds later along the same line, for <c val="#TooltipNumbers">50%</c> damage. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all of Hanzo's damage.
+Behavior/Name/HanzoGoldenHeadshotStun=Headshot
+Behavior/Tooltip/HanzoGoldenHeadshotStun=Stunned by a fully charged Storm Bow.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

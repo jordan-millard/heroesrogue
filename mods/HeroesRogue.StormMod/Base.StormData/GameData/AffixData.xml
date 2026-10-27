@@ -25236,6 +25236,159 @@
             </String>
         </Instances>
 
+        <Instances Id="HanzoStormArcher">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_stormbow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="HanzoPiercingArrows">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="HanzoFlawlessTechnique">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 HanzoArcherMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 HanzoGoldenFocusTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 HanzoGoldenMasteryTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="HanzoGoldenMasteryTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="HanzoGoldenFocusTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Abil,HanzoStormBowFireTargetPoint,Cost.Vital[Energy] -10">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,HanzoStormBowDamage,MultiplicativeModifierArray[HanzoArcherPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_HanzoStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_HanzoTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoDragonFletching">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_hanzo_stormbow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoStormArcher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,HanzoStormBowDamage,MultiplicativeModifierArray[HanzoArcherCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoSteadyDraw">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_hanzo_qpress.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoStormArcher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Multiply Behavior,HanzoStormBowCharging,Duration 0.95">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoSharpenedArrowheadsBoon">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_shieldbreaker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoStormArcher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="HanzoSharpenedArrowheads">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoGiantSlayerBoon">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_kaijuhunter.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoStormArcher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="HanzoGiantSlayer">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoHeadshot">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_stormbow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoStormArcher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 HanzoHeadshotMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="HanzoMachineBow">
+            <String String="Assets/Textures/storm_ui_icon_hanzo_fromonething.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hanzo">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HanzoStormArcher">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 HanzoMachineBowMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

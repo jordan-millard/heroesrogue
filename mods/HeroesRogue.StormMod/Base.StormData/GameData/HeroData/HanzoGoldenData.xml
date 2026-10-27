@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Hanzo. Starters: Storm Archer (Storm Bow: half Mana, 20% range and damage, Piercing Arrows and Flawless Technique). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator, also on Basic Attacks) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/HanzoGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="HanzoArcherMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="HanzoHeadshotMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="HanzoMachineBowMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Storm Archer ===== -->
+  <!-- Storm Bow keeps its 4 second cooldown, costs half Mana and has 20% more range (script) and damage; gain Piercing Arrows and Flawless Technique. Focus quest (50% kept): 2% Storm Bow and Basic Attack damage per Storm Bow hit on an enemy Hero. Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 make Storm Bow recharge 1% faster each, 41-80 make the arrow fly and Storm Bow charge 1% faster each, 81-100 make the arrow 1% wider each, at 100 an echo arrow 0.4 seconds later for 50% (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="HanzoGoldenFocusTokenCounter" parent="StormQuestToken">
+    <Face value="HanzoGoldenFocusTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="HanzoGoldenMasteryTokenCounter" parent="StormQuestToken">
+    <Face value="HanzoGoldenMasteryTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="HanzoGoldenFocusTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="HanzoGoldenFocusTokenCounter" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HanzoStormBowDamage">
+    <MultiplicativeModifierArray index="HanzoArcherPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoArcherCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoArcherLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="HanzoGoldenEcho" Validator="HanzoGoldenIsEchoMissile" Modifier="-0.5" />
+  </CEffectDamage>
+  <CEffectDamage id="HanzoStormBowDamage">
+    <MultiplicativeModifierArray index="HanzoArcherHit" Accumulator="HanzoGoldenFocusTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="HanzoHeroWeaponDamage">
+    <MultiplicativeModifierArray index="HanzoArcherHit" Accumulator="HanzoGoldenFocusTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="HanzoGoldenFocusTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hanzo_stormbow.dds" />
+  </CButton>
+  <CButton id="HanzoGoldenMasteryTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hanzo_stormbow.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Mastery at 100: an echo arrow follows each Storm Bow 0.4 seconds later for 50% damage. The script casts the missile
+       again with HanzoGoldenEchoing on Hanzo for a moment; the launch tags that missile (as Flawless Technique's empowered
+       arrow) and its damage is halved. -->
+  <CBehaviorBuff id="HanzoGoldenEchoing">
+    <Duration value="0.0625" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="HanzoGoldenEchoMissile" />
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenCasterEchoing">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="HanzoGoldenEchoing" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="HanzoGoldenTagEchoMissile">
+    <ValidatorArray value="HanzoGoldenCasterEchoing" />
+    <WhichUnit Value="Source" />
+    <Behavior value="HanzoGoldenEchoMissile" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HanzoStormBowLaunchMissileSet">
+    <EffectArray value="HanzoGoldenTagEchoMissile" />
+  </CEffectSet>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenIsEchoMissile">
+    <WhichUnit Effect="HanzoStormBowImpactSet" Value="Source" />
+    <Compare value="GT" />
+    <Behavior value="HanzoGoldenEchoMissile" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenIsNotEchoMissile">
+    <WhichUnit Effect="HanzoStormBowImpactSet" Value="Source" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="HanzoGoldenEchoMissile" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Headshot (Epic): a fully charged Storm Bow (not the echo) stuns enemy Heroes for 1.5 seconds. The script gives Hanzo
+       HanzoGoldenHeadshotReady when a fully charged arrow is fired. -->
+  <CBehaviorBuff id="HanzoGoldenHeadshotReady">
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="HanzoGoldenCasterHeadshotReady">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="HanzoGoldenHeadshotReady" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="HanzoGoldenHeadshotStun" parent="StormStun">
+    <Duration value="1.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="HanzoGoldenHeadshotApply">
+    <ValidatorArray value="HanzoGoldenCasterHeadshotReady" />
+    <ValidatorArray value="HanzoGoldenIsNotEchoMissile" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="HanzoGoldenHeadshotStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HanzoStormBowImpactSet">
+    <EffectArray value="HanzoGoldenHeadshotApply" />
+  </CEffectSet>
+  <!-- Mastery past 100 stacks: Hanzo's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="HanzoGoldenOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+</Catalog>
