@@ -26,14 +26,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
   <!-- Silver Hunter: Cursed Bullet deals the larger of 35% of current Health (locked: Silvered and Kindling skip it; percent
        damage ignores Spell Power and the damage buffs) (uncapped, unlike the base 1277.85 cap) and 20% of
-       maximum Health, and heals Greymane for the damage -->
+       maximum Health, and heals Greymane for a third of the damage -->
   <CEffectDamage id="GreymaneGoldenBulletCurrentDamage" parent="StormSpellPercentDamage">
     <FlatModifierArray index="Current" Accumulator="GreymaneGoldenBulletCurrentAccumulator" />
-    <LeechFraction index="Life" value="1" />
+    <LeechFraction index="Life" value="0.3333" />
   </CEffectDamage>
   <CEffectDamage id="GreymaneGoldenBulletMaxDamage" parent="StormSpellPercentDamage">
     <VitalFractionMax index="Life" value="0.2" />
-    <LeechFraction index="Life" value="1" />
+    <LeechFraction index="Life" value="0.3333" />
   </CEffectDamage>
   <!-- Feral Ripper, Bleed Out (Epic): 3 ticks of a tenth of Razor Swipe's damage (the script sets the Amount) -->
   <CEffectDamage id="GreymaneGoldenBleedDamage" parent="StormSpellDot">
@@ -132,7 +132,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Silver Hunter ===== -->
-  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds, a hit on a Hero sets it to 4, it deals the larger of 35% of current and 20% of maximum Health and Greymane heals for its damage. Silvered quest (50% kept): 5% damage to non-Heroes per Cursed Bullet hit on an enemy Hero, and to Heroes for 6 seconds after a hit (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
+  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds, a hit on a Hero sets it to 4, it deals the larger of 35% of current and 20% of maximum Health and Greymane heals for a third of its damage. Silvered quest (50% kept): 3% damage to non-Heroes per Cursed Bullet hit on an enemy Hero, and to Heroes for 6 seconds after a hit (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="GreymaneGoldenSilverTokenCounter" parent="StormQuestToken">
     <Face value="GreymaneGoldenSilverTokenCounter" />
     <Max value="100000" />
@@ -146,7 +146,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="GreymaneGoldenSilverTokenCounter" />
-    <Scale value="0.05" />
+    <Scale value="0.03" />
   </CAccumulatorToken>
   <CEffectDamage id="GreymaneGoldenBulletCurrentDamage">
     <MultiplicativeModifierArray index="GreymaneSilverPower" Modifier="0" />
