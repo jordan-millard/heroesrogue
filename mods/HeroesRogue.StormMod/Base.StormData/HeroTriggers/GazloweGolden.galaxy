@@ -223,6 +223,8 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Turret Engineer: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_GazloweEngineerHits;
 // Turret Engineer hit on an enemy Hero: takedown window, GazloweGoldenTargetingTokenCounter, the heal, and on-hit boons
 bool libAffx_GazloweEngineerHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -231,7 +233,11 @@ bool libAffx_GazloweEngineerHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_GazloweEngineerTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    libGame_gf_ModifyTokenCount(1, "GazloweGoldenTargetingTokenCounter", hero);
+    libAffx_GazloweEngineerHits += 1;
+    if (libAffx_GazloweEngineerHits >= 10) {
+        libAffx_GazloweEngineerHits = 0;
+        libGame_gf_ModifyTokenCount(10, "GazloweGoldenTargetingTokenCounter", hero);
+    }
     return true;
 }
 // Turret Engineer: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
