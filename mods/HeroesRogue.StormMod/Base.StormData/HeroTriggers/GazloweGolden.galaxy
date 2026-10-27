@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Gazlowe. Turret Engineer: turret and turret Deth Lazor hits on enemy Heroes open a 6 second takedown window
 // (Gazlowe's own Deth Lazor too) and add the hit quest token; turret drops spend all Scrap. Takedowns in the window add
-// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 leech and Health, then 1% damage per stack.
+// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 turret healing and a Shield, then 1% damage per stack.
 // Lazor Specialist: Deth Lazor hits on enemy Heroes add Calibration and open a 6 second window. Takedowns add
 // Amplification: Deth Lazor length, then a Shield per hit, then at 100 a turret per hit, then 1% damage per stack.
 // ============================================================
@@ -17,7 +17,7 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GazloweLazorTime; // per enemy playe
 int libAffx_GazloweLazorAdded; // Lazor Specialist: takedown stacks already applied to the catalog this game
 int libAffx_GazloweSpeedApplied; // Turret Engineer: Upgrades stacks applied as turret Attack Speed
 int libAffx_GazlowePowerApplied; // Turret Engineer: Upgrades stacks past 100 applied as damage
-bool libAffx_GazloweHullOn; // Turret Engineer: 100 Upgrades stacks reached this game (leech and Health turned on)
+bool libAffx_GazloweFortifyOn; // Turret Engineer: 100 Upgrades stacks reached this game (2% turret healing and the Shield turned on)
 fixed libAffx_GazloweRelicBonus; // Turret Engineer: range added to Superior Schematics' side shot search (largest Scrap range bonus)
 int libAffx_GazloweLazorPowerApplied; // Lazor Specialist: Amplification stacks past 100 applied as damage
 
@@ -44,7 +44,7 @@ void libAffx_GazloweQuestDing() {
 bool libAffx_GazloweInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_GazloweTakedownWindow;
 }
-// GazloweGoldenUpgradesTokenCounter: stacks 1-40: 1% of the 3.94 second Scrap regeneration each; 41-80 turret Attack Speed, 100 leech and Health, then damage (libAffx_GazloweEngineerSync)
+// GazloweGoldenUpgradesTokenCounter: stacks 1-40: 1% of the 3.94 second Scrap regeneration each; 41-80 turret Attack Speed, 100 turret healing and Shield, then damage (libAffx_GazloweEngineerSync)
 void libAffx_GazloweSyncEngineer () {
     unit hero = libAffx_GazloweHero();
     int stacks;
@@ -131,15 +131,14 @@ void libAffx_GazloweLazorOnHit (unit hero, unit victim) {
         UnitCreateEffectPoint(hero, "RockItTurretCreateUnit", UnitGetPosition(victim));
     }
 }
-// Turret Engineer: Upgrades stacks 41-80 give turrets 1% Attack Speed each; at 100 turrets leech 50% and have 50% more
-// Health; each stack past 100 adds 1% to all damage (turrets and Gazlowe). Amounts are set in the catalog (new turrets get
+// Turret Engineer: Upgrades stacks 41-80 give turrets 1% Attack Speed each; at 100 turrets heal 2% per second and their
+// hits on Heroes Shield Gazlowe (libAffx_GazloweEngineerShield); each stack past 100 adds 1% to all damage (turrets and Gazlowe). Amounts are set in the catalog (new turrets get
 // them on creation) and re-added to the existing turrets when they change.
 void libAffx_GazloweEngineerSync () {
     unit hero = libAffx_GazloweHero();
     int stacks;
     int speed;
     int power;
-    bool hull = false;
     bool tune = false;
     unitgroup turrets;
     unit turret;
@@ -150,12 +149,9 @@ void libAffx_GazloweEngineerSync () {
     stacks = libAffx_GazloweStacks("GazloweGoldenUpgradesTokenCounter");
     speed = MaxI(0, MinI(stacks - 40, 40));
     power = MaxI(0, stacks - 100);
-    if (stacks >= 100 && !libAffx_GazloweHullOn) {
-        libAffx_GazloweHullOn = true;
-        hull = true;
-        libAffx_CatalogReferenceModify("Effect,GazloweGoldenTurretHullApply,Chance", libAffx_player, "1", c_upgradeOperationSet);
-        libAffx_CatalogReferenceModify("Effect,RockItTurretWeaponDamage,LeechFraction[Life]", libAffx_player, "0.5", c_upgradeOperationSet);
-        libAffx_CatalogReferenceModify("Effect,RockItTurretWeaponRelicSideDamage,LeechFraction[Life]", libAffx_player, "0.5", c_upgradeOperationSet);
+    if (stacks >= 100 && !libAffx_GazloweFortifyOn) {
+        libAffx_GazloweFortifyOn = true;
+        libAffx_CatalogReferenceModify("Effect,GazloweGoldenTurretRepair,VitalArray[Life].ChangeFraction", libAffx_player, "0.02", c_upgradeOperationSet);
     }
     if (speed != libAffx_GazloweSpeedApplied || power != libAffx_GazlowePowerApplied) {
         libAffx_GazloweSpeedApplied = speed;
@@ -170,20 +166,33 @@ void libAffx_GazloweEngineerSync () {
     if (power > 0 && !UnitHasBehavior2(hero, "GazloweGoldenOverdrive")) {
         UnitBehaviorAdd(hero, "GazloweGoldenOverdrive", hero, 1);
     }
-    if (!hull && !tune) {
+    if (!tune) {
         return;
     }
     turrets = UnitGroup("TinkerRockItTurret", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
     for (i = UnitGroupCount(turrets, c_unitCountAll); i > 0; i -= 1) {
         turret = UnitGroupUnitFromEnd(turrets, i);
-        if (hull && UnitIsAlive(turret) && !UnitHasBehavior2(turret, "GazloweGoldenTurretHull")) {
-            UnitBehaviorAdd(turret, "GazloweGoldenTurretHull", hero, 1);
-        }
-        if (tune && UnitIsAlive(turret)) {
+        if (UnitIsAlive(turret)) {
             UnitBehaviorRemove(turret, "GazloweGoldenTurretTuning", 1);
             UnitBehaviorAdd(turret, "GazloweGoldenTurretTuning", hero, 1);
         }
     }
+}
+// Turret Engineer, 100 Upgrades stacks: a turret hit on an enemy Hero adds 1% of Gazlowe's maximum Health to his Shield
+// (up to 35%) and restarts its 10 seconds
+void libAffx_GazloweEngineerShield (unit hero) {
+    fixed life;
+    fixed current = 0.0;
+    if (!libAffx_GazloweFortifyOn || !UnitIsAlive(hero)) {
+        return;
+    }
+    life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+    if (UnitHasBehavior2(hero, "GazloweGoldenTurretShield")) {
+        current = UnitBehaviorDamageModifyRemaining(hero, "GazloweGoldenTurretShield");
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretShield", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.01 * life, 0.35 * life));
+    UnitBehaviorRemove(hero, "GazloweGoldenTurretShield", 1);
+    UnitBehaviorAdd(hero, "GazloweGoldenTurretShield", hero, 1);
 }
 bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
     libAffx_GazloweEngineerSync();
@@ -259,6 +268,7 @@ bool libAffx_GazloweEngineerHit_Func (bool testConds, bool runActions) {
         libAffx_GazloweEngineerHits = 0;
         libGame_gf_ModifyTokenCount(10, "GazloweGoldenTargetingTokenCounter", hero);
     }
+    libAffx_GazloweEngineerShield(hero);
     return true;
 }
 // Turret Engineer: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)

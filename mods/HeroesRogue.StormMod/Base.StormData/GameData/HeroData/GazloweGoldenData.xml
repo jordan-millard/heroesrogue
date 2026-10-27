@@ -10,7 +10,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GazloweScrapGlobesMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Turret Engineer ===== -->
-  <!-- Turrets cost 6 Scrap and their drop spends all Scrap; they never lose Health over time and heal 1% per second, each Scrap past 6 adds 5% Attack Speed, range and Health, 12 or more reveal enemies in attack range, each past 22 adds 0.2% maximum Health damage to Heroes (script). Targeting quest (50% kept): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets leech 50% and have 50% more Health (script), then 1% damage each (script). -->
+  <!-- Turrets cost 6 Scrap and their drop spends all Scrap; they never lose Health over time and heal 1% per second, each Scrap past 6 adds 5% Attack Speed, range and Health, 12 or more reveal enemies in attack range, each past 22 adds 0.2% maximum Health damage to Heroes (script). Targeting quest (50% kept): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets heal 2% per second and their hits on Heroes Shield Gazlowe (script), then 1% damage each (script). -->
   <CBehaviorTokenCounter id="GazloweGoldenTargetingTokenCounter" parent="StormQuestToken">
     <Face value="GazloweGoldenTargetingTokenCounter" />
     <Max value="100000" />
@@ -94,7 +94,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Scale value="0.001" />
     <UnitSource Value="Creator" />
   </CAccumulatorToken>
-  <!-- Turret Engineer: turrets never lose Health over time and heal 1% of their maximum Health per second (the script adds it) -->
+  <!-- Turret Engineer: turrets never lose Health over time and heal 1% of their maximum Health per second, 2% at 100 Upgrades
+       stacks (the script adds it and sets the amount) -->
   <CBehaviorBuff id="GazloweGoldenTurretFrame" parent="CarryBehaviorParent">
     <Period value="1" />
     <PeriodicEffect value="GazloweGoldenTurretRepair" />
@@ -142,11 +143,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <DamageDealtFraction index="Ability" value="0" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Upgrades at 100 stacks: turrets have 50% more Health (the script turns on its apply effect and adds it to every turret) -->
-  <CBehaviorBuff id="GazloweGoldenTurretHull" parent="CarryBehaviorParent">
-    <Modification>
-      <VitalMaxFractionArray index="Life" value="0.5" />
-    </Modification>
+  <!-- Upgrades at 100 stacks: turret hits on enemy Heroes add 1% of Gazlowe's maximum Health to this Shield, up to 35%;
+       each hit restarts its 10 seconds (the script sets ModifyLimit and re-adds it) -->
+  <CBehaviorBuff id="GazloweGoldenTurretShield" parent="StormShield">
+    <InfoIcon value="Assets/Textures/storm_ui_icon_Gazlowe_RockItTurret.dds" />
+    <Duration value="10" />
+    <DamageResponse ModifyLimit="0" />
   </CBehaviorBuff>
   <!-- Upgrades and Amplification past 100 stacks: Gazlowe's own damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="GazloweGoldenOverdrive" parent="CarryBehaviorParent">
@@ -183,13 +185,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Chance value="0" />
     <Behavior value="GazloweGoldenTurretTuning" />
   </CEffectApplyBehavior>
-  <!-- on each new turret (the script turns it on at 100 Upgrades stacks) -->
-  <CEffectApplyBehavior id="GazloweGoldenTurretHullApply">
-    <Chance value="0" />
-    <Behavior value="GazloweGoldenTurretHull" />
-  </CEffectApplyBehavior>
   <CEffectSet id="GazloweRockItTurretCreateUnitSet">
     <EffectArray value="GazloweGoldenTurretTuningApply" />
-    <EffectArray value="GazloweGoldenTurretHullApply" />
   </CEffectSet>
 </Catalog>
