@@ -30,7 +30,6 @@ fixed libAffx_GreymaneCocktailHitTime = -10.0; // Gilnean Alchemist: game time o
 bool libAffx_GreymaneProwlOn; // Feral Ripper: 100 Feral Hunt stacks reached this game (Stealth on Razor Swipe turned on)
 int libAffx_GreymaneRipperPowerApplied; // Feral Ripper: Feral Hunt stacks past 100 applied as damage
 int libAffx_GreymaneSilverApplied; // Silver Hunter: Silvered stacks applied as damage to non-Heroes
-int libAffx_GreymaneArmorApplied; // Silver Hunter: Hunter's Resolve stacks applied as Armor
 fixed libAffx_GreymaneTenacity; // Silver Hunter: crowd control duration reduction from Hunter's Resolve (0 to 0.4)
 bool libAffx_GreymaneRicochetOn; // Silver Hunter: 100 Hunter's Resolve stacks reached this game (ricochet turned on)
 int libAffx_GreymaneSilverPowerApplied; // Silver Hunter: Hunter's Resolve stacks past 100 applied as damage
@@ -264,14 +263,12 @@ void libAffx_GreymaneSilverSync () {
         UnitBehaviorAdd(hero, "GreymaneGoldenSilverbane", hero, 1);
     }
     stacks = libAffx_GreymaneStacks("GreymaneGoldenResolveTokenCounter");
-    armor = MinI(stacks, 40);
-    if (armor != libAffx_GreymaneArmorApplied) {
-        libAffx_GreymaneArmorApplied = armor;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenSilverArmor", "ArmorModification.AllArmorBonus", libAffx_player, IntToFixed(armor));
-        UnitBehaviorRemove(hero, "GreymaneGoldenSilverArmor", 1);
-    }
-    if (armor > 0 && !UnitHasBehavior2(hero, "GreymaneGoldenSilverArmor")) {
-        UnitBehaviorAdd(hero, "GreymaneGoldenSilverArmor", hero, 1);
+    // one Armor per behavior stack: add or remove stacks to match
+    armor = MinI(stacks, 40) - UnitBehaviorCount(hero, "GreymaneGoldenSilverArmor");
+    if (armor > 0) {
+        UnitBehaviorAdd(hero, "GreymaneGoldenSilverArmor", hero, armor);
+    } else if (armor < 0) {
+        UnitBehaviorRemove(hero, "GreymaneGoldenSilverArmor", -armor);
     }
     libAffx_GreymaneTenacity = 0.01 * IntToFixed(MaxI(0, MinI(stacks - 40, 40)));
     if (stacks >= 100 && !libAffx_GreymaneRicochetOn) {

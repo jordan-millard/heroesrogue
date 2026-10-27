@@ -304,12 +304,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GreymaneGoldenSilverbane" parent="CarryBehaviorParent">
     <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1" />
   </CBehaviorBuff>
-  <!-- Hunter's Resolve stacks 1-40: 1 Armor each, on top of Worgen form's (the script sets the amount and re-adds it) -->
+  <!-- Hunter's Resolve stacks 1-40: 1 Armor per behavior stack, on top of Worgen form's (the script sets the stack count) -->
   <CBehaviorBuff id="GreymaneGoldenSilverArmor" parent="StormArmor">
+    <MaxStackCount value="40" />
+    <BehaviorFlags index="Permanent" value="1" />
     <Alignment value="Positive" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_Snapshot.dds" />
-    <ArmorModification>
-      <AllArmorBonus value="0" />
+    <ArmorModification StackCount="40">
+      <AllArmorBonus value="1" />
     </ArmorModification>
   </CBehaviorBuff>
   <!-- Hunter's Resolve at 100: Cursed Bullet ricochets from its target to the nearest other enemy Hero within 7 (Chance 0: the
