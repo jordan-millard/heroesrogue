@@ -24732,6 +24732,7 @@
 
 
 
+
         <Instances Id="GreymaneGilneanAlchemist">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -25171,13 +25172,13 @@
             </String>
         </Instances>
         <Instances Id="GreymaneSilverRounds">
-            <Int Int="0">
+            <Int Int="1">
                 <Field Id="Max" />
             </Int>
             <String String="Assets/Textures/storm_ui_icon_Greymane_Snapshot.dds">
                 <Field Id="Icon" />
             </String>
-            <String String="Common">
+            <String String="Legendary">
                 <Field Id="Rarity" />
             </String>
             <String String="Greymane">
@@ -25186,10 +25187,10 @@
             <User Type="Affix" Instance="GreymaneSilverHunter">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 2 Set Effect,GreymaneGoldenBulletCurrentDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.15">
+            <String String="1 2 Set Effect,GreymaneGoldenBulletCurrentDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.25">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 2 Set Effect,GreymaneGoldenBulletMaxDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.15">
+            <String String="1 2 Set Effect,GreymaneGoldenBulletMaxDamage,MultiplicativeModifierArray[GreymaneSilverCommon].Modifier 0.25">
                 <Field Id="CatalogModification" Index="1" />
             </String>
         </Instances>
