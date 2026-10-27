@@ -118,12 +118,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <VitalMaxFractionArray index="Life" value="0.05" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Turret Engineer: a turret dropped with 12 or more Scrap reveals enemies in its attack range (the script adds it and
-       sets the radius) -->
-  <CBehaviorBuff id="GazloweGoldenTurretSentry" parent="CarryBehaviorParent">
-    <Period value="1" />
-    <PeriodicEffect value="GazloweGoldenTurretSentryReveal" />
-  </CBehaviorBuff>
+  <!-- Turret Engineer: marks a turret dropped with 12 or more Scrap; every second the script reveals around it out to its
+       attack range (GazloweGoldenTurretSentryReveal, radius set per turret from its weapon range) -->
+  <CBehaviorBuff id="GazloweGoldenTurretSentry" parent="CarryBehaviorParent" />
   <!-- Turret Engineer, Scrap past 22: the script sets the fraction (0.2% per Scrap past 22) before each hit on a Hero -->
   <CEffectDamage id="GazloweGoldenTurretShredDamage" parent="StormSpellPercentDamage">
     <ValidatorArray value="TargetIsHero" />

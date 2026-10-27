@@ -194,8 +194,28 @@ void libAffx_GazloweEngineerShield (unit hero) {
     UnitBehaviorRemove(hero, "GazloweGoldenTurretShield", 1);
     UnitBehaviorAdd(hero, "GazloweGoldenTurretShield", hero, 1);
 }
+// Turret Engineer: each turret dropped with 12 or more Scrap reveals out to its current attack range. Attack range is
+// measured between unit edges, so the reveal adds 1.25 for the turret's and the target's size.
+void libAffx_GazloweSentryReveal () {
+    unit hero = libAffx_GazloweHero();
+    unitgroup turrets;
+    unit turret;
+    int i;
+    if (hero == null || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return;
+    }
+    turrets = UnitGroup("TinkerRockItTurret", libAffx_player, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+    for (i = UnitGroupCount(turrets, c_unitCountAll); i > 0; i -= 1) {
+        turret = UnitGroupUnitFromEnd(turrets, i);
+        if (UnitIsAlive(turret) && UnitHasBehavior2(turret, "GazloweGoldenTurretSentry")) {
+            CatalogFieldValueSetFixed(c_gameCatalogEffect, "GazloweGoldenTurretSentryReveal", "RevealRadius", libAffx_player, UnitWeaponRange(turret, 1) + 1.25);
+            UnitCreateEffectUnit(turret, "GazloweGoldenTurretSentryReveal", turret);
+        }
+    }
+}
 bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
     libAffx_GazloweEngineerSync();
+    libAffx_GazloweSentryReveal();
     libAffx_GazloweLazorSync();
     return true;
 }
@@ -248,7 +268,6 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
         }
     }
     if (used >= 12) {
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "GazloweGoldenTurretSentryReveal", "RevealRadius", libAffx_player, 6.0 + 0.3 * IntToFixed(used - 6));
         UnitBehaviorAdd(turret, "GazloweGoldenTurretSentry", hero, 1);
     }
     return true;
