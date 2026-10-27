@@ -3,10 +3,11 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Greymane. Starters: Gilnean Alchemist (Gilnean Cocktail burns for 25% of maximum Health) and Feral Ripper (Razor Swipe charges, healing on Hero hits). Each damage effect has its own multipliers: starter power, Common boon, hit quest (unused: Kindling is a damage response) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and buffs are in HeroTriggers/GreymaneGolden.galaxy. -->
+  <!-- Golden Greymane. Starters: Gilnean Alchemist (Gilnean Cocktail burns for 25% of maximum Health), Feral Ripper (Razor Swipe charges, healing on Hero hits) and Silver Hunter (Cursed Bullet from level 1, half cooldown, heals for its damage). Each damage effect has its own multipliers: starter power, Common boon, hit quest (unused: Kindling is a damage response) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and buffs are in HeroTriggers/GreymaneGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="GreymaneAlchemistMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneRipperMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymaneSilverMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneJugularMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneWildfireMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneBleedOutMarker" parent="CarryBehaviorParent" />
@@ -116,6 +117,35 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CButton id="GreymaneGoldenFeralHuntTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Greymane_Swipe.dds" />
+  </CButton>
+
+  <!-- ===== Silver Hunter ===== -->
+  <!-- Gain Cursed Bullet at level 1 (Go for the Throat can't be taken); its cooldown is halved to 15 seconds and Greymane heals for its damage. Silvered quest (50% kept): 20% damage to non-Heroes per Cursed Bullet hit on an enemy Hero (script). Hunter's Resolve quest: takedowns within 6 seconds of a hit; stacks 1-40 add 1 Armor each, 41-80 make crowd control 1% shorter each (script), at 100 Cursed Bullet ricochets to another Hero within 7 (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="GreymaneGoldenSilverTokenCounter" parent="StormQuestToken">
+    <Face value="GreymaneGoldenSilverTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GreymaneGoldenResolveTokenCounter" parent="StormQuestToken">
+    <Face value="GreymaneGoldenResolveTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GreymaneGoldenSilverTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GreymaneGoldenSilverTokenCounter" />
+    <Scale value="0.2" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GreymaneCursedBulletDamagePercentDamage">
+    <MultiplicativeModifierArray index="GreymaneSilverPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneSilverCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneSilverLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="GreymaneGoldenSilverTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Greymane_Snapshot.dds" />
+  </CButton>
+  <CButton id="GreymaneGoldenResolveTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Greymane_Snapshot.dds" />
   </CButton>
 
   <!-- ===== Boons ===== -->
@@ -264,6 +294,51 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectModifyUnit>
   <!-- Feral Hunt past 100 stacks: Greymane's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="GreymaneGoldenRipperOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- ===== Silver Hunter ===== -->
+  <!-- Silvered quest: Greymane deals more damage to non-Heroes (the script sets the fraction and re-adds it) -->
+  <CBehaviorBuff id="GreymaneGoldenSilverbane" parent="CarryBehaviorParent">
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1" />
+  </CBehaviorBuff>
+  <!-- Hunter's Resolve stacks 1-40: 1 Armor each, on top of Worgen form's (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="GreymaneGoldenSilverArmor" parent="StormArmor">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_Snapshot.dds" />
+    <ArmorModification>
+      <AllArmorBonus value="0" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <!-- Hunter's Resolve at 100: Cursed Bullet ricochets from its target to the nearest other enemy Hero within 7 (Chance 0: the
+       script turns it on) -->
+  <CEffectEnumArea id="GreymaneGoldenRicochetSearch">
+    <Chance value="0" />
+    <ImpactLocation Value="TargetUnit" />
+    <SearchFilters value="Heroic;Player,Ally,Neutral,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <ExcludeArray Value="Target" />
+    <AreaArray MaxCount="1" Effect="GreymaneGoldenRicochetLaunch">
+      <Radius value="7" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectLaunchMissile id="GreymaneGoldenRicochetLaunch">
+    <LaunchLocation Effect="GreymaneGoldenRicochetSearch" Value="TargetUnit" />
+    <ImpactLocation Value="TargetUnit" />
+    <ImpactEffect value="GreymaneGoldenRicochetImpactSet" />
+    <AmmoUnit value="GreymaneCursedBulletMissile" />
+    <Movers Link="CursedBulletMissile" />
+  </CEffectLaunchMissile>
+  <CEffectSet id="GreymaneGoldenRicochetImpactSet">
+    <ValidatorArray value="NotVehicle" />
+    <EffectArray value="GreymaneCursedBulletDamagePercentDamage" />
+  </CEffectSet>
+  <CEffectSet id="GreymaneCursedBulletImpactSet">
+    <EffectArray value="GreymaneGoldenRicochetSearch" />
+  </CEffectSet>
+  <!-- Hunter's Resolve past 100 stacks: Greymane's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="GreymaneGoldenSilverOverdrive" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
