@@ -24386,6 +24386,7 @@
 
 
 
+
         <Instances Id="GazloweTurretEngineer">
             <String String="Assets/Textures/storm_ui_icon_Gazlowe_RockItTurret.dds">
                 <Field Id="Icon" />
@@ -24414,17 +24415,20 @@
             <String String="1 1 Set Effect,GazloweGoldenTurretTuningApply,Chance 1">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Add Abil,TinkerRockItTurret,Cost.Vital[Energy] 2">
+            <String String="1 1 Set Effect,GazloweGoldenTurretHitHook,Chance 1">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,RockItTurretWeaponDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
+            <String String="1 1 Add Abil,TinkerRockItTurret,Cost.Vital[Energy] 2">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,RockItTurretWeaponRelicSideDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
+            <String String="1 1 Set Effect,RockItTurretWeaponDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,TinkerDethLazorFirinMahLazorzTalentDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
+            <String String="1 1 Set Effect,RockItTurretWeaponRelicSideDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
                 <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,TinkerDethLazorFirinMahLazorzTalentDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
             </String>
             <String String="AffixAdded libAffx_GazloweStart">
                 <Field Id="Trigger" />

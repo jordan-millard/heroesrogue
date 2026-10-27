@@ -194,6 +194,28 @@ bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
 // turret never loses Health over time and heals 1% per second; each Scrap spent past 6 adds 5% Attack Speed, range and
 // Health; with 12 or more it reveals enemies in its attack range. Turrets dropped by Lazor Specialist's quest also run
 // this set, but only Turret Engineer has the marker.
+// Turret Engineer: a turret hit (GazloweGoldenTurretHitHook, caster is the turret). Each Scrap spent past 12 on the turret
+// slows by 1% per hit (up to 10% per hit, 50% in total, 1.5 seconds); each past 22 deals 0.2% of a Hero's maximum Health.
+bool libAffx_GazloweEngineerTurretHit_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GazloweHero();
+    unit turret = EventPlayerEffectUsedUnit(c_effectUnitCaster);
+    unit victim = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    int over;
+    if (hero == null || turret == null || victim == null || !UnitIsAlive(victim) || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
+        return false;
+    }
+    // Overclock stacks are the Scrap spent past 6
+    over = UnitBehaviorCount(turret, "GazloweGoldenTurretOverclock") - 6;
+    if (over <= 0) {
+        return false;
+    }
+    UnitBehaviorAdd(victim, "GazloweGoldenTurretSlow", turret, MinI(over, 10));
+    if (over > 10 && libAffx_GazloweIsEnemyHero(victim)) {
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "GazloweGoldenTurretShredDamage", "VitalFractionMax[Life]", libAffx_player, 0.002 * IntToFixed(over - 10));
+        UnitCreateEffectUnit(turret, "GazloweGoldenTurretShredDamage", victim);
+    }
+    return true;
+}
 bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     unit hero = libAffx_GazloweHero();
     unit turret = EventPlayerEffectUsedUnit(c_effectUnitTarget);
@@ -307,6 +329,7 @@ bool libAffx_GazloweStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DethLazorCharged1Damage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GazloweEngineerTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GazloweEngineerDrop_Func"), libAffx_player, "GazloweRockItTurretCreateUnitSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GazloweEngineerTurretHit_Func"), libAffx_player, "GazloweGoldenTurretHitHook");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GazloweSync_Func"), 1.0, c_timeGame);
     return true;
