@@ -191,8 +191,8 @@ bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
     return true;
 }
 // Turret Engineer: a Rock-It! Turret costs 6 Scrap and its drop spends all of Gazlowe's Scrap (the cost is paid first). The
-// turret never loses Health over time and heals 1% per second; each Scrap spent past 6 adds 5% Attack Speed, range and
-// Health; with 12 or more it reveals enemies in its attack range. Turrets dropped by Lazor Specialist's quest also run
+// turret never loses Health over time and heals 1% per second; each Scrap spent past 6 adds 5% Attack Speed and range and
+// 10% Health; with 12 or more it reveals enemies in its attack range. Turrets dropped by Lazor Specialist's quest also run
 // this set, but only Turret Engineer has the marker.
 // Turret Engineer: a turret attack damaged an enemy (any unit). Each Scrap spent past 12 on the turret slows by 1% per
 // hit (up to 10% per hit, 50% in total, 1.5 seconds); each past 22 deals 0.2% of a Hero's maximum Health.
