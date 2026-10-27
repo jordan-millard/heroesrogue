@@ -24,7 +24,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="GreymaneGoldenCocktailEruptDamage" parent="StormSpell">
     <Amount value="110" />
   </CEffectDamage>
-  <!-- Silver Hunter: Cursed Bullet deals the larger of 35% of current Health (uncapped, unlike the base 1277.85 cap) and 20% of
+  <!-- Silver Hunter: Cursed Bullet deals the larger of 35% of current Health (locked: Silvered and Kindling skip it; percent
+       damage ignores Spell Power and the damage buffs) (uncapped, unlike the base 1277.85 cap) and 20% of
        maximum Health, and heals Greymane for the damage -->
   <CEffectDamage id="GreymaneGoldenBulletCurrentDamage" parent="StormSpellPercentDamage">
     <FlatModifierArray index="Current" Accumulator="GreymaneGoldenBulletCurrentAccumulator" />
@@ -224,6 +225,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GreymaneGoldenKindling" parent="CarryBehaviorParent">
     <DamageResponse Chance="1" Location="Attacker" ModifyFraction="1">
       <ValidatorArray value="GreymaneGoldenTargetBurning" />
+      <ExcludeEffectArray value="GreymaneGoldenBulletCurrentDamage" />
+      <ExcludeEffectArray value="GreymaneGoldenBulletMaxDamage" />
     </DamageResponse>
   </CBehaviorBuff>
   <!-- Distillation stacks 1-40: Cocktail hits on Heroes add to this Shield; no duration (the script sets ModifyLimit) -->
@@ -350,7 +353,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectModifyUnit>
   <!-- Silvered quest: Greymane deals more damage to non-Heroes (the script sets the fraction and re-adds it) -->
   <CBehaviorBuff id="GreymaneGoldenSilverbane" parent="CarryBehaviorParent">
-    <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1" />
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1">
+      <ExcludeEffectArray value="GreymaneGoldenBulletCurrentDamage" />
+      <ExcludeEffectArray value="GreymaneGoldenBulletMaxDamage" />
+    </DamageResponse>
   </CBehaviorBuff>
   <!-- and to Heroes for 6 seconds after a Cursed Bullet hit on an enemy Hero (the script sets the fraction and re-adds it on
        each hit) -->
@@ -359,7 +365,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <InfoFlags index="Hidden" value="0" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_Snapshot.dds" />
     <Duration value="6" />
-    <DamageResponse Chance="1" Location="Attacker" TargetFilters="Heroic;-" ModifyFraction="1" />
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="Heroic;-" ModifyFraction="1">
+      <ExcludeEffectArray value="GreymaneGoldenBulletCurrentDamage" />
+      <ExcludeEffectArray value="GreymaneGoldenBulletMaxDamage" />
+    </DamageResponse>
   </CBehaviorBuff>
   <!-- Hunter's Resolve stacks 1-40: 1 Armor per behavior stack, on top of Worgen form's (the script sets the stack count) -->
   <CBehaviorBuff id="GreymaneGoldenSilverArmor" parent="StormArmor">
