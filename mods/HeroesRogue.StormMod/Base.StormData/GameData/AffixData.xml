@@ -24724,6 +24724,7 @@
 
 
 
+
         <Instances Id="GreymaneGilneanAlchemist">
             <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
                 <Field Id="Icon" />
@@ -24924,6 +24925,191 @@
                 <Field Id="AffixesRequired" />
             </User>
             <String String="1 0 GreymaneJugularMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneFeralRipper">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Swipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GreymaneRazorSwipeUnfetteredAssault">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GreymaneInnerBeastViciousness">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GreymaneRipperMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GreymaneGoldenSavageryTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GreymaneGoldenFeralHuntTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GreymaneGoldenFeralHuntTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GreymaneGoldenSavageryTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneRazorSwipe,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneRazorSwipe,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneRazorSwipe,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneRazorSwipe,Cost.Charge.TimeUse 4">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneRazorSwipe,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,GreymaneRazorSwipe,Cost.Vital[Energy] -12.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Effect,GreymaneRazorSwipePersistent,PeriodicOffsetArray[0] -0.8">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Add Behavior,GreymaneRazorSwipeDash,Modification.MoveSpeedMaximum 4.2">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Add Behavior,GreymaneRazorSwipeDash,Modification.MoveSpeedMinimum 4.2">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Add Effect,GreymaneRazorSwipeSquareSearchArea,AreaArray[0].RectangleHeight 0.7">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneRazorSwipeDamage,MultiplicativeModifierArray[GreymaneRipperPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGoldenBleedDamage,MultiplicativeModifierArray[GreymaneRipperPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="AffixAdded libAffx_GreymaneStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GreymaneTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneSharperClaws">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Swipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneFeralRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GreymaneRazorSwipeDamage,MultiplicativeModifierArray[GreymaneRipperCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GreymaneGoldenBleedDamage,MultiplicativeModifierArray[GreymaneRipperCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GreymanePounce">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Swipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneFeralRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GreymaneRazorSwipe,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneToothAndClawBoon">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Swipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneFeralRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GreymaneToothAndClaw">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneAlphaKillerBoon">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Swipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneFeralRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GreymaneWorgenFormAlphaKiller">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneBleedOut">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Swipe.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneFeralRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GreymaneBleedOutMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneLordOfTheHunt">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_Darkflight.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneFeralRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GreymaneLordOfTheHuntMarker">
                 <Field Id="Behavior" />
             </String>
         </Instances>

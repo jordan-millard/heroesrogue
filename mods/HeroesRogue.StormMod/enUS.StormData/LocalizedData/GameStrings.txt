@@ -2359,6 +2359,28 @@ Button/Name/GreymaneGoldenKindlingTokenCounter=Kindling
 Button/Tooltip/GreymaneGoldenKindlingTokenCounter=<c val="#TooltipQuest">Bonus damage to burning enemies: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GreymaneGoldenKindlingTokenCounter$*1" precision="1"/>%</c></c>
 Button/Name/GreymaneGoldenDistillationTokenCounter=Distillation
 Button/Tooltip/GreymaneGoldenDistillationTokenCounter=<c val="#TooltipQuest">Distillation stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GreymaneGoldenDistillationTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> make Cocktail hits on Heroes grant a Shield that never expires (up to <c val="#TooltipNumbers">10%</c> of maximum Health per hit, to <c val="#TooltipNumbers">30%</c> in total). Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the flask fly <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make the splash <c val="#TooltipNumbers">1%</c> larger. At <c val="#TooltipNumbers">100</c> stacks, <c val="#TooltipNumbers">1</c> second after the Cocktail lands, the spot erupts for <c val="#TooltipNumbers">50%</c> of the splash damage. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all of Greymane's damage.
+Affix/Name/GreymaneFeralRipper=Feral Ripper
+Affix/Tooltip/GreymaneFeralRipper=Gain <c val="#TooltipNumbers">Unfettered Assault</c> and <c val="#TooltipNumbers">Viciousness</c>. Razor Swipe deals <c val="#TooltipNumbers">20%</c> more damage, dashes <c val="#TooltipNumbers">20%</c> farther, costs half Mana and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">4</c> second recharge). Each Razor Swipe hit on an enemy Hero heals you for <c val="#TooltipNumbers">5%</c> of your maximum Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Razor Swipe hit on an enemy Hero adds <c val="#TooltipNumbers">1%</c> Razor Swipe damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Razor Swipe hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make the dash longer and wider (up to <c val="#TooltipNumbers">40%</c>), then add healing (up to <c val="#TooltipNumbers">2%</c> more). At <c val="#TooltipNumbers">100</c>, each Razor Swipe Stealths you for <c val="#TooltipNumbers">4</c> seconds; your attacks don't break it, and damage can't for the first <c val="#TooltipNumbers">2</c>. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all your damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest and <c val="#TooltipNumbers">100%</c> of the second after a win.
+Affix/Name/GreymaneSharperClaws=Sharper Claws
+Affix/Tooltip/GreymaneSharperClaws=Razor Swipe deals <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GreymanePounce=Pounce
+Affix/Tooltip/GreymanePounce=Razor Swipe recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/GreymaneToothAndClawBoon=Tooth and Claw
+Affix/Tooltip/GreymaneToothAndClawBoon=Gain the talent <c val="#TooltipNumbers">Tooth and Claw</c>: Worgen Basic Attacks cleave, and Razor Swipe deals more damage.
+Affix/Name/GreymaneAlphaKillerBoon=Alpha Killer
+Affix/Tooltip/GreymaneAlphaKillerBoon=Gain the talent <c val="#TooltipNumbers">Alpha Killer</c>: Worgen Basic Attacks against Heroes deal bonus damage based on their maximum Health.
+Affix/Name/GreymaneBleedOut=Bleed Out
+Affix/Tooltip/GreymaneBleedOut=Enemies hit by Razor Swipe bleed for <c val="#TooltipNumbers">30%</c> of its damage over <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/GreymaneLordOfTheHunt=Lord of the Hunt
+Affix/Tooltip/GreymaneLordOfTheHunt=Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Razor Swipe hit reset Darkflight's cooldown.
+Button/Name/GreymaneGoldenSavageryTokenCounter=Savagery
+Button/Tooltip/GreymaneGoldenSavageryTokenCounter=<c val="#TooltipQuest">Bonus Razor Swipe damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GreymaneGoldenSavageryTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/GreymaneGoldenFeralHuntTokenCounter=Feral Hunt
+Button/Tooltip/GreymaneGoldenFeralHuntTokenCounter=<c val="#TooltipQuest">Feral Hunt stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GreymaneGoldenFeralHuntTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Razor Swipe recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the dash <c val="#TooltipNumbers">1%</c> longer and wider. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each add <c val="#TooltipNumbers">0.1%</c> of maximum Health to the heal per Hero hit. At <c val="#TooltipNumbers">100</c> stacks, each Razor Swipe Stealths Greymane for <c val="#TooltipNumbers">4</c> seconds: his attacks don't break it, and damage can't for the first <c val="#TooltipNumbers">2</c> seconds. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all of Greymane's damage.
+Behavior/Name/GreymaneGoldenProwl=Prowl
+Behavior/Tooltip/GreymaneGoldenProwl=Stealthed by Razor Swipe. Attacking does not break it.
+Behavior/Name/GreymaneGoldenBleed=Bleed Out
+Behavior/Tooltip/GreymaneGoldenBleed=Bleeding from Greymane's Razor Swipe.
 Behavior/Name/GreymaneGoldenCocktailBurnFlat=Gilnean Fire
 Behavior/Tooltip/GreymaneGoldenCocktailBurnFlat=Burning from Greymane's Gilnean Cocktail.
 Behavior/Name/GreymaneGoldenCocktailBurn=Gilnean Fire

@@ -4,6 +4,8 @@ include "AffixTriggers"
 // Golden Greymane. Gilnean Alchemist: Cocktail hits on enemy Heroes add Kindling (damage to burning enemies) and open a 3
 // second takedown window (burn and eruption ticks refresh it). Takedowns in the window add Distillation: a Shield per
 // hit, then flask speed, then splash size, then at 100 an eruption, then 2% damage per stack.
+// Feral Ripper: Razor Swipe hits on enemy Heroes add Savagery and heal; takedowns in the window add Feral Hunt:
+// recharge, then dash length and width, then healing, then at 100 Stealth on each swipe, then 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_GreymaneTakedownWindow = 3.0;
@@ -13,10 +15,16 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GreymaneAlchemistTime; // per enemy 
 int libAffx_GreymaneAlchemistAdded; // Gilnean Alchemist: takedown stacks already applied to the catalog this game
 int libAffx_GreymaneAlchemistAdded2; // Gilnean Alchemist: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_GreymaneAlchemistAdded3; // Gilnean Alchemist: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GreymaneRipperTime; // per enemy player, last Feral Ripper hit
+int libAffx_GreymaneRipperAdded; // Feral Ripper: takedown stacks already applied to the catalog this game
+int libAffx_GreymaneRipperAdded2; // Feral Ripper: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_GreymaneRipperAdded3; // Feral Ripper: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_GreymaneKindlingApplied; // Gilnean Alchemist: Kindling stacks applied as damage to burning enemies
 bool libAffx_GreymaneElixirDone; // Gilnean Alchemist: Incendiary Elixir completion moved to the charge recharge
 bool libAffx_GreymaneEruptOn; // Gilnean Alchemist: 100 Distillation stacks reached this game (eruption turned on)
 fixed libAffx_GreymaneCocktailHitTime = -10.0; // Gilnean Alchemist: game time of the last Cocktail hit in flight
+bool libAffx_GreymaneProwlOn; // Feral Ripper: 100 Feral Hunt stacks reached this game (Stealth on Razor Swipe turned on)
+int libAffx_GreymaneRipperPowerApplied; // Feral Ripper: Feral Hunt stacks past 100 applied as damage
 int libAffx_GreymanePowerApplied; // Gilnean Alchemist: Distillation stacks past 100 applied as damage
 
 unit libAffx_GreymaneHero() {
@@ -79,8 +87,45 @@ void libAffx_GreymaneSyncAlchemist () {
     CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailBurnFlatDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailEruptDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
 }
+// GreymaneGoldenFeralHuntTokenCounter: stacks 1-40: 1% of the 4 second recharge each; 41-80 dash length and width, 81-100 healing, 100 Stealth, then damage (libAffx_GreymaneRipperSync)
+void libAffx_GreymaneSyncRipper () {
+    unit hero = libAffx_GreymaneHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GreymaneRipperMarker")) {
+        return;
+    }
+    stacks = libAffx_GreymaneStacks("GreymaneGoldenFeralHuntTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_GreymaneRipperAdded) {
+        libAffx_CatalogReferenceModify("Abil,GreymaneRazorSwipe,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded) * -0.04, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GreymaneRipperAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the dash is 1% longer (distance and speed, with Unfettered Assault and the starter) and wider each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_GreymaneRipperAdded2) {
+        libAffx_CatalogReferenceModify("Effect,GreymaneRazorSwipePersistent,PeriodicOffsetArray[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded2) * -0.048, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,GreymaneRazorSwipeDash,Modification.MoveSpeedMaximum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded2) * 0.252, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,GreymaneRazorSwipeDash,Modification.MoveSpeedMinimum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded2) * 0.252, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GreymaneRazorSwipeSquareSearchArea,AreaArray[0].RectangleHeight", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded2) * 0.042, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GreymaneRazorSwipeSquareSearchArea,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded2) * 0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GreymaneRazorSwipeHalfCircleSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GreymaneRipperAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 0.1% of maximum Health more healing per Hero hit each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_GreymaneRipperAdded3) {
+        libAffx_CatalogReferenceModify("Effect,GreymaneRipperHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneRipperAdded3) * 0.001, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GreymaneRipperAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneRazorSwipeDamage", "MultiplicativeModifierArray[GreymaneRipperLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenBleedDamage", "MultiplicativeModifierArray[GreymaneRipperLegacy].Modifier", libAffx_player, bonus);
+}
 bool libAffx_GreymaneSync_Func (bool testConds, bool runActions) {
     libAffx_GreymaneSyncAlchemist();
+    libAffx_GreymaneSyncRipper();
     return true;
 }
 // Gilnean Alchemist, every second and on hits: Kindling (1% damage to burning enemies per stack), Incendiary Elixir's
@@ -132,8 +177,47 @@ void libAffx_GreymaneAlchemistSync () {
         UnitBehaviorAdd(hero, "GreymaneGoldenOverdrive", hero, 1);
     }
 }
+// Feral Ripper, every second and on takedowns: the 100 Feral Hunt Stealth, Bleed Out's tick (a tenth of Razor Swipe's
+// current damage) and past 100 Feral Hunt 2% damage per stack.
+void libAffx_GreymaneRipperSync () {
+    unit hero = libAffx_GreymaneHero();
+    int stacks;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "GreymaneRipperMarker")) {
+        return;
+    }
+    stacks = libAffx_GreymaneStacks("GreymaneGoldenFeralHuntTokenCounter");
+    if (stacks >= 100 && !libAffx_GreymaneProwlOn) {
+        libAffx_GreymaneProwlOn = true;
+        libAffx_CatalogReferenceModify("Effect,GreymaneGoldenProwlApply,Chance", libAffx_player, "1", c_upgradeOperationSet);
+        libAffx_CatalogReferenceModify("Effect,GreymaneGoldenProwlGuardApply,Chance", libAffx_player, "1", c_upgradeOperationSet);
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "GreymaneGoldenBleedDamage", "Amount", libAffx_player, 0.1 * StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "GreymaneRazorSwipeDamage", "Amount", libAffx_player)));
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_GreymaneRipperPowerApplied) {
+        libAffx_GreymaneRipperPowerApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenRipperOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenRipperOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        UnitBehaviorRemove(hero, "GreymaneGoldenRipperOverdrive", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GreymaneGoldenRipperOverdrive")) {
+        UnitBehaviorAdd(hero, "GreymaneGoldenRipperOverdrive", hero, 1);
+    }
+}
+// Bleed Out (Epic): every enemy Razor Swipe hits bleeds for 30% of its damage over 3 seconds (restarts on a new hit)
+bool libAffx_GreymaneBleed_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GreymaneHero();
+    unit victim = EventUnit();
+    if (hero == null || victim == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "GreymaneBleedOutMarker") || !UnitIsAlive(victim)) {
+        return false;
+    }
+    UnitBehaviorRemove(victim, "GreymaneGoldenBleed", 1);
+    UnitBehaviorAdd(victim, "GreymaneGoldenBleed", hero, 1);
+    return true;
+}
 bool libAffx_GreymaneAlchemistTick_Func (bool testConds, bool runActions) {
     libAffx_GreymaneAlchemistSync();
+    libAffx_GreymaneRipperSync();
     return true;
 }
 // Gilnean Alchemist: a Cocktail that hits nothing in flight still splashes where its flight ends. The flask always flies
@@ -231,6 +315,30 @@ bool libAffx_GreymaneAlchemistWindow_Func (bool testConds, bool runActions) {
     libAffx_GreymaneAlchemistTime[UnitGetOwner(victim)] = GameGetMissionTime();
     return true;
 }
+// Feral Ripper hit on an enemy Hero: takedown window, GreymaneGoldenSavageryTokenCounter, the heal, and on-hit boons
+bool libAffx_GreymaneRipperHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GreymaneIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GreymaneRipperMarker")) {
+        return false;
+    }
+    libAffx_GreymaneRipperTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "GreymaneGoldenSavageryTokenCounter", hero);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "GreymaneRipperHeal", hero);
+    }
+    return true;
+}
+// Feral Ripper: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_GreymaneRipperWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GreymaneIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GreymaneRipperMarker")) {
+        return false;
+    }
+    libAffx_GreymaneRipperTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_GreymaneTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -251,6 +359,16 @@ bool libAffx_GreymaneTakedown (bool testConds, bool runActions) {
         libAffx_GreymaneQuestDing();
         libAffx_GreymaneAlchemistSync();
     }
+    if (UnitHasBehavior2(hero, "GreymaneRipperMarker") && libAffx_GreymaneInWindow(libAffx_GreymaneRipperTime[killedPlayer], now)) {
+        libAffx_GreymaneRipperTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GreymaneGoldenFeralHuntTokenCounter", hero);
+        libAffx_GreymaneSyncRipper();
+        libAffx_GreymaneQuestDing();
+        libAffx_GreymaneRipperSync();
+        if (UnitHasBehavior2(hero, "GreymaneLordOfTheHuntMarker")) {
+            UnitCreateEffectUnit(hero, "GreymaneGoldenDarkflightReset", hero);
+        }
+    }
     return true;
 }
 bool libAffx_GreymaneStart (bool testConds, bool runActions) {
@@ -265,9 +383,14 @@ bool libAffx_GreymaneStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_GreymaneAlchemistWindow_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailBurnDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailEruptDamage");
+    trig = TriggerCreate("libAffx_GreymaneRipperHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneRazorSwipeDamage");
+    trig = TriggerCreate("libAffx_GreymaneRipperWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenBleedDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneAlchemistTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GreymaneCocktailLaunch_Func"), libAffx_player, "GreymaneGilneanCocktailLaunchMissile");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GreymaneCocktailHit_Func"), libAffx_player, "GreymaneGilneanCocktailImpactSetPersistent");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_GreymaneBleed_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneRazorSwipeDamage");
     trig = TriggerCreate("libAffx_GreymaneBurn_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailSpreadDamage");

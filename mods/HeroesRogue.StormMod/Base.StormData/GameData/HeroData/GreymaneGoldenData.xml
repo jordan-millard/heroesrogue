@@ -3,11 +3,14 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Greymane. Starters: Gilnean Alchemist (Gilnean Cocktail burns for 20% of maximum Health). Each damage effect has its own multipliers: starter power, Common boon, hit quest (unused: Kindling is a damage response) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and buffs are in HeroTriggers/GreymaneGolden.galaxy. -->
+  <!-- Golden Greymane. Starters: Gilnean Alchemist (Gilnean Cocktail burns for 25% of maximum Health) and Feral Ripper (Razor Swipe charges, healing on Hero hits). Each damage effect has its own multipliers: starter power, Common boon, hit quest (unused: Kindling is a damage response) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and buffs are in HeroTriggers/GreymaneGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="GreymaneAlchemistMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymaneRipperMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneJugularMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="GreymaneWildfireMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymaneBleedOutMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymaneLordOfTheHuntMarker" parent="CarryBehaviorParent" />
   <!-- Gilnean Alchemist burn ticks (10 over 10 seconds): 2.5% of maximum Health, or for Structures, Mercenaries and bosses a
        tenth of the splash damage (the script sets the Amount) -->
   <CEffectDamage id="GreymaneGoldenCocktailBurnDamage" parent="StormSpellDotPercentDamage">
@@ -18,6 +21,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
   <CEffectDamage id="GreymaneGoldenCocktailEruptDamage" parent="StormSpell">
     <Amount value="110" />
+  </CEffectDamage>
+  <!-- Feral Ripper, Bleed Out (Epic): 3 ticks of a tenth of Razor Swipe's damage (the script sets the Amount) -->
+  <CEffectDamage id="GreymaneGoldenBleedDamage" parent="StormSpellDot">
+    <Amount value="12.6" />
   </CEffectDamage>
 
   <!-- ===== Gilnean Alchemist ===== -->
@@ -67,6 +74,48 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CButton id="GreymaneGoldenDistillationTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
+  </CButton>
+
+  <!-- ===== Feral Ripper ===== -->
+  <!-- Razor Swipe stores 2 charges (4 second recharge), costs half Mana, dashes 20% farther and deals 20% more damage; each enemy Hero hit heals 5% of maximum Health; gain Unfettered Assault and Viciousness. Savagery quest (50% kept): 1% Razor Swipe damage per enemy Hero hit. Feral Hunt quest: takedowns within 3 seconds of a hit; stacks 1-40 make Razor Swipe recharge 1% faster each, 41-80 make the dash 1% longer and wider each, 81-100 add 0.1% healing each, at 100 each Razor Swipe Stealths for 4 seconds (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="GreymaneGoldenSavageryTokenCounter" parent="StormQuestToken">
+    <Face value="GreymaneGoldenSavageryTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GreymaneGoldenFeralHuntTokenCounter" parent="StormQuestToken">
+    <Face value="GreymaneGoldenFeralHuntTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GreymaneGoldenSavageryTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GreymaneGoldenSavageryTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GreymaneRazorSwipeDamage">
+    <MultiplicativeModifierArray index="GreymaneRipperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneRipperCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneRipperHit" Accumulator="GreymaneGoldenSavageryTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GreymaneRipperLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenBleedDamage">
+    <MultiplicativeModifierArray index="GreymaneRipperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneRipperCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneRipperHit" Accumulator="GreymaneGoldenSavageryTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GreymaneRipperLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectModifyUnit id="GreymaneRipperHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.05" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CButton id="GreymaneGoldenSavageryTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Greymane_Swipe.dds" />
+  </CButton>
+  <CButton id="GreymaneGoldenFeralHuntTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Greymane_Swipe.dds" />
   </CButton>
 
   <!-- ===== Boons ===== -->
@@ -155,6 +204,71 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CActorModel id="GreymaneGilneanCocktailImpact">
     <On Terms="Effect.GreymaneGoldenCocktailEruptDamage.Start; At Target" Send="Create" />
   </CActorModel>
+  <!-- ===== Feral Ripper ===== -->
+  <!-- charges: Unfettered Assault's Basic Attacks also shorten the recharge -->
+  <CEffectModifyUnit id="GreymaneRazorSwipeUnfetteredAssaultModifyCooldown">
+    <Cost Abil="GreymaneRazorSwipe,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" ChargeTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <!-- Feral Hunt at 100: each Razor Swipe Stealths Greymane for 4 seconds. Not a temporary cloak, so his attacks and abilities
+       don't remove it; taking damage does, except during the first 2 seconds (an unrevealable cloak, as Eyes in the Dark's
+       decloak safety). Neither holds fire. Chance 0: the script turns them on. -->
+  <CBehaviorBuff id="GreymaneGoldenProwl" parent="StormCloak">
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_Swipe.dds" />
+    <Duration value="4" />
+    <InitialEffect value="HeroGenericCasterUpdateVisibility" />
+    <FinalEffect value="HeroGenericCasterUpdateVisibility" />
+    <Modification>
+      <StateFlags index="SuppressDamageVisibilityAttacker" value="1" />
+      <BehaviorLinkDisableArray value="AttackReveal" />
+    </Modification>
+    <DamageResponse Chance="1" Handled="GreymaneGoldenProwlRemove" Priority="97">
+      <ValidatorArray value="SourceNotUnrevealable" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CEffectRemoveBehavior id="GreymaneGoldenProwlRemove">
+    <WhichUnit Value="Source" />
+    <BehaviorLink value="GreymaneGoldenProwl" />
+  </CEffectRemoveBehavior>
+  <CBehaviorBuff id="GreymaneGoldenProwlGuard" parent="StormUnrevealableCloak">
+    <Duration value="2" />
+    <InitialEffect value="HeroGenericCasterUpdateVisibility" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="GreymaneGoldenProwlApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="GreymaneGoldenProwl" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="GreymaneGoldenProwlGuardApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="GreymaneGoldenProwlGuard" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="GreymaneRazorSwipeSet">
+    <EffectArray value="GreymaneGoldenProwlGuardApply" />
+    <EffectArray value="GreymaneGoldenProwlApply" />
+  </CEffectSet>
+  <!-- Bleed Out (Epic): enemies Razor Swipe hits bleed for 30% of its damage over 3 seconds (the script adds it) -->
+  <CBehaviorBuff id="GreymaneGoldenBleed" parent="StormDot">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_Swipe.dds" />
+    <Duration value="3.0625" />
+    <Period value="1" />
+    <PeriodCount value="3" />
+    <PeriodicEffect value="GreymaneGoldenBleedDamage" />
+    <PeriodicDisplayEffect value="GreymaneGoldenBleedDamage" />
+  </CBehaviorBuff>
+  <!-- Lord of the Hunt (Legendary): a Feral Hunt takedown resets Darkflight (and Disengage, which shares its cooldown) -->
+  <CEffectModifyUnit id="GreymaneGoldenDarkflightReset">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="GreymaneDarkflight,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+  <!-- Feral Hunt past 100 stacks: Greymane's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="GreymaneGoldenRipperOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
   <!-- Distillation past 100 stacks: Greymane's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="GreymaneGoldenOverdrive" parent="CarryBehaviorParent">
     <Modification>
