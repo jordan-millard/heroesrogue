@@ -140,7 +140,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <DamageDealtFraction index="Ability" value="0" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Upgrades at 100 stacks: turret hits on enemy Heroes add 1% of Gazlowe's maximum Health to this Shield, up to 35%;
+  <!-- Upgrades at 100 stacks: turret hits on enemy Heroes add 0.5% of Gazlowe's maximum Health to this Shield, up to 35%;
        each hit restarts its 10 seconds (the script sets ModifyLimit and re-adds it) -->
   <CBehaviorBuff id="GazloweGoldenTurretShield" parent="StormShield">
     <InfoIcon value="Assets/Textures/storm_ui_icon_Gazlowe_RockItTurret.dds" />

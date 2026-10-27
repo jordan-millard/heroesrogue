@@ -178,7 +178,7 @@ void libAffx_GazloweEngineerSync () {
         }
     }
 }
-// Turret Engineer, 100 Upgrades stacks: a turret hit on an enemy Hero adds 1% of Gazlowe's maximum Health to his Shield
+// Turret Engineer, 100 Upgrades stacks: a turret hit on an enemy Hero adds 0.5% of Gazlowe's maximum Health to his Shield
 // (up to 35%) and restarts its 10 seconds
 void libAffx_GazloweEngineerShield (unit hero) {
     fixed life;
@@ -190,7 +190,7 @@ void libAffx_GazloweEngineerShield (unit hero) {
     if (UnitHasBehavior2(hero, "GazloweGoldenTurretShield")) {
         current = UnitBehaviorDamageModifyRemaining(hero, "GazloweGoldenTurretShield");
     }
-    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretShield", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.01 * life, 0.35 * life));
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretShield", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.005 * life, 0.35 * life));
     UnitBehaviorRemove(hero, "GazloweGoldenTurretShield", 1);
     UnitBehaviorAdd(hero, "GazloweGoldenTurretShield", hero, 1);
 }
