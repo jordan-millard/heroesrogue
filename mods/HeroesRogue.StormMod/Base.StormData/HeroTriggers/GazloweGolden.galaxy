@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Gazlowe. Turret Engineer: turret and turret Deth Lazor hits on enemy Heroes open a 6 second takedown window
 // (Gazlowe's own Deth Lazor too) and add the hit quest token; turret drops spend all Scrap. Takedowns in the window add
-// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 leech and Health, then 2% damage per stack.
+// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 leech and Health, then 1% damage per stack.
 // Lazor Specialist: Deth Lazor hits on enemy Heroes add Calibration and open a 6 second window. Takedowns add
 // Amplification: Deth Lazor length, then a Shield per hit, then at 100 a turret per hit, then 1% damage per stack.
 // ============================================================
@@ -131,7 +131,7 @@ void libAffx_GazloweLazorOnHit (unit hero, unit victim) {
     }
 }
 // Turret Engineer: Upgrades stacks 41-80 give turrets 1% Attack Speed each; at 100 turrets leech 50% and have 50% more
-// Health; each stack past 100 adds 2% to all damage (turrets and Gazlowe). Amounts are set in the catalog (new turrets get
+// Health; each stack past 100 adds 1% to all damage (turrets and Gazlowe). Amounts are set in the catalog (new turrets get
 // them on creation) and re-added to the existing turrets when they change.
 void libAffx_GazloweEngineerSync () {
     unit hero = libAffx_GazloweHero();
@@ -161,9 +161,9 @@ void libAffx_GazloweEngineerSync () {
         libAffx_GazlowePowerApplied = power;
         tune = true;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.01 * IntToFixed(speed));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.01 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(power));
         UnitBehaviorRemove(hero, "GazloweGoldenOverdrive", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "GazloweGoldenOverdrive")) {
@@ -189,9 +189,10 @@ bool libAffx_GazloweEngineerTick_Func (bool testConds, bool runActions) {
     libAffx_GazloweLazorSync();
     return true;
 }
-// Turret Engineer: a Rock-It! Turret drop spends all of Gazlowe's Scrap (the cost is paid first). With at least 6 Scrap
-// spent the turret never loses Health over time; each Scrap past 6 adds 10% Attack Speed, range and Health. Turrets dropped by
-// Lazor Specialist's quest also run this set, but only Turret Engineer has the marker.
+// Turret Engineer: a Rock-It! Turret costs 6 Scrap and its drop spends all of Gazlowe's Scrap (the cost is paid first). The
+// turret never loses Health over time and heals 1% per second; each Scrap spent past 6 adds 5% Attack Speed, range and
+// Health; with 12 or more it reveals enemies in its attack range. Turrets dropped by Lazor Specialist's quest also run
+// this set, but only Turret Engineer has the marker.
 bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     unit hero = libAffx_GazloweHero();
     unit turret = EventPlayerEffectUsedUnit(c_effectUnitTarget);
@@ -205,12 +206,14 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     extra = MaxI(0, FixedToInt(scrap));
     UnitSetPropertyFixed(hero, c_unitPropEnergy, scrap - IntToFixed(extra));
     used = FixedToInt(StringToFixed(CatalogFieldValueGet(c_gameCatalogAbil, "TinkerRockItTurret", "Cost[0].Vital[Energy]", libAffx_player))) + extra;
-    if (used >= 6) {
-        UnitBehaviorAdd(turret, "GazloweGoldenTurretFrame", hero, 1);
-    }
+    UnitBehaviorAdd(turret, "GazloweGoldenTurretFrame", hero, 1);
     if (used > 6) {
         UnitBehaviorAdd(turret, "GazloweGoldenTurretOverclock", hero, used - 6);
         UnitSetPropertyFixed(turret, c_unitPropLifePercent, 100.0);
+    }
+    if (used >= 12) {
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "GazloweGoldenTurretSentryReveal", "RevealRadius", libAffx_player, 6.0 + 0.3 * IntToFixed(used - 6));
+        UnitBehaviorAdd(turret, "GazloweGoldenTurretSentry", hero, 1);
     }
     return true;
 }
