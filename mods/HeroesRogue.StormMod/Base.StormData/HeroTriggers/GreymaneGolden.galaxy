@@ -1,0 +1,219 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Greymane. Gilnean Alchemist: Cocktail hits on enemy Heroes add Kindling (damage to burning enemies) and open a 3
+// second takedown window (burn and eruption ticks refresh it). Takedowns in the window add Distillation: a Shield per
+// hit, then flask speed, then splash size, then at 100 an eruption, then 2% damage per stack.
+// ============================================================
+
+const fixed libAffx_GreymaneTakedownWindow = 3.0;
+const fixed libAffx_GreymanePastCapDamagePerStack = 0.01;
+bool libAffx_GreymaneStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GreymaneAlchemistTime; // per enemy player, last Gilnean Alchemist hit
+int libAffx_GreymaneAlchemistAdded; // Gilnean Alchemist: takedown stacks already applied to the catalog this game
+int libAffx_GreymaneAlchemistAdded2; // Gilnean Alchemist: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_GreymaneAlchemistAdded3; // Gilnean Alchemist: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_GreymaneKindlingApplied; // Gilnean Alchemist: Kindling stacks applied as damage to burning enemies
+bool libAffx_GreymaneElixirDone; // Gilnean Alchemist: Incendiary Elixir completion moved to the charge recharge
+bool libAffx_GreymaneEruptOn; // Gilnean Alchemist: 100 Distillation stacks reached this game (eruption turned on)
+int libAffx_GreymanePowerApplied; // Gilnean Alchemist: Distillation stacks past 100 applied as damage
+
+unit libAffx_GreymaneHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_GreymaneIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_GreymaneStacks(string tokenId) {
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_GreymaneQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_GreymaneInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_GreymaneTakedownWindow;
+}
+// GreymaneGoldenDistillationTokenCounter: stacks 1-40: a Shield per hit (libAffx_GreymaneAlchemistOnHit); 41-80 flask speed, 81-100 splash size, 100 eruption, then damage (libAffx_GreymaneAlchemistSync)
+void libAffx_GreymaneSyncAlchemist () {
+    unit hero = libAffx_GreymaneHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "GreymaneAlchemistMarker")) {
+        return;
+    }
+    stacks = libAffx_GreymaneStacks("GreymaneGoldenDistillationTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_GreymaneAlchemistAdded) {
+        libAffx_GreymaneAlchemistAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the flask flies 1% faster each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_GreymaneAlchemistAdded2) {
+        libAffx_CatalogReferenceModify("Mover,GreymaneGilneanCocktailMissile,MotionPhases[0].Speed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneAlchemistAdded2) * 0.275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,GreymaneGilneanCocktailMissile,MotionPhases[0].MinSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneAlchemistAdded2) * 0.225, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,GreymaneGilneanCocktailMissile,MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneAlchemistAdded2) * 0.325, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GreymaneAlchemistAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the splash is 1% larger each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_GreymaneAlchemistAdded3) {
+        libAffx_CatalogReferenceModify("Effect,GreymaneGilneanCocktailSpreadSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneAlchemistAdded3) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GreymaneGilneanCocktailSpreadSearchArea,AreaArray[0].RadiusBonus", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneAlchemistAdded3) * 0.01125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,GreymaneGilneanCocktailSpreadSearchArea,AreaArray[0].Arc", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GreymaneAlchemistAdded3) * 0.65, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_GreymaneAlchemistAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGilneanCocktailDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGilneanCocktailSpreadDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailBurnDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "GreymaneGoldenCocktailEruptDamage", "MultiplicativeModifierArray[GreymaneAlchemistLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_GreymaneSync_Func (bool testConds, bool runActions) {
+    libAffx_GreymaneSyncAlchemist();
+    return true;
+}
+// Gilnean Alchemist, every second and on hits: Kindling (1% damage to burning enemies per stack), Incendiary Elixir's
+// completion (its 3 seconds go to the charge recharge), the 100 Distillation eruption (half the splash's current damage)
+// and past 100 Distillation 2% damage per stack.
+void libAffx_GreymaneAlchemistSync () {
+    unit hero = libAffx_GreymaneHero();
+    int kindling;
+    int stacks;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "GreymaneAlchemistMarker")) {
+        return;
+    }
+    kindling = libAffx_GreymaneStacks("GreymaneGoldenKindlingTokenCounter");
+    if (kindling != libAffx_GreymaneKindlingApplied) {
+        libAffx_GreymaneKindlingApplied = kindling;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenKindling", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.01 * IntToFixed(kindling));
+        UnitBehaviorRemove(hero, "GreymaneGoldenKindling", 1);
+    }
+    if (kindling > 0 && !UnitHasBehavior2(hero, "GreymaneGoldenKindling")) {
+        UnitBehaviorAdd(hero, "GreymaneGoldenKindling", hero, 1);
+    }
+    // charges: Incendiary Elixir's cooldown cuts would not shorten the recharge
+    if (!libAffx_GreymaneElixirDone && libAffx_GreymaneStacks("GreymaneGilneanCocktailIncendiaryElixirQuestToken") >= 15) {
+        libAffx_GreymaneElixirDone = true;
+        libAffx_CatalogReferenceModify("Abil,GreymaneGilneanCocktail,Cost[0].Charge.TimeUse", libAffx_player, "-3", c_upgradeOperationAdd);
+    }
+    if (StringToFixed(CatalogFieldValueGet(c_gameCatalogAbil, "GreymaneGilneanCocktail", "Cost[0].Cooldown.TimeUse", libAffx_player)) != 0.5) {
+        libAffx_CatalogReferenceModify("Abil,GreymaneGilneanCocktail,Cost[0].Cooldown.TimeUse", libAffx_player, "0.5", c_upgradeOperationSet);
+    }
+    stacks = libAffx_GreymaneStacks("GreymaneGoldenDistillationTokenCounter");
+    if (stacks >= 100) {
+        if (!libAffx_GreymaneEruptOn) {
+            libAffx_GreymaneEruptOn = true;
+            libAffx_CatalogReferenceModify("Effect,GreymaneGoldenCocktailEruptPersistent,Chance", libAffx_player, "1", c_upgradeOperationSet);
+        }
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "GreymaneGoldenCocktailEruptDamage", "Amount", libAffx_player, 0.5 * StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "GreymaneGilneanCocktailSpreadDamage", "Amount", libAffx_player)));
+    }
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_GreymanePowerApplied) {
+        libAffx_GreymanePowerApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        UnitBehaviorRemove(hero, "GreymaneGoldenOverdrive", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GreymaneGoldenOverdrive")) {
+        UnitBehaviorAdd(hero, "GreymaneGoldenOverdrive", hero, 1);
+    }
+}
+bool libAffx_GreymaneAlchemistTick_Func (bool testConds, bool runActions) {
+    libAffx_GreymaneAlchemistSync();
+    return true;
+}
+// Gilnean Alchemist, Cocktail hit on an enemy Hero. Distillation stacks 1-40: the hit adds a Shield (no duration) of up to
+// 10% of maximum Health, to a total of up to 30%, both growing with each stack. Go for the Jugular (Legendary): the hit
+// also deals Go for the Throat's damage.
+void libAffx_GreymaneAlchemistOnHit (unit hero, unit victim) {
+    int n = MinI(libAffx_GreymaneStacks("GreymaneGoldenDistillationTokenCounter"), 40);
+    fixed life;
+    fixed current = 0.0;
+    libAffx_GreymaneAlchemistSync();
+    if (!UnitIsAlive(hero)) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GreymaneJugularMarker")) {
+        UnitCreateEffectUnit(hero, "GreymaneGoForTheThroatDamage", victim);
+    }
+    if (n > 0) {
+        life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+        if (UnitHasBehavior2(hero, "GreymaneGoldenCocktailShield")) {
+            current = UnitBehaviorDamageModifyRemaining(hero, "GreymaneGoldenCocktailShield");
+        }
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GreymaneGoldenCocktailShield", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.0025 * IntToFixed(n) * life, 0.0075 * IntToFixed(n) * life));
+        UnitBehaviorRemove(hero, "GreymaneGoldenCocktailShield", 1);
+        UnitBehaviorAdd(hero, "GreymaneGoldenCocktailShield", hero, 1);
+    }
+}
+// Gilnean Alchemist hit on an enemy Hero: takedown window, GreymaneGoldenKindlingTokenCounter, the heal, and on-hit boons
+bool libAffx_GreymaneAlchemistHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GreymaneIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GreymaneAlchemistMarker")) {
+        return false;
+    }
+    libAffx_GreymaneAlchemistTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "GreymaneGoldenKindlingTokenCounter", hero);
+    libAffx_GreymaneAlchemistOnHit(hero, victim);
+    return true;
+}
+// Gilnean Alchemist: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_GreymaneAlchemistWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_GreymaneIsEnemyHero(victim) || !UnitHasBehavior2(hero, "GreymaneAlchemistMarker")) {
+        return false;
+    }
+    libAffx_GreymaneAlchemistTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_GreymaneTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_GreymaneHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "GreymaneAlchemistMarker") && libAffx_GreymaneInWindow(libAffx_GreymaneAlchemistTime[killedPlayer], now)) {
+        libAffx_GreymaneAlchemistTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "GreymaneGoldenDistillationTokenCounter", hero);
+        libAffx_GreymaneSyncAlchemist();
+        libAffx_GreymaneQuestDing();
+        libAffx_GreymaneAlchemistSync();
+    }
+    return true;
+}
+bool libAffx_GreymaneStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_GreymaneStarted) {
+        return true;
+    }
+    libAffx_GreymaneStarted = true;
+    trig = TriggerCreate("libAffx_GreymaneAlchemistHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailSpreadDamage");
+    trig = TriggerCreate("libAffx_GreymaneAlchemistWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailBurnDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailEruptDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneAlchemistTick_Func"), 1.0, c_timeGame);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneSync_Func"), 1.0, c_timeGame);
+    return true;
+}

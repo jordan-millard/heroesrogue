@@ -24721,6 +24721,198 @@
             </String>
         </Instances>
 
+        <Instances Id="GreymaneGilneanAlchemist">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="GreymaneGilneanCocktailPerfectAim">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GreymaneGilneanCocktailIncendiaryElixir">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 GreymaneAlchemistMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GreymaneGoldenKindlingTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GreymaneGoldenDistillationTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GreymaneGoldenDistillationTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GreymaneGoldenKindlingTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="GreymaneGilneanCocktailIncendiaryElixirQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurnApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneGilneanCocktail,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneGilneanCocktail,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneGilneanCocktail,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneGilneanCocktail,Cost.Charge.TimeUse 7">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,GreymaneGilneanCocktail,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Add Abil,GreymaneGilneanCocktail,Cost.Vital[Energy] -27.5">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGilneanCocktailDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGilneanCocktailSpreadDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailBurnDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,GreymaneGoldenCocktailEruptDamage,MultiplicativeModifierArray[GreymaneAlchemistPower].Modifier 0">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="AffixAdded libAffx_GreymaneStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GreymaneTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneStrongBrew">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,GreymaneGilneanCocktailDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,GreymaneGilneanCocktailSpreadDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,GreymaneGoldenCocktailBurnDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,GreymaneGoldenCocktailEruptDamage,MultiplicativeModifierArray[GreymaneAlchemistCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneQuickHands">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,GreymaneGilneanCocktail,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneWizenedDuelistBoon">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GreymaneWizenedDuelist">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneHuntersBlunderbussBoon">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GreymaneHuntersBlunderbuss">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneWildfire">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_QAttack.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Behavior,GreymaneGoldenCocktailBurn,MaxStackCount 50">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GreymaneGoForTheJugular">
+            <String String="Assets/Textures/storm_ui_icon_Greymane_GoForTheThroat.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Greymane">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GreymaneGilneanAlchemist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 GreymaneJugularMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

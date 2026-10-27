@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Greymane. Starters: Gilnean Alchemist (Gilnean Cocktail burns for 20% of maximum Health). Each damage effect has its own multipliers: starter power, Common boon, hit quest (unused: Kindling is a damage response) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and buffs are in HeroTriggers/GreymaneGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="GreymaneAlchemistMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GreymaneJugularMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Gilnean Alchemist ===== -->
+  <!-- Gilnean Cocktail stores 2 charges (7 second recharge) and costs half Mana; it burns Heroes and Minions for 20% of maximum Health over 10 seconds; gain Perfect Aim and Incendiary Elixir. Kindling quest (50% kept): 1% damage to burning enemies per Cocktail hit on an enemy Hero (script). Distillation quest: takedowns within 3 seconds of a Cocktail hit or burn tick; stacks 1-40 a Shield per hit (script), 41-80 the flask flies 1% faster each, 81-100 the splash is 1% larger each, at 100 an eruption 1 second later for 50% (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="GreymaneGoldenKindlingTokenCounter" parent="StormQuestToken">
+    <Face value="GreymaneGoldenKindlingTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GreymaneGoldenDistillationTokenCounter" parent="StormQuestToken">
+    <Face value="GreymaneGoldenDistillationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GreymaneGoldenKindlingTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GreymaneGoldenKindlingTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="GreymaneGilneanCocktailDamage">
+    <MultiplicativeModifierArray index="GreymaneAlchemistPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGilneanCocktailSpreadDamage">
+    <MultiplicativeModifierArray index="GreymaneAlchemistPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenCocktailBurnDamage">
+    <MultiplicativeModifierArray index="GreymaneAlchemistPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="GreymaneGoldenCocktailEruptDamage">
+    <MultiplicativeModifierArray index="GreymaneAlchemistPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GreymaneAlchemistLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="GreymaneGoldenKindlingTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
+  </CButton>
+  <CButton id="GreymaneGoldenDistillationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Gilnean Alchemist: Gilnean Cocktail burns Heroes and Minions it hits for 20% of their maximum Health over 10 seconds
+       (Chance 0: the starter turns it on). Wildfire (Epic) lets the burn stack instead of refresh. -->
+  <CValidatorUnitFilters id="GreymaneGoldenTargetHeroic">
+    <Filters value="Heroic;-" />
+  </CValidatorUnitFilters>
+  <CValidatorCombine id="GreymaneGoldenBurnTarget">
+    <Type value="Or" />
+    <CombineArray value="GreymaneGoldenTargetHeroic" />
+    <CombineArray value="TargetMinion" />
+  </CValidatorCombine>
+  <CBehaviorBuff id="GreymaneGoldenCocktailBurn">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
+    <BehaviorCategories index="DebuffVulnerable" value="1" />
+    <Duration value="10.0625" />
+    <Period value="1" />
+    <PeriodicEffect value="GreymaneGoldenCocktailBurnDamage" />
+  </CBehaviorBuff>
+  <CEffectDamage id="GreymaneGoldenCocktailBurnDamage" parent="StormSpellDotPercentDamage">
+    <VitalFractionMax index="Life" value="0.02" />
+  </CEffectDamage>
+  <CEffectApplyBehavior id="GreymaneGoldenCocktailBurnApply">
+    <Chance value="0" />
+    <ValidatorArray value="GreymaneGoldenBurnTarget" />
+    <Behavior value="GreymaneGoldenCocktailBurn" />
+  </CEffectApplyBehavior>
+  <!-- the first enemy hit (one more period on the impact persistent) and the cone splash -->
+  <CEffectCreatePersistent id="GreymaneGilneanCocktailImpactSetPersistent">
+    <PeriodCount value="8" />
+    <PeriodicEffectArray value="GreymaneGoldenCocktailBurnApply" />
+    <PeriodicEffectArray value="GreymaneGoldenCocktailEruptPersistent" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="GreymaneGilneanCocktailSpreadImpactSet">
+    <EffectArray value="GreymaneGoldenCocktailBurnApply" />
+  </CEffectSet>
+  <!-- Kindling quest: Greymane deals more damage to burning enemies (the script sets the fraction and re-adds it) -->
+  <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenTargetBurning">
+    <WhichUnit Value="Target" />
+    <Compare value="GE" />
+    <Value value="1" />
+    <Behavior value="GreymaneGoldenCocktailBurn" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="GreymaneGoldenKindling" parent="CarryBehaviorParent">
+    <DamageResponse Chance="1" Location="Attacker" ModifyFraction="1">
+      <ValidatorArray value="GreymaneGoldenTargetBurning" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <!-- Distillation stacks 1-40: Cocktail hits on Heroes add to this Shield; no duration (the script sets ModifyLimit) -->
+  <CBehaviorBuff id="GreymaneGoldenCocktailShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Greymane_QAttack.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <!-- Distillation at 100: 1 second after the Cocktail lands, the spot erupts for half the splash damage (Chance and Amount set
+       by the script) -->
+  <CEffectCreatePersistent id="GreymaneGoldenCocktailEruptPersistent">
+    <Chance value="0" />
+    <WhichLocation Value="TargetPoint" />
+    <PeriodCount value="1" />
+    <PeriodicPeriodArray value="1" />
+    <PeriodicEffectArray value="GreymaneGoldenCocktailEruptSearch" />
+  </CEffectCreatePersistent>
+  <CEffectEnumArea id="GreymaneGoldenCocktailEruptSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="GreymaneGoldenCocktailEruptDamage">
+      <Radius value="2.5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectDamage id="GreymaneGoldenCocktailEruptDamage" parent="StormSpell">
+    <Amount value="110" />
+  </CEffectDamage>
+  <CActorModel id="GreymaneGilneanCocktailImpact">
+    <On Terms="Effect.GreymaneGoldenCocktailEruptDamage.Start; At Target" Send="Create" />
+  </CActorModel>
+  <!-- Distillation past 100 stacks: Greymane's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="GreymaneGoldenOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+</Catalog>

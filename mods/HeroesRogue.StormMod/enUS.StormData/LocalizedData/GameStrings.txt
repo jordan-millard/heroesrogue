@@ -2341,6 +2341,28 @@ Affix/Name/GazloweScrapGlobes=Scrap Globes
 Affix/Tooltip/GazloweScrapGlobes=Healing Globes also grant <c val="#TooltipNumbers">4</c> Scrap.
 Behavior/Name/GazloweGoblinMonopolyTimeStop=Goblin Monopoly
 Behavior/Tooltip/GazloweGoblinMonopolyTimeStop=Gazlowe is not sharing.
+Affix/Name/GreymaneGilneanAlchemist=Gilnean Alchemist
+Affix/Tooltip/GreymaneGilneanAlchemist=Gain <c val="#TooltipNumbers">Perfect Aim</c> and <c val="#TooltipNumbers">Incendiary Elixir</c>. Gilnean Cocktail costs half Mana and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">7</c> second recharge; Incendiary Elixir's reward shortens it by <c val="#TooltipNumbers">3</c> seconds). Heroes and Minions it hits burn for <c val="#TooltipNumbers">20%</c> of their maximum Health over <c val="#TooltipNumbers">10</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Gilnean Cocktail hit on an enemy Hero makes you deal <c val="#TooltipNumbers">1%</c> more damage to burning enemies.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">3</c> seconds of a Cocktail hit or burn make Cocktail hits on Heroes grant a Shield that never expires (up to <c val="#TooltipNumbers">10%</c> of maximum Health per hit, <c val="#TooltipNumbers">30%</c> in total), then make the flask fly faster (up to <c val="#TooltipNumbers">40%</c>), then make the splash larger (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, the spot erupts again <c val="#TooltipNumbers">1</c> second after the Cocktail lands, for <c val="#TooltipNumbers">50%</c> of the splash damage. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all your damage.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of the first quest, <c val="#TooltipNumbers">100%</c> of the second and <c val="#TooltipNumbers">50%</c> of Incendiary Elixir after a win.
+Affix/Name/GreymaneStrongBrew=Strong Brew
+Affix/Tooltip/GreymaneStrongBrew=Gilnean Cocktail and its burn deal <c val="#TooltipNumbers">15%</c> more damage.
+Affix/Name/GreymaneQuickHands=Quick Hands
+Affix/Tooltip/GreymaneQuickHands=Gilnean Cocktail recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/GreymaneWizenedDuelistBoon=Wizened Duelist
+Affix/Tooltip/GreymaneWizenedDuelistBoon=Gain the talent <c val="#TooltipNumbers">Wizened Duelist</c>: Human Basic Attacks against Heroes increase Basic Attack damage.
+Affix/Name/GreymaneHuntersBlunderbussBoon=Hunter's Blunderbuss
+Affix/Tooltip/GreymaneHuntersBlunderbussBoon=Gain the talent <c val="#TooltipNumbers">Hunter's Blunderbuss</c>: Human Basic Attacks splash behind the target.
+Affix/Name/GreymaneWildfire=Wildfire
+Affix/Tooltip/GreymaneWildfire=Gilnean Cocktail's burn stacks instead of refreshing: each Cocktail adds another <c val="#TooltipNumbers">20%</c> of maximum Health over <c val="#TooltipNumbers">10</c> seconds.
+Affix/Name/GreymaneGoForTheJugular=Go for the Jugular
+Affix/Tooltip/GreymaneGoForTheJugular=Each Gilnean Cocktail hit on an enemy Hero also deals <c val="#TooltipNumbers">Go for the Throat</c>'s damage to it.
+Button/Name/GreymaneGoldenKindlingTokenCounter=Kindling
+Button/Tooltip/GreymaneGoldenKindlingTokenCounter=<c val="#TooltipQuest">Bonus damage to burning enemies: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GreymaneGoldenKindlingTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/GreymaneGoldenDistillationTokenCounter=Distillation
+Button/Tooltip/GreymaneGoldenDistillationTokenCounter=<c val="#TooltipQuest">Distillation stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:GreymaneGoldenDistillationTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> make Cocktail hits on Heroes grant a Shield that never expires (up to <c val="#TooltipNumbers">10%</c> of maximum Health per hit, to <c val="#TooltipNumbers">30%</c> in total). Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the flask fly <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make the splash <c val="#TooltipNumbers">1%</c> larger. At <c val="#TooltipNumbers">100</c> stacks, <c val="#TooltipNumbers">1</c> second after the Cocktail lands, the spot erupts for <c val="#TooltipNumbers">50%</c> of the splash damage. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all of Greymane's damage.
+Behavior/Name/GreymaneGoldenCocktailBurn=Gilnean Fire
+Behavior/Tooltip/GreymaneGoldenCocktailBurn=Burning from Greymane's Gilnean Cocktail.
+Behavior/Name/GreymaneGoldenCocktailShield=Distillation
+Behavior/Tooltip/GreymaneGoldenCocktailShield=Shielded by Gilnean Cocktail hits.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=
