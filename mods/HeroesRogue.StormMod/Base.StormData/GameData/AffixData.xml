@@ -24381,6 +24381,7 @@
         </Instances>
 
 
+
         <Instances Id="GazloweTurretEngineer">
             <String String="Assets/Textures/storm_ui_icon_Gazlowe_RockItTurret.dds">
                 <Field Id="Icon" />
@@ -24409,20 +24410,17 @@
             <String String="GazloweGoldenTargetingTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="1 1 Set Effect,GazloweGoldenTurretFrameApply,Chance 1">
+            <String String="1 1 Set Effect,GazloweGoldenTurretTuningApply,Chance 1">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Set Effect,GazloweGoldenTurretTuningApply,Chance 1">
+            <String String="1 1 Set Effect,RockItTurretWeaponDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,RockItTurretWeaponDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0.5">
+            <String String="1 1 Set Effect,RockItTurretWeaponRelicSideDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,RockItTurretWeaponRelicSideDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0.5">
+            <String String="1 1 Set Effect,TinkerDethLazorFirinMahLazorzTalentDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0">
                 <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Effect,TinkerDethLazorFirinMahLazorzTalentDamage,MultiplicativeModifierArray[GazloweEngineerPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="4" />
             </String>
             <String String="AffixAdded libAffx_GazloweStart">
                 <Field Id="Trigger" />
@@ -24525,6 +24523,127 @@
                 <Field Id="AffixesRequired" />
             </User>
             <String String="GazloweRockItTurretOverchargedCapacitors">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GazloweLazorSpecialist">
+            <String String="Assets/Textures/storm_ui_icon_Gazlowe_DethLazor.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tinker">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TinkerMasteryGoblinFusion">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="GazloweOverload">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="GazloweMasterBlaster">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
+            <String String="1 0 GazloweLazorMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 GazloweGoldenCalibrationTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 GazloweGoldenAmplificationTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="GazloweGoldenAmplificationTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="GazloweGoldenCalibrationTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,GazloweDethLazor,CastIntroTime 0.2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,GazloweDethLazorWarningPersistent,PeriodicPeriodArray[0] 0.1374">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DethLazorCharged1Damage,MultiplicativeModifierArray[GazloweLazorPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_GazloweStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_GazloweTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="GazloweFocusingLens">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Gazlowe_DethLazor.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tinker">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GazloweLazorSpecialist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DethLazorCharged1Damage,MultiplicativeModifierArray[GazloweLazorCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="GazloweHyperfocusCoilsBoon">
+            <String String="Assets/Textures/storm_ui_icon_gazlowe_dethlazor_a.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tinker">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GazloweLazorSpecialist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GazloweHyperfocusCoils">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GazloweEZPZDimensionalRipperBoon">
+            <String String="Assets/Textures/storm_ui_icon_Gazlowe_DethLazor.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tinker">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GazloweLazorSpecialist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TinkerMasteryEZPZDimensionalRipper">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="GazloweFirinMahLazorzBoon">
+            <String String="Assets/Textures/storm_ui_icon_Gazlowe_RockItTurret.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tinker">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GazloweLazorSpecialist">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="GazloweDethLazorFirinMahLazorz">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>

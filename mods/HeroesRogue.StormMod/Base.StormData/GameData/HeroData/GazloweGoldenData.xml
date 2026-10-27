@@ -3,12 +3,13 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Gazlowe. Starter: Turret Engineer (Rock-It! Turrets never decay, Firin' Mah Lazorz). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulators) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and turret buffs are in HeroTriggers/GazloweGolden.galaxy. -->
+  <!-- Golden Gazlowe. Starters: Turret Engineer (turret drops spend all Scrap, Firin' Mah Lazorz) and Lazor Specialist (0.2 second Deth Lazor, the level 7 talents). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulators) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and turret buffs are in HeroTriggers/GazloweGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="GazloweEngineerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="GazloweLazorMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Turret Engineer ===== -->
-  <!-- Rock-It! Turrets never lose Health over time; gain Firin' Mah Lazorz. Targeting quest (50% kept): 1% turret damage per turret Deth Lazor hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets leech 50% and have 50% more Health (script), then 2% damage each (script). -->
+  <!-- Turret drops spend all Scrap: with at least 6 the turret never loses Health over time, and each Scrap past 6 adds 10% Attack Speed and range (script); gain Firin' Mah Lazorz. Targeting quest (50% kept): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets leech 50% and have 50% more Health (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="GazloweGoldenTargetingTokenCounter" parent="StormQuestToken">
     <Face value="GazloweGoldenTargetingTokenCounter" />
     <Max value="100000" />
@@ -22,7 +23,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="GazloweGoldenTargetingTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.001" />
   </CAccumulatorToken>
   <CEffectDamage id="RockItTurretWeaponDamage">
     <MultiplicativeModifierArray index="GazloweEngineerPower" Modifier="0" />
@@ -52,6 +53,36 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_Gazlowe_RockItTurret.dds" />
   </CButton>
 
+  <!-- ===== Lazor Specialist ===== -->
+  <!-- Deth Lazor fires 0.2 seconds after the cast instead of 0.65; gain Goblin Fusion, Overload and Master Blaster. Calibration quest (50% kept): 1% Deth Lazor damage per hit on an enemy Hero. Amplification quest: takedowns within 6 seconds of a Deth Lazor hit; stacks 1-40 make Deth Lazor 0.5% longer each, 41-80 a Shield per hit (script), at 100 a turret per hit (script), then 1% damage each (script). -->
+  <CBehaviorTokenCounter id="GazloweGoldenCalibrationTokenCounter" parent="StormQuestToken">
+    <Face value="GazloweGoldenCalibrationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="GazloweGoldenAmplificationTokenCounter" parent="StormQuestToken">
+    <Face value="GazloweGoldenAmplificationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="GazloweGoldenCalibrationTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="GazloweGoldenCalibrationTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DethLazorCharged1Damage">
+    <MultiplicativeModifierArray index="GazloweLazorPower" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweLazorCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="GazloweLazorHit" Accumulator="GazloweGoldenCalibrationTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="GazloweLazorLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="GazloweGoldenCalibrationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Gazlowe_DethLazor.dds" />
+  </CButton>
+  <CButton id="GazloweGoldenAmplificationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Gazlowe_DethLazor.dds" />
+  </CButton>
+
   <!-- ===== Boons ===== -->
   <!-- Turret Engineer: the hit quest's damage read from the turret's creator (Gazlowe has the tokens, the turret attacks) -->
   <CAccumulatorToken id="GazloweGoldenTargetingCreatorAccumulator" parent="BaseTokenAccumulator">
@@ -59,13 +90,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="GazloweGoldenTargetingTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.001" />
     <UnitSource Value="Creator" />
   </CAccumulatorToken>
-  <!-- Turret Engineer: turrets never lose Health over time (cancels their Health decay) -->
+  <!-- Turret Engineer: a turret dropped with at least 6 Scrap never loses Health over time (the script adds it) -->
   <CBehaviorBuff id="GazloweGoldenTurretFrame" parent="CarryBehaviorParent">
     <Modification>
       <VitalRegenMultiplier index="Life" value="-1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Turret Engineer: one stack per Scrap spent past 6 on the turret's drop, 10% Attack Speed and range each (the script adds it) -->
+  <CBehaviorBuff id="GazloweGoldenTurretOverclock" parent="CarryBehaviorParent">
+    <MaxStackCount value="100" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.1" />
+      <WeaponRange value="0.6" />
+      <WeaponScanBonus value="0.6" />
     </Modification>
   </CBehaviorBuff>
   <!-- Upgrades stacks 41-80 Attack Speed and past 100 damage (the script sets the amounts and re-adds it to every turret) -->
@@ -81,18 +121,20 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <VitalMaxFractionArray index="Life" value="0.5" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Upgrades past 100 stacks: Gazlowe's own damage (the script sets the amount and re-adds it) -->
+  <!-- Upgrades and Amplification past 100 stacks: Gazlowe's own damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="GazloweGoldenOverdrive" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
     </Modification>
   </CBehaviorBuff>
-  <!-- on each new turret (Turret Engineer turns it on) -->
-  <CEffectApplyBehavior id="GazloweGoldenTurretFrameApply">
-    <Chance value="0" />
-    <Behavior value="GazloweGoldenTurretFrame" />
-  </CEffectApplyBehavior>
+  <!-- Lazor Specialist, Amplification stacks 41-80: Deth Lazor hits on Heroes add to this Shield; no duration (the script
+       sets ModifyLimit, as Alarak's Discordant Ward) -->
+  <CBehaviorBuff id="GazloweGoldenLazorShield" parent="StormShield">
+    <InfoIcon value="Assets/Textures/storm_ui_icon_Gazlowe_DethLazor.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- on each new turret (Turret Engineer turns it on) -->
   <CEffectApplyBehavior id="GazloweGoldenTurretTuningApply">
     <Chance value="0" />
@@ -104,7 +146,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Behavior value="GazloweGoldenTurretHull" />
   </CEffectApplyBehavior>
   <CEffectSet id="GazloweRockItTurretCreateUnitSet">
-    <EffectArray value="GazloweGoldenTurretFrameApply" />
     <EffectArray value="GazloweGoldenTurretTuningApply" />
     <EffectArray value="GazloweGoldenTurretHullApply" />
   </CEffectSet>
