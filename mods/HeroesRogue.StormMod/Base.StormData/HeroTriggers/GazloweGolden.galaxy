@@ -18,7 +18,8 @@ int libAffx_GazloweLazorAdded; // Lazor Specialist: takedown stacks already appl
 int libAffx_GazloweSpeedApplied; // Turret Engineer: Upgrades stacks applied as turret Attack Speed
 int libAffx_GazlowePowerApplied; // Turret Engineer: Upgrades stacks past 100 applied as damage
 bool libAffx_GazloweFortifyOn; // Turret Engineer: 100 Upgrades stacks reached this game (2% turret healing and the Shield turned on)
-fixed libAffx_GazloweFreeDropTime = -1.0; // game time of the last Lazor Specialist hit turret (free for Turret Engineer)
+fixed libAffx_GazloweFreeDropTime = -10.0; // game time of the last Lazor Specialist hit turret (free for Turret Engineer)
+int libAffx_GazloweFreeDrops; // Lazor Specialist hit turrets not yet seen by libAffx_GazloweEngineerDrop_Func (free for 1 second)
 fixed libAffx_GazloweRelicBonus; // Turret Engineer: range added to Superior Schematics' side shot search (largest Scrap range bonus)
 int libAffx_GazloweLazorPowerApplied; // Lazor Specialist: Amplification stacks past 100 applied as damage
 
@@ -129,7 +130,11 @@ void libAffx_GazloweLazorOnHit (unit hero, unit victim) {
         UnitBehaviorAdd(hero, "GazloweGoldenLazorShield", hero, 1);
     }
     if (stacks >= 100) {
-        // free: with Turret Engineer too, libAffx_GazloweEngineerDrop_Func sees the time and spends no Scrap
+        // free: with Turret Engineer too, libAffx_GazloweEngineerDrop_Func uses up one pending free drop and spends no Scrap
+        if (GameGetMissionTime() - libAffx_GazloweFreeDropTime > 1.0) {
+            libAffx_GazloweFreeDrops = 0;
+        }
+        libAffx_GazloweFreeDrops += 1;
         libAffx_GazloweFreeDropTime = GameGetMissionTime();
         UnitCreateEffectPoint(hero, "RockItTurretCreateUnit", UnitGetPosition(victim));
     }
@@ -256,7 +261,8 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     if (hero == null || turret == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "GazloweEngineerMarker")) {
         return false;
     }
-    if (GameGetMissionTime() == libAffx_GazloweFreeDropTime) {
+    if (libAffx_GazloweFreeDrops > 0 && GameGetMissionTime() - libAffx_GazloweFreeDropTime <= 1.0) {
+        libAffx_GazloweFreeDrops -= 1;
         used = 6;
     } else {
         scrap = UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent);
