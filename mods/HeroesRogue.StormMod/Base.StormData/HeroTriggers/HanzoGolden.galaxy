@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Hanzo. Storm Archer: Storm Bow hits on enemy Heroes add Focus (Storm Bow and Basic Attack damage) and open a
-// 3 second takedown window. Takedowns add Mastery: recharge, then arrow speed and charge speed, then arrow width,
+// 6 second takedown window. Takedowns add Mastery: recharge, then arrow speed and charge speed, then arrow width,
 // then at 100 an echo arrow, then 2% damage per stack. Storm Bow's range is in Hanzo's own script (libHHAN).
 // Scatter Master: shard hits on enemy Heroes add Volley (once per Hero per arrow); takedowns add Ricochet: recharge,
 // then more shards, then more bounces, then at 100 shards split on Heroes, then 2% damage per stack.
@@ -272,14 +272,14 @@ bool libAffx_HanzoTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
-    if (UnitHasBehavior2(hero, "HanzoArcherMarker") && libAffx_HanzoInWindow(libAffx_HanzoArcherTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "HanzoArcherMarker") && libAffx_HanzoArcherTime[killedPlayer] > 0.0 && now - libAffx_HanzoArcherTime[killedPlayer] <= 6.0) {
         libAffx_HanzoArcherTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "HanzoGoldenMasteryTokenCounter", hero);
         libAffx_HanzoSyncArcher();
         libAffx_HanzoQuestDing();
         libAffx_HanzoArcherSync();
     }
-    if (UnitHasBehavior2(hero, "HanzoScatterMarker") && libAffx_HanzoInWindow(libAffx_HanzoScatterTime[killedPlayer], now)) {
+    if (UnitHasBehavior2(hero, "HanzoScatterMarker") && libAffx_HanzoScatterTime[killedPlayer] > 0.0 && now - libAffx_HanzoScatterTime[killedPlayer] <= 6.0) {
         libAffx_HanzoScatterTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "HanzoGoldenRicochetTokenCounter", hero);
         libAffx_HanzoSyncScatter();

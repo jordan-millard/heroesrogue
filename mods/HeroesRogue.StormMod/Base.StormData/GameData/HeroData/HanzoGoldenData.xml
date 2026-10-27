@@ -15,7 +15,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Storm Archer ===== -->
-  <!-- Storm Bow keeps its 4 second cooldown, costs half Mana and has 20% more range (script) and damage; gain Piercing Arrows and Flawless Technique. Focus quest (50% kept): 2% Storm Bow and Basic Attack damage per Storm Bow hit on an enemy Hero. Mastery quest: takedowns within 3 seconds of a hit; stacks 1-40 make Storm Bow recharge 1% faster each, 41-80 make the arrow fly and Storm Bow charge 1% faster each, 81-100 make the arrow 1% wider each, at 100 an echo arrow 0.4 seconds later for 50% (script), then 2% damage each (script). -->
+  <!-- Storm Bow keeps its 4 second cooldown, costs half Mana and has 20% more range (script) and damage; gain Piercing Arrows and Flawless Technique. Focus quest (50% kept): 2% Storm Bow and Basic Attack damage per Storm Bow hit on an enemy Hero. Mastery quest: takedowns within 6 seconds of a hit; stacks 1-40 make Storm Bow recharge 1% faster each, 41-80 make the arrow fly and Storm Bow charge 1% faster each, 81-100 make the arrow 1% wider each, at 100 an echo arrow 0.4 seconds later for 50% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="HanzoGoldenFocusTokenCounter" parent="StormQuestToken">
     <Face value="HanzoGoldenFocusTokenCounter" />
     <Max value="100000" />
@@ -51,7 +51,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Scatter Master ===== -->
-  <!-- Scatter Arrow stores 2 charges (8 second recharge), costs half Mana, splits into 2 more shards and deals 20% more damage; gain Explosive Arrows and Serrated Arrows. Volley quest (50% kept): 1% Scatter Arrow damage per enemy Hero hit, once per Hero per arrow. Ricochet quest: takedowns within 3 seconds of a hit; stacks 1-40 make Scatter Arrow recharge 1% faster each, 41-80 add 1 shard per 10 (script), 81-100 add 1 bounce per 10 (script), at 100 shards that hit a Hero split into 2 small shards for 30% (script), then 2% damage each (script). -->
+  <!-- Scatter Arrow stores 2 charges (8 second recharge), costs half Mana, splits into 2 more shards and deals 20% more damage; gain Explosive Arrows and Serrated Arrows. Volley quest (50% kept): 1% Scatter Arrow damage per enemy Hero hit, once per Hero per arrow. Ricochet quest: takedowns within 6 seconds of a hit; stacks 1-40 make Scatter Arrow recharge 1% faster each, 41-80 add 1 shard per 10 (script), 81-100 add 1 bounce per 10 (script), at 100 shards that hit a Hero split into 2 small shards for 30% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="HanzoGoldenVolleyTokenCounter" parent="StormQuestToken">
     <Face value="HanzoGoldenVolleyTokenCounter" />
     <Max value="100000" />
