@@ -18,7 +18,7 @@ int libAffx_GazloweLazorAdded; // Lazor Specialist: takedown stacks already appl
 int libAffx_GazloweSpeedApplied; // Turret Engineer: Upgrades stacks applied as turret Attack Speed
 int libAffx_GazlowePowerApplied; // Turret Engineer: Upgrades stacks past 100 applied as damage
 bool libAffx_GazloweFortifyOn; // Turret Engineer: 100 Upgrades stacks reached this game (2% turret healing and the Shield turned on)
-fixed libAffx_GazloweFreeDropTime = -1.0; // Turret Engineer: game time of the last free takedown turret
+fixed libAffx_GazloweFreeDropTime = -1.0; // game time of the last Lazor Specialist hit turret (free for Turret Engineer)
 fixed libAffx_GazloweRelicBonus; // Turret Engineer: range added to Superior Schematics' side shot search (largest Scrap range bonus)
 int libAffx_GazloweLazorPowerApplied; // Lazor Specialist: Amplification stacks past 100 applied as damage
 
@@ -129,6 +129,8 @@ void libAffx_GazloweLazorOnHit (unit hero, unit victim) {
         UnitBehaviorAdd(hero, "GazloweGoldenLazorShield", hero, 1);
     }
     if (stacks >= 100) {
+        // free: with Turret Engineer too, libAffx_GazloweEngineerDrop_Func sees the time and spends no Scrap
+        libAffx_GazloweFreeDropTime = GameGetMissionTime();
         UnitCreateEffectPoint(hero, "RockItTurretCreateUnit", UnitGetPosition(victim));
     }
 }
@@ -244,8 +246,7 @@ bool libAffx_GazloweEngineerTurretHit_Func (bool testConds, bool runActions) {
 // Turret Engineer: a Rock-It! Turret costs 6 Scrap and its drop spends all of Gazlowe's Scrap (the cost is paid first). The
 // turret never loses Health over time and heals 1% per second; each Scrap spent past 6 adds 5% Attack Speed, range and
 // Health; with 12 or more it reveals enemies in its attack range. Turrets dropped by Lazor Specialist's quest also run
-// this set, but only Turret Engineer has the marker. The free turret from a takedown at 100 Upgrades stacks counts as a
-// 6 Scrap drop and spends no Scrap.
+// this set, but only Turret Engineer has the marker; with both starters those count as a 6 Scrap drop and spend no Scrap.
 bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     unit hero = libAffx_GazloweHero();
     unit turret = EventPlayerEffectUsedUnit(c_effectUnitTarget);
@@ -277,17 +278,6 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
         UnitBehaviorAdd(turret, "GazloweGoldenTurretSentry", hero, 1);
     }
     return true;
-}
-// Turret Engineer, 100 Upgrades stacks: each counted takedown drops a free Rock-It! Turret where the Hero died (a 6 Scrap
-// turret; libAffx_GazloweEngineerDrop_Func sees the time and spends no Scrap)
-void libAffx_GazloweEngineerFreeTurret () {
-    unit hero = libAffx_GazloweHero();
-    unit dead = libGame_gf_HeroParticipatedInTakedownKilledHero();
-    if (hero == null || dead == null || !UnitIsAlive(hero) || libAffx_GazloweStacks("GazloweGoldenUpgradesTokenCounter") < 100) {
-        return;
-    }
-    libAffx_GazloweFreeDropTime = GameGetMissionTime();
-    UnitCreateEffectPoint(hero, "RockItTurretCreateUnit", UnitGetPosition(dead));
 }
 // Turret Engineer: hits counted toward the next batch of 10 tokens (one quest ding per batch)
 int libAffx_GazloweEngineerHits;
@@ -348,7 +338,6 @@ bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
         libAffx_GazloweSyncEngineer();
         libAffx_GazloweQuestDing();
         libAffx_GazloweEngineerSync();
-        libAffx_GazloweEngineerFreeTurret();
     }
     if (UnitHasBehavior2(hero, "GazloweLazorMarker") && libAffx_GazloweLazorTime[killedPlayer] > 0.0 && now - libAffx_GazloweLazorTime[killedPlayer] <= 6.0) {
         libAffx_GazloweLazorTime[killedPlayer] = 0.0;
