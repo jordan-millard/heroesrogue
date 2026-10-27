@@ -18,6 +18,7 @@ int libAffx_GazloweLazorAdded; // Lazor Specialist: takedown stacks already appl
 int libAffx_GazloweSpeedApplied; // Turret Engineer: Upgrades stacks applied as turret Attack Speed
 int libAffx_GazlowePowerApplied; // Turret Engineer: Upgrades stacks past 100 applied as damage
 bool libAffx_GazloweHullOn; // Turret Engineer: 100 Upgrades stacks reached this game (leech and Health turned on)
+fixed libAffx_GazloweRelicBonus; // Turret Engineer: range added to Superior Schematics' side shot search (largest Scrap range bonus)
 int libAffx_GazloweLazorPowerApplied; // Lazor Specialist: Amplification stacks past 100 applied as damage
 
 unit libAffx_GazloweHero() {
@@ -210,6 +211,11 @@ bool libAffx_GazloweEngineerDrop_Func (bool testConds, bool runActions) {
     if (used > 6) {
         UnitBehaviorAdd(turret, "GazloweGoldenTurretOverclock", hero, used - 6);
         UnitSetPropertyFixed(turret, c_unitPropLifePercent, 100.0);
+        // Superior Schematics' side shots search a fixed radius around the turret: grow it with the largest range bonus
+        if (0.3 * IntToFixed(used - 6) > libAffx_GazloweRelicBonus) {
+            libAffx_CatalogReferenceModify("Effect,RockItTurretRelicSearch,AreaArray[0].Radius", libAffx_player, FixedToString(0.3 * IntToFixed(used - 6) - libAffx_GazloweRelicBonus, c_fixedPrecisionAny), c_upgradeOperationAdd);
+            libAffx_GazloweRelicBonus = 0.3 * IntToFixed(used - 6);
+        }
     }
     if (used >= 12) {
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "GazloweGoldenTurretSentryReveal", "RevealRadius", libAffx_player, 6.0 + 0.3 * IntToFixed(used - 6));
