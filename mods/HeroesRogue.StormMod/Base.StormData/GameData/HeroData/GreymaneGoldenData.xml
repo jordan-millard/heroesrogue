@@ -99,7 +99,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicEffectArray index="1" value="GreymaneGoldenCocktailPrimarySet" />
   </CEffectCreatePersistent>
   <!-- a Cocktail that reaches the end of its flight without hitting anything still splashes around that spot (the
-       splash's own damage and quest; Chance 0, the starter turns it on) -->
+       splash's own damage and quest; Chance 0, the starter turns it on; the script casts it, libAffx_GreymaneCocktailLaunch_Func) -->
   <CEffectEnumArea id="GreymaneGoldenCocktailBurstSearch">
     <Chance value="0" />
     <ImpactLocation Value="TargetPoint" />
@@ -108,10 +108,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <Radius value="3" />
     </AreaArray>
   </CEffectEnumArea>
-  <CEffectSet id="GreymaneGilneanCocktailImpactDummy">
-    <EffectArray index="0" value="GreymaneGoldenCocktailBurstSearch" />
-    <EffectArray value="StormSuicide" />
-  </CEffectSet>
   <!-- Kindling quest: Greymane deals more damage to burning enemies (the script sets the fraction and re-adds it) -->
   <CValidatorUnitCompareBehaviorCount id="GreymaneGoldenTargetBurningPercent">
     <WhichUnit Value="Target" />

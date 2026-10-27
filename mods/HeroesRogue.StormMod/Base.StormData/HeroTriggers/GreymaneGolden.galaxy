@@ -16,6 +16,7 @@ int libAffx_GreymaneAlchemistAdded3; // Gilnean Alchemist: takedown quest stage 
 int libAffx_GreymaneKindlingApplied; // Gilnean Alchemist: Kindling stacks applied as damage to burning enemies
 bool libAffx_GreymaneElixirDone; // Gilnean Alchemist: Incendiary Elixir completion moved to the charge recharge
 bool libAffx_GreymaneEruptOn; // Gilnean Alchemist: 100 Distillation stacks reached this game (eruption turned on)
+fixed libAffx_GreymaneCocktailHitTime = -10.0; // Gilnean Alchemist: game time of the last Cocktail hit in flight
 int libAffx_GreymanePowerApplied; // Gilnean Alchemist: Distillation stacks past 100 applied as damage
 
 unit libAffx_GreymaneHero() {
@@ -135,6 +136,34 @@ bool libAffx_GreymaneAlchemistTick_Func (bool testConds, bool runActions) {
     libAffx_GreymaneAlchemistSync();
     return true;
 }
+// Gilnean Alchemist: a Cocktail that hits nothing in flight still splashes where its flight ends. The flask always flies
+// its full distance toward the target point; a Cocktail hit during the flight cancels the splash.
+bool libAffx_GreymaneCocktailLaunch_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_GreymaneHero();
+    point aim = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    point origin;
+    point land;
+    fixed dist;
+    fixed speed;
+    fixed launched = GameGetMissionTime();
+    if (hero == null || aim == null || !UnitHasBehavior2(hero, "GreymaneAlchemistMarker")) {
+        return false;
+    }
+    origin = UnitGetPosition(hero);
+    dist = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "GreymaneGilneanCocktailLaunchMissile", "ImpactLocation.ProjectionDistanceScale", libAffx_player));
+    speed = MaxF(1.0, StringToFixed(CatalogFieldValueGet(c_gameCatalogMover, "GreymaneGilneanCocktailMissile", "MotionPhases[0].Speed", libAffx_player)));
+    land = PointWithOffsetPolar(origin, dist, AngleBetweenPoints(origin, aim));
+    Wait(dist / speed + 0.125, c_timeGame);
+    if (libAffx_GreymaneCocktailHitTime >= launched || !UnitIsAlive(hero)) {
+        return true;
+    }
+    UnitCreateEffectPoint(hero, "GreymaneGoldenCocktailBurstSearch", land);
+    return true;
+}
+bool libAffx_GreymaneCocktailHit_Func (bool testConds, bool runActions) {
+    libAffx_GreymaneCocktailHitTime = GameGetMissionTime();
+    return true;
+}
 // Gilnean Alchemist: every enemy the Cocktail damages (first hit, splash, flight-end splash) burns for 10 seconds:
 // 25% of maximum Health, or the splash damage for Structures, Mercenaries and bosses. The burn restarts on a new hit;
 // with Wildfire it stacks instead.
@@ -237,6 +266,8 @@ bool libAffx_GreymaneStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailBurnDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGoldenCocktailEruptDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_GreymaneAlchemistTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GreymaneCocktailLaunch_Func"), libAffx_player, "GreymaneGilneanCocktailLaunchMissile");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_GreymaneCocktailHit_Func"), libAffx_player, "GreymaneGilneanCocktailImpactSetPersistent");
     trig = TriggerCreate("libAffx_GreymaneBurn_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "GreymaneGilneanCocktailSpreadDamage");
