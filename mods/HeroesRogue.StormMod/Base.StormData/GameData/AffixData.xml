@@ -24395,6 +24395,7 @@
 
 
 
+
         <Instances Id="GazloweTurretEngineer">
             <String String="Assets/Textures/storm_ui_icon_Gazlowe_RockItTurret.dds">
                 <Field Id="Icon" />
@@ -24466,6 +24467,47 @@
             </String>
             <String String="1 2 Set Effect,TinkerDethLazorFirinMahLazorzTalentDamage,MultiplicativeModifierArray[GazloweEngineerCommon].Modifier 0.15">
                 <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="GazloweGoblinMonopoly">
+            <Int Int="1">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_gazlowe_salvager.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tinker">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="GazloweTurretEngineer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="2 0 GazloweGoblinMonopolyTimeStop">
+                <Field Id="Behavior" />
+            </String>
+            <String String="3 0 GazloweGoblinMonopolyTimeStop">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="4 0 GazloweGoblinMonopolyTimeStop">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="5 0 GazloweGoblinMonopolyTimeStop">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="1 1 Multiply Effect,GazloweReduceReuseRecycleTraitManaHealer,RechargeVitalRate 3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Effect,GazloweReduceReuseRecycleTraitScrapPickupManaHealer,RechargeVitalRate 3">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Multiply Effect,GazloweDethLazorGoblinFusionManaHealer,RechargeVitalRate 3">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Multiply Effect,GazloweBigGameHunterManaHealer,RechargeVitalRate 3">
+                <Field Id="CatalogModification" Index="3" />
             </String>
         </Instances>
         <Instances Id="GazloweSpareParts">

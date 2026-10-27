@@ -177,6 +177,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="RegenGlobeImpactSet">
     <EffectArray value="GazloweScrapGlobesScrap" />
   </CEffectSet>
+  <!-- Goblin Monopoly (Common, Turret Engineer): the AI teammates are Time Stopped for 30 minutes at the start of the fight
+       (as the Slow Start curse) -->
+  <CBehaviorBuff id="GazloweGoblinMonopolyTimeStop" parent="StormTimeStopParent">
+    <BehaviorCategories index="Temporary" value="1" />
+    <BehaviorCategories index="Restorable" value="1" />
+    <Duration value="1800" />
+    <DisplayDuration index="Self" value="1" />
+    <DisplayDuration index="Ally" value="1" />
+    <DisplayDuration index="Neutral" value="1" />
+    <DisplayDuration index="Enemy" value="1" />
+    <InfoFlags index="AlwaysUseGameText" value="1" />
+    <DisplayPriority value="1001" />
+  </CBehaviorBuff>
   <!-- on each new turret (Turret Engineer turns it on) -->
   <CEffectApplyBehavior id="GazloweGoldenTurretTuningApply">
     <Chance value="0" />
