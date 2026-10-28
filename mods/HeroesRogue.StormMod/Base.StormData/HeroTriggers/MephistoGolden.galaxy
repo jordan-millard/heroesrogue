@@ -4,6 +4,8 @@ include "AffixTriggers"
 // Golden Mephisto. Skull Caller: Skull Missile hits on enemy Heroes add Malice (Skull Missile damage) and open a
 // 6 second takedown window. Takedowns add Dread: recharge, then skull speed and width, then reach, then at 100
 // the skull flies back to Mephisto, then 2% damage per stack.
+// Storm of Hatred: Lightning Nova hits on enemy Heroes add Charge; takedowns add Tempest: cooldown, then life leech,
+// then damage to non-Heroes, then at 100 non-Hero hits trigger Lord of Hatred, then 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_MephistoTakedownWindow = 3.0;
@@ -13,8 +15,14 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MephistoSkullTime; // per enemy play
 int libAffx_MephistoSkullAdded; // Skull Caller: takedown stacks already applied to the catalog this game
 int libAffx_MephistoSkullAdded2; // Skull Caller: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_MephistoSkullAdded3; // Skull Caller: takedown quest stage 3 stacks already applied to the catalog this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MephistoNovaTime; // per enemy player, last Storm of Hatred hit
+int libAffx_MephistoNovaAdded; // Storm of Hatred: takedown stacks already applied to the catalog this game
+int libAffx_MephistoNovaAdded2; // Storm of Hatred: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MephistoNovaAdded3; // Storm of Hatred: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_MephistoPowerApplied; // Skull Caller: Dread stacks past 100 applied as damage
 fixed libAffx_MephistoSkullStormLast = -100.0; // Skull Storm: game time it last fired
+bool libAffx_MephistoTraitOn; // Storm of Hatred: 100 Tempest reached this game (Lord of Hatred on non-Heroes)
+int libAffx_MephistoNovaPowerApplied; // Storm of Hatred: Tempest stacks past 100 applied as damage
 
 unit libAffx_MephistoHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -73,8 +81,42 @@ void libAffx_MephistoSyncSkull () {
     CatalogFieldValueSet(c_gameCatalogEffect, "MephistoSkullMissileDamage", "MultiplicativeModifierArray[MephistoSkullLegacy].Modifier", libAffx_player, bonus);
     CatalogFieldValueSet(c_gameCatalogEffect, "MephistoGoldenSkullEchoDamage", "MultiplicativeModifierArray[MephistoSkullLegacy].Modifier", libAffx_player, bonus);
 }
+// MephistoGoldenTempestTokenCounter: stacks 1-40: 1% of the 12 second cooldown each; 41-80 life leech, 81-100 damage to non-Heroes, 100 Lord of Hatred on non-Heroes, then damage (libAffx_MephistoNovaSync)
+void libAffx_MephistoSyncNova () {
+    unit hero = libAffx_MephistoHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "MephistoNovaMarker")) {
+        return;
+    }
+    stacks = libAffx_MephistoStacks("MephistoGoldenTempestTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MephistoNovaAdded) {
+        libAffx_CatalogReferenceModify("Abil,MephistoLightningNova,Cost[0].Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoNovaAdded) * -0.12, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MephistoNovaAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.25% life leech each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MephistoNovaAdded2) {
+        libAffx_CatalogReferenceModify("Effect,MephistoLightningNovaDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoNovaAdded2) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MephistoGoldenNovaFieldDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoNovaAdded2) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MephistoNovaAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 5% damage to non-Heroes each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MephistoNovaAdded3) {
+        libAffx_CatalogReferenceModify("Effect,MephistoLightningNovaDamage,MultiplicativeModifierArray[MephistoGoldenNonHero].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoNovaAdded3) * 0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MephistoGoldenNovaFieldDamage,MultiplicativeModifierArray[MephistoGoldenNonHero].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoNovaAdded3) * 0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MephistoNovaAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "MephistoLightningNovaDamage", "MultiplicativeModifierArray[MephistoNovaLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "MephistoGoldenNovaFieldDamage", "MultiplicativeModifierArray[MephistoNovaLegacy].Modifier", libAffx_player, bonus);
+}
 bool libAffx_MephistoSync_Func (bool testConds, bool runActions) {
     libAffx_MephistoSyncSkull();
+    libAffx_MephistoSyncNova();
     return true;
 }
 // Skull Caller: past 100 Dread, 2% damage per stack; Skull Storm's ready icon
@@ -102,8 +144,33 @@ void libAffx_MephistoSkullSync () {
         UnitBehaviorRemove(hero, "MephistoGoldenSkullStormReady", 1);
     }
 }
+// Storm of Hatred: at 100 Tempest, nova hits on non-Heroes trigger Lord of Hatred; past 100, 2% damage per stack
+void libAffx_MephistoNovaSync () {
+    unit hero = libAffx_MephistoHero();
+    int stacks;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MephistoNovaMarker")) {
+        return;
+    }
+    stacks = libAffx_MephistoStacks("MephistoGoldenTempestTokenCounter");
+    if (stacks >= 100 && !libAffx_MephistoTraitOn) {
+        libAffx_MephistoTraitOn = true;
+        libAffx_CatalogReferenceModify("Effect,MephistoGoldenNovaTraitSet,Chance", libAffx_player, "1", c_upgradeOperationSet);
+    }
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MephistoNovaPowerApplied) {
+        libAffx_MephistoNovaPowerApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MephistoGoldenNovaOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MephistoGoldenNovaOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        UnitBehaviorRemove(hero, "MephistoGoldenNovaOverdrive", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MephistoGoldenNovaOverdrive")) {
+        UnitBehaviorAdd(hero, "MephistoGoldenNovaOverdrive", hero, 1);
+    }
+}
 bool libAffx_MephistoSkullTick_Func (bool testConds, bool runActions) {
     libAffx_MephistoSkullSync();
+    libAffx_MephistoNovaSync();
     return true;
 }
 // Dread at 100: a Skull Missile is launched (the skull unit itself flies). Follow it until it dies or stops, then a skull
@@ -189,6 +256,17 @@ bool libAffx_MephistoSkullHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "MephistoGoldenMaliceTokenCounter", hero);
     return true;
 }
+// Storm of Hatred hit on an enemy Hero: takedown window, MephistoGoldenChargeTokenCounter, the heal, and on-hit boons
+bool libAffx_MephistoNovaHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MephistoHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MephistoIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MephistoNovaMarker")) {
+        return false;
+    }
+    libAffx_MephistoNovaTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MephistoGoldenChargeTokenCounter", hero);
+    return true;
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_MephistoTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -209,6 +287,13 @@ bool libAffx_MephistoTakedown (bool testConds, bool runActions) {
         libAffx_MephistoQuestDing();
         libAffx_MephistoSkullSync();
     }
+    if (UnitHasBehavior2(hero, "MephistoNovaMarker") && libAffx_MephistoNovaTime[killedPlayer] > 0.0 && now - libAffx_MephistoNovaTime[killedPlayer] <= 6.0) {
+        libAffx_MephistoNovaTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MephistoGoldenTempestTokenCounter", hero);
+        libAffx_MephistoSyncNova();
+        libAffx_MephistoQuestDing();
+        libAffx_MephistoNovaSync();
+    }
     return true;
 }
 bool libAffx_MephistoStart (bool testConds, bool runActions) {
@@ -220,6 +305,9 @@ bool libAffx_MephistoStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_MephistoSkullHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MephistoSkullMissileDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MephistoGoldenSkullEchoDamage");
+    trig = TriggerCreate("libAffx_MephistoNovaHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MephistoLightningNovaDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MephistoGoldenNovaFieldDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MephistoSkullTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MephistoSkullLaunch_Func"), libAffx_player, "MephistoSkullMissileLaunchMissile");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MephistoSkullRain_Func"), libAffx_player, "MephistoShadeOfMephistoInitialSet");

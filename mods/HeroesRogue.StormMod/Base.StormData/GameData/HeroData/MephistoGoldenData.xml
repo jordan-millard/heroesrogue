@@ -3,15 +3,18 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Mephisto. Starter: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
+  <!-- Golden Mephisto. Starters: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull) and Storm of Hatred (Lightning Nova: 2 seconds less cooldown, half Mana, 20% thicker ring, Furious Spark and Static Field). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="MephistoSkullMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MephistoNovaMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MephistoSkullRainMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MephistoSkullStormMarker" parent="CarryBehaviorParent" />
   <!-- Skull Caller, Dread at 100: the returning skull's damage, 50% -->
   <CEffectDamage id="MephistoGoldenSkullEchoDamage" parent="MephistoSkullMissileDamage">
     <MultiplicativeModifierArray index="MephistoGoldenEcho" Modifier="-0.5" />
   </CEffectDamage>
+  <!-- Storm of Hatred, Conductive: the stationary nova's damage (as Lightning Nova's; its per-cast ramp is gone by then) -->
+  <CEffectDamage id="MephistoGoldenNovaFieldDamage" parent="MephistoLightningNovaDamage" />
 
   <!-- ===== Skull Caller ===== -->
   <!-- Skull Missile stores 2 charges (5 second recharge), costs half Mana and is 20% wider with 20% more damage; gain Unyielding Power (its reward is a 3rd charge) and Abhorred Skull. Malice quest (50% kept): 1% Skull Missile damage per enemy Hero hit. Dread quest: takedowns within 6 seconds of a hit; stacks 1-40 make Skull Missile recharge 1% faster each, 41-80 make the skull fly 1% faster and 1% wider each, 81-100 make it reach 1% farther each, at 100 the skull flies back to Mephisto for 50% (script), then 2% damage each (script). -->
@@ -47,6 +50,44 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CButton id="MephistoGoldenDreadTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_mephisto_skull.dds" />
+  </CButton>
+
+  <!-- ===== Storm of Hatred ===== -->
+  <!-- Lightning Nova has 2 seconds less cooldown (12), costs half Mana and has a 20% thicker ring; gain Furious Spark and Static Field. Charge quest (50% kept): 0.2% Lightning Nova damage per enemy Hero hit. Tempest quest: takedowns within 6 seconds of a hit; stacks 1-40 make Lightning Nova recharge 1% faster each, 41-80 add 0.25% life leech each (10%), 81-100 add 5% damage to non-Heroes each (100%), at 100 hits on non-Heroes trigger Lord of Hatred (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="MephistoGoldenChargeTokenCounter" parent="StormQuestToken">
+    <Face value="MephistoGoldenChargeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MephistoGoldenTempestTokenCounter" parent="StormQuestToken">
+    <Face value="MephistoGoldenTempestTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MephistoGoldenChargeTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MephistoGoldenChargeTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MephistoLightningNovaDamage">
+    <MultiplicativeModifierArray index="MephistoNovaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoNovaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoNovaHit" Accumulator="MephistoGoldenChargeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MephistoNovaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoGoldenNonHero" Validator="TargetNotHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MephistoGoldenNovaFieldDamage">
+    <MultiplicativeModifierArray index="MephistoNovaPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoNovaCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoNovaHit" Accumulator="MephistoGoldenChargeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MephistoNovaLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoGoldenNonHero" Validator="TargetNotHero" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MephistoGoldenChargeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_mephisto_lightning.dds" />
+  </CButton>
+  <CButton id="MephistoGoldenTempestTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_mephisto_lightning.dds" />
   </CButton>
 
   <!-- ===== Boons ===== -->
@@ -106,6 +147,62 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CActorSound>
   <!-- Dread past 100 stacks: Mephisto's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="MephistoGoldenOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- ===== Storm of Hatred ===== -->
+  <!-- Tempest at 100: Lightning Nova hits on non-Heroes also trigger Lord of Hatred's cooldown reduction (Chance 0, the script
+       turns it on) -->
+  <CEffectSet id="MephistoGoldenNovaTraitSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetNotHero" />
+    <EffectArray value="MephistoLordOfHatredLightningNovaCDR" />
+    <EffectArray value="MephistoLordOfHatredHysteriaLightningNovaCDR" />
+  </CEffectSet>
+  <CEffectSet id="MephistoLightningNovaImpactSet">
+    <EffectArray value="MephistoGoldenNovaTraitSet" />
+  </CEffectSet>
+  <!-- Conductive (Epic): when Lightning Nova ends, a stationary nova stays where it ended for 3 seconds (Chance 0, the boon
+       turns it on) -->
+  <CEffectSet id="MephistoLightningNovaFinalSet">
+    <EffectArray value="MephistoGoldenNovaFieldPersistent" />
+  </CEffectSet>
+  <CEffectCreatePersistent id="MephistoGoldenNovaFieldPersistent">
+    <Chance value="0" />
+    <WhichLocation Value="TargetPoint" />
+    <PeriodicEffectArray value="MephistoGoldenNovaFieldSearchSet" />
+    <PeriodicPeriodArray value="0.25" />
+    <PeriodCount value="12" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="MephistoGoldenNovaFieldSearchSet">
+    <Marker Duration="0.25">
+      <MatchFlags index="Id" value="1" />
+    </Marker>
+    <EffectArray value="MephistoGoldenNovaFieldSearch" />
+  </CEffectSet>
+  <CEffectEnumArea id="MephistoGoldenNovaFieldSearch" parent="MephistoLightningNovaLoopSearch">
+    <AreaArray index="0" Effect="MephistoGoldenNovaFieldImpactSet" />
+  </CEffectEnumArea>
+  <CEffectSet id="MephistoGoldenNovaFieldImpactSet">
+    <ValidatorArray value="noMarkers" />
+    <EffectArray value="MephistoGoldenNovaFieldDamage" />
+    <EffectArray value="MephistoLordOfHatredLightningNovaCDRSet" />
+    <EffectArray value="MephistoGoldenNovaTraitSet" />
+  </CEffectSet>
+  <CActorModel id="MephistoGoldenNovaFieldFX" parent="StormModelAnimationStyleContinuous">
+    <On Terms="Effect.MephistoGoldenNovaFieldPersistent.Start" Send="Create" />
+    <On Terms="Effect.MephistoGoldenNovaFieldPersistent.Stop" Send="AnimBracketStop BSD" />
+    <Model value="MephistoLightningNovaCastFX" />
+  </CActorModel>
+  <CActorModel id="MephistoGoldenNovaFieldImpactFX" parent="StormModelAnimationStyleOneShotUnit">
+    <On Terms="Effect.MephistoGoldenNovaFieldDamage.Start; At Target" Send="Create" />
+    <Model value="MephistoLightningNovaImpactFX" />
+    <HostSiteOps Ops="SOpAttachCenter" HoldPosition="1" HoldRotation="1" />
+  </CActorModel>
+  <!-- Tempest past 100 stacks: Mephisto's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="MephistoGoldenNovaOverdrive" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />

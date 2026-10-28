@@ -25655,6 +25655,7 @@
             </String>
         </Instances>
 
+
         <Instances Id="MephistoSkullCaller">
             <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
                 <Field Id="Icon" />
@@ -25815,6 +25816,156 @@
             </User>
             <String String="1 0 MephistoSkullStormMarker">
                 <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoStormOfHatred">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MephistoLightningNovaFuriousSpark">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MephistoLightningNovaStaticField">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MephistoNovaMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MephistoGoldenChargeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MephistoGoldenTempestTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MephistoGoldenTempestTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MephistoGoldenChargeTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MephistoLightningNova,Cost.Cooldown.TimeUse 12">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,MephistoLightningNova,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,MephistoLightningNovaLoopSearch,AreaArray[0].InnerRadius 5.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenNovaFieldSearch,AreaArray[0].InnerRadius 5.1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,MephistoLightningNovaDamage,MultiplicativeModifierArray[MephistoNovaPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenNovaFieldDamage,MultiplicativeModifierArray[MephistoNovaPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_MephistoStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MephistoTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoChargedNova">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoStormOfHatred">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MephistoLightningNovaDamage,MultiplicativeModifierArray[MephistoNovaCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MephistoGoldenNovaFieldDamage,MultiplicativeModifierArray[MephistoNovaCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoStaticBarrierBoon">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoStormOfHatred">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MephistoLightningNovaStaticBarrier">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoMimicBoon">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_shade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoStormOfHatred">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MephistoLightningNovaMimic">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoConductive">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoStormOfHatred">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MephistoGoldenNovaFieldPersistent,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoNovaOverload">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoStormOfHatred">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MephistoLightningNovaLoopSearch,AreaArray[0].InnerRadius 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenNovaFieldSearch,AreaArray[0].InnerRadius 0">
+                <Field Id="CatalogModification" Index="1" />
             </String>
         </Instances>
 
