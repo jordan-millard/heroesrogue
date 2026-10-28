@@ -93,7 +93,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Sith Lord ===== -->
-  <!-- Basic Attacks have a chance to fire a fan of 3 free Skull Missiles at the target (40% on Heroes, 20% otherwise) and a chance to start or refresh Lightning Nova (30% on Heroes, 15% otherwise) (script), and leech 50% of their damage; Shade of Mephisto deals double damage; Basic Attacks on Heroes give 40% Attack Speed for 10 seconds; Skull Missile and Lightning Nova can't be cast; gain Shard of Hate. Rage quest (50% kept): 0.2% Basic Attack and Shade of Mephisto damage per Basic Attack hit on an enemy Hero. Dominion quest: takedowns within 6 seconds of a hit; stacks 1-40 add 0.1 Basic Attack range and skull reach each, 41-80 add 1% Movement Speed for 6 seconds after attacking each, at 100 Basic Attacks weaken enemies 30% (script), then 2% damage each (script). -->
+  <!-- Basic Attacks have a chance to fire a fan of 3 free Skull Missiles at the target (40% on Heroes, 20% otherwise) and a chance to start or refresh Lightning Nova (30% on Heroes, 15% otherwise) (script), and leech 50% of their damage; Shade of Mephisto deals double damage; Basic Attacks on Heroes give 40% Attack Speed for 10 seconds; Skull Missile and Lightning Nova can't be cast; gain Shard of Hate. Rage quest (50% kept): 0.5% Basic Attack and Shade of Mephisto damage per Basic Attack hit on an enemy Hero. Dominion quest: takedowns within 6 seconds of a hit; stacks 1-40 add 0.1 Basic Attack range and skull reach each, 41-80 add 1% Movement Speed for 6 seconds after attacking each, at 100 Basic Attacks weaken enemies 30% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="MephistoGoldenRageTokenCounter" parent="StormQuestToken">
     <Face value="MephistoGoldenRageTokenCounter" />
     <Max value="100000" />
@@ -107,7 +107,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="MephistoGoldenRageTokenCounter" />
-    <Scale value="0.002" />
+    <Scale value="0.005" />
   </CAccumulatorToken>
   <CEffectDamage id="MephistoWeaponDamage">
     <MultiplicativeModifierArray index="MephistoSithPower" Modifier="0" />
