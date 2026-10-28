@@ -228,7 +228,8 @@ void libAffx_MephistoSithSync () {
         UnitBehaviorAdd(hero, "MephistoGoldenSithOverdrive", hero, 1);
     }
 }
-// Sith Lord: each Basic Attack has a 33% chance to fire a free Skull Missile at its target
+// Sith Lord: each Basic Attack has a 33% chance to fire a free Skull Missile at a Hero target, or to start (or refresh) Lightning
+// Nova on any other target
 bool libAffx_MephistoSithAttack_Func (bool testConds, bool runActions) {
     unit hero = libAffx_MephistoHero();
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
@@ -238,7 +239,11 @@ bool libAffx_MephistoSithAttack_Func (bool testConds, bool runActions) {
     if (RandomInt(1, 100) > 33) {
         return true;
     }
-    UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", UnitGetPosition(target));
+    if (UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", UnitGetPosition(target));
+    } else if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "MephistoLightningNovaCastSet", hero);
+    }
     return true;
 }
 // Shadow Shield (Epic): a Basic Attack on a Hero shields Mephisto for 30% of his maximum Health, decaying over 1.5 seconds
