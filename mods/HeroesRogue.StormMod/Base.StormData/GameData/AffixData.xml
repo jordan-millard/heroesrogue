@@ -25660,6 +25660,7 @@
 
 
 
+
         <Instances Id="MephistoSkullCaller">
             <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
                 <Field Id="Icon" />
@@ -25956,6 +25957,162 @@
             </String>
             <String String="1 1 Set Effect,MephistoGoldenNovaFieldSearch,AreaArray[0].InnerRadius 0">
                 <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoSithLord">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_hatred.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MephistoShardOfHate">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 0 MephistoSithMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MephistoGoldenRageTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MephistoGoldenDominionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 MephistoGoldenSkullSealed">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="MephistoGoldenDominionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MephistoGoldenRageTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,MephistoModifyWeaponCooldown,Chance 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,MephistoDisableTurningBehaviorApplyBehavior,Chance 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,MephistoWeaponDamage,LeechFraction[Life] 0.5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,MephistoWeaponShardOfHateDamage,LeechFraction[Life] 0.5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenFrenzyApply,Chance 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenStrideApply,Chance 1">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MephistoWeaponDamage,MultiplicativeModifierArray[MephistoSithPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MephistoWeaponShardOfHateDamage,MultiplicativeModifierArray[MephistoSithPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_MephistoStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MephistoTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoDarkStrikes">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_mephisto_hatred.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSithLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MephistoWeaponDamage,MultiplicativeModifierArray[MephistoSithCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MephistoWeaponShardOfHateDamage,MultiplicativeModifierArray[MephistoSithCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoPiercingHatred">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_hatred.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSithLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 String Effect,MephistoWeaponDamage,ArmorMitigationRule IgnorePositive">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 String Effect,MephistoWeaponShardOfHateDamage,ArmorMitigationRule IgnorePositive">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoTrickery">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_shade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSithLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MephistoGoldenTrickeryDamage,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoShadowShield">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_shade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSithLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MephistoShadowShieldMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoLordOfTerror">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_hatred.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSithLord">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MephistoGoldenTerrorSet,Chance 1">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
 

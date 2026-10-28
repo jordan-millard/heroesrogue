@@ -3,12 +3,14 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Mephisto. Starters: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull) and Storm of Hatred (Lightning Nova: 2 seconds less cooldown, half Mana, 20% thicker ring, Furious Spark and Static Field). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
+  <!-- Golden Mephisto. Starters: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull), Storm of Hatred (Lightning Nova: 2 seconds less cooldown, half Mana, 20% thicker ring, Furious Spark, Static Field and Static Barrier) and Sith Lord (Basic Attacks fire a free Skull Missile, 50% leech, attack speed on Hero hits, Shard of Hate; Skull Missile cannot be cast). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="MephistoSkullMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MephistoNovaMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MephistoSithMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MephistoSkullRainMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MephistoSkullStormMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MephistoShadowShieldMarker" parent="CarryBehaviorParent" />
   <!-- Skull Caller, Dread at 100: the returning skull's damage, 50% -->
   <CEffectDamage id="MephistoGoldenSkullEchoDamage" parent="MephistoSkullMissileDamage">
     <MultiplicativeModifierArray index="MephistoGoldenEcho" Modifier="-0.5" />
@@ -88,6 +90,42 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <CButton id="MephistoGoldenTempestTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_mephisto_lightning.dds" />
+  </CButton>
+
+  <!-- ===== Sith Lord ===== -->
+  <!-- Basic Attacks fire a free Skull Missile at their target (script) and leech 50% of their damage; Basic Attacks on Heroes give 100% Attack Speed for 10 seconds; Skull Missile can't be cast; gain Shard of Hate. Rage quest (50% kept): 0.2% Basic Attack damage per Basic Attack hit on an enemy Hero. Dominion quest: takedowns within 6 seconds of a hit; stacks 1-40 add 0.1 Basic Attack range and skull reach each, 41-80 add 1% Movement Speed for 6 seconds after attacking each, at 100 Basic Attacks weaken enemies 30% (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="MephistoGoldenRageTokenCounter" parent="StormQuestToken">
+    <Face value="MephistoGoldenRageTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MephistoGoldenDominionTokenCounter" parent="StormQuestToken">
+    <Face value="MephistoGoldenDominionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MephistoGoldenRageTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MephistoGoldenRageTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MephistoWeaponDamage">
+    <MultiplicativeModifierArray index="MephistoSithPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSithCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSithHit" Accumulator="MephistoGoldenRageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MephistoSithLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MephistoWeaponShardOfHateDamage">
+    <MultiplicativeModifierArray index="MephistoSithPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSithCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSithHit" Accumulator="MephistoGoldenRageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MephistoSithLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MephistoGoldenRageTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_mephisto_hatred.dds" />
+  </CButton>
+  <CButton id="MephistoGoldenDominionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_mephisto_hatred.dds" />
   </CButton>
 
   <!-- ===== Boons ===== -->
@@ -219,6 +257,118 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CActorModel>
   <!-- Tempest past 100 stacks: Mephisto's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="MephistoGoldenNovaOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- ===== Sith Lord ===== -->
+  <!-- Basic Attack effects (Chance 0: the starter, quest and boons turn them on). On the attacked unit: -->
+  <CEffectSet id="MephistoWeaponPostImpactSet">
+    <EffectArray value="MephistoGoldenFrenzyApply" />
+    <EffectArray value="MephistoGoldenStrideApply" />
+    <EffectArray value="MephistoGoldenWeakenApply" />
+    <EffectArray value="MephistoGoldenTrickeryDamage" />
+    <EffectArray value="MephistoGoldenTerrorSet" />
+  </CEffectSet>
+  <!-- and on Shard of Hate's splash targets: Weaken -->
+  <CEffectSet id="MephistoShardOfHateWeaponPostImpactSet">
+    <EffectArray value="MephistoGoldenWeakenApply" />
+  </CEffectSet>
+  <!-- Basic Attacks on Heroes: 100% Attack Speed for 10 seconds -->
+  <CBehaviorBuff id="MephistoGoldenFrenzy">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_hatred.dds" />
+    <Duration value="10" />
+    <Modification>
+      <UnifiedAttackSpeedFactor value="1" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MephistoGoldenFrenzyApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="MephistoGoldenFrenzy" />
+  </CEffectApplyBehavior>
+  <!-- Dominion 41-80: Movement Speed for 6 seconds after attacking (the quest adds 1% per stack) -->
+  <CBehaviorBuff id="MephistoGoldenStride">
+    <Duration value="6" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MephistoGoldenStrideApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="MephistoGoldenStride" />
+  </CEffectApplyBehavior>
+  <!-- Dominion at 100: Basic Attacks weaken enemies (30% less damage dealt for 3 seconds) -->
+  <CBehaviorBuff id="MephistoGoldenWeaken">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_hatred.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MephistoGoldenWeakenApply">
+    <Chance value="0" />
+    <Behavior value="MephistoGoldenWeaken" />
+  </CEffectApplyBehavior>
+  <!-- Trickery (Rare): Basic Attacks on Heroes also deal 1% of their maximum Health -->
+  <CEffectDamage id="MephistoGoldenTrickeryDamage" parent="StormSpellPercentDamage">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.01" />
+    <SourceButtonFace value="Attack" />
+  </CEffectDamage>
+  <!-- Lord of Terror (Legendary): Basic Attacks Stun an enemy Hero for 1.5 seconds, once every 5 seconds per Hero -->
+  <CBehaviorBuff id="MephistoGoldenTerrorStun" parent="StormStun">
+    <Duration value="1.5" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MephistoGoldenTerrorCooldown">
+    <Duration value="5" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="MephistoGoldenTargetNotTerrorCooldown">
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="MephistoGoldenTerrorCooldown" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="MephistoGoldenTerrorStunApply">
+    <Behavior value="MephistoGoldenTerrorStun" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="MephistoGoldenTerrorCooldownApply">
+    <Behavior value="MephistoGoldenTerrorCooldown" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MephistoGoldenTerrorSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="MephistoGoldenTargetNotTerrorCooldown" />
+    <EffectArray value="MephistoGoldenTerrorCooldownApply" />
+    <EffectArray value="MephistoGoldenTerrorStunApply" />
+  </CEffectSet>
+  <!-- Shadow Shield (Epic): Basic Attacks on Heroes shield Mephisto for 30% of his maximum Health for 1.5 seconds (the
+       script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="MephistoGoldenShadowShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
+    <Duration value="1.5" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <!-- Sith Lord can't cast Skull Missile itself -->
+  <CBehaviorBuff id="MephistoGoldenSkullSealed">
+    <BehaviorFlags index="Permanent" value="1" />
+    <Modification>
+      <AbilLinkDisableArray value="MephistoSkullMissile" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Dominion past 100 stacks: Mephisto's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="MephistoGoldenSithOverdrive" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
