@@ -75,6 +75,7 @@ void libAffx_MephistoSyncSkull () {
     wanted = MaxI(0, MinI(stacks - 80, 20));
     if (wanted != libAffx_MephistoSkullAdded3) {
         libAffx_CatalogReferenceModify("Effect,MephistoSkullMissileLaunchMissile,ImpactLocation.ProjectionDistanceScale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded3) * 0.125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MephistoGoldenSkullReturnLaunch,ImpactLocation.ProjectionDistanceScale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded3) * 0.125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MephistoSkullAdded3 = wanted;
     }
     bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);

@@ -17,7 +17,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="MephistoGoldenNovaFieldDamage" parent="MephistoLightningNovaDamage" />
 
   <!-- ===== Skull Caller ===== -->
-  <!-- Skull Missile stores 2 charges (5 second recharge), costs half Mana and is 20% wider with 20% more damage; gain Unyielding Power (its reward is a 3rd charge) and Abhorred Skull. Malice quest (50% kept): 1% Skull Missile damage per enemy Hero hit. Dread quest: takedowns within 6 seconds of a hit; stacks 1-40 make Skull Missile recharge 1% faster each, 41-80 make the skull fly 1% faster and 1% wider each, 81-100 make it reach 1% farther each, at 100 the skull flies back to Mephisto for 50% (script), then 2% damage each (script). -->
+  <!-- Skull Missile stores 2 charges (5 second recharge), costs half Mana and is 20% wider with 20% more damage; gain Unyielding Power (its reward is a 3rd charge) and Abhorred Skull. Malice quest (50% kept): 1% Skull Missile damage per enemy Hero hit. Dread quest: takedowns within 6 seconds of a hit; stacks 1-40 make Skull Missile recharge 1% faster each, 41-80 make the skull fly 1% faster and 1% wider each, 81-100 make it reach 1% farther each, at 100 the skull flies back its full range for 50% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="MephistoGoldenMaliceTokenCounter" parent="StormQuestToken">
     <Face value="MephistoGoldenMaliceTokenCounter" />
     <Max value="100000" />
@@ -92,8 +92,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Boons ===== -->
   <!-- Dread at 100: when a Skull Missile ends, the script creates a skull where it stopped and it flies back to Mephisto,
-       hitting each enemy in its path again (its own marker, so the forward skull's hits don't block it). It flies to the point
-       Mephisto stood on when it turned around. As the base skull, the launch runs as a behavior's expire effect on the skull
+       hitting each enemy in its path again (its own marker, so the forward skull's hits don't block it). It flies the skull's
+       full range back along the line, through the point Mephisto stood on when it turned around. As the base skull, the launch runs as a behavior's expire effect on the skull
        unit: launched straight from the spawn effect, the missile was Mephisto, and its arrival killed him. -->
   <CEffectCreateUnit id="MephistoGoldenSkullReturnCreateUnit">
     <WhichLocation Value="TargetPoint" />
@@ -123,6 +123,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ImpactLocation>
       <Effect value="MephistoGoldenSkullReturnCreateUnit" />
       <Value value="CasterPoint" />
+      <ProjectionMultiplier value="1" />
+      <ProjectionSourceValue value="TargetPoint" />
+      <ProjectionTargetValue value="CasterPoint" />
+      <UsesLineDash value="1" />
+      <LineDashType value="AllowedInUnpathable" />
+      <ProjectionDistanceScale value="12.5" />
     </ImpactLocation>
     <SharedFlags index="DynamicSearchArea" value="1" />
     <Movers Link="MephistoSkullMissileMissile" />
