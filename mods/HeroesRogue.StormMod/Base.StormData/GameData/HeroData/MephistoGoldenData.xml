@@ -92,7 +92,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <!-- ===== Boons ===== -->
   <!-- Dread at 100: when a Skull Missile ends, the script creates a skull where it stopped and it flies back to Mephisto,
-       hitting each enemy in its path again (its own marker, so the forward skull's hits don't block it) -->
+       hitting each enemy in its path again (its own marker, so the forward skull's hits don't block it). It flies to the point
+       Mephisto stood on when it turned around: aimed at Mephisto himself, its arrival killed him. -->
   <CEffectCreateUnit id="MephistoGoldenSkullReturnCreateUnit">
     <WhichLocation Value="TargetPoint" />
     <CreateFlags index="Placement" value="0" />
@@ -105,14 +106,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="MephistoGoldenSkullReturnLaunch" />
   </CEffectSet>
   <CEffectModifyUnit id="MephistoGoldenSkullReturnSetFacing">
-    <FacingLocation Value="CasterUnit" />
+    <FacingLocation Value="OriginPoint" />
   </CEffectModifyUnit>
   <CEffectLaunchMissileAdvanced id="MephistoGoldenSkullReturnLaunch">
     <Marker>
       <MatchFlags index="Id" value="1" />
     </Marker>
     <ImpactLocation>
-      <Value value="CasterUnit" />
+      <Value value="OriginPoint" />
     </ImpactLocation>
     <SharedFlags index="DynamicSearchArea" value="1" />
     <Movers Link="MephistoSkullMissileMissile" />
