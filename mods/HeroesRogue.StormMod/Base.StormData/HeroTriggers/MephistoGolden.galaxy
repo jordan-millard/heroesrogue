@@ -228,20 +228,33 @@ void libAffx_MephistoSithSync () {
         UnitBehaviorAdd(hero, "MephistoGoldenSithOverdrive", hero, 1);
     }
 }
-// Sith Lord: each Basic Attack has a 33% chance to fire a free Skull Missile at a Hero target, or to start (or refresh) Lightning
-// Nova on any other target
+// Sith Lord: each Basic Attack rolls twice: a fan of 3 free Skull Missiles at the target (40% on Heroes, 20% on anything
+// else) and starting or refreshing Lightning Nova (30% on Heroes, 15% on anything else)
 bool libAffx_MephistoSithAttack_Func (bool testConds, bool runActions) {
     unit hero = libAffx_MephistoHero();
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
-    if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "MephistoSithMarker")) {
+    point origin;
+    fixed facing;
+    fixed dist;
+    int skullChance = 20;
+    int novaChance = 15;
+    int k;
+    if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "MephistoSithMarker") || !UnitIsAlive(hero)) {
         return false;
     }
-    if (RandomInt(1, 100) > 33) {
-        return true;
-    }
     if (UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
-        UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", UnitGetPosition(target));
-    } else if (UnitIsAlive(hero)) {
+        skullChance = 40;
+        novaChance = 30;
+    }
+    if (RandomInt(1, 100) <= skullChance) {
+        origin = UnitGetPosition(hero);
+        facing = AngleBetweenPoints(origin, UnitGetPosition(target));
+        dist = MaxF(1.0, DistanceBetweenPoints(origin, UnitGetPosition(target)));
+        for (k = -1; k <= 1; k += 1) {
+            UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", PointWithOffsetPolar(origin, dist, facing + 20.0 * IntToFixed(k)));
+        }
+    }
+    if (RandomInt(1, 100) <= novaChance) {
         UnitCreateEffectUnit(hero, "MephistoLightningNovaCastSet", hero);
     }
     return true;

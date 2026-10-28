@@ -25664,6 +25664,7 @@
 
 
 
+
         <Instances Id="MephistoSkullCaller">
             <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
                 <Field Id="Icon" />
@@ -26011,11 +26012,14 @@
             <String String="1 1 Set Effect,MephistoGoldenStrideApply,Chance 1">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,MephistoWeaponDamage,MultiplicativeModifierArray[MephistoSithPower].Modifier 0">
+            <String String="1 1 Set Effect,MephistoShadeOfMephistoDamage,MultiplicativeModifierArray[MephistoGoldenSithTeleport].Modifier 1">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,MephistoWeaponShardOfHateDamage,MultiplicativeModifierArray[MephistoSithPower].Modifier 0">
+            <String String="1 1 Set Effect,MephistoWeaponDamage,MultiplicativeModifierArray[MephistoSithPower].Modifier 0">
                 <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,MephistoWeaponShardOfHateDamage,MultiplicativeModifierArray[MephistoSithPower].Modifier 0">
+                <Field Id="CatalogModification" Index="8" />
             </String>
             <String String="AffixAdded libAffx_MephistoStart">
                 <Field Id="Trigger" />
