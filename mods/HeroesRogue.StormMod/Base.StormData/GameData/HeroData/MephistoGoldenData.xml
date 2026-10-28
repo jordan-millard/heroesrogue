@@ -93,7 +93,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ===== Boons ===== -->
   <!-- Dread at 100: when a Skull Missile ends, the script creates a skull where it stopped and it flies back to Mephisto,
        hitting each enemy in its path again (its own marker, so the forward skull's hits don't block it). It flies to the point
-       Mephisto stood on when it turned around: aimed at Mephisto himself, its arrival killed him. -->
+       Mephisto stood on when it turned around. As the base skull, the launch runs as a behavior's expire effect on the skull
+       unit: launched straight from the spawn effect, the missile was Mephisto, and its arrival killed him. -->
   <CEffectCreateUnit id="MephistoGoldenSkullReturnCreateUnit">
     <WhichLocation Value="TargetPoint" />
     <CreateFlags index="Placement" value="0" />
@@ -103,17 +104,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectCreateUnit>
   <CEffectSet id="MephistoGoldenSkullReturnSpawnSet">
     <EffectArray value="MephistoGoldenSkullReturnSetFacing" />
-    <EffectArray value="MephistoGoldenSkullReturnLaunch" />
+    <EffectArray value="MephistoGoldenSkullReturnApplyDelay" />
   </CEffectSet>
   <CEffectModifyUnit id="MephistoGoldenSkullReturnSetFacing">
-    <FacingLocation Value="OriginPoint" />
+    <FacingLocation Effect="MephistoGoldenSkullReturnCreateUnit" Value="CasterPoint" />
   </CEffectModifyUnit>
+  <CEffectApplyBehavior id="MephistoGoldenSkullReturnApplyDelay">
+    <Behavior value="MephistoGoldenSkullReturnDelay" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="MephistoGoldenSkullReturnDelay">
+    <Duration value="0.0625" />
+    <ExpireEffect value="MephistoGoldenSkullReturnLaunch" />
+  </CBehaviorBuff>
   <CEffectLaunchMissileAdvanced id="MephistoGoldenSkullReturnLaunch">
     <Marker>
       <MatchFlags index="Id" value="1" />
     </Marker>
     <ImpactLocation>
-      <Value value="OriginPoint" />
+      <Effect value="MephistoGoldenSkullReturnCreateUnit" />
+      <Value value="CasterPoint" />
     </ImpactLocation>
     <SharedFlags index="DynamicSearchArea" value="1" />
     <Movers Link="MephistoSkullMissileMissile" />
