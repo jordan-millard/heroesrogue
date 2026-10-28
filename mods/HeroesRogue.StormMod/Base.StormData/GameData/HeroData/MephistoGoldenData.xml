@@ -353,9 +353,34 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="MephistoGoldenTerrorCooldownApply" />
     <EffectArray value="MephistoGoldenTerrorStunApply" />
   </CEffectSet>
-  <!-- Shadow Shield (Epic): Basic Attacks on Heroes shield Mephisto for 30% of his maximum Health for 1.5 seconds (the
-       script sets the amount and re-adds it) -->
-  <CBehaviorBuff id="MephistoGoldenShadowShield" parent="StormShield">
+  <!-- Shadow Shield (Epic): Basic Attacks on Heroes shield Mephisto for 30% of his maximum Health, decaying to nothing over
+       1.5 seconds: 6 shields of 5% each expire one every 0.25 seconds (the script sets the amounts and re-adds them) -->
+  <CBehaviorBuff id="MephistoGoldenShadowShield1" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
+    <Duration value="0.25" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MephistoGoldenShadowShield2" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
+    <Duration value="0.5" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MephistoGoldenShadowShield3" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
+    <Duration value="0.75" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MephistoGoldenShadowShield4" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
+    <Duration value="1.0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MephistoGoldenShadowShield5" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
+    <Duration value="1.25" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MephistoGoldenShadowShield6" parent="StormShield">
     <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_shade.dds" />
     <Duration value="1.5" />
     <DamageResponse ModifyLimit="0" />

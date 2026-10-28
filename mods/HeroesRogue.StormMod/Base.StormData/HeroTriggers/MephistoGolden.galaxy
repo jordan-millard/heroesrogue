@@ -238,14 +238,20 @@ bool libAffx_MephistoSithAttack_Func (bool testConds, bool runActions) {
     UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", UnitGetPosition(target));
     return true;
 }
-// Shadow Shield (Epic): a Basic Attack on a Hero shields Mephisto for 30% of his maximum Health for 1.5 seconds
+// Shadow Shield (Epic): a Basic Attack on a Hero shields Mephisto for 30% of his maximum Health, decaying over 1.5 seconds
+// (6 shields of 5%, the k-th lasting 0.25 * k seconds; all are refilled on each hit)
 void libAffx_MephistoShadowShield (unit hero) {
+    int k;
+    string shield;
     if (!UnitHasBehavior2(hero, "MephistoShadowShieldMarker") || !UnitIsAlive(hero)) {
         return;
     }
-    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MephistoGoldenShadowShield", "DamageResponse.ModifyLimit", libAffx_player, 0.3 * UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent));
-    UnitBehaviorRemove(hero, "MephistoGoldenShadowShield", 1);
-    UnitBehaviorAdd(hero, "MephistoGoldenShadowShield", hero, 1);
+    for (k = 1; k <= 6; k += 1) {
+        shield = "MephistoGoldenShadowShield" + IntToString(k);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, shield, "DamageResponse.ModifyLimit", libAffx_player, 0.05 * UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent));
+        UnitBehaviorRemove(hero, shield, 1);
+        UnitBehaviorAdd(hero, shield, hero, 1);
+    }
 }
 bool libAffx_MephistoSkullTick_Func (bool testConds, bool runActions) {
     libAffx_MephistoSkullSync();
