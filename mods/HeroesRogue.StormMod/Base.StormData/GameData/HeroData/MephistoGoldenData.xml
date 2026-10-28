@@ -53,7 +53,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Storm of Hatred ===== -->
-  <!-- Lightning Nova has 2 seconds less cooldown (12), costs half Mana and has a 20% thicker ring; gain Furious Spark and Static Field. Charge quest (50% kept): 0.2% Lightning Nova damage per enemy Hero hit. Tempest quest: takedowns within 6 seconds of a hit; stacks 1-40 make Lightning Nova recharge 1% faster each, 41-80 add 0.25% life leech each (10%), 81-100 add 5% damage to non-Heroes each (100%), at 100 hits on non-Heroes trigger Lord of Hatred (script), then 2% damage each (script). -->
+  <!-- Lightning Nova has 2 seconds less cooldown (12), costs half Mana and has a 20% thicker ring; gain Furious Spark, Static Field and Static Barrier. Charge quest (50% kept): 0.2% Lightning Nova damage per enemy Hero hit. Tempest quest: takedowns within 6 seconds of a hit; stacks 1-40 make Lightning Nova recharge 1% faster each, 41-80 add 0.25% life leech each (10%), 81-100 add 5% damage to non-Heroes each (100%), at 100 hits on non-Heroes trigger Lord of Hatred (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="MephistoGoldenChargeTokenCounter" parent="StormQuestToken">
     <Face value="MephistoGoldenChargeTokenCounter" />
     <Max value="100000" />

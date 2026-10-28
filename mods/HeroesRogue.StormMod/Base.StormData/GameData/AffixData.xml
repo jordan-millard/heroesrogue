@@ -25656,6 +25656,7 @@
         </Instances>
 
 
+
         <Instances Id="MephistoSkullCaller">
             <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
                 <Field Id="Icon" />
@@ -25834,6 +25835,9 @@
             <String String="MephistoLightningNovaStaticField">
                 <Field Id="TalentsAdd" Index="1" />
             </String>
+            <String String="MephistoLightningNovaStaticBarrier">
+                <Field Id="TalentsAdd" Index="2" />
+            </String>
             <String String="1 0 MephistoNovaMarker">
                 <Field Id="Behavior" />
             </String>
@@ -25895,23 +25899,6 @@
             </String>
             <String String="1 2 Set Effect,MephistoGoldenNovaFieldDamage,MultiplicativeModifierArray[MephistoNovaCommon].Modifier 0.1">
                 <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="MephistoStaticBarrierBoon">
-            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Mephisto">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="MephistoStormOfHatred">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="MephistoLightningNovaStaticBarrier">
-                <Field Id="TalentsAdd" />
             </String>
         </Instances>
         <Instances Id="MephistoMimicBoon">
