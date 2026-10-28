@@ -228,12 +228,15 @@ void libAffx_MephistoSithSync () {
         UnitBehaviorAdd(hero, "MephistoGoldenSithOverdrive", hero, 1);
     }
 }
-// Sith Lord: every Basic Attack fires a free Skull Missile at its target
+// Sith Lord: each Basic Attack has a 33% chance to fire a free Skull Missile at its target
 bool libAffx_MephistoSithAttack_Func (bool testConds, bool runActions) {
     unit hero = libAffx_MephistoHero();
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
     if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "MephistoSithMarker")) {
         return false;
+    }
+    if (RandomInt(1, 100) > 33) {
+        return true;
     }
     UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", UnitGetPosition(target));
     return true;

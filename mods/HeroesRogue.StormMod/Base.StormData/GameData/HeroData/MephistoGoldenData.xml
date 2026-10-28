@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Mephisto. Starters: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull), Storm of Hatred (Lightning Nova: 2 seconds less cooldown, half Mana, 20% thicker ring, Furious Spark, Static Field and Static Barrier) and Sith Lord (Basic Attacks fire a free Skull Missile, 50% leech, attack speed on Hero hits, Shard of Hate; Skull Missile cannot be cast). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
+  <!-- Golden Mephisto. Starters: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull), Storm of Hatred (Lightning Nova: 2 seconds less cooldown, half Mana, 20% thicker ring, Furious Spark, Static Field and Static Barrier) and Sith Lord (Basic Attacks have a 33% chance to fire a free Skull Missile, 50% leech, attack speed on Hero hits, Shard of Hate; Skull Missile cannot be cast). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="MephistoSkullMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="MephistoNovaMarker" parent="CarryBehaviorParent" />
@@ -93,7 +93,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Sith Lord ===== -->
-  <!-- Basic Attacks fire a free Skull Missile at their target (script) and leech 50% of their damage; Basic Attacks on Heroes give 100% Attack Speed for 10 seconds; Skull Missile can't be cast; gain Shard of Hate. Rage quest (50% kept): 0.2% Basic Attack damage per Basic Attack hit on an enemy Hero. Dominion quest: takedowns within 6 seconds of a hit; stacks 1-40 add 0.1 Basic Attack range and skull reach each, 41-80 add 1% Movement Speed for 6 seconds after attacking each, at 100 Basic Attacks weaken enemies 30% (script), then 2% damage each (script). -->
+  <!-- Basic Attacks have a 33% chance to fire a free Skull Missile at their target (script) and leech 50% of their damage; Basic Attacks on Heroes give 40% Attack Speed for 10 seconds; Skull Missile can't be cast; gain Shard of Hate. Rage quest (50% kept): 0.2% Basic Attack damage per Basic Attack hit on an enemy Hero. Dominion quest: takedowns within 6 seconds of a hit; stacks 1-40 add 0.1 Basic Attack range and skull reach each, 41-80 add 1% Movement Speed for 6 seconds after attacking each, at 100 Basic Attacks weaken enemies 30% (script), then 2% damage each (script). -->
   <CBehaviorTokenCounter id="MephistoGoldenRageTokenCounter" parent="StormQuestToken">
     <Face value="MephistoGoldenRageTokenCounter" />
     <Max value="100000" />
@@ -275,14 +275,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="MephistoShardOfHateWeaponPostImpactSet">
     <EffectArray value="MephistoGoldenWeakenApply" />
   </CEffectSet>
-  <!-- Basic Attacks on Heroes: 100% Attack Speed for 10 seconds -->
+  <!-- Basic Attacks on Heroes: 40% Attack Speed for 10 seconds -->
   <CBehaviorBuff id="MephistoGoldenFrenzy">
     <Alignment value="Positive" />
     <InfoFlags index="Hidden" value="0" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_hatred.dds" />
     <Duration value="10" />
     <Modification>
-      <UnifiedAttackSpeedFactor value="1" />
+      <UnifiedAttackSpeedFactor value="0.4" />
     </Modification>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="MephistoGoldenFrenzyApply">
