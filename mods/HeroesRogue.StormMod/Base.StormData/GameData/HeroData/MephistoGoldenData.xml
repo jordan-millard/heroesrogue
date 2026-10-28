@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Mephisto. Starter: Skull Caller (Skull Missile: 2 charges, half Mana, 20% width and damage, Unyielding Power and Abhorred Skull). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap (unused: past 100 the script adds a damage buff). Hits, quests and script boons are in HeroTriggers/MephistoGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="MephistoSkullMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MephistoSkullRainMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MephistoSkullStormMarker" parent="CarryBehaviorParent" />
+  <!-- Skull Caller, Dread at 100: the returning skull's damage, 50% -->
+  <CEffectDamage id="MephistoGoldenSkullEchoDamage" parent="MephistoSkullMissileDamage">
+    <MultiplicativeModifierArray index="MephistoGoldenEcho" Modifier="-0.5" />
+  </CEffectDamage>
+
+  <!-- ===== Skull Caller ===== -->
+  <!-- Skull Missile stores 2 charges (5 second recharge), costs half Mana and is 20% wider with 20% more damage; gain Unyielding Power (its reward is a 3rd charge) and Abhorred Skull. Malice quest (50% kept): 1% Skull Missile damage per enemy Hero hit. Dread quest: takedowns within 6 seconds of a hit; stacks 1-40 make Skull Missile recharge 1% faster each, 41-80 make the skull fly 1% faster and 1% wider each, 81-100 make it reach 1% farther each, at 100 the skull flies back to Mephisto for 50% (script), then 2% damage each (script). -->
+  <CBehaviorTokenCounter id="MephistoGoldenMaliceTokenCounter" parent="StormQuestToken">
+    <Face value="MephistoGoldenMaliceTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MephistoGoldenDreadTokenCounter" parent="StormQuestToken">
+    <Face value="MephistoGoldenDreadTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MephistoGoldenMaliceTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MephistoGoldenMaliceTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MephistoSkullMissileDamage">
+    <MultiplicativeModifierArray index="MephistoSkullPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSkullCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSkullHit" Accumulator="MephistoGoldenMaliceTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MephistoSkullLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MephistoGoldenSkullEchoDamage">
+    <MultiplicativeModifierArray index="MephistoSkullPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSkullCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MephistoSkullHit" Accumulator="MephistoGoldenMaliceTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MephistoSkullLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MephistoGoldenMaliceTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_mephisto_skull.dds" />
+  </CButton>
+  <CButton id="MephistoGoldenDreadTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_mephisto_skull.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- Dread at 100: when a Skull Missile ends, the script creates a skull where it stopped and it flies back to Mephisto,
+       hitting each enemy in its path again (its own marker, so the forward skull's hits don't block it) -->
+  <CEffectCreateUnit id="MephistoGoldenSkullReturnCreateUnit">
+    <WhichLocation Value="TargetPoint" />
+    <CreateFlags index="Placement" value="0" />
+    <CreateFlags index="NormalizeSpawnOffset" value="0" />
+    <SpawnEffect value="MephistoGoldenSkullReturnSpawnSet" />
+    <SpawnUnit value="MephistoSkullMissileMissile" />
+  </CEffectCreateUnit>
+  <CEffectSet id="MephistoGoldenSkullReturnSpawnSet">
+    <EffectArray value="MephistoGoldenSkullReturnSetFacing" />
+    <EffectArray value="MephistoGoldenSkullReturnLaunch" />
+  </CEffectSet>
+  <CEffectModifyUnit id="MephistoGoldenSkullReturnSetFacing">
+    <FacingLocation Value="CasterUnit" />
+  </CEffectModifyUnit>
+  <CEffectLaunchMissileAdvanced id="MephistoGoldenSkullReturnLaunch">
+    <Marker>
+      <MatchFlags index="Id" value="1" />
+    </Marker>
+    <ImpactLocation>
+      <Value value="CasterUnit" />
+    </ImpactLocation>
+    <SharedFlags index="DynamicSearchArea" value="1" />
+    <Movers Link="MephistoSkullMissileMissile" />
+    <SearchEffect value="MephistoGoldenSkullReturnSearch" />
+  </CEffectLaunchMissileAdvanced>
+  <CEffectEnumArea id="MephistoGoldenSkullReturnSearch" parent="MephistoSkullMissileSearch">
+    <AreaArray index="0" Effect="MephistoGoldenSkullReturnImpactSet" />
+  </CEffectEnumArea>
+  <CEffectSet id="MephistoGoldenSkullReturnImpactSet">
+    <ValidatorArray value="noMarkers" />
+    <EffectArray value="MephistoLordOfHatedSkullMissileShadeOfMephistoCDRSet" />
+    <EffectArray value="MephistoGoldenSkullEchoDamage" />
+    <EffectArray value="MephistoSkullMissileApplySlowSwitch" />
+    <EffectArray value="MephistoSkullMissileAbhorredSkullApplyBehavior" />
+    <EffectArray value="MephistoSkullMissileUnyieldingPowerAddToken" />
+    <EffectArray value="ApplyAbilityImpactReveal" />
+    <EffectArray value="MephistoShadeOfMephistoMaliciousIntentAddTokenCount" />
+    <EffectArray value="MephistoShadeOfMephistoTrickeryAddTokenCount" />
+    <EffectArray value="MephistoSkullMissileHatefulMendingManaRestoration" />
+  </CEffectSet>
+  <CActorModel id="MephistoGoldenSkullEchoImpactFX" parent="StormModelAnimationStyleOneShotUnit">
+    <On Terms="Effect.MephistoGoldenSkullEchoDamage.Start; At Target" Send="Create" />
+    <Model value="MephistoSkullMissileImpactFX" />
+    <HostSiteOps Ops="SOpAttachCenter" HoldPosition="1" HoldRotation="1" />
+  </CActorModel>
+  <CActorSound id="MephistoGoldenSkullEchoImpactSound" parent="SoundOneShot">
+    <On Terms="Effect.MephistoGoldenSkullEchoDamage.Start; At Target" Send="Create" />
+    <Sound value="MephistoSkullMissileImpactSound" />
+    <Sharing value="Always" />
+    <ScopeBearingsTracking value="ForceOn" />
+    <SoundFlags index="UpdateVisibility" value="0" />
+  </CActorSound>
+  <!-- Dread past 100 stacks: Mephisto's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="MephistoGoldenOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Skull Storm (Legendary): shown while it's ready -->
+  <CBehaviorBuff id="MephistoGoldenSkullStormReady">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_mephisto_skull.dds" />
+    <BehaviorFlags index="Permanent" value="1" />
+  </CBehaviorBuff>
+</Catalog>

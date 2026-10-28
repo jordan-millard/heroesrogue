@@ -1,0 +1,230 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Mephisto. Skull Caller: Skull Missile hits on enemy Heroes add Malice (Skull Missile damage) and open a
+// 6 second takedown window. Takedowns add Dread: recharge, then skull speed and width, then reach, then at 100
+// the skull flies back to Mephisto, then 2% damage per stack.
+// ============================================================
+
+const fixed libAffx_MephistoTakedownWindow = 3.0;
+const fixed libAffx_MephistoPastCapDamagePerStack = 0.01;
+bool libAffx_MephistoStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MephistoSkullTime; // per enemy player, last Skull Caller hit
+int libAffx_MephistoSkullAdded; // Skull Caller: takedown stacks already applied to the catalog this game
+int libAffx_MephistoSkullAdded2; // Skull Caller: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MephistoSkullAdded3; // Skull Caller: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_MephistoPowerApplied; // Skull Caller: Dread stacks past 100 applied as damage
+fixed libAffx_MephistoSkullStormLast = -100.0; // Skull Storm: game time it last fired
+
+unit libAffx_MephistoHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_MephistoIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_MephistoStacks(string tokenId) {
+    unit hero = libAffx_MephistoHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_MephistoQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_MephistoInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_MephistoTakedownWindow;
+}
+// MephistoGoldenDreadTokenCounter: stacks 1-40: 1% of the 5 second recharge each; 41-80 skull speed and width, 81-100 reach, 100 return, then damage (libAffx_MephistoSkullSync)
+void libAffx_MephistoSyncSkull () {
+    unit hero = libAffx_MephistoHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "MephistoSkullMarker")) {
+        return;
+    }
+    stacks = libAffx_MephistoStacks("MephistoGoldenDreadTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MephistoSkullAdded) {
+        libAffx_CatalogReferenceModify("Abil,MephistoSkullMissile,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded) * -0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MephistoSkullAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the skull flies 1% faster and is 1% wider each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MephistoSkullAdded2) {
+        libAffx_CatalogReferenceModify("Mover,MephistoSkullMissileMissile,MotionPhases[0].Speed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded2) * 0.19, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,MephistoSkullMissileMissile,MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded2) * 0.19, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MephistoSkullMissileSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MephistoGoldenSkullReturnSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MephistoSkullAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the skull reaches 1% farther each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MephistoSkullAdded3) {
+        libAffx_CatalogReferenceModify("Effect,MephistoSkullMissileLaunchMissile,ImpactLocation.ProjectionDistanceScale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MephistoSkullAdded3) * 0.125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MephistoSkullAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+    CatalogFieldValueSet(c_gameCatalogEffect, "MephistoSkullMissileDamage", "MultiplicativeModifierArray[MephistoSkullLegacy].Modifier", libAffx_player, bonus);
+    CatalogFieldValueSet(c_gameCatalogEffect, "MephistoGoldenSkullEchoDamage", "MultiplicativeModifierArray[MephistoSkullLegacy].Modifier", libAffx_player, bonus);
+}
+bool libAffx_MephistoSync_Func (bool testConds, bool runActions) {
+    libAffx_MephistoSyncSkull();
+    return true;
+}
+// Skull Caller: past 100 Dread, 2% damage per stack; Skull Storm's ready icon
+void libAffx_MephistoSkullSync () {
+    unit hero = libAffx_MephistoHero();
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MephistoSkullMarker")) {
+        return;
+    }
+    power = MaxI(0, libAffx_MephistoStacks("MephistoGoldenDreadTokenCounter") - 100);
+    if (power != libAffx_MephistoPowerApplied) {
+        libAffx_MephistoPowerApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MephistoGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MephistoGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        UnitBehaviorRemove(hero, "MephistoGoldenOverdrive", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MephistoGoldenOverdrive")) {
+        UnitBehaviorAdd(hero, "MephistoGoldenOverdrive", hero, 1);
+    }
+    if (UnitHasBehavior2(hero, "MephistoSkullStormMarker") && GameGetMissionTime() - libAffx_MephistoSkullStormLast >= 30.0) {
+        if (!UnitHasBehavior2(hero, "MephistoGoldenSkullStormReady")) {
+            UnitBehaviorAdd(hero, "MephistoGoldenSkullStormReady", hero, 1);
+        }
+    } else if (UnitHasBehavior2(hero, "MephistoGoldenSkullStormReady")) {
+        UnitBehaviorRemove(hero, "MephistoGoldenSkullStormReady", 1);
+    }
+}
+bool libAffx_MephistoSkullTick_Func (bool testConds, bool runActions) {
+    libAffx_MephistoSkullSync();
+    return true;
+}
+// Dread at 100: a Skull Missile is launched (the skull unit itself flies). Follow it until it dies or stops, then a skull
+// flies back from there to Mephisto for 50% damage (libAffx: MephistoGoldenSkullReturnCreateUnit).
+bool libAffx_MephistoSkullLaunch_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MephistoHero();
+    unit skull = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    point last;
+    point here;
+    int ticks = 0;
+    if (hero == null || !UnitHasBehavior2(hero, "MephistoSkullMarker") || libAffx_MephistoStacks("MephistoGoldenDreadTokenCounter") < 100) {
+        return false;
+    }
+    if (skull == null || UnitGetType(skull) != "MephistoSkullMissileMissile") {
+        skull = EventPlayerEffectUsedUnit(c_effectUnitSource);
+    }
+    if (skull == null || UnitGetType(skull) != "MephistoSkullMissileMissile") {
+        return false;
+    }
+    last = UnitGetPosition(skull);
+    while (ticks < 48) {
+        Wait(0.0625, c_timeGame);
+        ticks += 1;
+        if (!UnitIsAlive(skull)) {
+            break;
+        }
+        here = UnitGetPosition(skull);
+        if (ticks > 2 && DistanceBetweenPoints(here, last) < 0.05) {
+            break;
+        }
+        last = here;
+    }
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    UnitCreateEffectPoint(hero, "MephistoGoldenSkullReturnCreateUnit", last);
+    return true;
+}
+// Skull Rain (Epic): casting Shade of Mephisto refreshes all Skull Missile charges
+bool libAffx_MephistoSkullRain_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MephistoHero();
+    if (hero == null || !UnitHasBehavior2(hero, "MephistoSkullRainMarker")) {
+        return false;
+    }
+    UnitAbilityAddChargeUsed(hero, "MephistoSkullMissile", "Abil/MephistoSkullMissile", -1.0 * UnitAbilityGetChargeUsed(hero, "MephistoSkullMissile", "Abil/MephistoSkullMissile"));
+    return true;
+}
+// Skull Storm (Legendary): taking damage below 50% Health fires a Skull Missile at every enemy Hero within 10, once every
+// 30 seconds (it waits until there's a Hero in range)
+bool libAffx_MephistoSkullStorm_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MephistoHero();
+    unitgroup foes;
+    int i;
+    if (hero == null || EventUnit() != hero || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MephistoSkullStormMarker")) {
+        return false;
+    }
+    if (GameGetMissionTime() - libAffx_MephistoSkullStormLast < 30.0 || UnitGetPropertyFixed(hero, c_unitPropLifePercent, c_unitPropCurrent) >= 50.0) {
+        return false;
+    }
+    foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(hero), 10.0), UnitFilter((1 << c_targetFilterHeroic) | (1 << c_targetFilterVisible), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterStasis - 32)) | (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32))), 0);
+    if (UnitGroupCount(foes, c_unitCountAlive) == 0) {
+        return false;
+    }
+    libAffx_MephistoSkullStormLast = GameGetMissionTime();
+    UnitBehaviorRemove(hero, "MephistoGoldenSkullStormReady", 1);
+    i = 1;
+    while (i <= UnitGroupCount(foes, c_unitCountAll)) {
+        if (UnitIsAlive(UnitGroupUnit(foes, i))) {
+            UnitCreateEffectPoint(hero, "MephistoSkullMissileCastSet", UnitGetPosition(UnitGroupUnit(foes, i)));
+        }
+        i += 1;
+    }
+    return true;
+}
+// Skull Caller hit on an enemy Hero: takedown window, MephistoGoldenMaliceTokenCounter, the heal, and on-hit boons
+bool libAffx_MephistoSkullHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MephistoHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MephistoIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MephistoSkullMarker")) {
+        return false;
+    }
+    libAffx_MephistoSkullTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MephistoGoldenMaliceTokenCounter", hero);
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_MephistoTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_MephistoHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "MephistoSkullMarker") && libAffx_MephistoSkullTime[killedPlayer] > 0.0 && now - libAffx_MephistoSkullTime[killedPlayer] <= 6.0) {
+        libAffx_MephistoSkullTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MephistoGoldenDreadTokenCounter", hero);
+        libAffx_MephistoSyncSkull();
+        libAffx_MephistoQuestDing();
+        libAffx_MephistoSkullSync();
+    }
+    return true;
+}
+bool libAffx_MephistoStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_MephistoStarted) {
+        return true;
+    }
+    libAffx_MephistoStarted = true;
+    trig = TriggerCreate("libAffx_MephistoSkullHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MephistoSkullMissileDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MephistoGoldenSkullEchoDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MephistoSkullTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MephistoSkullLaunch_Func"), libAffx_player, "MephistoSkullMissileLaunchMissile");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MephistoSkullRain_Func"), libAffx_player, "MephistoShadeOfMephistoInitialSet");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_MephistoSkullStorm_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MephistoSync_Func"), 1.0, c_timeGame);
+    return true;
+}

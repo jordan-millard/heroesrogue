@@ -25655,6 +25655,169 @@
             </String>
         </Instances>
 
+        <Instances Id="MephistoSkullCaller">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MephistoSkullMissileUnyieldingPower">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MephistoSkullMissileAbhorredSkull">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MephistoSkullMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MephistoGoldenMaliceTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MephistoGoldenDreadTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MephistoGoldenDreadTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MephistoGoldenMaliceTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MephistoSkullMissile,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MephistoSkullMissile,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MephistoSkullMissile,Cost.Charge.TimeUse 5">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MephistoSkullMissile,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MephistoSkullMissile,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,MephistoSkullMissile,Cost.Vital[Energy] -10">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MephistoSkullMissileUnyieldingPowerQuestCompleteModifyPlayer,EffectArray[0].Value 3">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MephistoSkullMissileSearch,AreaArray[0].RectangleWidth 2.4">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenSkullReturnSearch,AreaArray[0].RectangleWidth 2.4">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,MephistoSkullMissileDamage,MultiplicativeModifierArray[MephistoSkullPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,MephistoGoldenSkullEchoDamage,MultiplicativeModifierArray[MephistoSkullPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="AffixAdded libAffx_MephistoStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MephistoTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoHatefulSkulls">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSkullCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MephistoSkullMissileDamage,MultiplicativeModifierArray[MephistoSkullCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MephistoGoldenSkullEchoDamage,MultiplicativeModifierArray[MephistoSkullCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoHatefulMendingBoon">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_skull.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSkullCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MephistoSkullMissileHatefulMending">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoLightningReactionBoon">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_lightning.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSkullCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MephistoSkullMissileLightningReaction">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoSkullRain">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_shade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSkullCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MephistoSkullRainMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="MephistoSkullStorm">
+            <String String="Assets/Textures/storm_ui_icon_mephisto_hatred.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Mephisto">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MephistoSkullCaller">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MephistoSkullStormMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
