@@ -5,7 +5,7 @@ include "AffixTriggers"
 // window; takedowns add Carnage: recharge, then range and arc, then Movement Speed while channeling, then at 100 a
 // second target. Grenadier: Frag Grenade hits on enemy Heroes add Shellshock; takedowns add Demolition: recharge,
 // then flight speed and size, then knockback, then at 100 bomblets. Odin Pilot: Annihilate and Ragnarok Missiles hits on
-// Heroes add Devastation and Salvo; takedowns while in the Odin add Pilot: Odin ability cooldowns, then duration, then Odin damage, then at 100 Big Red Button strikes, then 2.5% damage per stack.
+// Heroes add Devastation (also damage to non-Heroes); takedowns while in the Odin add Pilot: Odin ability cooldowns, then duration, then Odin damage, then at 100 Big Red Button strikes, then 2.5% damage per stack.
 // ============================================================
 
 const fixed libAffx_TychusTakedownWindow = 3.0;
@@ -26,6 +26,7 @@ int libAffx_TychusOdinAdded3; // Odin Pilot: takedown quest stage 3 stacks alrea
 unit libAffx_TychusOverkillPrimary; // Minigun Maniac: the last unit hit by the main Overkill stream
 int libAffx_TychusFlightApplied; // Grenadier: Demolition stacks applied as grenade flight speed
 int libAffx_TychusOdinPowerApplied; // Odin Pilot: Pilot stacks past 100 applied as damage
+int libAffx_TychusBaneApplied = -1; // Odin Pilot: Devastation stacks applied to damage to non-Heroes
 
 unit libAffx_TychusHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -233,12 +234,22 @@ bool libAffx_TychusBomblets_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Odin Pilot: past 100 Pilot, 2.5% damage per stack
+// Odin Pilot: past 100 Pilot, 2.5% damage per stack; Devastation's 1% per stack to all damage to non-Heroes
 void libAffx_TychusOdinPilotSync () {
     unit hero = libAffx_TychusHero();
     int power;
+    int bane;
     if (hero == null || !UnitHasBehavior2(hero, "TychusOdinMarker")) {
         return;
+    }
+    bane = libAffx_TychusStacks("TychusGoldenDevastationTokenCounter");
+    if (bane != libAffx_TychusBaneApplied) {
+        libAffx_TychusBaneApplied = bane;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenDevastationBane", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.01 * IntToFixed(bane));
+        UnitBehaviorRemove(hero, "TychusGoldenDevastationBane", 1);
+    }
+    if (!UnitHasBehavior2(hero, "TychusGoldenDevastationBane")) {
+        UnitBehaviorAdd(hero, "TychusGoldenDevastationBane", hero, 1);
     }
     power = MaxI(0, libAffx_TychusStacks("TychusGoldenPilotTokenCounter") - 100);
     if (power != libAffx_TychusOdinPowerApplied) {
@@ -278,15 +289,6 @@ bool libAffx_TychusHaywire_Func (bool testConds, bool runActions) {
 bool libAffx_TychusTick_Func (bool testConds, bool runActions) {
     libAffx_TychusGrenadeSync();
     libAffx_TychusOdinPilotSync();
-    return true;
-}
-// Odin Pilot, Salvo quest: Ragnarok Missiles hits on enemy Heroes
-bool libAffx_TychusSalvo_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_TychusHero();
-    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_TychusIsEnemyHero(EventUnit()) || !UnitHasBehavior2(hero, "TychusOdinMarker")) {
-        return false;
-    }
-    libGame_gf_ModifyTokenCount(1, "TychusGoldenSalvoTokenCounter", hero);
     return true;
 }
 // Reinforced Plating (talent): commandeering the Odin shields Tychus for 30% of his maximum Health until it ends
@@ -426,13 +428,13 @@ bool libAffx_TychusStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TychusGrenadeDamage");
     trig = TriggerCreate("libAffx_TychusOdinHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOdinAnnihilateDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOdinRagnarokMissilesTargetedDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TychusTick_Func"), 1.0, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_TychusOverkillPrimary_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOverkillPrimaryTargetDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TychusOverkillSecond_Func"), 0.25, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_TychusBomblets_Func"), libAffx_player, "GrenadeTargetSearchSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TychusHaywire_Func"), 1.5, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinEnd_Func"), null, "TychusOdin", c_unitBehaviorChangeDestroy);
-    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_TychusSalvo_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOdinRagnarokMissilesTargetedDamage");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinStart_Func"), null, "TychusOdin", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinPlating_Func"), null, "TychusOdin", c_unitBehaviorChangeCreate);
     // also picks up stacks loaded from the bank

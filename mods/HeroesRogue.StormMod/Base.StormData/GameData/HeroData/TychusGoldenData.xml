@@ -98,7 +98,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Odin Pilot ===== -->
-  <!-- Commandeer Odin from level 1 with a 30 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 5.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken; the Odin is a turret (-200% Movement Speed, 75 armor) and an Active (key 1) ends it early; the level 10 talent Reinforced Plating is shown. Devastation quest (50% kept): 1% Annihilate damage per enemy Hero hit. Salvo quest (50% kept, extra_data and script): 5% Ragnarok Missiles damage per enemy Hero hit. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make Annihilate, Ragnarok Missiles and Thrusters recharge 1% faster each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
+  <!-- Commandeer Odin from level 1 with a 30 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 5.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken; the Odin is a turret (-200% Movement Speed, 75 armor) and an Active (key 1) ends it early; the level 10 talent Reinforced Plating is shown. Devastation quest (50% kept): 1% Annihilate, Ragnarok Missiles and all damage to non-Heroes (script) per Annihilate or Ragnarok Missiles hit on an enemy Hero. Commandeer Odin costs 20 Mana. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make Annihilate, Ragnarok Missiles and Thrusters recharge 1% faster each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
   <CBehaviorTokenCounter id="TychusGoldenDevastationTokenCounter" parent="StormQuestToken">
     <Face value="TychusGoldenDevastationTokenCounter" />
     <Max value="100000" />
@@ -137,7 +137,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
-    <MultiplicativeModifierArray index="TychusGoldenSalvo" Accumulator="TychusGoldenSalvoTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="TychusOdinNuclearBlastDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
@@ -146,6 +145,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="TychusOdinAnnihilateDamage">
+    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusOdinRagnarokMissilesTargetedDamage">
     <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
   </CEffectDamage>
   <CButton id="TychusGoldenDevastationTokenCounter" parent="StormButtonParent">
@@ -295,21 +297,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="TychusOdinAnnihilateSearchImpactSet">
     <EffectArray value="TychusGoldenConcussionSet" />
   </CEffectSet>
-  <!-- Salvo quest (50% kept): 5% Ragnarok Missiles damage per enemy Hero hit (the script adds the tokens) -->
-  <CBehaviorTokenCounter id="TychusGoldenSalvoTokenCounter" parent="StormQuestToken">
-    <Face value="TychusGoldenSalvoTokenCounter" />
-    <Max value="100000" />
-  </CBehaviorTokenCounter>
-  <CAccumulatorToken id="TychusGoldenSalvoTokenCounterAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="TychusGoldenSalvoTokenCounter" />
-    <Scale value="0.05" />
-  </CAccumulatorToken>
-  <CButton id="TychusGoldenSalvoTokenCounter" parent="StormButtonParent">
-    <Icon value="Assets\Textures\storm_ui_icon_tychus_ragnarokmissiles.dds" />
-  </CButton>
+  <!-- Devastation quest: its bonus also applies to all of Tychus's damage to non-Heroes (the script sets the fraction and
+       re-adds it; Annihilate and Ragnarok Missiles already get it through the quest's accumulator) -->
+  <CBehaviorBuff id="TychusGoldenDevastationBane" parent="CarryBehaviorParent">
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic" ModifyFraction="1">
+      <ExcludeEffectArray value="TychusOdinAnnihilateDamage" />
+      <ExcludeEffectArray value="TychusOdinRagnarokMissilesTargetedDamage" />
+    </DamageResponse>
+  </CBehaviorBuff>
   <!-- Odin Pilot: the Odin is a turret: -200% Movement Speed while in it (its armor is set to 75 by the starter) -->
   <CBehaviorBuff id="TychusGoldenOdinAnchor">
     <BehaviorFlags index="Permanent" value="1" />
