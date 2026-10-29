@@ -2995,7 +2995,11 @@ void libAffx_ApplyTalents(int affix) {
     for (i = 1; i <= libAffx_maxTalents; i += 1) {
         addTalent = libAffx_affixes[affix].addTalents[i];
         if (addTalent != "" && addTalent != null) {
-            libAffx_AddTalent(libAffx_player, addTalent);
+            // a talent already owned (picked, or given by another starter or boon) is not given twice: its behaviors and
+            // quest would be added again
+            if (!PlayerHasTalent(libAffx_player, addTalent)) {
+                libAffx_AddTalent(libAffx_player, addTalent);
+            }
             SetTalentEnabled(addTalent, false);
         }
         disableTalent = libAffx_affixes[affix].disableTalents[i];
@@ -6390,6 +6394,7 @@ void libAffx_InitVariables () {
     libAffx_SetGoldenHero("L90ETC");
     libAffx_SetGoldenHero("Murky");
     libAffx_SetGoldenHero("Genji");
+    libAffx_SetGoldenHero("Tychus");
     libAffx_SetGoldenHero("Mephisto");
     libAffx_SetGoldenHero("Hanzo");
     libAffx_SetGoldenHero("Greymane");

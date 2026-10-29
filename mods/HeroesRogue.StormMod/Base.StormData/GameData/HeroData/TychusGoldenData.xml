@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Tychus. Starters: Minigun Maniac (Overkill: half Mana, 20% damage, Spray n Pray and Can Do This All Day), Grenadier (Frag Grenade: 2 charges, half Mana, 20% radius and damage, Titan Grenade and Melting Point) and Odin Pilot (Commandeer Odin at level 1, 25 second cooldown from when it ends, 50% longer, 1.1 more Odin range; 35% less damage outside it; no Drakken Laser Drill). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/TychusGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="TychusMinigunMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TychusGrenadeMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TychusOdinMarker" parent="CarryBehaviorParent" />
+  <!-- Minigun Maniac, Carnage at 100: Overkill also fires at a second enemy Hero in range for 50% (script) -->
+  <CEffectDamage id="TychusGoldenOverkillSecondDamage" parent="TychusOverkillPrimaryTargetDamage">
+    <MultiplicativeModifierArray index="TychusGoldenSecond" Modifier="-0.5" />
+    <FloaterCreation value="Force" />
+  </CEffectDamage>
+  <!-- Grenadier, Demolition at 100: 0.5 seconds after the blast, 3 bomblets around it for 30% each (script) -->
+  <CEffectDamage id="TychusGoldenBombletDamage" parent="TychusGrenadeDamage">
+    <MultiplicativeModifierArray index="TychusGoldenBomblet" Modifier="-0.7" />
+  </CEffectDamage>
+
+  <!-- ===== Minigun Maniac ===== -->
+  <!-- Overkill keeps its cooldown, costs half Mana and deals 20% more damage; gain Spray n Pray and Can Do This All Day. Barrage quest (50% kept): 0.2% Overkill damage per Overkill hit on an enemy Hero, added in batches of 10. Carnage quest: takedowns within 6 seconds of a hit; stacks 1-40 make Overkill recharge 1% faster each, 41-80 add 0.5% range and arc each, 81-100 add 1% Movement Speed while channeling each, at 100 Overkill also fires at a second enemy Hero in range for 50% (script), then 1% Overkill damage each. -->
+  <CBehaviorTokenCounter id="TychusGoldenBarrageTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenBarrageTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="TychusGoldenCarnageTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenCarnageTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TychusGoldenBarrageTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TychusGoldenBarrageTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TychusOverkillPrimaryTargetDamage">
+    <MultiplicativeModifierArray index="TychusMinigunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusMinigunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusMinigunHit" Accumulator="TychusGoldenBarrageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TychusMinigunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusOverkillSecondaryTargetDamage">
+    <MultiplicativeModifierArray index="TychusMinigunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusMinigunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusMinigunHit" Accumulator="TychusGoldenBarrageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TychusMinigunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusGoldenOverkillSecondDamage">
+    <MultiplicativeModifierArray index="TychusMinigunPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusMinigunCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusMinigunHit" Accumulator="TychusGoldenBarrageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TychusMinigunLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="TychusGoldenBarrageTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_overkill.dds" />
+  </CButton>
+  <CButton id="TychusGoldenCarnageTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_overkill.dds" />
+  </CButton>
+
+  <!-- ===== Grenadier ===== -->
+  <!-- Frag Grenade stores 2 charges (7 second recharge), costs half Mana and has 20% more radius and damage; gain Titan Grenade and Melting Point. Shellshock quest (50% kept): 1.5% Frag Grenade damage per enemy Hero hit. Demolition quest: takedowns within 6 seconds of a hit; stacks 1-40 make Frag Grenade recharge 1% faster each, 41-80 make the grenade fly 1% faster (script) and 1% larger each, 81-100 make the knockback 1% stronger each, at 100 3 bomblets around the blast 0.5 seconds later for 30% each (script), then 1% Frag Grenade damage each. -->
+  <CBehaviorTokenCounter id="TychusGoldenShellshockTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenShellshockTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="TychusGoldenDemolitionTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenDemolitionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TychusGoldenShellshockTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TychusGoldenShellshockTokenCounter" />
+    <Scale value="0.015" />
+  </CAccumulatorToken>
+  <CEffectDamage id="TychusGrenadeDamage">
+    <MultiplicativeModifierArray index="TychusGrenadePower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGrenadeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGrenadeHit" Accumulator="TychusGoldenShellshockTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TychusGrenadeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusGoldenBombletDamage">
+    <MultiplicativeModifierArray index="TychusGrenadePower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGrenadeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGrenadeHit" Accumulator="TychusGoldenShellshockTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TychusGrenadeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="TychusGoldenShellshockTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_fraggrenade.dds" />
+  </CButton>
+  <CButton id="TychusGoldenDemolitionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_fraggrenade.dds" />
+  </CButton>
+
+  <!-- ===== Odin Pilot ===== -->
+  <!-- Commandeer Odin from level 1 with a 25 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 1.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make the cooldown 1% shorter each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
+  <CBehaviorTokenCounter id="TychusGoldenPilotTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenPilotTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="TychusOdinWeaponDamage">
+    <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="OdinWeaponSplashDamage">
+    <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusOdinAnnihilateDamage">
+    <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusOdinRagnarokMissilesTargetedDamage">
+    <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="TychusOdinNuclearBlastDamage">
+    <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="TychusGoldenPilotTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_commandeerodin.dds" />
+  </CButton>
+
+  <!-- ===== Boons ===== -->
+  <!-- shared: weakened (30% less damage dealt for 3 seconds), used by Suppressing Fire and Shrapnel -->
+  <CBehaviorBuff id="TychusGoldenWeaken">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_tychus_minigun.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- ===== Minigun Maniac ===== -->
+  <!-- Carnage at 100: the second target's shot (the script casts it on the nearest other enemy Hero in range) -->
+  <CEffectSet id="TychusGoldenOverkillSecondSet">
+    <EffectArray value="TychusGoldenOverkillSecondDamage" />
+    <EffectArray value="ApplyAbilityImpactReveal" />
+    <EffectArray value="TychusGoldenSuppressApply" />
+  </CEffectSet>
+  <CActorAction id="TychusGoldenOverkillSecondAction" parent="RangedMinionAttackParent" effectAttack="TychusGoldenOverkillSecondDamage">
+    <LaunchAssets Model="" Sound="" />
+    <ImpactMap index="None" Model="TychusOverkillUnitImpactModel" Sound="Tychus_Overkill_Impact_Unit" />
+    <ImpactModel value="TychusOverkillUnitImpactModel" />
+    <ImpactSound value="TychusOverkillUnitImpactSound" />
+  </CActorAction>
+  <!-- Suppressing Fire (Epic): Overkill weakens what it hits (Chance 0, the boon turns it on) -->
+  <CEffectApplyBehavior id="TychusGoldenSuppressApply">
+    <Chance value="0" />
+    <Behavior value="TychusGoldenWeaken" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="TychusOverkillMainTargetImpactSet">
+    <EffectArray value="TychusGoldenSuppressApply" />
+  </CEffectSet>
+  <CEffectSet id="TychusOverkillSecondaryTargetImpactSet">
+    <EffectArray value="TychusGoldenSuppressApply" />
+  </CEffectSet>
+  <!-- Bottomless Drum (Legendary): Unstoppable while channeling Overkill (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="TychusGoldenDrumUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="10" />
+    <RemoveValidatorArray value="TychusCasterHasOverkillActive" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="TychusGoldenDrumApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="TychusGoldenDrumUnstoppable" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="TychusOverkillInitialSet">
+    <EffectArray value="TychusGoldenDrumApply" />
+  </CEffectSet>
+  <!-- ===== Grenadier ===== -->
+  <!-- charges: Titan Grenade's cooldown refund and the cancelled-throw refund also work on charges -->
+  <CEffectModifyUnit id="TychusFragGrenadeTitanGrenadeModifyCooldown">
+    <Cost Abil="TychusGrenade,Execute" CooldownOperation="Add" CooldownTimeUse="-1" ChargeTimeUse="-1" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="TychusFragGrenadeRefundCostModifyUnit">
+    <Cost Abil="TychusGrenade,Execute" CooldownOperation="Set" ChargeCountUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Shrapnel (Epic) weakens Heroes, Flash Bombs (Legendary) stuns (Chance 0, the boons turn them on) -->
+  <CEffectApplyBehavior id="TychusGoldenShrapnelApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="TychusGoldenWeaken" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="TychusGoldenFlashStun" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="TychusGoldenFlashApply">
+    <Chance value="0" />
+    <Behavior value="TychusGoldenFlashStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="GrenadeExplosionSet">
+    <EffectArray value="TychusGoldenShrapnelApply" />
+    <EffectArray value="TychusGoldenFlashApply" />
+  </CEffectSet>
+  <!-- Demolition at 100: the bomblets (the script casts this search at 3 points around the blast) -->
+  <CEffectEnumArea id="TychusGoldenBombletSearch">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="TychusGoldenBombletImpactSet">
+      <Radius value="1.25" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="TychusGoldenBombletImpactSet">
+    <EffectArray value="TychusGoldenBombletDamage" />
+    <EffectArray value="ApplyAbilityImpactReveal" />
+    <EffectArray value="TychusGoldenShrapnelApply" />
+    <EffectArray value="TychusGoldenFlashApply" />
+  </CEffectSet>
+  <CActorModel id="TychusGoldenBombletExplosion" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.TychusGoldenBombletSearch.Start" Send="Create" />
+    <On Terms="ActorCreation" Send="Create TychusGrenadeExplosionSound" />
+    <Model value="TychusGrenadeExplosion" />
+    <Scale value="0.55,0.55,0.55" />
+  </CActorModel>
+  <!-- ===== Odin Pilot ===== -->
+  <!-- outside the Odin Tychus deals 35% less damage -->
+  <CBehaviorBuff id="TychusGoldenGrounded">
+    <BehaviorFlags index="Permanent" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <DisableValidatorArray value="NoOdin" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.35" />
+      <DamageDealtFraction index="Basic" value="-0.35" />
+      <DamageDealtFraction index="Ability" value="-0.35" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Concussion Wave (Epic): Annihilate stuns enemies for 0.5 seconds, once per cast (Chance 0, the boon turns it on). The
+       first segment's search goes through the impact set too. -->
+  <CEffectEnumArea id="TychusOdinAnnihilateInitialSearch">
+    <AreaArray index="0" Effect="TychusOdinAnnihilateSearchImpactSet" />
+  </CEffectEnumArea>
+  <CBehaviorBuff id="TychusGoldenConcussionStun" parent="StormStun">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="TychusGoldenConcussionCooldown">
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="TychusGoldenNotConcussed">
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="TychusGoldenConcussionCooldown" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="TychusGoldenConcussionStunApply">
+    <Behavior value="TychusGoldenConcussionStun" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="TychusGoldenConcussionCooldownApply">
+    <Behavior value="TychusGoldenConcussionCooldown" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="TychusGoldenConcussionSet">
+    <Chance value="0" />
+    <ValidatorArray value="TychusGoldenNotConcussed" />
+    <EffectArray value="TychusGoldenConcussionCooldownApply" />
+    <EffectArray value="TychusGoldenConcussionStunApply" />
+  </CEffectSet>
+  <CEffectSet id="TychusOdinAnnihilateSearchImpactSet">
+    <EffectArray value="TychusGoldenConcussionSet" />
+  </CEffectSet>
+  <!-- Haywire (Legendary): in the Odin, 50% less Attack Speed, 50% more Movement Speed and Unstoppable -->
+  <CBehaviorBuff id="TychusGoldenHaywire" parent="StormUnstoppableParent">
+    <BehaviorFlags index="Permanent" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <DisableValidatorArray value="CasterHasOdin" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="-0.5" />
+      <UnifiedMoveSpeedFactor value="0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Pilot past 100 stacks: Tychus's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="TychusGoldenOdinOverdrive" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+</Catalog>

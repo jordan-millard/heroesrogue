@@ -26124,6 +26124,505 @@
             </String>
         </Instances>
 
+
+        <Instances Id="TychusMinigunManiac">
+            <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TychusMasterySprayNPray">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TychusCanDoThisAllDayOverkillTalent">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TychusMinigunMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TychusGoldenBarrageTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TychusGoldenCarnageTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TychusGoldenCarnageTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="TychusGoldenBarrageTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="TychusMasterAssassinQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="TychusMinigunInTheRhythmVisualToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Add Abil,TychusOverkillTargeted,Cost.Vital[Energy] -30">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,TychusOverkillPrimaryTargetDamage,MultiplicativeModifierArray[TychusMinigunPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,TychusOverkillSecondaryTargetDamage,MultiplicativeModifierArray[TychusMinigunPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,TychusGoldenOverkillSecondDamage,MultiplicativeModifierArray[TychusMinigunPower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_TychusStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TychusTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TychusArmorPiercing">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusMinigunManiac">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TychusOverkillPrimaryTargetDamage,MultiplicativeModifierArray[TychusMinigunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,TychusOverkillSecondaryTargetDamage,MultiplicativeModifierArray[TychusMinigunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,TychusGoldenOverkillSecondDamage,MultiplicativeModifierArray[TychusMinigunCommon].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="TychusFastSpool">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tychus_minigun.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusMinigunManiac">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,TychusOverkillTargeted,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TychusInTheRhythmBoon">
+            <String String="Assets/Textures/storm_ui_icon_tychus_minigun.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusMinigunManiac">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TychusInTheRhythm">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TychusArmorPiercingRoundsBoon">
+            <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusMinigunManiac">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TychusMasteryOverkillArmorPiercingRounds">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TychusSuppressingFire">
+            <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusMinigunManiac">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TychusGoldenSuppressApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TychusBottomlessDrum">
+            <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusMinigunManiac">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TychusGoldenDrumApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TychusGrenadier">
+            <String String="Assets/Textures/storm_ui_icon_tychus_fraggrenade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TychusMasteryFragGrenadeTitanGrenade">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TychusMeltingPoint">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 TychusGrenadeMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TychusGoldenShellshockTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TychusGoldenDemolitionTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TychusGoldenDemolitionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="TychusGoldenShellshockTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="TychusMasterAssassinQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="TychusMinigunInTheRhythmVisualToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,TychusGrenade,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,TychusGrenade,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,TychusGrenade,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,TychusGrenade,Cost.Charge.TimeUse 7">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,TychusGrenade,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,TychusGrenade,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,GrenadeTargetSearch,AreaArray[0].Radius 2.7">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,TychusGrenadeDamage,MultiplicativeModifierArray[TychusGrenadePower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,TychusGoldenBombletDamage,MultiplicativeModifierArray[TychusGrenadePower].Modifier 0.2">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_TychusStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TychusTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TychusBiggerBoom">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tychus_fraggrenade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusGrenadier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TychusGrenadeDamage,MultiplicativeModifierArray[TychusGrenadeCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,TychusGoldenBombletDamage,MultiplicativeModifierArray[TychusGrenadeCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TychusCombatTacticianBoon">
+            <String String="Assets/Textures/storm_ui_icon_tychus_minigun.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusGrenadier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TychusCombatTactician">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TychusRelentlessSoldierBoon">
+            <String String="Assets/Textures/storm_ui_icon_tychus_minigun.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusGrenadier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TychusRelentlessSoldier">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TychusShrapnel">
+            <String String="Assets/Textures/storm_ui_icon_tychus_fraggrenade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusGrenadier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TychusGoldenShrapnelApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TychusFlashBombs">
+            <String String="Assets/Textures/storm_ui_icon_tychus_fraggrenade.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusGrenadier">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TychusGoldenFlashApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TychusOdinPilot">
+            <String String="Assets/Textures/storm_ui_icon_tychus_commandeerodin.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="TychusHeroicAbilityCommandeerOdin">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="TychusHeroicAbilityDrakkenLaserDrill">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 TychusOdinMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 TychusGoldenPilotTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 TychusGoldenGrounded">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="TychusGoldenPilotTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="TychusMasterAssassinQuestToken 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="TychusMinigunInTheRhythmVisualToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,TychusOdinNoHealth,Cost.Cooldown.TimeUse 25">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Behavior,TychusOdin,Duration 1.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Weapon,TychusOdin,Range 1.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,TychusOdinWeaponDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,OdinWeaponSplashDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,TychusOdinAnnihilateDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,TychusOdinRagnarokMissilesTargetedDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,TychusOdinNuclearBlastDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_TychusStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_TychusTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="TychusBiggerGuns">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_tychus_commandeerodin.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusOdinPilot">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,TychusOdinWeaponDamage,MultiplicativeModifierArray[TychusOdinCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,OdinWeaponSplashDamage,MultiplicativeModifierArray[TychusOdinCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,TychusOdinAnnihilateDamage,MultiplicativeModifierArray[TychusOdinCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,TychusOdinRagnarokMissilesTargetedDamage,MultiplicativeModifierArray[TychusOdinCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,TychusOdinNuclearBlastDamage,MultiplicativeModifierArray[TychusOdinCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+        </Instances>
+        <Instances Id="TychusNeosteelCoatingBoon">
+            <String String="Assets/Textures/storm_ui_icon_tychus_minigun.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusOdinPilot">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TychusNeosteelCoating">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TychusBigRedButtonBoon">
+            <String String="Assets/Textures/storm_ui_icon_tychus_commandeerodin.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusOdinPilot">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="TychusMasteryOdinBigRedButton">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="TychusConcussionWave">
+            <String String="Assets/Textures/storm_ui_icon_tychus_commandeerodin.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusOdinPilot">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,TychusGoldenConcussionSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="TychusHaywire">
+            <String String="Assets/Textures/storm_ui_icon_tychus_commandeerodin.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Tychus">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="TychusOdinPilot">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 TychusGoldenHaywire">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
