@@ -386,6 +386,17 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     if (libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter") >= 100) {
         count = 3;
     }
+    // Raynor's Inspire attack speed reaches the Banshees too (and doubles their damage) while it lasts
+    for (i = 1; i <= 3; i += 1) {
+        banshee = libAffx_RaynorBanshee[i];
+        if (banshee != null && UnitIsAlive(banshee) && UnitHasBehavior2(hero, "RaynorInspireAttackSpeedSelf")) {
+            if (UnitHasBehavior2(banshee, "RaynorGoldenBansheeInspired")) {
+                UnitBehaviorSetDurationRemaining(banshee, "RaynorGoldenBansheeInspired", 0.5);
+            } else {
+                UnitBehaviorAdd(banshee, "RaynorGoldenBansheeInspired", banshee, 1);
+            }
+        }
+    }
     // Squadron stacks 1-40 changed the Banshees' Movement Speed: re-add their buff so the live ones get it
     speed = MinI(40, libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"));
     if (speed != libAffx_RaynorBansheeSpeed) {
