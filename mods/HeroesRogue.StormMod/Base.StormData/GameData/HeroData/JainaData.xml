@@ -190,6 +190,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="JainaTidecallerTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_jaina_summonwaterelemental.dds" />
   </CButton>
+  <!-- Frost Mage: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="JainaFrostboltPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Blizzard Caller: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="JainaBlizzardPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Elementalist: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="JainaElementalPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- Shatter (Rare, Frost Mage): Frostbolt hits on Heroes take 1 second off Cone of Cold -->

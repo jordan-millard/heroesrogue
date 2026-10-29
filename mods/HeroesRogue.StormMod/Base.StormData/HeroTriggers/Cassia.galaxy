@@ -19,12 +19,15 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaJavelinTime; // per enemy play
 int libAffx_CassiaJavelinAdded; // Valkyrie's Javelin: takedown stacks already applied to the catalog this game
 int libAffx_CassiaJavelinAdded2; // Valkyrie's Javelin: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_CassiaJavelinAdded3; // Valkyrie's Javelin: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_CassiaJavelinPastApplied; // Valkyrie's Javelin: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaFendTime; // per enemy player, last Warden of Arreat hit
 int libAffx_CassiaFendAdded; // Warden of Arreat: takedown stacks already applied to the catalog this game
 int libAffx_CassiaFendAdded2; // Warden of Arreat: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_CassiaFendAdded3; // Warden of Arreat: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_CassiaFendPastApplied; // Warden of Arreat: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_CassiaSkirmTime; // per enemy player, last Lightning Strike hit
 int libAffx_CassiaSkirmAdded; // Lightning Strike: takedown stacks already applied to the catalog this game
+int libAffx_CassiaSkirmPastApplied; // Lightning Strike: takedown quest stacks past the cap applied as damage this game
 fixed libAffx_CassiaJavelinCast; // last Lightning Fury throw (real or echo)
 fixed libAffx_CassiaJavelinEchoTime = -1.0; // when the script threw the last echo
 int libAffx_CassiaJavelinHeroes; // enemy Heroes hit by the current throw
@@ -67,6 +70,7 @@ void libAffx_CassiaSyncJavelin () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AmazonGoldenJavelinMarker")) {
         return;
     }
@@ -89,25 +93,17 @@ void libAffx_CassiaSyncJavelin () {
         libAffx_CatalogReferenceModify("Behavior,AmazonGoldenJavelinSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaJavelinAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CassiaJavelinAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryLightningDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryStaticElectricityLightningDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenStormSpearDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonFendChannelDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonHeroWeaponDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonHeroWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenSkirmishMaxHealthDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonAvoidanceSurgeOfLightDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBlindingLightDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonMartialLawDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonMartialLawBaseDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImprisoningLightDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImpaleDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBallLightningBounceToEnemyDamage", "MultiplicativeModifierArray[CassiaJavelinLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_CassiaJavelinPastApplied) {
+        libAffx_CassiaJavelinPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaJavelinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaJavelinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "CassiaJavelinPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "CassiaJavelinPastCapDamage")) {
+        UnitBehaviorAdd(hero, "CassiaJavelinPastCapDamage", hero, 1);
+    }
 }
 // AmazonGoldenFendMasteryTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% arc each; 81-100: 1% faster strikes each; then 2.5% all damage each
 void libAffx_CassiaSyncFend () {
@@ -115,6 +111,7 @@ void libAffx_CassiaSyncFend () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AmazonGoldenWardenMarker")) {
         return;
     }
@@ -137,25 +134,17 @@ void libAffx_CassiaSyncFend () {
         libAffx_CatalogReferenceModify("Effect,AmazonGoldenSteadfastPersistent,PeriodicPeriodArray[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaFendAdded3) * -0.00125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CassiaFendAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonFendChannelDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryLightningDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryStaticElectricityLightningDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenStormSpearDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonHeroWeaponDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonHeroWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenSkirmishMaxHealthDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonAvoidanceSurgeOfLightDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBlindingLightDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonMartialLawDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonMartialLawBaseDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImprisoningLightDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImpaleDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBallLightningBounceToEnemyDamage", "MultiplicativeModifierArray[CassiaFendLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_CassiaFendPastApplied) {
+        libAffx_CassiaFendPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaFendPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaFendPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "CassiaFendPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "CassiaFendPastCapDamage")) {
+        UnitBehaviorAdd(hero, "CassiaFendPastCapDamage", hero, 1);
+    }
 }
 // AmazonGoldenSkirmisherTokenCounter: stacks 1-40: 0.5% Attack Speed each (stacks of AmazonGoldenSkirmisherAttackSpeed, script); 41-80: 1% shorter Slows and Stuns each (script); 100: 1% maximum Health on Basic Attacks (script); then 1.5% all damage past 100
 void libAffx_CassiaSyncSkirm () {
@@ -163,6 +152,7 @@ void libAffx_CassiaSyncSkirm () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AmazonGoldenSkirmisherMarker")) {
         return;
     }
@@ -171,25 +161,17 @@ void libAffx_CassiaSyncSkirm () {
     if (wanted != libAffx_CassiaSkirmAdded) {
         libAffx_CassiaSkirmAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.015, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonHeroWeaponDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonHeroWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonChargedStrikesWeaponDamageTitansRevenge", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenKitingShotDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenSkirmishMaxHealthDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryLightningDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonLightningFuryStaticElectricityLightningDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonGoldenStormSpearDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonFendChannelDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonAvoidanceSurgeOfLightDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBlindingLightDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonMartialLawDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonMartialLawBaseDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImprisoningLightDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonValkyrieImpaleDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AmazonBallLightningBounceToEnemyDamage", "MultiplicativeModifierArray[CassiaSkirmLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.015 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_CassiaSkirmPastApplied) {
+        libAffx_CassiaSkirmPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaSkirmPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.015);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaSkirmPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.015);
+        UnitBehaviorRemove(hero, "CassiaSkirmPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "CassiaSkirmPastCapDamage")) {
+        UnitBehaviorAdd(hero, "CassiaSkirmPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_CassiaSync_Func (bool testConds, bool runActions) {
     libAffx_CassiaSyncJavelin();

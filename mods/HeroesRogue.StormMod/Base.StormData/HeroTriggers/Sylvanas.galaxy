@@ -11,12 +11,15 @@ const fixed libAffx_SylvanasPastCapDamagePerStack = 0.01;
 bool libAffx_SylvanasStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_SylvanasFireTime; // per enemy player, last Dark Ranger hit
 int libAffx_SylvanasFireAdded; // Dark Ranger: takedown stacks already applied to the catalog this game
+int libAffx_SylvanasFirePastApplied; // Dark Ranger: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_SylvanasDaggerTime; // per enemy player, last Shadow Queen hit
 int libAffx_SylvanasDaggerAdded; // Shadow Queen: takedown stacks already applied to the catalog this game
 int libAffx_SylvanasDaggerAdded2; // Shadow Queen: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_SylvanasDaggerPastApplied; // Shadow Queen: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_SylvanasWaveTime; // per enemy player, last Banshee hit
 int libAffx_SylvanasWaveAdded; // Banshee: takedown stacks already applied to the catalog this game
 int libAffx_SylvanasWaveAdded2; // Banshee: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_SylvanasWavePastApplied; // Banshee: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_SylvanasHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -47,6 +50,7 @@ void libAffx_SylvanasSyncFire () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "SylvanasFireMarker")) {
         return;
     }
@@ -56,12 +60,17 @@ void libAffx_SylvanasSyncFire () {
         libAffx_CatalogReferenceModify("Abil,SylvanasWitheringFire,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasFireAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_SylvanasFireAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWitheringFireDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWitheringFireDamageRemorseless", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDeafeningBlastDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowActivateDamage", "MultiplicativeModifierArray[SylvanasFireLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_SylvanasFirePastApplied) {
+        libAffx_SylvanasFirePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasFirePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasFirePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "SylvanasFirePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "SylvanasFirePastCapDamage")) {
+        UnitBehaviorAdd(hero, "SylvanasFirePastCapDamage", hero, 1);
+    }
 }
 // SylvanasPlagueTokenCounter: stacks 1-40: 1% of the 11 second cooldown each; 41-80: 1% longer damage over time each; then 3% damage each, Heroics too
 void libAffx_SylvanasSyncDagger () {
@@ -69,6 +78,7 @@ void libAffx_SylvanasSyncDagger () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "SylvanasDaggerMarker")) {
         return;
     }
@@ -85,12 +95,17 @@ void libAffx_SylvanasSyncDagger () {
         libAffx_CatalogReferenceModify("Behavior,SylvanasShadowDaggerDummyBuffSpreadBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasDaggerAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_SylvanasDaggerAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasShadowDaggerInitialDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasShadowDaggerDoTDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDeafeningBlastDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowActivateDamage", "MultiplicativeModifierArray[SylvanasDaggerLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_SylvanasDaggerPastApplied) {
+        libAffx_SylvanasDaggerPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDaggerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDaggerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "SylvanasDaggerPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "SylvanasDaggerPastCapDamage")) {
+        UnitBehaviorAdd(hero, "SylvanasDaggerPastCapDamage", hero, 1);
+    }
 }
 // SylvanasHauntingTokenCounter: stacks 1-40: 1% of the 11 second cooldown each; 41-80: 1% of the 75 Mana cost each; then 3% damage each, Heroics too
 void libAffx_SylvanasSyncWave () {
@@ -98,6 +113,7 @@ void libAffx_SylvanasSyncWave () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "SylvanasWaveMarker")) {
         return;
     }
@@ -113,11 +129,17 @@ void libAffx_SylvanasSyncWave () {
         libAffx_CatalogReferenceModify("Abil,SylvanasHauntingWave,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasWaveAdded2) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_SylvanasWaveAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasHauntingWaveDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowDeafeningBlastDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "SylvanasWailingArrowActivateDamage", "MultiplicativeModifierArray[SylvanasWaveLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_SylvanasWavePastApplied) {
+        libAffx_SylvanasWavePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasWavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasWavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "SylvanasWavePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "SylvanasWavePastCapDamage")) {
+        UnitBehaviorAdd(hero, "SylvanasWavePastCapDamage", hero, 1);
+    }
 }
 bool libAffx_SylvanasSync_Func (bool testConds, bool runActions) {
     libAffx_SylvanasSyncFire();

@@ -18,10 +18,13 @@ const fixed libAffx_KaelthasPastCapDamagePerStack = 0.01;
 bool libAffx_KaelthasStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasFlamestrikeTime; // per enemy player, last Sunfire hit
 int libAffx_KaelthasFlamestrikeAdded; // Sunfire: takedown stacks already applied to the catalog this game
+int libAffx_KaelthasFlamestrikePastApplied; // Sunfire: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasBombTime; // per enemy player, last Bombardier hit
 int libAffx_KaelthasBombAdded; // Bombardier: charges added by the takedown quest this game
+int libAffx_KaelthasBombPastApplied; // Bombardier: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KaelthasPyroTime; // per enemy player, last Pyromancer hit
 int libAffx_KaelthasPyroAdded; // Pyromancer: takedown stacks already applied to the catalog this game
+int libAffx_KaelthasPyroPastApplied; // Pyromancer: takedown quest stacks past the cap applied as damage this game
 const fixed libAffx_KaelthasSunfireRingDelay = 0.35; // between the Verdant Spheres Flamestrike and each ring
 bool libAffx_KaelthasSunfireRings; // the ring visuals upgrade was given
 int libAffx_KaelthasSunwellScale; // Sunwell scale upgrade levels given this game
@@ -59,6 +62,7 @@ void libAffx_KaelthasSyncFlamestrike () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker")) {
         return;
     }
@@ -77,8 +81,17 @@ void libAffx_KaelthasSyncFlamestrike () {
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresIgniteSearchAreaUnnamed,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasFlamestrikeAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KaelthasPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasFlamestrikeDamage", "MultiplicativeModifierArray[KaelthasFlamestrikeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 30: libAffx_KaelthasPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 30);
+    if (power != libAffx_KaelthasFlamestrikePastApplied) {
+        libAffx_KaelthasFlamestrikePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasFlamestrikePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasFlamestrikePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "KaelthasFlamestrikePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "KaelthasFlamestrikePastCapDamage")) {
+        UnitBehaviorAdd(hero, "KaelthasFlamestrikePastCapDamage", hero, 1);
+    }
 }
 // KaelthasChainDetonationTokenCounter: 1 more Living Bomb charge per 15 stacks, up to 2, then damage
 void libAffx_KaelthasSyncBomb () {
@@ -86,6 +99,7 @@ void libAffx_KaelthasSyncBomb () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "KaelthasBombMarker")) {
         return;
     }
@@ -95,10 +109,17 @@ void libAffx_KaelthasSyncBomb () {
         libAffx_CatalogReferenceModify("Abil,KaelthasLivingBomb,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_KaelthasBombAdded), c_upgradeOperationAdd);
         libAffx_KaelthasBombAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KaelthasPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasLivingBombImpactDamage", "MultiplicativeModifierArray[KaelthasBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasLivingBombDoTDamage", "MultiplicativeModifierArray[KaelthasBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasLivingBombExplosionDamage", "MultiplicativeModifierArray[KaelthasBombLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 30: libAffx_KaelthasPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 30);
+    if (power != libAffx_KaelthasBombPastApplied) {
+        libAffx_KaelthasBombPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasBombPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasBombPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "KaelthasBombPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "KaelthasBombPastCapDamage")) {
+        UnitBehaviorAdd(hero, "KaelthasBombPastCapDamage", hero, 1);
+    }
 }
 // KaelthasPhoenixFireTokenCounter: 1% of the 20 second cooldown per stack, up to 40%, then damage
 void libAffx_KaelthasSyncPyro () {
@@ -106,6 +127,7 @@ void libAffx_KaelthasSyncPyro () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "KaelthasPyroMarker")) {
         return;
     }
@@ -115,9 +137,17 @@ void libAffx_KaelthasSyncPyro () {
         libAffx_CatalogReferenceModify("Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasPyroAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasPyroAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_KaelthasPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasPyroblastDamage", "MultiplicativeModifierArray[KaelthasPyroLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KaelthasPyroblastSplashDamage", "MultiplicativeModifierArray[KaelthasPyroLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_KaelthasPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_KaelthasPyroPastApplied) {
+        libAffx_KaelthasPyroPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasPyroPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasPyroPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "KaelthasPyroPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "KaelthasPyroPastCapDamage")) {
+        UnitBehaviorAdd(hero, "KaelthasPyroPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_KaelthasSync_Func (bool testConds, bool runActions) {
     libAffx_KaelthasSyncFlamestrike();

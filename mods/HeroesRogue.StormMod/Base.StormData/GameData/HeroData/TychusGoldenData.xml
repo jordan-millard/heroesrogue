@@ -20,7 +20,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Minigun Maniac ===== -->
-  <!-- Overkill keeps its cooldown, costs half Mana and deals 20% more damage; gain Spray n Pray and Can Do This All Day. Barrage quest (50% kept): 0.2% Overkill damage per Overkill hit on an enemy Hero, added in batches of 10. Carnage quest: takedowns within 6 seconds of a hit; stacks 1-40 make Overkill recharge 1% faster each, 41-80 add 0.5% range and arc each, 81-100 add 1% Movement Speed while channeling each, at 100 Overkill also fires at a second enemy Hero in range for 50% (script), then 1% Overkill damage each. -->
+  <!-- Overkill keeps its cooldown, costs half Mana and deals 20% more damage; gain Spray n Pray and Can Do This All Day. Barrage quest (50% kept): 0.2% Overkill damage per Overkill hit on an enemy Hero, added in batches of 10. Carnage quest: takedowns within 6 seconds of a hit; stacks 1-40 add 0.25% life leech against Heroes each (10%), 41-80 add 0.5% range and arc each, 81-100 add 1% Movement Speed while channeling each, at 100 Overkill also fires at a second enemy Hero in range for 50% (script), then 1% Overkill damage each. -->
   <CBehaviorTokenCounter id="TychusGoldenBarrageTokenCounter" parent="StormQuestToken">
     <Face value="TychusGoldenBarrageTokenCounter" />
     <Max value="100000" />
@@ -41,18 +41,21 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="TychusMinigunCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusMinigunHit" Accumulator="TychusGoldenBarrageTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="TychusMinigunLegacy" Modifier="0" />
+    <LeechValidator index="Life" value="TargetIsHero" />
   </CEffectDamage>
   <CEffectDamage id="TychusOverkillSecondaryTargetDamage">
     <MultiplicativeModifierArray index="TychusMinigunPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusMinigunCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusMinigunHit" Accumulator="TychusGoldenBarrageTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="TychusMinigunLegacy" Modifier="0" />
+    <LeechValidator index="Life" value="TargetIsHero" />
   </CEffectDamage>
   <CEffectDamage id="TychusGoldenOverkillSecondDamage">
     <MultiplicativeModifierArray index="TychusMinigunPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusMinigunCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusMinigunHit" Accumulator="TychusGoldenBarrageTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="TychusMinigunLegacy" Modifier="0" />
+    <LeechValidator index="Life" value="TargetIsHero" />
   </CEffectDamage>
   <CButton id="TychusGoldenBarrageTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tychus_overkill.dds" />
@@ -156,6 +159,20 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="TychusGoldenPilotTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tychus_commandeerodin.dds" />
   </CButton>
+  <!-- Minigun Maniac: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="TychusMinigunPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Grenadier: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="TychusGrenadePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- shared: weakened (30% less damage dealt for 3 seconds), used by Suppressing Fire and Shrapnel -->

@@ -36,6 +36,8 @@ int libAffx_genjiExtraShuriken; // extra Shuriken per throw turned on by Thousan
 fixed libAffx_genjiDeflectAdded; // Deflect seconds added by Thousand Cuts this game
 fixed libAffx_genjiSwiftCooldownAdded; // Swift Strike cooldown taken off by Shimada Legacy this game
 fixed libAffx_genjiDragonCooldownAdded; // Dragonblade cooldown taken off by Dragon Soul this game
+int libAffx_genjiSwiftPastApplied; // Shimada Legacy stacks past the cap applied as damage this game
+int libAffx_genjiDragonPastApplied; // Dragon Soul stacks past the cap applied as damage this game
 fixed libAffx_genjiLastEcho = -1.0; // Thousand Blades: when the last echo was thrown
 fixed libAffx_genjiLastExecute = -10.0; // Shadow Execution: when Swift Strike was last reset
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_genjiShurikenTime; // per enemy player, last Shuriken hit
@@ -97,12 +99,12 @@ void libAffx_GenjiSyncShuriken () {
         libAffx_genjiDeflectAdded = deflect;
     }
 }
-// Shimada Legacy: Swift Strike's cooldown, then damage past the cap
+// Shimada Legacy: Swift Strike's cooldown, then (past the cap) all of Genji's damage
 void libAffx_GenjiSyncSwift () {
     unit hero = libAffx_GenjiHero();
     int stacks;
     fixed wanted;
-    string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "GenjiBladeMarker")) {
         return;
     }
@@ -112,17 +114,24 @@ void libAffx_GenjiSyncSwift () {
         libAffx_CatalogReferenceModify("Abil,GenjiSwiftStrike,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(libAffx_genjiSwiftCooldownAdded - wanted, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_genjiSwiftCooldownAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - libAffx_genjiSwiftCooldownMaxStacks)) * libAffx_genjiPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeStrikeAtTheHeartDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiSwiftStrikeFinalCutDamage", "MultiplicativeModifierArray[GenjiShimadaLegacy].Modifier", libAffx_player, bonus);
+    power = MaxI(0, stacks - libAffx_genjiSwiftCooldownMaxStacks);
+    if (power != libAffx_genjiSwiftPastApplied) {
+        libAffx_genjiSwiftPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenShimadaPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_genjiPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenShimadaPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_genjiPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "GenjiGoldenShimadaPastCap", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GenjiGoldenShimadaPastCap")) {
+        UnitBehaviorAdd(hero, "GenjiGoldenShimadaPastCap", hero, 1);
+    }
 }
-// Dragon Soul: Unleash's cooldown, then damage past the cap
+// Dragon Soul: Unleash's cooldown, then (past the cap) all of Genji's damage
 void libAffx_GenjiSyncDragon () {
     unit hero = libAffx_GenjiHero();
     int stacks;
     fixed wanted;
     string delta;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "GenjiDragonMarker")) {
         return;
     }
@@ -133,8 +142,16 @@ void libAffx_GenjiSyncDragon () {
         libAffx_CatalogReferenceModify("Abil,GenjiDragonMasterUnleash,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
         libAffx_genjiDragonCooldownAdded = wanted;
     }
-    CatalogFieldValueSet(c_gameCatalogEffect, "GenjiDragonbladeAttackDamage", "MultiplicativeModifierArray[GenjiDragonSoul].Modifier", libAffx_player,
-        FixedToString(IntToFixed(MaxI(0, stacks - libAffx_genjiDragonCooldownMaxStacks)) * libAffx_genjiPastCapDamagePerStack, c_fixedPrecisionAny));
+    power = MaxI(0, stacks - libAffx_genjiDragonCooldownMaxStacks);
+    if (power != libAffx_genjiDragonPastApplied) {
+        libAffx_genjiDragonPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenDragonPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_genjiPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenDragonPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_genjiPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "GenjiGoldenDragonPastCap", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GenjiGoldenDragonPastCap")) {
+        UnitBehaviorAdd(hero, "GenjiGoldenDragonPastCap", hero, 1);
+    }
 }
 // Dragon Master: puts the permanent Dragonblade form back when it's missing (after a respawn)
 bool libAffx_GenjiDragonForm_Func (bool testConds, bool runActions) {

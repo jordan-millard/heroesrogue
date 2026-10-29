@@ -164,6 +164,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="ChromieGoldenTimelineTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Chromie_Looper.dds" />
   </CButton>
+  <!-- Sand Sniper: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ChromieSniperPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bronze Breath: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ChromieBreathPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Chronomancer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ChromieChronoPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="ChromieDragonsBreathDamage">

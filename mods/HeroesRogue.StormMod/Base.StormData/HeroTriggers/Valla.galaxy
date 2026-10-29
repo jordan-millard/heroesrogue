@@ -16,10 +16,13 @@ const fixed libAffx_VallaPastCapDamagePerStack = 0.01;
 bool libAffx_VallaStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaHungerTime; // per enemy player, last Hungering Hunter hit
 int libAffx_VallaHungerAdded; // Hungering Hunter: charges added by the takedown quest this game
+int libAffx_VallaHungerPastApplied; // Hungering Hunter: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaVolleyTime; // per enemy player, last Multishot Marksman hit
 int libAffx_VallaVolleyAdded; // Multishot Marksman: takedown stacks already applied to the catalog this game
+int libAffx_VallaVolleyPastApplied; // Multishot Marksman: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_VallaStrafeTime; // per enemy player, last Strafe Queen hit
 int libAffx_VallaStrafeAdded; // Strafe Queen: takedown stacks already applied to the catalog this game
+int libAffx_VallaStrafePastApplied; // Strafe Queen: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_VallaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -50,6 +53,7 @@ void libAffx_VallaSyncHunger () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "VallaHungerMarker")) {
         return;
     }
@@ -59,17 +63,17 @@ void libAffx_VallaSyncHunger () {
         libAffx_CatalogReferenceModify("Abil,DemonHunterHungeringArrow,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_VallaHungerAdded), c_upgradeOperationAdd);
         libAffx_VallaHungerAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage1", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage2", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage3", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage4", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "HungeringArrowDamage5", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage1", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage2", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage3", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage4", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterHungeringArrowHeroDamage5", "MultiplicativeModifierArray[VallaHungerLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 30: libAffx_VallaPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 30);
+    if (power != libAffx_VallaHungerPastApplied) {
+        libAffx_VallaHungerPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaHungerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaHungerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "VallaHungerPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "VallaHungerPastCapDamage")) {
+        UnitBehaviorAdd(hero, "VallaHungerPastCapDamage", hero, 1);
+    }
 }
 // VallaBountyTokenCounter: 1% of the 8 second cooldown per stack, up to 30%, then damage
 void libAffx_VallaSyncVolley () {
@@ -77,6 +81,7 @@ void libAffx_VallaSyncVolley () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "VallaVolleyMarker")) {
         return;
     }
@@ -86,9 +91,17 @@ void libAffx_VallaSyncVolley () {
         libAffx_CatalogReferenceModify("Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_VallaVolleyAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_VallaVolleyAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "MultishotDamage", "MultiplicativeModifierArray[VallaVolleyLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "MultishotArsenalGrenadeDamage", "MultiplicativeModifierArray[VallaVolleyLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 30: libAffx_VallaPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 30);
+    if (power != libAffx_VallaVolleyPastApplied) {
+        libAffx_VallaVolleyPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaVolleyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaVolleyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "VallaVolleyPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "VallaVolleyPastCapDamage")) {
+        UnitBehaviorAdd(hero, "VallaVolleyPastCapDamage", hero, 1);
+    }
 }
 // VallaEndlessHuntTokenCounter: 0.1 seconds of Strafe per stack, up to 2 seconds, then damage
 void libAffx_VallaSyncStrafe () {
@@ -96,6 +109,7 @@ void libAffx_VallaSyncStrafe () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "VallaStrafeMarker")) {
         return;
     }
@@ -105,9 +119,17 @@ void libAffx_VallaSyncStrafe () {
         libAffx_CatalogReferenceModify("Behavior,Strafe,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_VallaStrafeAdded) * 0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_VallaStrafeAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 20)) * libAffx_VallaPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterStrafeBasicWeaponDamage", "MultiplicativeModifierArray[VallaStrafeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DemonHunterStrafeDeathSiphonDamage", "MultiplicativeModifierArray[VallaStrafeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 20: libAffx_VallaPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 20);
+    if (power != libAffx_VallaStrafePastApplied) {
+        libAffx_VallaStrafePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaStrafePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaStrafePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "VallaStrafePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "VallaStrafePastCapDamage")) {
+        UnitBehaviorAdd(hero, "VallaStrafePastCapDamage", hero, 1);
+    }
 }
 bool libAffx_VallaSync_Func (bool testConds, bool runActions) {
     libAffx_VallaSyncHunger();

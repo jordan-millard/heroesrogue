@@ -186,6 +186,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="TracerOverchargeTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tracer_pulsebomb.dds" />
   </CButton>
+  <!-- Gunslinger: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="TracerGunPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Brawler: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="TracerMeleePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bomber: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="TracerBombPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- Bomber: Pulse Bomb hits on enemy Heroes add a Shield of 50% of maximum Health (up to 100%) that lasts until broken.

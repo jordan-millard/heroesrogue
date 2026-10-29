@@ -125,6 +125,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="OrpheaNightmareTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_orphea_e.dds" />
   </CButton>
+  <!-- Shadow Dancer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="OrpheaWaltzPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Abyssal Maw: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="OrpheaChompPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Dreadbringer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="OrpheaDreadPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="OrpheaEternalFeastDamage">

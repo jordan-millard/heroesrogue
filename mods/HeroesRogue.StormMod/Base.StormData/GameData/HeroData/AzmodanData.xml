@@ -155,6 +155,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="AzmodanGoldenLegionTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_azmodan_generalofhell.dds" />
   </CButton>
+  <!-- Lord of Annihilation: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="AzmodanGlobePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Lord of Sin: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="AzmodanSinPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- General of the Burning Hells: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="AzmodanGenPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="AzmodanAllShallBurnDamage">

@@ -12,12 +12,15 @@ const fixed libAffx_GuldanPastCapDamagePerStack = 0.01;
 bool libAffx_GuldanStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanFelTime; // per enemy player, last Fel Lord hit
 int libAffx_GuldanFelAdded; // Fel Lord: takedown stacks already applied to the catalog this game
+int libAffx_GuldanFelPastApplied; // Fel Lord: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanDrainTime; // per enemy player, last Soul Harvester hit
 int libAffx_GuldanDrainAdded; // Soul Harvester: takedown stacks already applied to the catalog this game
 int libAffx_GuldanDrainAdded2; // Soul Harvester: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_GuldanDrainPastApplied; // Soul Harvester: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_GuldanCorruptionTime; // per enemy player, last Corruptor hit
 int libAffx_GuldanCorruptionAdded; // Corruptor: takedown stacks already applied to the catalog this game
 int libAffx_GuldanCorruptionAdded2; // Corruptor: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_GuldanCorruptionPastApplied; // Corruptor: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_GuldanHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -48,6 +51,7 @@ void libAffx_GuldanSyncFel () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "GuldanFelMarker")) {
         return;
     }
@@ -57,10 +61,17 @@ void libAffx_GuldanSyncFel () {
         libAffx_CatalogReferenceModify("Abil,GuldanFelFlame,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanFelAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanFelFlameDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanHorrifyDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanRainOfDestructionDamage", "MultiplicativeModifierArray[GuldanFelLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_GuldanFelPastApplied) {
+        libAffx_GuldanFelPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanFelPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanFelPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "GuldanFelPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GuldanFelPastCapDamage")) {
+        UnitBehaviorAdd(hero, "GuldanFelPastCapDamage", hero, 1);
+    }
 }
 // GuldanHarvestTokenCounter: stacks 1-40: 1% of the 10 second cooldown each; 41-80: 2% more Drain Life healing each; then 3% damage each, Heroics too
 void libAffx_GuldanSyncDrain () {
@@ -68,6 +79,7 @@ void libAffx_GuldanSyncDrain () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "GuldanDrainMarker")) {
         return;
     }
@@ -83,11 +95,17 @@ void libAffx_GuldanSyncDrain () {
         libAffx_CatalogReferenceModify("Effect,GuldanDrainLifeCreateHealer,MultiplicativeModifierArray[GuldanHarvestStage2].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanDrainAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanDrainAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanDrainLifeDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanDrainLifeCurseOfExhaustionTalentDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanHorrifyDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanRainOfDestructionDamage", "MultiplicativeModifierArray[GuldanDrainLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_GuldanDrainPastApplied) {
+        libAffx_GuldanDrainPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanDrainPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanDrainPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "GuldanDrainPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GuldanDrainPastCapDamage")) {
+        UnitBehaviorAdd(hero, "GuldanDrainPastCapDamage", hero, 1);
+    }
 }
 // GuldanAfflictionTokenCounter: stacks 1-40: 1% of the 14 second cooldown each; 41-80: 1% larger strikes each; then 3% damage each, Heroics too
 void libAffx_GuldanSyncCorruption () {
@@ -95,6 +113,7 @@ void libAffx_GuldanSyncCorruption () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "GuldanCorruptionMarker")) {
         return;
     }
@@ -112,12 +131,17 @@ void libAffx_GuldanSyncCorruption () {
         libAffx_CatalogReferenceModify("Effect,GuldanCorruptionEchoedCorruptionSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanCorruptionAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanCorruptionAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanCorruptionDoTDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanCorruptionRuinousAfflictionDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanCorruptionRuinousAfflictionThreeHitDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanHorrifyDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "GuldanRainOfDestructionDamage", "MultiplicativeModifierArray[GuldanCorruptionLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_GuldanCorruptionPastApplied) {
+        libAffx_GuldanCorruptionPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptionPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptionPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "GuldanCorruptionPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GuldanCorruptionPastCapDamage")) {
+        UnitBehaviorAdd(hero, "GuldanCorruptionPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_GuldanSync_Func (bool testConds, bool runActions) {
     libAffx_GuldanSyncFel();

@@ -19,13 +19,16 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ChromieSniperTime; // per enemy play
 int libAffx_ChromieSniperAdded; // Sand Sniper: takedown stacks already applied to the catalog this game
 int libAffx_ChromieSniperAdded2; // Sand Sniper: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_ChromieSniperAdded3; // Sand Sniper: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_ChromieSniperPastApplied; // Sand Sniper: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ChromieBreathTime; // per enemy player, last Bronze Breath hit
 int libAffx_ChromieBreathAdded; // Bronze Breath: takedown stacks already applied to the catalog this game
 int libAffx_ChromieBreathAdded2; // Bronze Breath: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_ChromieBreathAdded3; // Bronze Breath: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_ChromieBreathPastApplied; // Bronze Breath: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ChromieChronoTime; // per enemy player, last Chronomancer hit
 int libAffx_ChromieChronoAdded; // Chronomancer: takedown stacks already applied to the catalog this game
 int libAffx_ChromieChronoAdded2; // Chronomancer: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ChromieChronoPastApplied; // Chronomancer: takedown quest stacks past the cap applied as damage this game
 fixed libAffx_ChromieSandEchoTime = -1.0; // when the script launched the last echo Sand Blast
 fixed libAffx_ChromieBreathEchoTime = -1.0; // when the script ran the last echo blast of Dragon's Breath
 int libAffx_ChromieRangeAdded; // Chronomancer: Sand Blast range added for Momentum stacks
@@ -63,6 +66,7 @@ void libAffx_ChromieSyncSniper () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ChromieGoldenSniperMarker")) {
         return;
     }
@@ -84,14 +88,17 @@ void libAffx_ChromieSyncSniper () {
         libAffx_CatalogReferenceModify("Effect,ChromieSandBlastMissileScan,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieSniperAdded3) * 0.0125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieSniperAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastPastAndFutureMeDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieHeroWeaponDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandEchoWeaponDamage", "MultiplicativeModifierArray[ChromieSniperLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ChromieSniperPastApplied) {
+        libAffx_ChromieSniperPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieSniperPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieSniperPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "ChromieSniperPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ChromieSniperPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ChromieSniperPastCapDamage", hero, 1);
+    }
 }
 // ChromieGoldenDragonflightTokenCounter: stacks 1-40: 1% of the 14 second recharge each; 41-80: 1% of the delay each; 81-100: 1% area each; then 2.5% all damage each
 void libAffx_ChromieSyncBreath () {
@@ -99,6 +106,7 @@ void libAffx_ChromieSyncBreath () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ChromieGoldenBreathMarker")) {
         return;
     }
@@ -124,14 +132,17 @@ void libAffx_ChromieSyncBreath () {
         libAffx_CatalogReferenceModify("Actor,ChromieDragonsBreathEnemyWarningSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieBreathAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastPastAndFutureMeDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieHeroWeaponDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandEchoWeaponDamage", "MultiplicativeModifierArray[ChromieBreathLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ChromieBreathPastApplied) {
+        libAffx_ChromieBreathPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieBreathPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieBreathPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "ChromieBreathPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ChromieBreathPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ChromieBreathPastCapDamage", hero, 1);
+    }
 }
 // ChromieGoldenTimelineTokenCounter: stacks 1-40: the Shield, 0.5% of maximum Health each (script); 41-80: 1% lower Mana costs each; 100: Momentum halves instead of resetting (script); then 2.5% all damage each
 void libAffx_ChromieSyncChrono () {
@@ -139,6 +150,7 @@ void libAffx_ChromieSyncChrono () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ChromieGoldenChronoMarker")) {
         return;
     }
@@ -155,14 +167,17 @@ void libAffx_ChromieSyncChrono () {
         libAffx_CatalogReferenceModify("Abil,ChromieTemporalLoop,Cost[0].Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.6, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieChronoAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandBlastPastAndFutureMeDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenShardDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieDragonsBreathDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieGoldenTimeBombDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieHeroWeaponDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ChromieSandEchoWeaponDamage", "MultiplicativeModifierArray[ChromieChronoLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ChromieChronoPastApplied) {
+        libAffx_ChromieChronoPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieChronoPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieChronoPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "ChromieChronoPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ChromieChronoPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ChromieChronoPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_ChromieSync_Func (bool testConds, bool runActions) {
     libAffx_ChromieSyncSniper();

@@ -13,12 +13,15 @@ bool libAffx_OrpheaStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_OrpheaWaltzTime; // per enemy player, last Shadow Dancer hit
 int libAffx_OrpheaWaltzAdded; // Shadow Dancer: takedown stacks already applied to the catalog this game
 int libAffx_OrpheaWaltzAdded2; // Shadow Dancer: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_OrpheaWaltzPastApplied; // Shadow Dancer: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_OrpheaChompTime; // per enemy player, last Abyssal Maw hit
 int libAffx_OrpheaChompAdded; // Abyssal Maw: takedown stacks already applied to the catalog this game
 int libAffx_OrpheaChompAdded2; // Abyssal Maw: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_OrpheaChompPastApplied; // Abyssal Maw: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_OrpheaDreadTime; // per enemy player, last Dreadbringer hit
 int libAffx_OrpheaDreadAdded; // Dreadbringer: takedown stacks already applied to the catalog this game
 int libAffx_OrpheaDreadAdded2; // Dreadbringer: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_OrpheaDreadPastApplied; // Dreadbringer: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_OrpheaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -49,6 +52,7 @@ void libAffx_OrpheaSyncWaltz () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "OrpheaWaltzMarker")) {
         return;
     }
@@ -64,13 +68,17 @@ void libAffx_OrpheaSyncWaltz () {
         libAffx_CatalogReferenceModify("Abil,OrpheaShadowWaltz,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaWaltzAdded2) * -0.05, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaWaltzAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaShadowWaltzDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEnPointeDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaBondOfAnguishDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaWaltzLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_OrpheaWaltzPastApplied) {
+        libAffx_OrpheaWaltzPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "OrpheaWaltzPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "OrpheaWaltzPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "OrpheaWaltzPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "OrpheaWaltzPastCapDamage")) {
+        UnitBehaviorAdd(hero, "OrpheaWaltzPastCapDamage", hero, 1);
+    }
 }
 // OrpheaFeastTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80: 1% of the 0.625 second cast time each; then 3% damage each, Heroics too
 void libAffx_OrpheaSyncChomp () {
@@ -78,6 +86,7 @@ void libAffx_OrpheaSyncChomp () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "OrpheaChompMarker")) {
         return;
     }
@@ -93,11 +102,17 @@ void libAffx_OrpheaSyncChomp () {
         libAffx_CatalogReferenceModify("Abil,OrpheaChomp,CastIntroTime", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaChompAdded2) * -0.00625, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaChompAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaChompDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaChompLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_OrpheaChompPastApplied) {
+        libAffx_OrpheaChompPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "OrpheaChompPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "OrpheaChompPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "OrpheaChompPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "OrpheaChompPastCapDamage")) {
+        UnitBehaviorAdd(hero, "OrpheaChompPastCapDamage", hero, 1);
+    }
 }
 // OrpheaNightmareTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80: 1% of the 2.5 eruption radius each; then 3% damage each, Heroics too
 void libAffx_OrpheaSyncDread () {
@@ -105,6 +120,7 @@ void libAffx_OrpheaSyncDread () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "OrpheaDreadMarker")) {
         return;
     }
@@ -120,12 +136,17 @@ void libAffx_OrpheaSyncDread () {
         libAffx_CatalogReferenceModify("Effect,OrpheaDreadFinalSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_OrpheaDreadAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_OrpheaDreadAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaDreadLineDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaDreadFinalDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaEternalFeastInnerDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "OrpheaCrushingJawsDamage", "MultiplicativeModifierArray[OrpheaDreadLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_OrpheaDreadPastApplied) {
+        libAffx_OrpheaDreadPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "OrpheaDreadPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "OrpheaDreadPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "OrpheaDreadPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "OrpheaDreadPastCapDamage")) {
+        UnitBehaviorAdd(hero, "OrpheaDreadPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_OrpheaSync_Func (bool testConds, bool runActions) {
     libAffx_OrpheaSyncWaltz();

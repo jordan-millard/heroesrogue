@@ -16,10 +16,13 @@ const fixed libAffx_TracerPastCapDamagePerStack = 0.01;
 bool libAffx_TracerStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TracerGunTime; // per enemy player, last Gunslinger hit
 int libAffx_TracerGunAdded; // Gunslinger: takedown stacks already applied to the catalog this game
+int libAffx_TracerGunPastApplied; // Gunslinger: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TracerMeleeTime; // per enemy player, last Brawler hit
 int libAffx_TracerMeleeAdded; // Brawler: takedown stacks already applied to the catalog this game
+int libAffx_TracerMeleePastApplied; // Brawler: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TracerBombTime; // per enemy player, last Bomber hit
 int libAffx_TracerBombAdded; // Bomber: takedown stacks already applied to the catalog this game
+int libAffx_TracerBombPastApplied; // Bomber: takedown quest stacks past the cap applied as damage this game
 const int libAffx_TracerMagazineMax = 10; // Bigger Magazine: most ammo the quest adds
 int libAffx_TracerMagazine; // Bigger Magazine: ammo given to TracerBigMagazineCarry this game
 fixed libAffx_TracerPulseUsed = -1.0; // Pulse Bomb charge used at the last check (-1: not checked yet)
@@ -59,6 +62,7 @@ void libAffx_TracerSyncGun () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "TracerGunslingerMarker")) {
         return;
     }
@@ -67,13 +71,17 @@ void libAffx_TracerSyncGun () {
     if (wanted != libAffx_TracerGunAdded) {
         libAffx_TracerGunAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 10)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponDamage", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponDamageHero", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponRicochetDamage", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponRicochetDamageHero", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponFocusFireMasteryDamage", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerHeroWeaponFocusFireMasteryDamageHero", "MultiplicativeModifierArray[TracerGunLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 10: libAffx_TracerPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 10);
+    if (power != libAffx_TracerGunPastApplied) {
+        libAffx_TracerGunPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerGunPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerGunPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "TracerGunPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "TracerGunPastCapDamage")) {
+        UnitBehaviorAdd(hero, "TracerGunPastCapDamage", hero, 1);
+    }
 }
 // TracerBrawlTokenCounter: 1% of the 7 second recharge per stack, up to 40%, then damage
 void libAffx_TracerSyncMelee () {
@@ -81,6 +89,7 @@ void libAffx_TracerSyncMelee () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "TracerBrawlerMarker")) {
         return;
     }
@@ -90,8 +99,17 @@ void libAffx_TracerSyncMelee () {
         libAffx_CatalogReferenceModify("Abil,TracerMelee,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TracerMeleeAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TracerMeleeAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_TracerPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerMeleeDamage", "MultiplicativeModifierArray[TracerMeleeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_TracerPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_TracerMeleePastApplied) {
+        libAffx_TracerMeleePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerMeleePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerMeleePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "TracerMeleePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "TracerMeleePastCapDamage")) {
+        UnitBehaviorAdd(hero, "TracerMeleePastCapDamage", hero, 1);
+    }
 }
 // TracerOverchargeTokenCounter: stacks 1-40: Pulse Bomb charges 1% faster each (libAffx_TracerPulseRate); 41-80: explosions 1% larger each (libAffx_TracerBlastSync_Func); then 3% damage each
 void libAffx_TracerSyncBomb () {
@@ -99,6 +117,7 @@ void libAffx_TracerSyncBomb () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "TracerBomberMarker")) {
         return;
     }
@@ -107,15 +126,17 @@ void libAffx_TracerSyncBomb () {
     if (wanted != libAffx_TracerBombAdded) {
         libAffx_TracerBombAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBPulseBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBPulseBombAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombCompositionBQuantumSpikeDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombQuantumSpikeMasteryDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerPulseBombQuantumSpikeMasteryAoEDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TracerClusterBombDamage", "MultiplicativeModifierArray[TracerBombLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_TracerBombPastApplied) {
+        libAffx_TracerBombPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBombPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBombPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "TracerBombPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "TracerBombPastCapDamage")) {
+        UnitBehaviorAdd(hero, "TracerBombPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_TracerSync_Func (bool testConds, bool runActions) {
     libAffx_TracerSyncGun();

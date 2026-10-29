@@ -12,12 +12,15 @@ bool libAffx_ZagaraStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZagaraHiveTime; // per enemy player, last Hive Mother hit
 int libAffx_ZagaraHiveAdded; // Hive Mother: takedown stacks already applied to the catalog this game
 int libAffx_ZagaraHiveAdded2; // Hive Mother: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ZagaraHivePastApplied; // Hive Mother: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZagaraBaneTime; // per enemy player, last Acid Queen hit
 int libAffx_ZagaraBaneAdded; // Acid Queen: takedown stacks already applied to the catalog this game
 int libAffx_ZagaraBaneAdded2; // Acid Queen: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ZagaraBanePastApplied; // Acid Queen: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZagaraMutaTime; // per enemy player, last Swarm Matriarch hit
 int libAffx_ZagaraMutaAdded; // Swarm Matriarch: takedown stacks already applied to the catalog this game
 int libAffx_ZagaraMutaAdded2; // Swarm Matriarch: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ZagaraMutaPastApplied; // Swarm Matriarch: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_ZagaraHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -48,6 +51,7 @@ void libAffx_ZagaraSyncHive () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ZagaraHiveMarker")) {
         return;
     }
@@ -64,10 +68,17 @@ void libAffx_ZagaraSyncHive () {
         libAffx_CatalogReferenceModify("Effect,ZagaraHiveCreepHealBoss,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraHiveAdded2) * 0.000125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZagaraHiveAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraHydraliskRangedDamage", "MultiplicativeModifierArray[ZagaraHiveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraRoachAttackDamage", "MultiplicativeModifierArray[ZagaraHiveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraInfestedDropDamage", "MultiplicativeModifierArray[ZagaraHiveLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_ZagaraHivePastApplied) {
+        libAffx_ZagaraHivePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZagaraHivePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZagaraHivePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "ZagaraHivePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ZagaraHivePastCapDamage")) {
+        UnitBehaviorAdd(hero, "ZagaraHivePastCapDamage", hero, 1);
+    }
 }
 // ZagaraVolatileBroodTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 2.75 explosion radius each; then 3% damage each, Heroics too
 void libAffx_ZagaraSyncBane () {
@@ -75,6 +86,7 @@ void libAffx_ZagaraSyncBane () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ZagaraBaneMarker")) {
         return;
     }
@@ -90,10 +102,17 @@ void libAffx_ZagaraSyncBane () {
         libAffx_CatalogReferenceModify("Effect,ZagaraBanelingExplodeSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraBaneAdded2) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZagaraBaneAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraBanelingExplodeDamage", "MultiplicativeModifierArray[ZagaraBaneLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawImpactDamage", "MultiplicativeModifierArray[ZagaraBaneLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawSustainedDamage", "MultiplicativeModifierArray[ZagaraBaneLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_ZagaraBanePastApplied) {
+        libAffx_ZagaraBanePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZagaraBanePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZagaraBanePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "ZagaraBanePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ZagaraBanePastCapDamage")) {
+        UnitBehaviorAdd(hero, "ZagaraBanePastCapDamage", hero, 1);
+    }
 }
 // ZagaraSwarmHostTokenCounter: stacks 1-40: 1% of the 9 second recharge each; 41-80: 1% less Mutalisk decay each (450 Health over 42 seconds); then 3% damage each, Heroics too
 void libAffx_ZagaraSyncMuta () {
@@ -101,6 +120,7 @@ void libAffx_ZagaraSyncMuta () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ZagaraMutaMarker")) {
         return;
     }
@@ -116,12 +136,17 @@ void libAffx_ZagaraSyncMuta () {
         libAffx_CatalogReferenceModify("Unit,ZagaraMutalisk,LifeRegenRate", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZagaraMutaAdded2) * 0.1071, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZagaraMutaAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraMutaliskWeaponDamage1", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraMutaliskWeaponDamage2", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZagaraMutaliskWeaponDamage3", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawImpactDamage", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "DevouringMawSustainedDamage", "MultiplicativeModifierArray[ZagaraMutaLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_ZagaraMutaPastApplied) {
+        libAffx_ZagaraMutaPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZagaraMutaPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZagaraMutaPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "ZagaraMutaPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ZagaraMutaPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ZagaraMutaPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_ZagaraSync_Func (bool testConds, bool runActions) {
     libAffx_ZagaraSyncHive();

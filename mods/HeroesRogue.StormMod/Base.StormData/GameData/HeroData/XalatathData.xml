@@ -147,6 +147,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="XalatathSacrificeTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_xalatath_e_darkheartritual.dds" />
   </CButton>
+  <!-- Void Herald: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="XalatathVolleyPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Shadow Seer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="XalatathMarkPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Heart of Darkness: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="XalatathHeartPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="XalatathVoidEruptionFlightDamageTier1">

@@ -15,10 +15,13 @@ const fixed libAffx_ZuljinPastCapDamagePerStack = 0.01;
 bool libAffx_ZuljinStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinAxeTime; // per enemy player, last Axe Thrower hit
 int libAffx_ZuljinAxeAdded; // Axe Thrower: takedown stacks already applied to the catalog this game
+int libAffx_ZuljinAxePastApplied; // Axe Thrower: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinCleaveTime; // per enemy player, last Whirling Axes hit
 int libAffx_ZuljinCleaveAdded; // Whirling Axes: takedown stacks already applied to the catalog this game
+int libAffx_ZuljinCleavePastApplied; // Whirling Axes: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ZuljinHeadTime; // per enemy player, last Headhunter hit
 int libAffx_ZuljinHeadAdded; // Headhunter: takedown stacks already applied to the catalog this game
+int libAffx_ZuljinHeadPastApplied; // Headhunter: takedown quest stacks past the cap applied as damage this game
 const int libAffx_ZuljinTrophiesMax = 40;
 const int libAffx_ZuljinCleaveStacksNeeded = 50; // Cleaver stacks for the second Twin Cleave
 const fixed libAffx_ZuljinCleaveCross = 10.0; // the axes cross this far ahead of where Twin Cleave was thrown
@@ -56,6 +59,7 @@ void libAffx_ZuljinSyncAxe () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ZuljinAxeMarker")) {
         return;
     }
@@ -64,10 +68,17 @@ void libAffx_ZuljinSyncAxe () {
     if (wanted != libAffx_ZuljinAxeAdded) {
         libAffx_ZuljinAxeAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_ZuljinPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinNoMercyWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinASurpriseForYaWeaponDamage", "MultiplicativeModifierArray[ZuljinAxeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_ZuljinPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_ZuljinAxePastApplied) {
+        libAffx_ZuljinAxePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinAxePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinAxePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "ZuljinAxePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ZuljinAxePastCapDamage")) {
+        UnitBehaviorAdd(hero, "ZuljinAxePastCapDamage", hero, 1);
+    }
 }
 // ZuljinSpinningDeathTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80: 0.5% slow per axe each (libAffx_ZuljinSlowSync); then 3% damage each
 void libAffx_ZuljinSyncCleave () {
@@ -75,6 +86,7 @@ void libAffx_ZuljinSyncCleave () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ZuljinCleaveMarker")) {
         return;
     }
@@ -84,10 +96,17 @@ void libAffx_ZuljinSyncCleave () {
         libAffx_CatalogReferenceModify("Abil,ZuljinTwinCleave,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinCleaveAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZuljinCleaveAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveLeftDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveRightDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinTwinCleaveWrongPlaceWrongTimeDamage", "MultiplicativeModifierArray[ZuljinCleaveLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_ZuljinCleavePastApplied) {
+        libAffx_ZuljinCleavePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinCleavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinCleavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "ZuljinCleavePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ZuljinCleavePastCapDamage")) {
+        UnitBehaviorAdd(hero, "ZuljinCleavePastCapDamage", hero, 1);
+    }
 }
 // ZuljinHuntTokenCounter: 1% of the 6 second recharge per stack, up to 40%, then damage
 void libAffx_ZuljinSyncHead () {
@@ -95,6 +114,7 @@ void libAffx_ZuljinSyncHead () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "ZuljinHeadMarker")) {
         return;
     }
@@ -104,8 +124,17 @@ void libAffx_ZuljinSyncHead () {
         libAffx_CatalogReferenceModify("Abil,ZuljinGrievousThrow,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinHeadAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZuljinHeadAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_ZuljinPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "ZuljinGrievousThrowDamage", "MultiplicativeModifierArray[ZuljinHeadLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_ZuljinPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_ZuljinHeadPastApplied) {
+        libAffx_ZuljinHeadPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinHeadPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinHeadPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "ZuljinHeadPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ZuljinHeadPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ZuljinHeadPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_ZuljinSync_Func (bool testConds, bool runActions) {
     libAffx_ZuljinSyncAxe();

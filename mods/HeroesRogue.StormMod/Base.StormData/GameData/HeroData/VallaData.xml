@@ -190,6 +190,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="VallaEndlessHuntTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_valla_strafe.dds" />
   </CButton>
+  <!-- Hungering Hunter: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="VallaHungerPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Multishot Marksman: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="VallaVolleyPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Strafe Queen: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="VallaStrafePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- Barbed Arrows (Epic, Hungering Hunter): Hungering Arrow hits on Heroes take 5 Armor for 4 seconds, up to 4 times -->

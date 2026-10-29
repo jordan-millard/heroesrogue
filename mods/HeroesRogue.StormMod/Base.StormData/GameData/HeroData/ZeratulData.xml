@@ -131,6 +131,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="ZeratulNerazimTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_zeratul_vorpalblade.dds" />
   </CButton>
+  <!-- Void Blade: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ZeratulCleavePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Singularity: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ZeratulSpikePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Dark Templar: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ZeratulBladePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- Void Step (Rare, Void Blade): Cleave hits on Heroes take 1 second off Blink -->

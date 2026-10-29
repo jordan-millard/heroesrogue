@@ -125,6 +125,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="KerriganHiveMindTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kerrigan_ultralisk.dds" />
   </CButton>
+  <!-- Queen of Blades: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KerriganRavagePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Impaler: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KerriganBladesPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Brood Mother: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KerriganUltraPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- Bladed Fury (Rare, Queen of Blades): Ravage hits on Heroes take 1 second off Impaling Blades -->

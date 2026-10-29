@@ -15,11 +15,14 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AlarakDiscordTime; // per enemy play
 int libAffx_AlarakDiscordAdded; // Tal'darim Ascendant: takedown stacks already applied to the catalog this game
 int libAffx_AlarakDiscordAdded2; // Tal'darim Ascendant: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_AlarakDiscordAdded3; // Tal'darim Ascendant: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_AlarakDiscordPastApplied; // Tal'darim Ascendant: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AlarakSurgeTime; // per enemy player, last Lightning Lord hit
 int libAffx_AlarakSurgeAdded; // Lightning Lord: takedown stacks already applied to the catalog this game
 int libAffx_AlarakSurgeAdded2; // Lightning Lord: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_AlarakSurgePastApplied; // Lightning Lord: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AlarakBladeTime; // per enemy player, last Highlord hit
 int libAffx_AlarakBladeAdded; // Highlord: takedown stacks already applied to the catalog this game
+int libAffx_AlarakBladePastApplied; // Highlord: takedown quest stacks past the cap applied as damage this game
 int libAffx_AlarakSadismAdded; // Sadism tokens added by Highlord this game
 int libAffx_AlarakFrenzyApplied; // Attack Speed stacks applied to AlarakHighlordFrenzy
 
@@ -52,6 +55,7 @@ void libAffx_AlarakSyncDiscord () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AlarakDiscordMarker")) {
         return;
     }
@@ -86,11 +90,17 @@ void libAffx_AlarakSyncDiscord () {
         libAffx_CatalogReferenceModify("Actor,AlarakDiscordStrikePolygonGuide,Height", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.0625, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakDiscordAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 120)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakDiscordStrikeDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakDeadlyChargeDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakCounterStrikeDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakHeroWeaponDamage", "MultiplicativeModifierArray[AlarakDiscordLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 120: 0.03 each to all damage
+    power = MaxI(0, stacks - 120);
+    if (power != libAffx_AlarakDiscordPastApplied) {
+        libAffx_AlarakDiscordPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "AlarakDiscordPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "AlarakDiscordPastCapDamage")) {
+        UnitBehaviorAdd(hero, "AlarakDiscordPastCapDamage", hero, 1);
+    }
 }
 // AlarakTempestTokenCounter: stacks 1-40: 1% of the 6 second cooldown each; 41-80: 1% of the 10 range each; then 3% damage each, Heroics too
 void libAffx_AlarakSyncSurge () {
@@ -98,6 +108,7 @@ void libAffx_AlarakSyncSurge () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AlarakSurgeMarker")) {
         return;
     }
@@ -115,13 +126,17 @@ void libAffx_AlarakSyncSurge () {
         libAffx_CatalogReferenceModify("Actor,AlarakLightningSurgeRangeSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakSurgeAdded2) * 0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakSurgeAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakLightningSurgeDamage", "MultiplicativeModifierArray[AlarakSurgeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakLightningSurgeTargetDamage", "MultiplicativeModifierArray[AlarakSurgeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakLightningSurgeHeroDamage", "MultiplicativeModifierArray[AlarakSurgeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakLightningSurgeHeroTargetDamage", "MultiplicativeModifierArray[AlarakSurgeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakDeadlyChargeDamage", "MultiplicativeModifierArray[AlarakSurgeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakCounterStrikeDamage", "MultiplicativeModifierArray[AlarakSurgeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_AlarakSurgePastApplied) {
+        libAffx_AlarakSurgePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakSurgePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakSurgePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "AlarakSurgePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "AlarakSurgePastCapDamage")) {
+        UnitBehaviorAdd(hero, "AlarakSurgePastCapDamage", hero, 1);
+    }
 }
 // AlarakDominionTokenCounter: stacks 1-40: 1% Sadism each (libAffx_AlarakSadismSync); 41-80: 1% Attack Speed each (libAffx_AlarakFrenzySync); then 3% damage each, Heroics too
 void libAffx_AlarakSyncBlade () {
@@ -129,6 +144,7 @@ void libAffx_AlarakSyncBlade () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AlarakHighlordMarker")) {
         return;
     }
@@ -137,10 +153,17 @@ void libAffx_AlarakSyncBlade () {
     if (wanted != libAffx_AlarakBladeAdded) {
         libAffx_AlarakBladeAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.03, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakHeroWeaponDamage", "MultiplicativeModifierArray[AlarakBladeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakDeadlyChargeDamage", "MultiplicativeModifierArray[AlarakBladeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AlarakCounterStrikeDamage", "MultiplicativeModifierArray[AlarakBladeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.03 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_AlarakBladePastApplied) {
+        libAffx_AlarakBladePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakBladePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakBladePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        UnitBehaviorRemove(hero, "AlarakBladePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "AlarakBladePastCapDamage")) {
+        UnitBehaviorAdd(hero, "AlarakBladePastCapDamage", hero, 1);
+    }
 }
 bool libAffx_AlarakSync_Func (bool testConds, bool runActions) {
     libAffx_AlarakSyncDiscord();

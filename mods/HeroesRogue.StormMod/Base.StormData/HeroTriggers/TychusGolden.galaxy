@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Tychus. Minigun Maniac: Overkill hits on enemy Heroes add Barrage (in batches) and open a 6 second takedown
-// window; takedowns add Carnage: recharge, then range and arc, then Movement Speed while channeling, then at 100 a
+// window; takedowns add Carnage: life leech against Heroes, then range and arc, then Movement Speed while channeling, then at 100 a
 // second target. Grenadier: Frag Grenade hits on enemy Heroes add Shellshock; takedowns add Demolition: recharge,
 // then flight speed and size, then knockback, then at 100 bomblets. Odin Pilot: Annihilate and Ragnarok Missiles hits on
 // Heroes add Devastation (also damage to non-Heroes); takedowns while in the Odin add Pilot: Odin ability cooldowns, then duration, then Odin damage, then at 100 Big Red Button strikes, then 2.5% damage per stack.
@@ -15,10 +15,12 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TychusMinigunTime; // per enemy play
 int libAffx_TychusMinigunAdded; // Minigun Maniac: takedown stacks already applied to the catalog this game
 int libAffx_TychusMinigunAdded2; // Minigun Maniac: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_TychusMinigunAdded3; // Minigun Maniac: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_TychusMinigunPastApplied; // Minigun Maniac: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TychusGrenadeTime; // per enemy player, last Grenadier hit
 int libAffx_TychusGrenadeAdded; // Grenadier: takedown stacks already applied to the catalog this game
 int libAffx_TychusGrenadeAdded2; // Grenadier: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_TychusGrenadeAdded3; // Grenadier: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_TychusGrenadePastApplied; // Grenadier: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_TychusOdinTime; // per enemy player, last Odin Pilot hit
 int libAffx_TychusOdinAdded; // Odin Pilot: takedown stacks already applied to the catalog this game
 int libAffx_TychusOdinAdded2; // Odin Pilot: takedown quest stage 2 stacks already applied to the catalog this game
@@ -51,19 +53,22 @@ void libAffx_TychusQuestDing() {
 bool libAffx_TychusInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_TychusTakedownWindow;
 }
-// TychusGoldenCarnageTokenCounter: stacks 1-40: 1% of the 7 second cooldown each; 41-80 range and arc, 81-100 Movement Speed while channeling, 100 second target (script), then damage
+// TychusGoldenCarnageTokenCounter: stacks 1-40: 0.25% life leech against Heroes each; 41-80 range and arc, 81-100 Movement Speed while channeling, 100 second target (script), then damage
 void libAffx_TychusSyncMinigun () {
     unit hero = libAffx_TychusHero();
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "TychusMinigunMarker")) {
         return;
     }
     stacks = libAffx_TychusStacks("TychusGoldenCarnageTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_TychusMinigunAdded) {
-        libAffx_CatalogReferenceModify("Abil,TychusOverkillTargeted,Cost[0].Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusMinigunAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,TychusOverkillPrimaryTargetDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusMinigunAdded) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,TychusOverkillSecondaryTargetDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusMinigunAdded) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,TychusGoldenOverkillSecondDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusMinigunAdded) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TychusMinigunAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 0.5% range and arc each
@@ -85,10 +90,17 @@ void libAffx_TychusSyncMinigun () {
         libAffx_CatalogReferenceModify("Behavior,TychusOverkillActive,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusMinigunAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TychusMinigunAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * libAffx_TychusPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TychusOverkillPrimaryTargetDamage", "MultiplicativeModifierArray[TychusMinigunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TychusOverkillSecondaryTargetDamage", "MultiplicativeModifierArray[TychusMinigunLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TychusGoldenOverkillSecondDamage", "MultiplicativeModifierArray[TychusMinigunLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: libAffx_TychusPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_TychusMinigunPastApplied) {
+        libAffx_TychusMinigunPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusMinigunPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusMinigunPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "TychusMinigunPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "TychusMinigunPastCapDamage")) {
+        UnitBehaviorAdd(hero, "TychusMinigunPastCapDamage", hero, 1);
+    }
 }
 // TychusGoldenDemolitionTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80 flight speed (libAffx_TychusGrenadeSync) and size, 81-100 knockback, 100 bomblets (script), then damage
 void libAffx_TychusSyncGrenade () {
@@ -96,6 +108,7 @@ void libAffx_TychusSyncGrenade () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "TychusGrenadeMarker")) {
         return;
     }
@@ -117,9 +130,17 @@ void libAffx_TychusSyncGrenade () {
         libAffx_CatalogReferenceModify("Effect,TychusGrenadeApplyForce,Amount", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusGrenadeAdded3) * 0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TychusGrenadeAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * libAffx_TychusPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TychusGrenadeDamage", "MultiplicativeModifierArray[TychusGrenadeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "TychusGoldenBombletDamage", "MultiplicativeModifierArray[TychusGrenadeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: libAffx_TychusPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_TychusGrenadePastApplied) {
+        libAffx_TychusGrenadePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGrenadePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGrenadePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "TychusGrenadePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "TychusGrenadePastCapDamage")) {
+        UnitBehaviorAdd(hero, "TychusGrenadePastCapDamage", hero, 1);
+    }
 }
 // TychusGoldenPilotTokenCounter: stacks 1-40: 1% of the Odin abilities' cooldowns each; 41-80 duration, 81-100 Odin damage, 100 Big Red Button strikes, then damage (libAffx_TychusOdinPilotSync)
 void libAffx_TychusSyncOdin () {

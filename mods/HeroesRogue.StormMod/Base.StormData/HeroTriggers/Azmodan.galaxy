@@ -15,11 +15,14 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanGlobeTime; // per enemy playe
 int libAffx_AzmodanGlobeAdded; // Lord of Annihilation: takedown stacks already applied to the catalog this game
 int libAffx_AzmodanGlobeAdded2; // Lord of Annihilation: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_AzmodanGlobeAdded3; // Lord of Annihilation: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_AzmodanGlobePastApplied; // Lord of Annihilation: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanSinTime; // per enemy player, last Lord of Sin hit
 int libAffx_AzmodanSinAdded; // Lord of Sin: takedown stacks already applied to the catalog this game
 int libAffx_AzmodanSinAdded2; // Lord of Sin: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_AzmodanSinPastApplied; // Lord of Sin: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_AzmodanGenTime; // per enemy player, last General of the Burning Hells hit
 int libAffx_AzmodanGenAdded; // General of the Burning Hells: takedown stacks already applied to the catalog this game
+int libAffx_AzmodanGenPastApplied; // General of the Burning Hells: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_AzmodanHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -50,6 +53,7 @@ void libAffx_AzmodanSyncGlobe () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AzmodanGlobeMarker")) {
         return;
     }
@@ -76,25 +80,17 @@ void libAffx_AzmodanSyncGlobe () {
         libAffx_CatalogReferenceModify("Abil,AzmodanGlobeOfAnnihilation,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded3) * 0.3, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanGlobeAdded3 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnFinalExplosionDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnMasterOfDestructionTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorPeriodicDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionDemonGruntWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionExplodeDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionImpactDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantDemonicSmiteDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanHeroWeaponDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanGlobeLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_AzmodanGlobePastApplied) {
+        libAffx_AzmodanGlobePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGlobePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGlobePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "AzmodanGlobePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "AzmodanGlobePastCapDamage")) {
+        UnitBehaviorAdd(hero, "AzmodanGlobePastCapDamage", hero, 1);
+    }
 }
 // AzmodanGoldenSinTokenCounter: stacks 1-40: 0.03125 range and stretch each (1.25 at 40); 41-80: 1% Movement Speed while channeling each; then 2.5% all damage each
 void libAffx_AzmodanSyncSin () {
@@ -102,6 +98,7 @@ void libAffx_AzmodanSyncSin () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AzmodanSinMarker")) {
         return;
     }
@@ -118,25 +115,17 @@ void libAffx_AzmodanSyncSin () {
         libAffx_CatalogReferenceModify("Behavior,AzmodanAllShallBurnChannel,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanSinAdded2 = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnFinalExplosionDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnMasterOfDestructionTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorPeriodicDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionDemonGruntWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionExplodeDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionImpactDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantDemonicSmiteDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanHeroWeaponDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanSinLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_AzmodanSinPastApplied) {
+        libAffx_AzmodanSinPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanSinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanSinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "AzmodanSinPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "AzmodanSinPastCapDamage")) {
+        UnitBehaviorAdd(hero, "AzmodanSinPastCapDamage", hero, 1);
+    }
 }
 // AzmodanGoldenLegionTokenCounter: stacks 1-80: 1% Demon Warrior damage and Health each; then 2.5% all damage each
 void libAffx_AzmodanSyncGen () {
@@ -144,6 +133,7 @@ void libAffx_AzmodanSyncGen () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "AzmodanGenMarker")) {
         return;
     }
@@ -155,25 +145,17 @@ void libAffx_AzmodanSyncGen () {
         libAffx_CatalogReferenceModify("Behavior,AzmodanGoldenWarriorHealth,Modification.VitalMaxFractionArray[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGenAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanGenAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 80)) * 0.025, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanSummonDemonWarriorPeriodicDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTideOfSinTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGlobeOfAnnihilationTotalAnnihilationTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenSplinterDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnFinalExplosionDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanAllShallBurnMasterOfDestructionTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanGoldenForkDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionDemonGruntWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionExplodeDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonicInvasionImpactDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantDemonicSmiteDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanDemonLieutenantWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanHeroWeaponDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTideOfSinBlackPoolTalentDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "AzmodanTrampleDamage", "MultiplicativeModifierArray[AzmodanGenLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 80: 0.025 each to all damage
+    power = MaxI(0, stacks - 80);
+    if (power != libAffx_AzmodanGenPastApplied) {
+        libAffx_AzmodanGenPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGenPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGenPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "AzmodanGenPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "AzmodanGenPastCapDamage")) {
+        UnitBehaviorAdd(hero, "AzmodanGenPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_AzmodanSync_Func (bool testConds, bool runActions) {
     libAffx_AzmodanSyncGlobe();

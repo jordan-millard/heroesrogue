@@ -186,6 +186,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="FenixGoldenArsenalMasteryTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_fenix_w_1.dds" />
   </CButton>
+  <!-- Plasma Executor: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="FenixPlasmaPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Warp Striker: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="FenixWarpPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Twin Arsenal: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="FenixTwinPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="FenixGoldenWarpShotDamage">

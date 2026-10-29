@@ -17,10 +17,13 @@ const fixed libAffx_KerriganPastCapDamagePerStack = 0.01;
 bool libAffx_KerriganStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KerriganRavageTime; // per enemy player, last Queen of Blades hit
 int libAffx_KerriganRavageAdded; // Queen of Blades: takedown stacks already applied to the catalog this game
+int libAffx_KerriganRavagePastApplied; // Queen of Blades: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KerriganBladesTime; // per enemy player, last Impaler hit
 int libAffx_KerriganBladesAdded; // Impaler: takedown stacks already applied to the catalog this game
+int libAffx_KerriganBladesPastApplied; // Impaler: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_KerriganUltraTime; // per enemy player, last Brood Mother hit
 int libAffx_KerriganUltraAdded; // Brood Mother: takedown stacks already applied to the catalog this game
+int libAffx_KerriganUltraPastApplied; // Brood Mother: takedown quest stacks past the cap applied as damage this game
 const fixed libAffx_KerriganBroodShieldFraction = 0.4; // double Assimilation against Heroes
 fixed libAffx_KerriganBladesCastTime = -1.0; // game time of the Impaling Blades eruption being counted
 int libAffx_KerriganBladesCastHits; // enemy Heroes hit by that eruption
@@ -55,6 +58,7 @@ void libAffx_KerriganSyncRavage () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "KerriganRavageMarker")) {
         return;
     }
@@ -65,8 +69,17 @@ void libAffx_KerriganSyncRavage () {
         libAffx_CatalogReferenceModify("Effect,KerriganQueenOfBladesRegenHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganRavageAdded) * 0.0002, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganRavageAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 50)) * libAffx_KerriganPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KerriganRavageDamage", "MultiplicativeModifierArray[KerriganRavageLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 50: libAffx_KerriganPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 50);
+    if (power != libAffx_KerriganRavagePastApplied) {
+        libAffx_KerriganRavagePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganRavagePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganRavagePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "KerriganRavagePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "KerriganRavagePastCapDamage")) {
+        UnitBehaviorAdd(hero, "KerriganRavagePastCapDamage", hero, 1);
+    }
 }
 // KerriganKineticStormTokenCounter: 1% off Impaling Blades and Primal Grasp cooldowns per stack, up to 30%, then Impaling Blades damage
 void libAffx_KerriganSyncBlades () {
@@ -74,6 +87,7 @@ void libAffx_KerriganSyncBlades () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "KerriganBladesMarker")) {
         return;
     }
@@ -84,9 +98,17 @@ void libAffx_KerriganSyncBlades () {
         libAffx_CatalogReferenceModify("Abil,KerriganPrimalGrasp,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganBladesAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganBladesAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 30)) * libAffx_KerriganPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KerriganImpalingBladesDamage", "MultiplicativeModifierArray[KerriganBladesLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KerriganImpalingBladesPainfulSpikesDamage", "MultiplicativeModifierArray[KerriganBladesLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 30: libAffx_KerriganPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 30);
+    if (power != libAffx_KerriganBladesPastApplied) {
+        libAffx_KerriganBladesPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBladesPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBladesPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "KerriganBladesPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "KerriganBladesPastCapDamage")) {
+        UnitBehaviorAdd(hero, "KerriganBladesPastCapDamage", hero, 1);
+    }
 }
 // KerriganHiveMindTokenCounter: 1% of the 20 second cooldown per stack, up to 40%, then damage
 void libAffx_KerriganSyncUltra () {
@@ -94,6 +116,7 @@ void libAffx_KerriganSyncUltra () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "KerriganUltraMarker")) {
         return;
     }
@@ -103,10 +126,17 @@ void libAffx_KerriganSyncUltra () {
         libAffx_CatalogReferenceModify("Abil,KerriganSummonUltralisk,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganUltraAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganUltraAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_KerriganPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KerriganUltraliskWeaponDamage", "MultiplicativeModifierArray[KerriganUltraLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KerriganUltraliskWeaponSplashDamage", "MultiplicativeModifierArray[KerriganUltraLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "KerriganUltraliskChargeDamage", "MultiplicativeModifierArray[KerriganUltraLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_KerriganPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_KerriganUltraPastApplied) {
+        libAffx_KerriganUltraPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganUltraPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganUltraPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "KerriganUltraPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "KerriganUltraPastCapDamage")) {
+        UnitBehaviorAdd(hero, "KerriganUltraPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_KerriganSync_Func (bool testConds, bool runActions) {
     libAffx_KerriganSyncRavage();

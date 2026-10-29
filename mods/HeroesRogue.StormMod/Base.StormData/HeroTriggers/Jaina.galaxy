@@ -16,10 +16,13 @@ const fixed libAffx_JainaPastCapDamagePerStack = 0.01;
 bool libAffx_JainaStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_JainaFrostboltTime; // per enemy player, last Frost Mage hit
 int libAffx_JainaFrostboltAdded; // Frost Mage: takedown stacks already applied to the catalog this game
+int libAffx_JainaFrostboltPastApplied; // Frost Mage: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_JainaBlizzardTime; // per enemy player, last Blizzard Caller hit
 int libAffx_JainaBlizzardAdded; // Blizzard Caller: takedown stacks already applied to the catalog this game
+int libAffx_JainaBlizzardPastApplied; // Blizzard Caller: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_JainaElementalTime; // per enemy player, last Elementalist hit
 int libAffx_JainaElementalAdded; // Elementalist: takedown stacks already applied to the catalog this game
+int libAffx_JainaElementalPastApplied; // Elementalist: takedown quest stacks past the cap applied as damage this game
 
 unit libAffx_JainaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -50,6 +53,7 @@ void libAffx_JainaSyncFrostbolt () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "JainaFrostboltMarker")) {
         return;
     }
@@ -60,9 +64,17 @@ void libAffx_JainaSyncFrostbolt () {
         libAffx_CatalogReferenceModify("Abil,JainaConeOfCold,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaFrostboltAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaFrostboltAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 25)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaFrostboltDamage", "MultiplicativeModifierArray[JainaFrostboltLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaFrostboltDamageChilled", "MultiplicativeModifierArray[JainaFrostboltLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 25: libAffx_JainaPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 25);
+    if (power != libAffx_JainaFrostboltPastApplied) {
+        libAffx_JainaFrostboltPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaFrostboltPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaFrostboltPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "JainaFrostboltPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "JainaFrostboltPastCapDamage")) {
+        UnitBehaviorAdd(hero, "JainaFrostboltPastCapDamage", hero, 1);
+    }
 }
 // JainaEndlessWinterTokenCounter: 1% of the 10 second recharge per stack, up to 40%, then damage
 void libAffx_JainaSyncBlizzard () {
@@ -70,6 +82,7 @@ void libAffx_JainaSyncBlizzard () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "JainaBlizzardMarker")) {
         return;
     }
@@ -79,9 +92,17 @@ void libAffx_JainaSyncBlizzard () {
         libAffx_CatalogReferenceModify("Abil,JainaBlizzard,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaBlizzardAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaBlizzardAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaBlizzardDamage", "MultiplicativeModifierArray[JainaBlizzardLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaBlizzardDamageChilled", "MultiplicativeModifierArray[JainaBlizzardLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_JainaPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_JainaBlizzardPastApplied) {
+        libAffx_JainaBlizzardPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaBlizzardPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaBlizzardPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "JainaBlizzardPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "JainaBlizzardPastCapDamage")) {
+        UnitBehaviorAdd(hero, "JainaBlizzardPastCapDamage", hero, 1);
+    }
 }
 // JainaTidecallerTokenCounter: 1% of the 20 second cooldown per stack, up to 40%, then damage
 void libAffx_JainaSyncElemental () {
@@ -89,6 +110,7 @@ void libAffx_JainaSyncElemental () {
     int stacks;
     int wanted;
     string bonus;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "JainaElementalMarker")) {
         return;
     }
@@ -98,17 +120,17 @@ void libAffx_JainaSyncElemental () {
         libAffx_CatalogReferenceModify("Abil,JainaSummonWaterElemental,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaElementalAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaElementalAdded = wanted;
     }
-    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 40)) * libAffx_JainaPastCapDamagePerStack, c_fixedPrecisionAny);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponSplashDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponFrostbiteDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalWeaponFrostbiteSplashDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalFrostboltDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalFrostboltDamageChilled", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalBlizzardDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalBlizzardDamageChilled", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalConeOfColdDamage", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
-    CatalogFieldValueSet(c_gameCatalogEffect, "JainaWaterElementalConeOfColdDamageChilled", "MultiplicativeModifierArray[JainaElementalLegacy].Modifier", libAffx_player, bonus);
+    // stacks past 40: libAffx_JainaPastCapDamagePerStack each to all damage
+    power = MaxI(0, stacks - 40);
+    if (power != libAffx_JainaElementalPastApplied) {
+        libAffx_JainaElementalPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaElementalPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaElementalPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        UnitBehaviorRemove(hero, "JainaElementalPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "JainaElementalPastCapDamage")) {
+        UnitBehaviorAdd(hero, "JainaElementalPastCapDamage", hero, 1);
+    }
 }
 bool libAffx_JainaSync_Func (bool testConds, bool runActions) {
     libAffx_JainaSyncFrostbolt();

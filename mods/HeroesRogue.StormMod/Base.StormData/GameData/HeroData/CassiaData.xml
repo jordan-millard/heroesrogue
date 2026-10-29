@@ -178,6 +178,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="AmazonGoldenSkirmisherTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_cassia_avoidance.dds" />
   </CButton>
+  <!-- Valkyrie's Javelin: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="CassiaJavelinPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Warden of Arreat: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="CassiaFendPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Lightning Strike: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="CassiaSkirmPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="AmazonFendChannelDamage">

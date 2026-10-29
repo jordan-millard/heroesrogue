@@ -348,4 +348,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="MurkyLivingLegendTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Murky_SafetyBubble.dds" />
   </CButton>
+  <!-- takedown quest stacks past their cap: all of Murky's damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="MurkyGoldenSlimeMountainPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MurkyGoldenCatchPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 </Catalog>

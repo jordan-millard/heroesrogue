@@ -72,6 +72,17 @@ void libAffx_MurkySplash (unit hero, unit victim, fixed radius, string damageEff
     }
 }
 
+// Takedown quest stacks past a cap: a buff for all of the hero's damage (amount set per player, re-added when it changes)
+void libAffx_MurkyPastCapBuff (unit hero, string buff, fixed amount) {
+    if (AbsF(CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, buff, "Modification.DamageDealtFraction[Basic]", libAffx_player) - amount) > 0.0001) {
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, buff, "Modification.DamageDealtFraction[Basic]", libAffx_player, amount);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, buff, "Modification.DamageDealtFraction[Ability]", libAffx_player, amount);
+        UnitBehaviorRemove(hero, buff, 1);
+    }
+    if (amount > 0.0 && !UnitHasBehavior2(hero, buff)) {
+        UnitBehaviorAdd(hero, buff, hero, 1);
+    }
+}
 // Slime Mountain: Slime reaches further (adds only the change since the last sync), and its range indicator and cast
 // model follow. Stacks past the radius cap set the Slime Mountain damage modifier on both Slime damage effects, 1% each.
 void libAffx_MurkySyncRadius () {
@@ -89,8 +100,7 @@ void libAffx_MurkySyncRadius () {
         overflow = stacks - libAffx_murkyRadiusMaxStacks;
         stacks = libAffx_murkyRadiusMaxStacks;
     }
-    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkySlimeDamage", "MultiplicativeModifierArray[MurkySlimeMountain].Modifier", libAffx_player, libAffx_murkyMountainDamagePerStack * overflow);
-    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkySlimeBonusDamage", "MultiplicativeModifierArray[MurkySlimeMountain].Modifier", libAffx_player, libAffx_murkyMountainDamagePerStack * overflow);
+    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenSlimeMountainPastCap", libAffx_murkyMountainDamagePerStack * overflow);
     wanted = libAffx_murkyRadiusPerStack * stacks;
     delta = wanted - libAffx_murkyRadiusAdded;
     if (AbsF(delta) < 0.01) {
@@ -124,7 +134,7 @@ void libAffx_MurkySyncPufferRadius () {
         overflow = stacks - libAffx_murkyPufferRadiusMaxStacks;
         stacks = libAffx_murkyPufferRadiusMaxStacks;
     }
-    CatalogFieldValueSetFixed(c_gameCatalogEffect, "MurkyPufferfishDamage", "MultiplicativeModifierArray[MurkyCatchOfTheDay].Modifier", libAffx_player, libAffx_murkyCatchDamagePerStack * overflow);
+    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenCatchPastCap", libAffx_murkyCatchDamagePerStack * overflow);
     wanted = libAffx_murkyPufferRadiusPerStack * stacks;
     delta = wanted - libAffx_murkyPufferRadiusAdded;
     if (AbsF(delta) < 0.01) {

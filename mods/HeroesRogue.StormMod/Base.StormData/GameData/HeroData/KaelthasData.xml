@@ -144,6 +144,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="KaelthasPhoenixFireTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kaelthas_pyroblast.dds" />
   </CButton>
+  <!-- Sunfire: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KaelthasFlamestrikePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bombardier: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KaelthasBombPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Pyromancer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KaelthasPyroPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
   <!-- Kindling (Rare, Sunfire): Flamestrike hits on Heroes take 1 second off Living Bomb -->

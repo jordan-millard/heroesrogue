@@ -132,6 +132,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="SylvanasHauntingTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_sylvanas_hauntingwave.dds" />
   </CButton>
+  <!-- Dark Ranger: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="SylvanasFirePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Shadow Queen: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="SylvanasDaggerPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Banshee: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="SylvanasWavePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="SylvanasWailingArrowDamage">

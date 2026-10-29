@@ -142,6 +142,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="KelThuzadBondageTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_kel'thuzad_chains.dds" />
   </CButton>
+  <!-- Lord of Decay: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KelThuzadDecayPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Frostbinder: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KelThuzadNovaPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Chains of the Lich: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="KelThuzadChainsPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Takedown quest damage past the cap, also on these effects ===== -->
   <CEffectDamage id="KelThuzadFrozenTombDamage">
