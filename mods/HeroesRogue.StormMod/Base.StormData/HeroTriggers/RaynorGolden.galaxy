@@ -397,6 +397,13 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
             }
         }
     }
+    // every live Banshee keeps its Armor buff (re-added if anything removed it)
+    for (i = 1; i <= 3; i += 1) {
+        banshee = libAffx_RaynorBanshee[i];
+        if (banshee != null && UnitIsAlive(banshee) && !UnitHasBehavior2(banshee, "RaynorGoldenBansheeArmor")) {
+            UnitBehaviorAdd(banshee, "RaynorGoldenBansheeArmor", banshee, 1);
+        }
+    }
     // Squadron stacks 1-40 changed the Banshees' Movement Speed: re-add their buff so the live ones get it
     speed = MinI(40, libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"));
     if (speed != libAffx_RaynorBansheeSpeed) {

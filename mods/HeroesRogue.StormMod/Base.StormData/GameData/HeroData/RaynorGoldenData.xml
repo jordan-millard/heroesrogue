@@ -44,6 +44,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
        spawns), and Squadron stacks 1-40 add 0.5% Movement Speed each (the script re-adds it when that changes) -->
   <CBehaviorBuff id="RaynorGoldenBansheeArmor">
     <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />
     </Modification>
@@ -55,7 +56,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
        units) and deal double damage; the script keeps this short buff on them while his lasts -->
   <CBehaviorBuff id="RaynorGoldenBansheeInspired">
     <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_inspire.dds" />
     <Duration value="0.5" />
+    <BuffFlags index="RefreshStack" value="1" />
     <Modification>
       <AdditiveAttackSpeedFactor value="0.3" />
     </Modification>
