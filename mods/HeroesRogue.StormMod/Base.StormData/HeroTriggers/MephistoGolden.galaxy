@@ -386,6 +386,42 @@ bool libAffx_MephistoSithHit_Func (bool testConds, bool runActions) {
     libAffx_MephistoShadowShield(hero);
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_MephistoTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_MephistoTakedownCrossStart () {
+    unit hero = libAffx_MephistoHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_MephistoTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenDreadTokenCounter"));
+    libAffx_MephistoTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenTempestTokenCounter"));
+    libAffx_MephistoTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenDominionTokenCounter"));
+}
+void libAffx_MephistoTakedownCross () {
+    unit hero = libAffx_MephistoHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenDreadTokenCounter")) == libAffx_MephistoTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenTempestTokenCounter")) == libAffx_MephistoTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenDominionTokenCounter")) == libAffx_MephistoTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "MephistoSkullMarker") && FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenDreadTokenCounter")) == libAffx_MephistoTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "MephistoGoldenDreadTokenCounter", hero);
+        libAffx_MephistoSyncSkull();
+        libAffx_MephistoSkullSync();
+    }
+    if (UnitHasBehavior2(hero, "MephistoNovaMarker") && FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenTempestTokenCounter")) == libAffx_MephistoTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "MephistoGoldenTempestTokenCounter", hero);
+        libAffx_MephistoSyncNova();
+        libAffx_MephistoNovaSync();
+    }
+    if (UnitHasBehavior2(hero, "MephistoSithMarker") && FixedToInt(UnitGetTokenCount(hero, "MephistoGoldenDominionTokenCounter")) == libAffx_MephistoTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "MephistoGoldenDominionTokenCounter", hero);
+        libAffx_MephistoSyncSith();
+        libAffx_MephistoSithSync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_MephistoTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -399,6 +435,7 @@ bool libAffx_MephistoTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_MephistoTakedownCrossStart();
     if (UnitHasBehavior2(hero, "MephistoSkullMarker") && libAffx_MephistoSkullTime[killedPlayer] > 0.0 && now - libAffx_MephistoSkullTime[killedPlayer] <= 6.0) {
         libAffx_MephistoSkullTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "MephistoGoldenDreadTokenCounter", hero);
@@ -420,6 +457,7 @@ bool libAffx_MephistoTakedown (bool testConds, bool runActions) {
         libAffx_MephistoQuestDing();
         libAffx_MephistoSithSync();
     }
+    libAffx_MephistoTakedownCross();
     return true;
 }
 bool libAffx_MephistoStart (bool testConds, bool runActions) {

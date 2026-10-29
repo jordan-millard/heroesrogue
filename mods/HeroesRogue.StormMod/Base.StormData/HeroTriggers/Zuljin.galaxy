@@ -320,6 +320,40 @@ bool libAffx_ZuljinHeadHit_Func (bool testConds, bool runActions) {
     libAffx_ZuljinMarkHits[UnitGetOwner(victim)] = 0;
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_ZuljinTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ZuljinTakedownCrossStart () {
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ZuljinTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ZuljinTrophiesTokenCounter"));
+    libAffx_ZuljinTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ZuljinSpinningDeathTokenCounter"));
+    libAffx_ZuljinTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ZuljinHuntTokenCounter"));
+}
+void libAffx_ZuljinTakedownCross () {
+    unit hero = libAffx_ZuljinHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ZuljinTrophiesTokenCounter")) == libAffx_ZuljinTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ZuljinSpinningDeathTokenCounter")) == libAffx_ZuljinTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ZuljinHuntTokenCounter")) == libAffx_ZuljinTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ZuljinAxeMarker") && FixedToInt(UnitGetTokenCount(hero, "ZuljinTrophiesTokenCounter")) == libAffx_ZuljinTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ZuljinTrophiesTokenCounter", hero);
+        libAffx_ZuljinSyncAxe();
+        libAffx_ZuljinTrophiesSync();
+    }
+    if (UnitHasBehavior2(hero, "ZuljinCleaveMarker") && FixedToInt(UnitGetTokenCount(hero, "ZuljinSpinningDeathTokenCounter")) == libAffx_ZuljinTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ZuljinSpinningDeathTokenCounter", hero);
+        libAffx_ZuljinSyncCleave();
+    }
+    if (UnitHasBehavior2(hero, "ZuljinHeadMarker") && FixedToInt(UnitGetTokenCount(hero, "ZuljinHuntTokenCounter")) == libAffx_ZuljinTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ZuljinHuntTokenCounter", hero);
+        libAffx_ZuljinSyncHead();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_ZuljinTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -333,6 +367,7 @@ bool libAffx_ZuljinTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_ZuljinTakedownCrossStart();
     if (UnitHasBehavior2(hero, "ZuljinAxeMarker") && libAffx_ZuljinInWindow(libAffx_ZuljinAxeTime[killedPlayer], now)) {
         libAffx_ZuljinAxeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ZuljinTrophiesTokenCounter", hero);
@@ -352,6 +387,7 @@ bool libAffx_ZuljinTakedown (bool testConds, bool runActions) {
         libAffx_ZuljinSyncHead();
         libAffx_ZuljinQuestDing();
     }
+    libAffx_ZuljinTakedownCross();
     return true;
 }
 bool libAffx_ZuljinStart (bool testConds, bool runActions) {

@@ -271,6 +271,37 @@ bool libAffx_NovaMimicPin_Func (bool testConds, bool runActions) {
 }
 
 // HeroTakedown for Confirmed Kill, Killshot, Hunter's Mark and Phantom Strike
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_NovaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_NovaTakedownCrossStart () {
+    unit hero = libAffx_NovaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_NovaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter"));
+    libAffx_NovaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "NovaHuntersMarkTokenCounter"));
+    libAffx_NovaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "NovaPhantomStrikeTokenCounter"));
+}
+void libAffx_NovaTakedownCross () {
+    unit hero = libAffx_NovaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter")) == libAffx_NovaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "NovaHuntersMarkTokenCounter")) == libAffx_NovaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "NovaPhantomStrikeTokenCounter")) == libAffx_NovaTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "NovaDeadeyeMarker") && FixedToInt(UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter")) == libAffx_NovaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "NovaConfirmedKillTokenCounter", hero);
+        libAffx_NovaSyncSnipeRange();
+    }
+    if (UnitHasBehavior2(hero, "NovaCripplingFireMarker") && FixedToInt(UnitGetTokenCount(hero, "NovaHuntersMarkTokenCounter")) == libAffx_NovaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "NovaHuntersMarkTokenCounter", hero);
+    }
+    if (UnitHasBehavior2(hero, "NovaHoloCorpsMarker") && FixedToInt(UnitGetTokenCount(hero, "NovaPhantomStrikeTokenCounter")) == libAffx_NovaTakedownBefore[3]) {
+        libAffx_NovaAddDecoyToken("NovaPhantomStrikeTokenCounter", "NovaPhantomStrikeDecoyToken", 1);
+    }
+}
 bool libAffx_NovaTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
     unit hero = libAffx_NovaHero();
@@ -284,6 +315,7 @@ bool libAffx_NovaTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_NovaTakedownCrossStart();
     if (UnitHasBehavior2(hero, "NovaDeadeyeMarker") && libAffx_novaSnipeTime[killedPlayer] > 0.0 && now - libAffx_novaSnipeTime[killedPlayer] <= libAffx_novaSnipeWindow) {
         libAffx_novaSnipeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "NovaConfirmedKillTokenCounter", hero);
@@ -305,6 +337,7 @@ bool libAffx_NovaTakedown (bool testConds, bool runActions) {
             libAffx_NovaQuestDing();
         }
     }
+    libAffx_NovaTakedownCross();
     return true;
 }
 

@@ -401,46 +401,7 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Takedown quests are shared: each taken starter's takedown quest is kept at the highest count among them, so a starter
-// taken later starts with all of it, and a takedown that counts for several starters still adds only 1
-void libAffx_RaynorShareTakedowns () {
-    unit hero = libAffx_RaynorHero();
-    bool round;
-    bool pepper;
-    bool raider;
-    int shared = 0;
-    if (hero == null || !libAffx_bankLoaded) {
-        return;
-    }
-    round = UnitHasBehavior2(hero, "RaynorPenetratorMarker");
-    pepper = UnitHasBehavior2(hero, "RaynorPepperMarker");
-    raider = UnitHasBehavior2(hero, "RaynorRaiderMarker");
-    if (round) {
-        shared = MaxI(shared, libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter"));
-    }
-    if (pepper) {
-        shared = MaxI(shared, libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter"));
-    }
-    if (raider) {
-        shared = MaxI(shared, libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"));
-    }
-    if (round && libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter") < shared) {
-        libGame_gf_ModifyTokenCount(shared - libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter"), "RaynorGoldenBreachTokenCounter", hero);
-        libAffx_RaynorSyncRound();
-        libAffx_RaynorRoundSync();
-    }
-    if (pepper && libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter") < shared) {
-        libGame_gf_ModifyTokenCount(shared - libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter"), "RaynorGoldenSharpshooterTokenCounter", hero);
-        libAffx_RaynorSyncPepper();
-        libAffx_RaynorPepperSync();
-    }
-    if (raider && libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter") < shared) {
-        libGame_gf_ModifyTokenCount(shared - libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"), "RaynorGoldenSquadronTokenCounter", hero);
-        libAffx_RaynorSyncRaider();
-    }
-}
 bool libAffx_RaynorTick_Func (bool testConds, bool runActions) {
-    libAffx_RaynorShareTakedowns();
     libAffx_RaynorRoundSync();
     libAffx_RaynorBigOneSync();
     libAffx_RaynorPepperSync();
@@ -481,6 +442,41 @@ bool libAffx_RaynorRaiderHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_RaynorTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_RaynorTakedownCrossStart () {
+    unit hero = libAffx_RaynorHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_RaynorTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenBreachTokenCounter"));
+    libAffx_RaynorTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenSharpshooterTokenCounter"));
+    libAffx_RaynorTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenSquadronTokenCounter"));
+}
+void libAffx_RaynorTakedownCross () {
+    unit hero = libAffx_RaynorHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenBreachTokenCounter")) == libAffx_RaynorTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenSharpshooterTokenCounter")) == libAffx_RaynorTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenSquadronTokenCounter")) == libAffx_RaynorTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "RaynorPenetratorMarker") && FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenBreachTokenCounter")) == libAffx_RaynorTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "RaynorGoldenBreachTokenCounter", hero);
+        libAffx_RaynorSyncRound();
+        libAffx_RaynorRoundSync();
+    }
+    if (UnitHasBehavior2(hero, "RaynorPepperMarker") && FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenSharpshooterTokenCounter")) == libAffx_RaynorTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "RaynorGoldenSharpshooterTokenCounter", hero);
+        libAffx_RaynorSyncPepper();
+        libAffx_RaynorPepperSync();
+    }
+    if (UnitHasBehavior2(hero, "RaynorRaiderMarker") && FixedToInt(UnitGetTokenCount(hero, "RaynorGoldenSquadronTokenCounter")) == libAffx_RaynorTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "RaynorGoldenSquadronTokenCounter", hero);
+        libAffx_RaynorSyncRaider();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_RaynorTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -494,6 +490,7 @@ bool libAffx_RaynorTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_RaynorTakedownCrossStart();
     if (UnitHasBehavior2(hero, "RaynorPenetratorMarker") && libAffx_RaynorRoundTime[killedPlayer] > 0.0 && now - libAffx_RaynorRoundTime[killedPlayer] <= 6.0) {
         libAffx_RaynorRoundTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "RaynorGoldenBreachTokenCounter", hero);
@@ -514,7 +511,7 @@ bool libAffx_RaynorTakedown (bool testConds, bool runActions) {
         libAffx_RaynorSyncRaider();
         libAffx_RaynorQuestDing();
     }
-    libAffx_RaynorShareTakedowns();
+    libAffx_RaynorTakedownCross();
     return true;
 }
 bool libAffx_RaynorStart (bool testConds, bool runActions) {

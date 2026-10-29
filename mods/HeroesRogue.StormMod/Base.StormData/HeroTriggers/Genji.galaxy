@@ -228,6 +228,39 @@ bool libAffx_GenjiInWindow (fixed hitTime, fixed now) {
 }
 
 // HeroTakedown for Thousand Cuts, Shimada Legacy, Dragon Soul and Endless Dragon
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_GenjiTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_GenjiTakedownCrossStart () {
+    unit hero = libAffx_GenjiHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_GenjiTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "GenjiThousandCutsTokenCounter"));
+    libAffx_GenjiTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "GenjiShimadaLegacyTokenCounter"));
+    libAffx_GenjiTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "GenjiDragonSoulTokenCounter"));
+}
+void libAffx_GenjiTakedownCross () {
+    unit hero = libAffx_GenjiHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "GenjiThousandCutsTokenCounter")) == libAffx_GenjiTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "GenjiShimadaLegacyTokenCounter")) == libAffx_GenjiTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "GenjiDragonSoulTokenCounter")) == libAffx_GenjiTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GenjiShurikenStormMarker") && FixedToInt(UnitGetTokenCount(hero, "GenjiThousandCutsTokenCounter")) == libAffx_GenjiTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "GenjiThousandCutsTokenCounter", hero);
+        libAffx_GenjiSyncShuriken();
+    }
+    if (UnitHasBehavior2(hero, "GenjiBladeMarker") && FixedToInt(UnitGetTokenCount(hero, "GenjiShimadaLegacyTokenCounter")) == libAffx_GenjiTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "GenjiShimadaLegacyTokenCounter", hero);
+        libAffx_GenjiSyncSwift();
+    }
+    if (UnitHasBehavior2(hero, "GenjiDragonMarker") && FixedToInt(UnitGetTokenCount(hero, "GenjiDragonSoulTokenCounter")) == libAffx_GenjiTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "GenjiDragonSoulTokenCounter", hero);
+        libAffx_GenjiSyncDragon();
+    }
+}
 bool libAffx_GenjiTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
     unit hero = libAffx_GenjiHero();
@@ -240,6 +273,7 @@ bool libAffx_GenjiTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_GenjiTakedownCrossStart();
     if (UnitHasBehavior2(hero, "GenjiShurikenStormMarker") && libAffx_GenjiInWindow(libAffx_genjiShurikenTime[killedPlayer], now)) {
         libAffx_genjiShurikenTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "GenjiThousandCutsTokenCounter", hero);
@@ -261,6 +295,7 @@ bool libAffx_GenjiTakedown (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "GenjiEndlessDragonMarker") && UnitHasBehavior2(hero, "GenjiDragonMasterUnleash")) {
         UnitBehaviorSetDurationRemaining(hero, "GenjiDragonMasterUnleash", CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "GenjiDragonMasterUnleash", "Duration", libAffx_player));
     }
+    libAffx_GenjiTakedownCross();
     return true;
 }
 

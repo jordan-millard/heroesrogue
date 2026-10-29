@@ -259,6 +259,36 @@ bool libAffx_HanzoScatterHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[3] libAffx_HanzoTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_HanzoTakedownCrossStart () {
+    unit hero = libAffx_HanzoHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_HanzoTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "HanzoGoldenMasteryTokenCounter"));
+    libAffx_HanzoTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "HanzoGoldenRicochetTokenCounter"));
+}
+void libAffx_HanzoTakedownCross () {
+    unit hero = libAffx_HanzoHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "HanzoGoldenMasteryTokenCounter")) == libAffx_HanzoTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "HanzoGoldenRicochetTokenCounter")) == libAffx_HanzoTakedownBefore[2]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "HanzoArcherMarker") && FixedToInt(UnitGetTokenCount(hero, "HanzoGoldenMasteryTokenCounter")) == libAffx_HanzoTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "HanzoGoldenMasteryTokenCounter", hero);
+        libAffx_HanzoSyncArcher();
+        libAffx_HanzoArcherSync();
+    }
+    if (UnitHasBehavior2(hero, "HanzoScatterMarker") && FixedToInt(UnitGetTokenCount(hero, "HanzoGoldenRicochetTokenCounter")) == libAffx_HanzoTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "HanzoGoldenRicochetTokenCounter", hero);
+        libAffx_HanzoSyncScatter();
+        libAffx_HanzoScatterSync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_HanzoTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -272,6 +302,7 @@ bool libAffx_HanzoTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_HanzoTakedownCrossStart();
     if (UnitHasBehavior2(hero, "HanzoArcherMarker") && libAffx_HanzoArcherTime[killedPlayer] > 0.0 && now - libAffx_HanzoArcherTime[killedPlayer] <= 6.0) {
         libAffx_HanzoArcherTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "HanzoGoldenMasteryTokenCounter", hero);
@@ -286,6 +317,7 @@ bool libAffx_HanzoTakedown (bool testConds, bool runActions) {
         libAffx_HanzoQuestDing();
         libAffx_HanzoScatterSync();
     }
+    libAffx_HanzoTakedownCross();
     return true;
 }
 bool libAffx_HanzoStart (bool testConds, bool runActions) {

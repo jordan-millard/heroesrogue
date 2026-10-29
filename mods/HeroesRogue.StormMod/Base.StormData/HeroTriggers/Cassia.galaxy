@@ -443,6 +443,39 @@ bool libAffx_CassiaSkirmHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_CassiaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_CassiaTakedownCrossStart () {
+    unit hero = libAffx_CassiaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_CassiaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenJavelinTokenCounter"));
+    libAffx_CassiaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenFendMasteryTokenCounter"));
+    libAffx_CassiaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenSkirmisherTokenCounter"));
+}
+void libAffx_CassiaTakedownCross () {
+    unit hero = libAffx_CassiaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenJavelinTokenCounter")) == libAffx_CassiaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenFendMasteryTokenCounter")) == libAffx_CassiaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenSkirmisherTokenCounter")) == libAffx_CassiaTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "AmazonGoldenJavelinMarker") && FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenJavelinTokenCounter")) == libAffx_CassiaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "AmazonGoldenJavelinTokenCounter", hero);
+        libAffx_CassiaSyncJavelin();
+    }
+    if (UnitHasBehavior2(hero, "AmazonGoldenWardenMarker") && FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenFendMasteryTokenCounter")) == libAffx_CassiaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "AmazonGoldenFendMasteryTokenCounter", hero);
+        libAffx_CassiaSyncFend();
+    }
+    if (UnitHasBehavior2(hero, "AmazonGoldenSkirmisherMarker") && FixedToInt(UnitGetTokenCount(hero, "AmazonGoldenSkirmisherTokenCounter")) == libAffx_CassiaTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "AmazonGoldenSkirmisherTokenCounter", hero);
+        libAffx_CassiaSyncSkirm();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_CassiaTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -456,6 +489,7 @@ bool libAffx_CassiaTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_CassiaTakedownCrossStart();
     if (UnitHasBehavior2(hero, "AmazonGoldenJavelinMarker") && libAffx_CassiaInWindow(libAffx_CassiaJavelinTime[killedPlayer], now)) {
         libAffx_CassiaJavelinTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "AmazonGoldenJavelinTokenCounter", hero);
@@ -474,6 +508,7 @@ bool libAffx_CassiaTakedown (bool testConds, bool runActions) {
         libAffx_CassiaSyncSkirm();
         libAffx_CassiaQuestDing();
     }
+    libAffx_CassiaTakedownCross();
     return true;
 }
 bool libAffx_CassiaStart (bool testConds, bool runActions) {

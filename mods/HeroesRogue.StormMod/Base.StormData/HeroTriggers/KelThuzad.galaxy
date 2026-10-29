@@ -205,6 +205,39 @@ bool libAffx_KelThuzadChainsHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_KelThuzadTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_KelThuzadTakedownCrossStart () {
+    unit hero = libAffx_KelThuzadHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_KelThuzadTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "KelThuzadPlagueTokenCounter"));
+    libAffx_KelThuzadTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "KelThuzadWinterTokenCounter"));
+    libAffx_KelThuzadTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "KelThuzadBondageTokenCounter"));
+}
+void libAffx_KelThuzadTakedownCross () {
+    unit hero = libAffx_KelThuzadHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "KelThuzadPlagueTokenCounter")) == libAffx_KelThuzadTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "KelThuzadWinterTokenCounter")) == libAffx_KelThuzadTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "KelThuzadBondageTokenCounter")) == libAffx_KelThuzadTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadDecayMarker") && FixedToInt(UnitGetTokenCount(hero, "KelThuzadPlagueTokenCounter")) == libAffx_KelThuzadTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "KelThuzadPlagueTokenCounter", hero);
+        libAffx_KelThuzadSyncDecay();
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadNovaMarker") && FixedToInt(UnitGetTokenCount(hero, "KelThuzadWinterTokenCounter")) == libAffx_KelThuzadTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "KelThuzadWinterTokenCounter", hero);
+        libAffx_KelThuzadSyncNova();
+    }
+    if (UnitHasBehavior2(hero, "KelThuzadChainsMarker") && FixedToInt(UnitGetTokenCount(hero, "KelThuzadBondageTokenCounter")) == libAffx_KelThuzadTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "KelThuzadBondageTokenCounter", hero);
+        libAffx_KelThuzadSyncChains();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_KelThuzadTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -218,6 +251,7 @@ bool libAffx_KelThuzadTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_KelThuzadTakedownCrossStart();
     if (UnitHasBehavior2(hero, "KelThuzadDecayMarker") && libAffx_KelThuzadInWindow(libAffx_KelThuzadDecayTime[killedPlayer], now)) {
         libAffx_KelThuzadDecayTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "KelThuzadPlagueTokenCounter", hero);
@@ -236,6 +270,7 @@ bool libAffx_KelThuzadTakedown (bool testConds, bool runActions) {
         libAffx_KelThuzadSyncChains();
         libAffx_KelThuzadQuestDing();
     }
+    libAffx_KelThuzadTakedownCross();
     return true;
 }
 bool libAffx_KelThuzadStart (bool testConds, bool runActions) {

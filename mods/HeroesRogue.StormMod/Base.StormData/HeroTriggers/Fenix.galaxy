@@ -301,6 +301,39 @@ bool libAffx_FenixTwinWindow_Func (bool testConds, bool runActions) {
     libAffx_FenixTwinTime[UnitGetOwner(victim)] = GameGetMissionTime();
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_FenixTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_FenixTakedownCrossStart () {
+    unit hero = libAffx_FenixHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_FenixTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "FenixGoldenExecutionTokenCounter"));
+    libAffx_FenixTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "FenixGoldenWarpDoctrineTokenCounter"));
+    libAffx_FenixTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "FenixGoldenArsenalMasteryTokenCounter"));
+}
+void libAffx_FenixTakedownCross () {
+    unit hero = libAffx_FenixHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "FenixGoldenExecutionTokenCounter")) == libAffx_FenixTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "FenixGoldenWarpDoctrineTokenCounter")) == libAffx_FenixTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "FenixGoldenArsenalMasteryTokenCounter")) == libAffx_FenixTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenPlasmaMarker") && FixedToInt(UnitGetTokenCount(hero, "FenixGoldenExecutionTokenCounter")) == libAffx_FenixTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "FenixGoldenExecutionTokenCounter", hero);
+        libAffx_FenixSyncPlasma();
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenWarpMarker") && FixedToInt(UnitGetTokenCount(hero, "FenixGoldenWarpDoctrineTokenCounter")) == libAffx_FenixTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "FenixGoldenWarpDoctrineTokenCounter", hero);
+        libAffx_FenixSyncWarp();
+    }
+    if (UnitHasBehavior2(hero, "FenixGoldenTwinMarker") && FixedToInt(UnitGetTokenCount(hero, "FenixGoldenArsenalMasteryTokenCounter")) == libAffx_FenixTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "FenixGoldenArsenalMasteryTokenCounter", hero);
+        libAffx_FenixSyncTwin();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_FenixTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -314,6 +347,7 @@ bool libAffx_FenixTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_FenixTakedownCrossStart();
     if (UnitHasBehavior2(hero, "FenixGoldenWarpMarker")) {
         if (UnitHasBehavior2(hero, "FenixGoldenBlinkAssaultMarker")) {
             UnitAddChargeUsed(hero, "Abil/FenixWarp", -UnitGetChargeUsed(hero, "Abil/FenixWarp"));
@@ -340,6 +374,7 @@ bool libAffx_FenixTakedown (bool testConds, bool runActions) {
         libAffx_FenixSyncTwin();
         libAffx_FenixQuestDing();
     }
+    libAffx_FenixTakedownCross();
     return true;
 }
 bool libAffx_FenixStart (bool testConds, bool runActions) {

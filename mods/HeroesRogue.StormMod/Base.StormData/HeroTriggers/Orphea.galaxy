@@ -242,6 +242,39 @@ bool libAffx_OrpheaDreadHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_OrpheaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_OrpheaTakedownCrossStart () {
+    unit hero = libAffx_OrpheaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_OrpheaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "OrpheaEncoreTokenCounter"));
+    libAffx_OrpheaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "OrpheaFeastTokenCounter"));
+    libAffx_OrpheaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "OrpheaNightmareTokenCounter"));
+}
+void libAffx_OrpheaTakedownCross () {
+    unit hero = libAffx_OrpheaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "OrpheaEncoreTokenCounter")) == libAffx_OrpheaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "OrpheaFeastTokenCounter")) == libAffx_OrpheaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "OrpheaNightmareTokenCounter")) == libAffx_OrpheaTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "OrpheaWaltzMarker") && FixedToInt(UnitGetTokenCount(hero, "OrpheaEncoreTokenCounter")) == libAffx_OrpheaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "OrpheaEncoreTokenCounter", hero);
+        libAffx_OrpheaSyncWaltz();
+    }
+    if (UnitHasBehavior2(hero, "OrpheaChompMarker") && FixedToInt(UnitGetTokenCount(hero, "OrpheaFeastTokenCounter")) == libAffx_OrpheaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "OrpheaFeastTokenCounter", hero);
+        libAffx_OrpheaSyncChomp();
+    }
+    if (UnitHasBehavior2(hero, "OrpheaDreadMarker") && FixedToInt(UnitGetTokenCount(hero, "OrpheaNightmareTokenCounter")) == libAffx_OrpheaTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "OrpheaNightmareTokenCounter", hero);
+        libAffx_OrpheaSyncDread();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_OrpheaTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -255,6 +288,7 @@ bool libAffx_OrpheaTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_OrpheaTakedownCrossStart();
     if (UnitHasBehavior2(hero, "OrpheaWaltzMarker") && libAffx_OrpheaInWindow(libAffx_OrpheaWaltzTime[killedPlayer], now)) {
         libAffx_OrpheaWaltzTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "OrpheaEncoreTokenCounter", hero);
@@ -273,6 +307,7 @@ bool libAffx_OrpheaTakedown (bool testConds, bool runActions) {
         libAffx_OrpheaSyncDread();
         libAffx_OrpheaQuestDing();
     }
+    libAffx_OrpheaTakedownCross();
     return true;
 }
 bool libAffx_OrpheaStart (bool testConds, bool runActions) {

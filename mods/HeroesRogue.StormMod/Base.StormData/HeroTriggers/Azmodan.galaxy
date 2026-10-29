@@ -482,6 +482,39 @@ bool libAffx_AzmodanGenWindow_Func (bool testConds, bool runActions) {
     libAffx_AzmodanGenTime[UnitGetOwner(victim)] = GameGetMissionTime();
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_AzmodanTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_AzmodanTakedownCrossStart () {
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_AzmodanTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenDestructionTokenCounter"));
+    libAffx_AzmodanTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenSinTokenCounter"));
+    libAffx_AzmodanTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenLegionTokenCounter"));
+}
+void libAffx_AzmodanTakedownCross () {
+    unit hero = libAffx_AzmodanHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenDestructionTokenCounter")) == libAffx_AzmodanTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenSinTokenCounter")) == libAffx_AzmodanTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenLegionTokenCounter")) == libAffx_AzmodanTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "AzmodanGlobeMarker") && FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenDestructionTokenCounter")) == libAffx_AzmodanTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "AzmodanGoldenDestructionTokenCounter", hero);
+        libAffx_AzmodanSyncGlobe();
+    }
+    if (UnitHasBehavior2(hero, "AzmodanSinMarker") && FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenSinTokenCounter")) == libAffx_AzmodanTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "AzmodanGoldenSinTokenCounter", hero);
+        libAffx_AzmodanSyncSin();
+    }
+    if (UnitHasBehavior2(hero, "AzmodanGenMarker") && FixedToInt(UnitGetTokenCount(hero, "AzmodanGoldenLegionTokenCounter")) == libAffx_AzmodanTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "AzmodanGoldenLegionTokenCounter", hero);
+        libAffx_AzmodanSyncGen();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_AzmodanTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -495,6 +528,7 @@ bool libAffx_AzmodanTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_AzmodanTakedownCrossStart();
     if (UnitHasBehavior2(hero, "AzmodanGlobeMarker") && libAffx_AzmodanInWindow(libAffx_AzmodanGlobeTime[killedPlayer], now)) {
         libAffx_AzmodanGlobeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "AzmodanGoldenDestructionTokenCounter", hero);
@@ -513,6 +547,7 @@ bool libAffx_AzmodanTakedown (bool testConds, bool runActions) {
         libAffx_AzmodanSyncGen();
         libAffx_AzmodanQuestDing();
     }
+    libAffx_AzmodanTakedownCross();
     return true;
 }
 bool libAffx_AzmodanStart (bool testConds, bool runActions) {

@@ -377,6 +377,39 @@ bool libAffx_ChromieChronoHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_ChromieTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ChromieTakedownCrossStart () {
+    unit hero = libAffx_ChromieHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ChromieTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenSandsOfTimeTokenCounter"));
+    libAffx_ChromieTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenDragonflightTokenCounter"));
+    libAffx_ChromieTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenTimelineTokenCounter"));
+}
+void libAffx_ChromieTakedownCross () {
+    unit hero = libAffx_ChromieHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenSandsOfTimeTokenCounter")) == libAffx_ChromieTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenDragonflightTokenCounter")) == libAffx_ChromieTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenTimelineTokenCounter")) == libAffx_ChromieTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ChromieGoldenSniperMarker") && FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenSandsOfTimeTokenCounter")) == libAffx_ChromieTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ChromieGoldenSandsOfTimeTokenCounter", hero);
+        libAffx_ChromieSyncSniper();
+    }
+    if (UnitHasBehavior2(hero, "ChromieGoldenBreathMarker") && FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenDragonflightTokenCounter")) == libAffx_ChromieTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ChromieGoldenDragonflightTokenCounter", hero);
+        libAffx_ChromieSyncBreath();
+    }
+    if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker") && FixedToInt(UnitGetTokenCount(hero, "ChromieGoldenTimelineTokenCounter")) == libAffx_ChromieTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ChromieGoldenTimelineTokenCounter", hero);
+        libAffx_ChromieSyncChrono();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_ChromieTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -390,6 +423,7 @@ bool libAffx_ChromieTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_ChromieTakedownCrossStart();
     if (UnitHasBehavior2(hero, "ChromieGoldenChronoMarker")) {
         libAffx_ChromieMomentumLeft = 20.0;
         libAffx_ChromieShieldRefill(hero);
@@ -413,6 +447,7 @@ bool libAffx_ChromieTakedown (bool testConds, bool runActions) {
         libAffx_ChromieQuestDing();
         libAffx_ChromieShieldRefill(hero);
     }
+    libAffx_ChromieTakedownCross();
     return true;
 }
 bool libAffx_ChromieStart (bool testConds, bool runActions) {

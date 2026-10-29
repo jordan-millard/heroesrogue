@@ -405,6 +405,41 @@ bool libAffx_TychusOdinHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "TychusGoldenDevastationTokenCounter", hero);
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_TychusTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_TychusTakedownCrossStart () {
+    unit hero = libAffx_TychusHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_TychusTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "TychusGoldenCarnageTokenCounter"));
+    libAffx_TychusTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "TychusGoldenDemolitionTokenCounter"));
+    libAffx_TychusTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "TychusGoldenPilotTokenCounter"));
+}
+void libAffx_TychusTakedownCross () {
+    unit hero = libAffx_TychusHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "TychusGoldenCarnageTokenCounter")) == libAffx_TychusTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "TychusGoldenDemolitionTokenCounter")) == libAffx_TychusTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "TychusGoldenPilotTokenCounter")) == libAffx_TychusTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "TychusMinigunMarker") && FixedToInt(UnitGetTokenCount(hero, "TychusGoldenCarnageTokenCounter")) == libAffx_TychusTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "TychusGoldenCarnageTokenCounter", hero);
+        libAffx_TychusSyncMinigun();
+    }
+    if (UnitHasBehavior2(hero, "TychusGrenadeMarker") && FixedToInt(UnitGetTokenCount(hero, "TychusGoldenDemolitionTokenCounter")) == libAffx_TychusTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "TychusGoldenDemolitionTokenCounter", hero);
+        libAffx_TychusSyncGrenade();
+        libAffx_TychusGrenadeSync();
+    }
+    if (UnitHasBehavior2(hero, "TychusOdinMarker") && FixedToInt(UnitGetTokenCount(hero, "TychusGoldenPilotTokenCounter")) == libAffx_TychusTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "TychusGoldenPilotTokenCounter", hero);
+        libAffx_TychusSyncOdin();
+        libAffx_TychusOdinPilotSync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_TychusTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -418,6 +453,7 @@ bool libAffx_TychusTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_TychusTakedownCrossStart();
     if (UnitHasBehavior2(hero, "TychusOdinMarker") && UnitHasBehavior2(hero, "TychusOdin")) {
         libGame_gf_ModifyTokenCount(1, "TychusGoldenPilotTokenCounter", hero);
         libAffx_TychusSyncOdin();
@@ -443,6 +479,7 @@ bool libAffx_TychusTakedown (bool testConds, bool runActions) {
         libAffx_TychusSyncOdin();
         libAffx_TychusQuestDing();
     }
+    libAffx_TychusTakedownCross();
     return true;
 }
 bool libAffx_TychusStart (bool testConds, bool runActions) {

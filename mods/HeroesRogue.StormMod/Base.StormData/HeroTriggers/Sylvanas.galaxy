@@ -250,6 +250,39 @@ bool libAffx_SylvanasWaveHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_SylvanasTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_SylvanasTakedownCrossStart () {
+    unit hero = libAffx_SylvanasHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_SylvanasTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "SylvanasBarrageTokenCounter"));
+    libAffx_SylvanasTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "SylvanasPlagueTokenCounter"));
+    libAffx_SylvanasTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "SylvanasHauntingTokenCounter"));
+}
+void libAffx_SylvanasTakedownCross () {
+    unit hero = libAffx_SylvanasHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "SylvanasBarrageTokenCounter")) == libAffx_SylvanasTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "SylvanasPlagueTokenCounter")) == libAffx_SylvanasTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "SylvanasHauntingTokenCounter")) == libAffx_SylvanasTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "SylvanasFireMarker") && FixedToInt(UnitGetTokenCount(hero, "SylvanasBarrageTokenCounter")) == libAffx_SylvanasTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "SylvanasBarrageTokenCounter", hero);
+        libAffx_SylvanasSyncFire();
+    }
+    if (UnitHasBehavior2(hero, "SylvanasDaggerMarker") && FixedToInt(UnitGetTokenCount(hero, "SylvanasPlagueTokenCounter")) == libAffx_SylvanasTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "SylvanasPlagueTokenCounter", hero);
+        libAffx_SylvanasSyncDagger();
+    }
+    if (UnitHasBehavior2(hero, "SylvanasWaveMarker") && FixedToInt(UnitGetTokenCount(hero, "SylvanasHauntingTokenCounter")) == libAffx_SylvanasTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "SylvanasHauntingTokenCounter", hero);
+        libAffx_SylvanasSyncWave();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_SylvanasTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -263,6 +296,7 @@ bool libAffx_SylvanasTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_SylvanasTakedownCrossStart();
     if (UnitHasBehavior2(hero, "SylvanasFireMarker") && libAffx_SylvanasInWindow(libAffx_SylvanasFireTime[killedPlayer], now)) {
         libAffx_SylvanasFireTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "SylvanasBarrageTokenCounter", hero);
@@ -281,6 +315,7 @@ bool libAffx_SylvanasTakedown (bool testConds, bool runActions) {
         libAffx_SylvanasSyncWave();
         libAffx_SylvanasQuestDing();
     }
+    libAffx_SylvanasTakedownCross();
     return true;
 }
 bool libAffx_SylvanasStart (bool testConds, bool runActions) {

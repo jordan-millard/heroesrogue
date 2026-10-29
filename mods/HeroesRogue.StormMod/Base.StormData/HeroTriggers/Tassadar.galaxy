@@ -113,6 +113,33 @@ bool libAffx_TassadarShockRayHit_Func (bool testConds, bool runActions) {
 }
 
 // HeroTakedown for Storm of the Ages and Lance of Aiur
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[3] libAffx_TassadarTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_TassadarTakedownCrossStart () {
+    unit hero = libAffx_TassadarHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_TassadarTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "TassadarStormOfAgesTokenCounter"));
+    libAffx_TassadarTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "TassadarLanceOfAiurTokenCounter"));
+}
+void libAffx_TassadarTakedownCross () {
+    unit hero = libAffx_TassadarHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "TassadarStormOfAgesTokenCounter")) == libAffx_TassadarTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "TassadarLanceOfAiurTokenCounter")) == libAffx_TassadarTakedownBefore[2]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "TassadarEyeOfTheStormMarker") && FixedToInt(UnitGetTokenCount(hero, "TassadarStormOfAgesTokenCounter")) == libAffx_TassadarTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "TassadarStormOfAgesTokenCounter", hero);
+        libAffx_TassadarSyncStormDuration();
+    }
+    if (UnitHasBehavior2(hero, "TassadarTemplarsLanceMarker") && FixedToInt(UnitGetTokenCount(hero, "TassadarLanceOfAiurTokenCounter")) == libAffx_TassadarTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "TassadarLanceOfAiurTokenCounter", hero);
+    }
+}
 bool libAffx_TassadarTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
     unit hero = libAffx_TassadarHero();
@@ -125,6 +152,7 @@ bool libAffx_TassadarTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_TassadarTakedownCrossStart();
     if (UnitHasBehavior2(hero, "TassadarEyeOfTheStormMarker") && libAffx_tassadarStormTime[killedPlayer] > 0.0 && now - libAffx_tassadarStormTime[killedPlayer] <= libAffx_tassadarStormWindow) {
         libAffx_tassadarStormTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "TassadarStormOfAgesTokenCounter", hero);
@@ -136,6 +164,7 @@ bool libAffx_TassadarTakedown (bool testConds, bool runActions) {
         libGame_gf_ModifyTokenCount(1, "TassadarLanceOfAiurTokenCounter", hero);
         libAffx_TassadarQuestDing();
     }
+    libAffx_TassadarTakedownCross();
     return true;
 }
 

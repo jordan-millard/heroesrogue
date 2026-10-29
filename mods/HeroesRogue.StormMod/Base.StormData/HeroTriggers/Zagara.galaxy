@@ -302,6 +302,39 @@ bool libAffx_ZagaraMutaHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_ZagaraTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ZagaraTakedownCrossStart () {
+    unit hero = libAffx_ZagaraHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ZagaraTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ZagaraSpreadingBlightTokenCounter"));
+    libAffx_ZagaraTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ZagaraVolatileBroodTokenCounter"));
+    libAffx_ZagaraTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ZagaraSwarmHostTokenCounter"));
+}
+void libAffx_ZagaraTakedownCross () {
+    unit hero = libAffx_ZagaraHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ZagaraSpreadingBlightTokenCounter")) == libAffx_ZagaraTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ZagaraVolatileBroodTokenCounter")) == libAffx_ZagaraTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ZagaraSwarmHostTokenCounter")) == libAffx_ZagaraTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ZagaraHiveMarker") && FixedToInt(UnitGetTokenCount(hero, "ZagaraSpreadingBlightTokenCounter")) == libAffx_ZagaraTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ZagaraSpreadingBlightTokenCounter", hero);
+        libAffx_ZagaraSyncHive();
+    }
+    if (UnitHasBehavior2(hero, "ZagaraBaneMarker") && FixedToInt(UnitGetTokenCount(hero, "ZagaraVolatileBroodTokenCounter")) == libAffx_ZagaraTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ZagaraVolatileBroodTokenCounter", hero);
+        libAffx_ZagaraSyncBane();
+    }
+    if (UnitHasBehavior2(hero, "ZagaraMutaMarker") && FixedToInt(UnitGetTokenCount(hero, "ZagaraSwarmHostTokenCounter")) == libAffx_ZagaraTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ZagaraSwarmHostTokenCounter", hero);
+        libAffx_ZagaraSyncMuta();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_ZagaraTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -315,6 +348,7 @@ bool libAffx_ZagaraTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_ZagaraTakedownCrossStart();
     if (UnitHasBehavior2(hero, "ZagaraHiveMarker") && libAffx_ZagaraInWindow(libAffx_ZagaraHiveTime[killedPlayer], now)) {
         libAffx_ZagaraHiveTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ZagaraSpreadingBlightTokenCounter", hero);
@@ -333,6 +367,7 @@ bool libAffx_ZagaraTakedown (bool testConds, bool runActions) {
         libAffx_ZagaraSyncMuta();
         libAffx_ZagaraQuestDing();
     }
+    libAffx_ZagaraTakedownCross();
     return true;
 }
 bool libAffx_ZagaraStart (bool testConds, bool runActions) {

@@ -267,6 +267,42 @@ bool libAffx_XalatathHeartHit_Func (bool testConds, bool runActions) {
     libAffx_XalatathHeartShield(hero);
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_XalatathTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_XalatathTakedownCrossStart () {
+    unit hero = libAffx_XalatathHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_XalatathTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "XalatathProphecyTokenCounter"));
+    libAffx_XalatathTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "XalatathDoomTokenCounter"));
+    libAffx_XalatathTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "XalatathSacrificeTokenCounter"));
+}
+void libAffx_XalatathTakedownCross () {
+    unit hero = libAffx_XalatathHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "XalatathProphecyTokenCounter")) == libAffx_XalatathTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "XalatathDoomTokenCounter")) == libAffx_XalatathTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "XalatathSacrificeTokenCounter")) == libAffx_XalatathTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "XalatathVolleyMarker") && FixedToInt(UnitGetTokenCount(hero, "XalatathProphecyTokenCounter")) == libAffx_XalatathTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "XalatathProphecyTokenCounter", hero);
+        libAffx_XalatathSyncVolley();
+        libAffx_XalatathVolleyRangeSync();
+    }
+    if (UnitHasBehavior2(hero, "XalatathMarkMarker") && FixedToInt(UnitGetTokenCount(hero, "XalatathDoomTokenCounter")) == libAffx_XalatathTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "XalatathDoomTokenCounter", hero);
+        libAffx_XalatathSyncMark();
+        libAffx_XalatathMarkSpeedSync();
+    }
+    if (UnitHasBehavior2(hero, "XalatathHeartMarker") && FixedToInt(UnitGetTokenCount(hero, "XalatathSacrificeTokenCounter")) == libAffx_XalatathTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "XalatathSacrificeTokenCounter", hero);
+        libAffx_XalatathSyncHeart();
+        libAffx_XalatathHeartDurationSync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_XalatathTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -280,6 +316,7 @@ bool libAffx_XalatathTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_XalatathTakedownCrossStart();
     if (UnitHasBehavior2(hero, "XalatathVolleyMarker") && libAffx_XalatathInWindow(libAffx_XalatathVolleyTime[killedPlayer], now)) {
         libAffx_XalatathVolleyTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "XalatathProphecyTokenCounter", hero);
@@ -301,6 +338,7 @@ bool libAffx_XalatathTakedown (bool testConds, bool runActions) {
         libAffx_XalatathQuestDing();
         libAffx_XalatathHeartDurationSync();
     }
+    libAffx_XalatathTakedownCross();
     return true;
 }
 bool libAffx_XalatathStart (bool testConds, bool runActions) {

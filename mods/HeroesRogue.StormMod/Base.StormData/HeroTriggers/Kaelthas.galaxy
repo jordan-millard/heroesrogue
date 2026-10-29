@@ -361,6 +361,39 @@ bool libAffx_KaelthasPyroHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_KaelthasTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_KaelthasTakedownCrossStart () {
+    unit hero = libAffx_KaelthasHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_KaelthasTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "KaelthasSunwellTokenCounter"));
+    libAffx_KaelthasTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "KaelthasChainDetonationTokenCounter"));
+    libAffx_KaelthasTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "KaelthasPhoenixFireTokenCounter"));
+}
+void libAffx_KaelthasTakedownCross () {
+    unit hero = libAffx_KaelthasHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "KaelthasSunwellTokenCounter")) == libAffx_KaelthasTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "KaelthasChainDetonationTokenCounter")) == libAffx_KaelthasTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "KaelthasPhoenixFireTokenCounter")) == libAffx_KaelthasTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker") && FixedToInt(UnitGetTokenCount(hero, "KaelthasSunwellTokenCounter")) == libAffx_KaelthasTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "KaelthasSunwellTokenCounter", hero);
+        libAffx_KaelthasSyncFlamestrike();
+    }
+    if (UnitHasBehavior2(hero, "KaelthasBombMarker") && FixedToInt(UnitGetTokenCount(hero, "KaelthasChainDetonationTokenCounter")) == libAffx_KaelthasTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "KaelthasChainDetonationTokenCounter", hero);
+        libAffx_KaelthasSyncBomb();
+    }
+    if (UnitHasBehavior2(hero, "KaelthasPyroMarker") && FixedToInt(UnitGetTokenCount(hero, "KaelthasPhoenixFireTokenCounter")) == libAffx_KaelthasTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "KaelthasPhoenixFireTokenCounter", hero);
+        libAffx_KaelthasSyncPyro();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_KaelthasTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -374,6 +407,7 @@ bool libAffx_KaelthasTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_KaelthasTakedownCrossStart();
     if (UnitHasBehavior2(hero, "KaelthasFlamestrikeMarker") && libAffx_KaelthasInWindow(libAffx_KaelthasFlamestrikeTime[killedPlayer], now)) {
         libAffx_KaelthasFlamestrikeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "KaelthasSunwellTokenCounter", hero);
@@ -395,6 +429,7 @@ bool libAffx_KaelthasTakedown (bool testConds, bool runActions) {
             UnitCreateEffectUnit(hero, "KaelthasInfernoReset", hero);
         }
     }
+    libAffx_KaelthasTakedownCross();
     return true;
 }
 bool libAffx_KaelthasStart (bool testConds, bool runActions) {

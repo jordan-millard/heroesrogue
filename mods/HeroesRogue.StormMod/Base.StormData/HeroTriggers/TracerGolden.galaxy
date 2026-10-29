@@ -390,6 +390,40 @@ bool libAffx_TracerBombHit_Func (bool testConds, bool runActions) {
     libAffx_TracerBomberShield(hero);
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_TracerTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_TracerTakedownCrossStart () {
+    unit hero = libAffx_TracerHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_TracerTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "TracerBiggerMagazineTokenCounter"));
+    libAffx_TracerTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "TracerBrawlTokenCounter"));
+    libAffx_TracerTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "TracerOverchargeTokenCounter"));
+}
+void libAffx_TracerTakedownCross () {
+    unit hero = libAffx_TracerHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "TracerBiggerMagazineTokenCounter")) == libAffx_TracerTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "TracerBrawlTokenCounter")) == libAffx_TracerTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "TracerOverchargeTokenCounter")) == libAffx_TracerTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "TracerGunslingerMarker") && FixedToInt(UnitGetTokenCount(hero, "TracerBiggerMagazineTokenCounter")) == libAffx_TracerTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "TracerBiggerMagazineTokenCounter", hero);
+        libAffx_TracerSyncGun();
+        libAffx_TracerMagazineSync();
+    }
+    if (UnitHasBehavior2(hero, "TracerBrawlerMarker") && FixedToInt(UnitGetTokenCount(hero, "TracerBrawlTokenCounter")) == libAffx_TracerTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "TracerBrawlTokenCounter", hero);
+        libAffx_TracerSyncMelee();
+    }
+    if (UnitHasBehavior2(hero, "TracerBomberMarker") && FixedToInt(UnitGetTokenCount(hero, "TracerOverchargeTokenCounter")) == libAffx_TracerTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "TracerOverchargeTokenCounter", hero);
+        libAffx_TracerSyncBomb();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_TracerTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -403,6 +437,7 @@ bool libAffx_TracerTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_TracerTakedownCrossStart();
     // Refill: any enemy Hero takedown refills 50% of Pulse Bomb
     if (UnitHasBehavior2(hero, "TracerRefillMarker") && UnitHasBehavior2(hero, "TracerBomberMarker")) {
         libAffx_TracerRefill(hero);
@@ -426,6 +461,7 @@ bool libAffx_TracerTakedown (bool testConds, bool runActions) {
         libAffx_TracerSyncBomb();
         libAffx_TracerQuestDing();
     }
+    libAffx_TracerTakedownCross();
     return true;
 }
 bool libAffx_TracerStart (bool testConds, bool runActions) {

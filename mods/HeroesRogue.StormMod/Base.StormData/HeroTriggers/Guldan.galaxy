@@ -276,6 +276,39 @@ bool libAffx_GuldanCorruptionWindow_Func (bool testConds, bool runActions) {
     libAffx_GuldanCorruptionTime[UnitGetOwner(victim)] = GameGetMissionTime();
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_GuldanTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_GuldanTakedownCrossStart () {
+    unit hero = libAffx_GuldanHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_GuldanTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "GuldanPyreTokenCounter"));
+    libAffx_GuldanTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "GuldanHarvestTokenCounter"));
+    libAffx_GuldanTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "GuldanAfflictionTokenCounter"));
+}
+void libAffx_GuldanTakedownCross () {
+    unit hero = libAffx_GuldanHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "GuldanPyreTokenCounter")) == libAffx_GuldanTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "GuldanHarvestTokenCounter")) == libAffx_GuldanTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "GuldanAfflictionTokenCounter")) == libAffx_GuldanTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GuldanFelMarker") && FixedToInt(UnitGetTokenCount(hero, "GuldanPyreTokenCounter")) == libAffx_GuldanTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "GuldanPyreTokenCounter", hero);
+        libAffx_GuldanSyncFel();
+    }
+    if (UnitHasBehavior2(hero, "GuldanDrainMarker") && FixedToInt(UnitGetTokenCount(hero, "GuldanHarvestTokenCounter")) == libAffx_GuldanTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "GuldanHarvestTokenCounter", hero);
+        libAffx_GuldanSyncDrain();
+    }
+    if (UnitHasBehavior2(hero, "GuldanCorruptionMarker") && FixedToInt(UnitGetTokenCount(hero, "GuldanAfflictionTokenCounter")) == libAffx_GuldanTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "GuldanAfflictionTokenCounter", hero);
+        libAffx_GuldanSyncCorruption();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_GuldanTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -289,6 +322,7 @@ bool libAffx_GuldanTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_GuldanTakedownCrossStart();
     if (UnitHasBehavior2(hero, "GuldanFelMarker") && libAffx_GuldanInWindow(libAffx_GuldanFelTime[killedPlayer], now)) {
         libAffx_GuldanFelTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "GuldanPyreTokenCounter", hero);
@@ -307,6 +341,7 @@ bool libAffx_GuldanTakedown (bool testConds, bool runActions) {
         libAffx_GuldanSyncCorruption();
         libAffx_GuldanQuestDing();
     }
+    libAffx_GuldanTakedownCross();
     return true;
 }
 bool libAffx_GuldanStart (bool testConds, bool runActions) {

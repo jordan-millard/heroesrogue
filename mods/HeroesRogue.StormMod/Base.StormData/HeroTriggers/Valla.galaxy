@@ -210,6 +210,39 @@ bool libAffx_VallaStrafeHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_VallaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_VallaTakedownCrossStart () {
+    unit hero = libAffx_VallaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_VallaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "VallaTrophyHunterTokenCounter"));
+    libAffx_VallaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "VallaBountyTokenCounter"));
+    libAffx_VallaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "VallaEndlessHuntTokenCounter"));
+}
+void libAffx_VallaTakedownCross () {
+    unit hero = libAffx_VallaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "VallaTrophyHunterTokenCounter")) == libAffx_VallaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "VallaBountyTokenCounter")) == libAffx_VallaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "VallaEndlessHuntTokenCounter")) == libAffx_VallaTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "VallaHungerMarker") && FixedToInt(UnitGetTokenCount(hero, "VallaTrophyHunterTokenCounter")) == libAffx_VallaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "VallaTrophyHunterTokenCounter", hero);
+        libAffx_VallaSyncHunger();
+    }
+    if (UnitHasBehavior2(hero, "VallaVolleyMarker") && FixedToInt(UnitGetTokenCount(hero, "VallaBountyTokenCounter")) == libAffx_VallaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "VallaBountyTokenCounter", hero);
+        libAffx_VallaSyncVolley();
+    }
+    if (UnitHasBehavior2(hero, "VallaStrafeMarker") && FixedToInt(UnitGetTokenCount(hero, "VallaEndlessHuntTokenCounter")) == libAffx_VallaTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "VallaEndlessHuntTokenCounter", hero);
+        libAffx_VallaSyncStrafe();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_VallaTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -223,6 +256,7 @@ bool libAffx_VallaTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_VallaTakedownCrossStart();
     // Relentless: a takedown while Strafing restores Strafe's full duration
     if (UnitHasBehavior2(hero, "VallaRelentlessMarker") && UnitHasBehavior2(hero, "Strafe")) {
         UnitBehaviorSetDurationRemaining(hero, "Strafe", StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "Strafe", "Duration", libAffx_player)));
@@ -248,6 +282,7 @@ bool libAffx_VallaTakedown (bool testConds, bool runActions) {
         libAffx_VallaSyncStrafe();
         libAffx_VallaQuestDing();
     }
+    libAffx_VallaTakedownCross();
     return true;
 }
 bool libAffx_VallaStart (bool testConds, bool runActions) {

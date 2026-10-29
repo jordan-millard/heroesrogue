@@ -230,6 +230,39 @@ bool libAffx_JainaElementalHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_JainaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_JainaTakedownCrossStart () {
+    unit hero = libAffx_JainaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_JainaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "JainaColdFrontTokenCounter"));
+    libAffx_JainaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "JainaEndlessWinterTokenCounter"));
+    libAffx_JainaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "JainaTidecallerTokenCounter"));
+}
+void libAffx_JainaTakedownCross () {
+    unit hero = libAffx_JainaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "JainaColdFrontTokenCounter")) == libAffx_JainaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "JainaEndlessWinterTokenCounter")) == libAffx_JainaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "JainaTidecallerTokenCounter")) == libAffx_JainaTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "JainaFrostboltMarker") && FixedToInt(UnitGetTokenCount(hero, "JainaColdFrontTokenCounter")) == libAffx_JainaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "JainaColdFrontTokenCounter", hero);
+        libAffx_JainaSyncFrostbolt();
+    }
+    if (UnitHasBehavior2(hero, "JainaBlizzardMarker") && FixedToInt(UnitGetTokenCount(hero, "JainaEndlessWinterTokenCounter")) == libAffx_JainaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "JainaEndlessWinterTokenCounter", hero);
+        libAffx_JainaSyncBlizzard();
+    }
+    if (UnitHasBehavior2(hero, "JainaElementalMarker") && FixedToInt(UnitGetTokenCount(hero, "JainaTidecallerTokenCounter")) == libAffx_JainaTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "JainaTidecallerTokenCounter", hero);
+        libAffx_JainaSyncElemental();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_JainaTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -243,6 +276,7 @@ bool libAffx_JainaTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_JainaTakedownCrossStart();
     if (UnitHasBehavior2(hero, "JainaFrostboltMarker") && libAffx_JainaInWindow(libAffx_JainaFrostboltTime[killedPlayer], now)) {
         libAffx_JainaFrostboltTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "JainaColdFrontTokenCounter", hero);
@@ -261,6 +295,7 @@ bool libAffx_JainaTakedown (bool testConds, bool runActions) {
         libAffx_JainaSyncElemental();
         libAffx_JainaQuestDing();
     }
+    libAffx_JainaTakedownCross();
     return true;
 }
 bool libAffx_JainaStart (bool testConds, bool runActions) {

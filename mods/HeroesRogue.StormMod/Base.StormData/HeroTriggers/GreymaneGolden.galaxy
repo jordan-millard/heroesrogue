@@ -446,6 +446,42 @@ bool libAffx_GreymaneSilverHit_Func (bool testConds, bool runActions) {
     UnitBehaviorAdd(hero, "GreymaneGoldenSilverbaneHeroes", hero, 1);
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_GreymaneTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_GreymaneTakedownCrossStart () {
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_GreymaneTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenDistillationTokenCounter"));
+    libAffx_GreymaneTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenFeralHuntTokenCounter"));
+    libAffx_GreymaneTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenResolveTokenCounter"));
+}
+void libAffx_GreymaneTakedownCross () {
+    unit hero = libAffx_GreymaneHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenDistillationTokenCounter")) == libAffx_GreymaneTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenFeralHuntTokenCounter")) == libAffx_GreymaneTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenResolveTokenCounter")) == libAffx_GreymaneTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GreymaneAlchemistMarker") && FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenDistillationTokenCounter")) == libAffx_GreymaneTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "GreymaneGoldenDistillationTokenCounter", hero);
+        libAffx_GreymaneSyncAlchemist();
+        libAffx_GreymaneAlchemistSync();
+    }
+    if (UnitHasBehavior2(hero, "GreymaneRipperMarker") && FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenFeralHuntTokenCounter")) == libAffx_GreymaneTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "GreymaneGoldenFeralHuntTokenCounter", hero);
+        libAffx_GreymaneSyncRipper();
+        libAffx_GreymaneRipperSync();
+    }
+    if (UnitHasBehavior2(hero, "GreymaneSilverMarker") && FixedToInt(UnitGetTokenCount(hero, "GreymaneGoldenResolveTokenCounter")) == libAffx_GreymaneTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "GreymaneGoldenResolveTokenCounter", hero);
+        libAffx_GreymaneSyncSilver();
+        libAffx_GreymaneSilverSync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_GreymaneTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -459,6 +495,7 @@ bool libAffx_GreymaneTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_GreymaneTakedownCrossStart();
     if (UnitHasBehavior2(hero, "GreymaneAlchemistMarker") && libAffx_GreymaneInWindow(libAffx_GreymaneAlchemistTime[killedPlayer], now)) {
         libAffx_GreymaneAlchemistTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "GreymaneGoldenDistillationTokenCounter", hero);
@@ -483,6 +520,7 @@ bool libAffx_GreymaneTakedown (bool testConds, bool runActions) {
         libAffx_GreymaneQuestDing();
         libAffx_GreymaneSilverSync();
     }
+    libAffx_GreymaneTakedownCross();
     return true;
 }
 bool libAffx_GreymaneStart (bool testConds, bool runActions) {

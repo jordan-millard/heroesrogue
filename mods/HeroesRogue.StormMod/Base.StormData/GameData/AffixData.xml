@@ -10735,7 +10735,7 @@
             <String String="1 0 JunkratDemolitionTokenCounter">
                 <Field Id="Behavior" Index="1" />
             </String>
-            <String String="JunkratDemolitionTokenCounter 0.5">
+            <String String="JunkratDemolitionTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" />
             </String>
             <String String="1 1 Add Abil,JunkratFragLauncher,Cost.Charge.CountMax 1">
@@ -11788,7 +11788,7 @@
             <String String="TassadarStormOfAgesTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TassadarGatheringStormTokenCounter 0.35">
+            <String String="TassadarGatheringStormTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Multiply Effect,TassadarPsionicStormSearchArea,AreaArray[0].Radius 1.2">
@@ -12082,7 +12082,7 @@
             <String String="NovaConfirmedKillTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="NovaSteadyAimTokenCounter 0.35">
+            <String String="NovaSteadyAimTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Subtract Abil,NovaSnipeStorm,Cost.Cooldown.TimeUse 1">
@@ -12225,6 +12225,9 @@
             </String>
             <String String="NovaHuntersMarkTokenCounter 1.0">
                 <Field Id="QuestRetain" />
+            </String>
+            <String String="NovaMarkedTargetsTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Subtract Abil,NovaPinningShot,Cost.Charge.TimeUse 3">
                 <Field Id="CatalogModification" />
@@ -12370,7 +12373,7 @@
             <String String="NovaPhantomStrikeTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="NovaIllusionistTokenCounter 0.5">
+            <String String="NovaIllusionistTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Behavior,NovaHoloDecoyTimedLife,Duration 5">
@@ -13638,7 +13641,7 @@
             <String String="GenjiThousandCutsTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GenjiHailOfSteelTokenCounter 0.5">
+            <String String="GenjiHailOfSteelTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,GenjiShuriken,Cost.Charge.CountMax 4">
@@ -13811,7 +13814,7 @@
             <String String="GenjiShimadaLegacyTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GenjiPrecisionTokenCounter 0.5">
+            <String String="GenjiPrecisionTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,GenjiSwiftStrike,Cost.Cooldown.TimeUse 8">
@@ -13987,7 +13990,7 @@
             <String String="GenjiDragonSoulTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GenjiDragonHungerTokenCounter 0.5">
+            <String String="GenjiDragonHungerTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,GenjiDragonMasterUnleash,Cost.Cooldown.TimeUse 60">
@@ -15271,7 +15274,7 @@
             <String String="JainaColdFrontTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="JainaIceShardsTokenCounter 0.5">
+            <String String="JainaIceShardsTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,JainaFrostbolt,Cost.Cooldown.TimeUse 3">
@@ -15432,7 +15435,7 @@
             <String String="JainaEndlessWinterTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="JainaSnowfallTokenCounter 0.5">
+            <String String="JainaSnowfallTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,JainaBlizzard,Cost.Charge.CountMax 2">
@@ -15617,7 +15620,7 @@
             <String String="JainaTidecallerTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="JainaUndertowTokenCounter 0.5">
+            <String String="JainaUndertowTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,JainaSummonWaterElemental,Cost.Cooldown.TimeUse 20">
@@ -15860,7 +15863,7 @@
             <String String="TracerBiggerMagazineTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TracerHotLeadTokenCounter 0.5">
+            <String String="TracerHotLeadTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,TracerHeroWeaponDamage,MultiplicativeModifierArray[TracerGunPower].Modifier 0.5">
@@ -16048,7 +16051,7 @@
             <String String="TracerBrawlTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TracerKnucklesTokenCounter 0.5">
+            <String String="TracerKnucklesTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,TracerMeleeDamage,MultiplicativeModifierArray[TracerMeleePower].Modifier 0.5">
@@ -16197,7 +16200,7 @@
             <String String="TracerOverchargeTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TracerDemolitionTokenCounter 0.75">
+            <String String="TracerDemolitionTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Behavior,TracerPulseChargeRate,Duration 0.5">
@@ -16469,7 +16472,7 @@
             <String String="XalatathProphecyTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="XalatathEchoingWhispersTokenCounter 0.5">
+            <String String="XalatathEchoingWhispersTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="XalatathVoidVolleyQuestTokenCounter 0.5">
@@ -16627,7 +16630,7 @@
             <String String="XalatathDoomTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="XalatathOmenTokenCounter 0.5">
+            <String String="XalatathOmenTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="XalatathVoidVolleyQuestTokenCounter 0.5">
@@ -16791,7 +16794,7 @@
             <String String="XalatathSacrificeTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="XalatathRitualTokenCounter 0.5">
+            <String String="XalatathRitualTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="XalatathVoidVolleyQuestTokenCounter 0.5">
@@ -17029,7 +17032,7 @@
             <String String="KaelthasSunwellTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="KaelthasEmberTokenCounter 0.5">
+            <String String="KaelthasEmberTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="KaelthasFlamestrikeConvectionQuestToken 0.5">
@@ -17208,7 +17211,7 @@
             <String String="KaelthasChainDetonationTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="KaelthasFuseTokenCounter 0.5">
+            <String String="KaelthasFuseTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,KaelthasLivingBomb,Cost.Charge.CountMax 1">
@@ -17390,7 +17393,7 @@
             <String String="KaelthasPhoenixFireTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="KaelthasFirestormTokenCounter 0.5">
+            <String String="KaelthasFirestormTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse 20">
@@ -17584,7 +17587,7 @@
             <String String="ZuljinTrophiesTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ZuljinHackAndSlashTokenCounter 0.5">
+            <String String="ZuljinHackAndSlashTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="ZuljinYouWantAxeQuestMainToken 0.5">
@@ -17751,7 +17754,7 @@
             <String String="ZuljinSpinningDeathTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ZuljinCleaverTokenCounter 0.5">
+            <String String="ZuljinCleaverTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="ZuljinYouWantAxeQuestMainToken 0.5">
@@ -17948,7 +17951,7 @@
             <String String="ZuljinHuntTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ZuljinMarkedTokenCounter 0.5">
+            <String String="ZuljinMarkedTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="ZuljinYouWantAxeQuestMainToken 0.5">
@@ -18178,7 +18181,7 @@
             <String String="VallaTrophyHunterTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="VallaHungerTokenCounter 0.5">
+            <String String="VallaHungerTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="DemonHunterPuncturingArrowTalentQuestTokenCounter 0.5">
@@ -18402,7 +18405,7 @@
             <String String="VallaBountyTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="VallaVolleyTokenCounter 0.5">
+            <String String="VallaVolleyTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse 8">
@@ -18566,7 +18569,7 @@
             <String String="VallaEndlessHuntTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="VallaRapidFireTokenCounter 0.5">
+            <String String="VallaRapidFireTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,DemonHunterStrafe,Cost.Cooldown.TimeUse 25">
@@ -18764,7 +18767,7 @@
             <String String="GuldanPyreTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GuldanFelfireTokenCounter 0.5">
+            <String String="GuldanFelfireTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,GuldanFelFlameDamage,MultiplicativeModifierArray[GuldanFelPower].Modifier 0.5">
@@ -18919,7 +18922,7 @@
             <String String="GuldanHarvestTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GuldanSiphonTokenCounter 0.5">
+            <String String="GuldanSiphonTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,GuldanDrainLifeDamage,MultiplicativeModifierArray[GuldanDrainPower].Modifier 0.5">
@@ -19080,7 +19083,7 @@
             <String String="GuldanAfflictionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GuldanRotTokenCounter 0.5">
+            <String String="GuldanRotTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="GuldanCorruptionEchoedCorruptionQuestToken 0.5">
@@ -19341,7 +19344,7 @@
             <String String="SylvanasBarrageTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="SylvanasVolleyTokenCounter 0.5">
+            <String String="SylvanasVolleyTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="SylvanasBlackArrowsQuestToken 0.5">
@@ -19514,7 +19517,7 @@
             <String String="SylvanasPlagueTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="SylvanasTormentTokenCounter 0.5">
+            <String String="SylvanasTormentTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="SylvanasBlackArrowsQuestToken 0.5">
@@ -19678,7 +19681,7 @@
             <String String="SylvanasHauntingTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="SylvanasWailTokenCounter 0.5">
+            <String String="SylvanasWailTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="SylvanasBlackArrowsQuestToken 0.5">
@@ -20425,7 +20428,7 @@
             <String String="KelThuzadPlagueTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="KelThuzadPestilenceTokenCounter 0.5">
+            <String String="KelThuzadPestilenceTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="KelThuzadMasterOfTheColdDarkToken 1.0">
@@ -20601,7 +20604,7 @@
             <String String="KelThuzadWinterTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="KelThuzadRimeTokenCounter 0.5">
+            <String String="KelThuzadRimeTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="KelThuzadMasterOfTheColdDarkToken 1.0">
@@ -20783,7 +20786,7 @@
             <String String="KelThuzadBondageTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="KelThuzadShackleTokenCounter 0.5">
+            <String String="KelThuzadShackleTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="KelThuzadMasterOfTheColdDarkToken 1.0">
@@ -20995,7 +20998,7 @@
             <String String="OrpheaEncoreTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="OrpheaPirouetteTokenCounter 0.5">
+            <String String="OrpheaPirouetteTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Weapon,OrpheaWeapon,Range 1.1">
@@ -21174,7 +21177,7 @@
             <String String="OrpheaFeastTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="OrpheaGnashTokenCounter 0.5">
+            <String String="OrpheaGnashTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="OrpheaRavenousHungerToken 0.15">
@@ -21356,7 +21359,7 @@
             <String String="OrpheaNightmareTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="OrpheaTerrorTokenCounter 0.5">
+            <String String="OrpheaTerrorTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="OrpheaMindDevourerToken 0.5">
@@ -21608,7 +21611,7 @@
             <String String="ZagaraSpreadingBlightTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ZagaraInfestationTokenCounter 0.5">
+            <String String="ZagaraInfestationTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,ZagaraHydraliskRangedDamage,MultiplicativeModifierArray[ZagaraHivePower].Modifier 0.5">
@@ -21769,7 +21772,7 @@
             <String String="ZagaraVolatileBroodTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ZagaraAcidBurnTokenCounter 0.5">
+            <String String="ZagaraAcidBurnTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Abil,ZagaraBanelingBarrage,Cost.Vital[Energy] -7.5">
@@ -21921,7 +21924,7 @@
             <String String="ZagaraSwarmHostTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ZagaraFeedingFrenzyTokenCounter 0.5">
+            <String String="ZagaraFeedingFrenzyTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,ZagaraSummonHydralisk,Cost.Charge.CountMax 2">
@@ -22121,7 +22124,7 @@
             <String String="AzmodanGoldenDestructionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AzmodanGoldenDoomTokenCounter 0.5">
+            <String String="AzmodanGoldenDoomTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
@@ -22321,7 +22324,7 @@
             <String String="AzmodanGoldenSinTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AzmodanGoldenBurnTokenCounter 0.5">
+            <String String="AzmodanGoldenBurnTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
@@ -22497,7 +22500,7 @@
             <String String="AzmodanGoldenLegionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AzmodanGoldenRampageTokenCounter 0.5">
+            <String String="AzmodanGoldenRampageTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="AzmodanGlobeOfAnnihilationTokenCounter 0.5">
@@ -22685,7 +22688,7 @@
             <String String="AmazonGoldenJavelinTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AmazonGoldenThunderboltTokenCounter 0.5">
+            <String String="AmazonGoldenThunderboltTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="AmazonLightningFuryThunderstrokeQuestToken 0.5">
@@ -22864,7 +22867,7 @@
             <String String="AmazonGoldenFendMasteryTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AmazonGoldenFendStrikesTokenCounter 0.5">
+            <String String="AmazonGoldenFendStrikesTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Abil,AmazonFend,Cost.Vital[Energy] -25">
@@ -23052,7 +23055,7 @@
             <String String="AmazonGoldenSkirmisherTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="AmazonGoldenSkirmishTokenCounter 0.5">
+            <String String="AmazonGoldenSkirmishTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Weapon,AmazonHeroWeaponRanged,Range 2.1">
@@ -23283,7 +23286,7 @@
             <String String="ChromieGoldenSandsOfTimeTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ChromieGoldenPinpointTokenCounter 0.5">
+            <String String="ChromieGoldenPinpointTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Abil,ChromieSandBlast,Cost.Vital[Energy] -10">
@@ -23465,7 +23468,7 @@
             <String String="ChromieGoldenDragonflightTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="ChromieGoldenBronzeFireTokenCounter 0.5">
+            <String String="ChromieGoldenBronzeFireTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="ChromieDragonsBreathDeepBreathingQuestToken 0.5">
@@ -23867,7 +23870,7 @@
             <String String="FenixGoldenExecutionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="FenixGoldenFocusedPlasmaTokenCounter 0.5">
+            <String String="FenixGoldenFocusedPlasmaTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,FenixPlasmaCutter,Cost.Charge.CountMax 2">
@@ -24058,7 +24061,7 @@
             <String String="FenixGoldenWarpDoctrineTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="FenixGoldenWarpStrikesTokenCounter 0.5">
+            <String String="FenixGoldenWarpStrikesTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,FenixWarp,Cost.Charge.CountMax 2">
@@ -24246,7 +24249,7 @@
             <String String="FenixGoldenArsenalMasteryTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="FenixGoldenBombardmentTokenCounter 0.5">
+            <String String="FenixGoldenBombardmentTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,FenixHeroWeaponDamage,MultiplicativeModifierArray[FenixTwinPower].Modifier 0">
@@ -24762,7 +24765,7 @@
             <String String="GreymaneGoldenDistillationTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GreymaneGoldenKindlingTokenCounter 0.5">
+            <String String="GreymaneGoldenKindlingTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="GreymaneGilneanCocktailIncendiaryElixirQuestToken 0.5">
@@ -24965,7 +24968,7 @@
             <String String="GreymaneGoldenFeralHuntTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GreymaneGoldenSavageryTokenCounter 0.5">
+            <String String="GreymaneGoldenSavageryTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,GreymaneRazorSwipe,Cost.Charge.CountMax 2">
@@ -25153,7 +25156,7 @@
             <String String="GreymaneGoldenResolveTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="GreymaneGoldenSilverTokenCounter 0.5">
+            <String String="GreymaneGoldenSilverTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,GreymaneCursedBullet,Cost.Cooldown.TimeUse 15">
@@ -25267,7 +25270,7 @@
             <String String="HanzoGoldenMasteryTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="HanzoGoldenFocusTokenCounter 0.5">
+            <String String="HanzoGoldenFocusTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Add Abil,HanzoStormBowFireTargetPoint,Cost.Vital[Energy] -10">
@@ -25422,7 +25425,7 @@
             <String String="HanzoGoldenRicochetTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="HanzoGoldenVolleyTokenCounter 0.5">
+            <String String="HanzoGoldenVolleyTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,HanzoScatterArrow,Cost.Charge.CountMax 2">
@@ -25694,7 +25697,7 @@
             <String String="MephistoGoldenDreadTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="MephistoGoldenMaliceTokenCounter 0.5">
+            <String String="MephistoGoldenMaliceTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,MephistoSkullMissile,Cost.Charge.CountMax 2">
@@ -25859,7 +25862,7 @@
             <String String="MephistoGoldenTempestTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="MephistoGoldenChargeTokenCounter 0.5">
+            <String String="MephistoGoldenChargeTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Abil,MephistoLightningNova,Cost.Cooldown.TimeUse 12">
@@ -25992,7 +25995,7 @@
             <String String="MephistoGoldenDominionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="MephistoGoldenRageTokenCounter 0.5">
+            <String String="MephistoGoldenRageTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="1 1 Set Effect,MephistoModifyWeaponCooldown,Chance 0">
@@ -26134,6 +26137,443 @@
 
 
 
+
+
+
+        <Instances Id="RaynorPenetrator">
+            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 RaynorPenetratorMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 RaynorGoldenImpactTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 RaynorGoldenBreachTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="RaynorGoldenBreachTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="RaynorGoldenImpactTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,RaynorPenetratingRound,Cost.Vital[Energy] -30">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,RaynorPenetratingRoundDamage,MultiplicativeModifierArray[RaynorRoundPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_RaynorStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_RaynorTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorHollowPoints">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorPenetrator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,RaynorPenetratingRoundDamage,MultiplicativeModifierArray[RaynorRoundCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorHeavySlugsBoon">
+            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorPenetrator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="RaynorPenetratingRoundHeavySlugs">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorLineEmUpBoon">
+            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorPenetrator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="RaynorPenetratingRoundLine'EmUp">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 1 Add Abil,RaynorPenetratingRound,Cost.Cooldown.TimeUse 3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,RaynorPenetratingRound,Cost.Charge.TimeUse -2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorConcussiveRound">
+            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorPenetrator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,RaynorGoldenConcussiveApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorTheBigOne">
+            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorPenetrator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 RaynorBigOneMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorSergeantPepper">
+            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="RaynorVeteranMarksman">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="RaynorGive'EmSomePepperSergeantPepper">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 RaynorPepperMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 RaynorGoldenSharpshooterTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 RaynorGoldenGambitTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="RaynorGoldenSharpshooterTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="RaynorGoldenGambitTokenCounter 1.0">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,RaynorHeroWeaponDamage,MultiplicativeModifierArray[RaynorPepperPower].Modifier 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,RaynorGiveEmSomePepperWeaponDamage,MultiplicativeModifierArray[RaynorPepperPower].Modifier 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_RaynorStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_RaynorTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorSpicyRounds">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorSergeantPepper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,RaynorHeroWeaponDamage,MultiplicativeModifierArray[RaynorPepperCommon].Modifier 0.1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,RaynorGiveEmSomePepperWeaponDamage,MultiplicativeModifierArray[RaynorPepperCommon].Modifier 0.1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorExterminatorBoon">
+            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorSergeantPepper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="RaynorGiveEmSomePepperExterminator">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorBountyHunterBoon">
+            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorSergeantPepper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="RaynorBountyHunter">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorGoldenUnstableCompound">
+            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorSergeantPepper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,RaynorGoldenPepperSlowApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorGoldenRaidersRoll">
+            <String String="Assets/Textures/storm_ui_icon_raynor_adrenalinrush.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorSergeantPepper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,RaynorGoldenRaidersRollCooldown,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorRaiderCaptain">
+            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="RaynorHeroicAbilityRaynorsRaiders">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 RaynorRaiderMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 RaynorGoldenAirSupportTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 RaynorGoldenSquadronTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 RaynorRaynorsRaidersUnitTracker">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="1 0 RaynorRaynorsRaidersActiveCarry">
+                <Field Id="Behavior" Index="4" />
+            </String>
+            <String String="RaynorGoldenSquadronTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="RaynorGoldenAirSupportTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorRaiderPower].Modifier -0.7">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_RaynorStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_RaynorTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorRaiderPayroll">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorRaiderCommon].Modifier 0.2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorTightFormation">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,RaynorGoldenBansheeRespawn,Duration -2">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorFuelTheRushBoon">
+            <String String="Assets/Textures/storm_ui_icon_raynor_adrenalinrush.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="RaynorInspireFuelTheRush">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorCavalrysArrivedBoon">
+            <String String="Assets/Textures/storm_ui_icon_raynor_hyperion.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="RaynorHyperionCavalrysArrived">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorRocketsOut">
+            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 RaynorRocketsOutMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorRaiderSwarm">
+            <String String="Assets/Textures/storm_ui_icon_raynor_hyperion.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 RaynorRaiderSwarmMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
 
         <Instances Id="TychusMinigunManiac">
             <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
@@ -26660,441 +27100,6 @@
             </String>
         </Instances>
 
-        <Instances Id="RaynorPenetrator">
-            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="1 0 RaynorPenetratorMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 RaynorGoldenImpactTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 RaynorGoldenBreachTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="RaynorGoldenBreachTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="RaynorGoldenImpactTokenCounter 0.25 gains">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.CountMax 2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.CountStart 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Charge.TimeUse 6">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Abil,RaynorPenetratingRound,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Add Abil,RaynorPenetratingRound,Cost.Vital[Energy] -30">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Set Effect,RaynorPenetratingRoundDamage,MultiplicativeModifierArray[RaynorRoundPower].Modifier 0">
-                <Field Id="CatalogModification" Index="6" />
-            </String>
-            <String String="AffixAdded libAffx_RaynorStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_RaynorTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorHollowPoints">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorPenetrator">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,RaynorPenetratingRoundDamage,MultiplicativeModifierArray[RaynorRoundCommon].Modifier 0.1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorHeavySlugsBoon">
-            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorPenetrator">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="RaynorPenetratingRoundHeavySlugs">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorLineEmUpBoon">
-            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorPenetrator">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="RaynorPenetratingRoundLine'EmUp">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="1 1 Add Abil,RaynorPenetratingRound,Cost.Cooldown.TimeUse 3">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Abil,RaynorPenetratingRound,Cost.Charge.TimeUse -2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorConcussiveRound">
-            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorPenetrator">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,RaynorGoldenConcussiveApply,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorTheBigOne">
-            <String String="Assets/Textures/storm_ui_icon_raynor_penetratinground.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorPenetrator">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 RaynorBigOneMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorSergeantPepper">
-            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="RaynorVeteranMarksman">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="RaynorGive'EmSomePepperSergeantPepper">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 RaynorPepperMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 RaynorGoldenSharpshooterTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 RaynorGoldenGambitTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="RaynorGoldenSharpshooterTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="RaynorGoldenGambitTokenCounter 1.0">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,RaynorHeroWeaponDamage,MultiplicativeModifierArray[RaynorPepperPower].Modifier 0">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,RaynorGiveEmSomePepperWeaponDamage,MultiplicativeModifierArray[RaynorPepperPower].Modifier 0">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="AffixAdded libAffx_RaynorStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_RaynorTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorSpicyRounds">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorSergeantPepper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,RaynorHeroWeaponDamage,MultiplicativeModifierArray[RaynorPepperCommon].Modifier 0.1">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,RaynorGiveEmSomePepperWeaponDamage,MultiplicativeModifierArray[RaynorPepperCommon].Modifier 0.1">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorExterminatorBoon">
-            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorSergeantPepper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="RaynorGiveEmSomePepperExterminator">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorBountyHunterBoon">
-            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorSergeantPepper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="RaynorBountyHunter">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorGoldenUnstableCompound">
-            <String String="Assets/Textures/storm_ui_icon_raynor_acquireweakspot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorSergeantPepper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,RaynorGoldenPepperSlowApply,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorGoldenRaidersRoll">
-            <String String="Assets/Textures/storm_ui_icon_raynor_adrenalinrush.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorSergeantPepper">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,RaynorGoldenRaidersRollCooldown,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorRaiderCaptain">
-            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="RaynorHeroicAbilityRaynorsRaiders">
-                <Field Id="TalentsDisable" />
-            </String>
-            <String String="1 0 RaynorRaiderMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 RaynorGoldenAirSupportTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 RaynorGoldenSquadronTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="1 0 RaynorRaynorsRaidersUnitTracker">
-                <Field Id="Behavior" Index="3" />
-            </String>
-            <String String="1 0 RaynorRaynorsRaidersActiveCarry">
-                <Field Id="Behavior" Index="4" />
-            </String>
-            <String String="RaynorGoldenSquadronTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="RaynorGoldenAirSupportTokenCounter 0.25 gains">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorRaiderPower].Modifier -0.7">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="AffixAdded libAffx_RaynorStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_RaynorTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorRaiderPayroll">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorRaiderCaptain">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorRaiderCommon].Modifier 0.2">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorTightFormation">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorRaiderCaptain">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Behavior,RaynorGoldenBansheeRespawn,Duration -2">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorFuelTheRushBoon">
-            <String String="Assets/Textures/storm_ui_icon_raynor_adrenalinrush.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorRaiderCaptain">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="RaynorInspireFuelTheRush">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorCavalrysArrivedBoon">
-            <String String="Assets/Textures/storm_ui_icon_raynor_hyperion.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorRaiderCaptain">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="RaynorHyperionCavalrysArrived">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorRocketsOut">
-            <String String="Assets/Textures/storm_ui_icon_raynor_raynorsraiders.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorRaiderCaptain">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 RaynorRocketsOutMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="RaynorRaiderSwarm">
-            <String String="Assets/Textures/storm_ui_icon_raynor_hyperion.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Raynor">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="RaynorRaiderCaptain">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 RaynorRaiderSwarmMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
@@ -27200,7 +27205,7 @@
             <String String="1 0 FalstadGatheringThunderTokenCounter">
                 <Field Id="Behavior" Index="2" />
             </String>
-            <String String="FalstadShockwaveTokenCounter 0.5">
+            <String String="FalstadShockwaveTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" />
             </String>
             <String String="FalstadGatheringThunderTokenCounter 1.0">
@@ -27342,7 +27347,7 @@
             <User Type="Affix" Instance="FalstadWildhammersWrath">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="FalstadShockwaveTokenCounter 0.8">
+            <String String="FalstadShockwaveTokenCounter 0.8 gains">
                 <Field Id="QuestRetain" />
             </String>
         </Instances>
