@@ -265,6 +265,17 @@ bool libAffx_TychusSalvo_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "TychusGoldenSalvoTokenCounter", hero);
     return true;
 }
+// Reinforced Plating (talent): commandeering the Odin shields Tychus for 30% of his maximum Health until it ends
+bool libAffx_TychusOdinPlating_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TychusHero();
+    if (hero == null || EventUnit() != hero || !PlayerHasTalent(libAffx_player, "TychusGoldenOdinPlating")) {
+        return false;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinPlatingShield", "DamageResponse.ModifyLimit", libAffx_player, 0.3 * UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent));
+    UnitBehaviorRemove(hero, "TychusGoldenOdinPlatingShield", 1);
+    UnitBehaviorAdd(hero, "TychusGoldenOdinPlatingShield", hero, 1);
+    return true;
+}
 // Odin Pilot: the Odin's 30 second cooldown counts from when it ends
 bool libAffx_TychusOdinEnd_Func (bool testConds, bool runActions) {
     unit hero = libAffx_TychusHero();
@@ -398,6 +409,7 @@ bool libAffx_TychusStart (bool testConds, bool runActions) {
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinEnd_Func"), null, "TychusOdin", c_unitBehaviorChangeDestroy);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_TychusSalvo_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOdinRagnarokMissilesTargetedDamage");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinStart_Func"), null, "TychusOdin", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinPlating_Func"), null, "TychusOdin", c_unitBehaviorChangeCreate);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TychusSync_Func"), 1.0, c_timeGame);
     return true;

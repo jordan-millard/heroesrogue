@@ -97,7 +97,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Odin Pilot ===== -->
-  <!-- Commandeer Odin from level 1 with a 30 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 1.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken. Devastation quest (50% kept): 1% Annihilate damage per enemy Hero hit. Salvo quest (50% kept, extra_data and script): 5% Ragnarok Missiles damage per enemy Hero hit. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make Annihilate, Ragnarok Missiles and Thrusters recharge 1% faster each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
+  <!-- Commandeer Odin from level 1 with a 30 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 1.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken; the Odin is a turret (-200% Movement Speed, 75 armor) and an Active (key 1) ends it early; the level 10 talent Reinforced Plating is shown. Devastation quest (50% kept): 1% Annihilate damage per enemy Hero hit. Salvo quest (50% kept, extra_data and script): 5% Ragnarok Missiles damage per enemy Hero hit. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make Annihilate, Ragnarok Missiles and Thrusters recharge 1% faster each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
   <CBehaviorTokenCounter id="TychusGoldenDevastationTokenCounter" parent="StormQuestToken">
     <Face value="TychusGoldenDevastationTokenCounter" />
     <Max value="100000" />
@@ -319,6 +319,51 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="TychusGoldenSalvoTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tychus_ragnarokmissiles.dds" />
   </CButton>
+  <!-- Odin Pilot: the Odin is a turret: -200% Movement Speed while in it (its armor is set to 75 by the starter) -->
+  <CBehaviorBuff id="TychusGoldenOdinAnchor">
+    <BehaviorFlags index="Permanent" value="1" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <DisableValidatorArray value="CasterHasOdin" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-2" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Odin Pilot: an Active (key 1) that ends the Odin early. It is named TychusOdinCancel because the base Odin already
+       disables that ability for its first 5 seconds (TychusOdinCancelDelayBuff). -->
+  <CAbilEffectInstant id="TychusOdinCancel">
+    <Effect value="TychusGoldenOdinEjectRemove" />
+    <Flags index="Transient" value="1" />
+    <Cost>
+      <Cooldown TimeUse="1" />
+    </Cost>
+    <CmdButtonArray index="Execute" DefaultButtonFace="TychusGoldenOdinEject" Requirements="HaveTychusOdin" />
+    <SharedFlags index="AllowQuickCastCustomization" value="0" />
+  </CAbilEffectInstant>
+  <CEffectRemoveBehavior id="TychusGoldenOdinEjectRemove">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="TychusOdin" />
+  </CEffectRemoveBehavior>
+  <CBehaviorAbility id="TychusGoldenOdinEjectButton">
+    <Buttons Face="TychusGoldenOdinEject" Type="AbilCmd" AbilCmd="TychusOdinCancel,Execute" />
+  </CBehaviorAbility>
+  <CButton id="TychusGoldenOdinEject" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_commandeerodin.dds" />
+  </CButton>
+  <!-- Reinforced Plating: a level 10 talent only Odin Pilot shows (in place of the empty tier's filler). Commandeering the
+       Odin shields Tychus for 30% of his maximum Health until it ends (the script sets the amount). -->
+  <CTalent id="TychusGoldenOdinPlating">
+    <Face value="TychusGoldenOdinPlating" />
+    <Abil value="TychusOdinNoHealth" />
+  </CTalent>
+  <CButton id="TychusGoldenOdinPlating" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_temp_btn-upgrade-terran-neosteelframe.dds" />
+  </CButton>
+  <CBehaviorBuff id="TychusGoldenOdinPlatingShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_temp_btn-upgrade-terran-neosteelframe.dds" />
+    <Duration value="60" />
+    <RemoveValidatorArray value="CasterHasOdin" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
   <!-- Pilot past 100 stacks: Tychus's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="TychusGoldenOdinOverdrive" parent="CarryBehaviorParent">
     <Modification>
@@ -328,6 +373,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- the bomblets and the second Overkill shot scale with level (and Spell Power) like the effects they copy -->
   <CHero id="Tychus">
+    <TalentTreeArray Talent="TychusGoldenOdinPlating" Tier="4" Column="3" />
     <LevelScalingArray Ability="TychusGrenade">
       <Modifications>
         <Catalog value="Effect" />
