@@ -5,7 +5,7 @@ include "AffixTriggers"
 // add Breach: recharge, then flight speed and width, then knockback, then at 100 a fan of 3. Sergeant Pepper: the Gambit
 // (15% Pepper damage per stack) is carried between maps; takedowns after a Basic Attack hit add Sharpshooter: Attack
 // Speed, then range, then a chance to kill non-Heroes outright, then at 100 Pepper every other attack. Raider Captain:
-// Banshee hits on Heroes add Air Support; takedowns add Squadron: Banshee damage, then respawn time, then Health, then
+// Banshee hits on Heroes add Air Support; takedowns add Squadron: Banshee Movement Speed, then respawn time, then Health, then
 // at 100 a third Banshee. Past 100, every takedown quest adds 2% to all damage per stack.
 // ============================================================
 
@@ -29,6 +29,7 @@ int libAffx_RaynorRaiderAdded3; // Raider Captain: takedown quest stage 3 stacks
 int libAffx_RaynorRaiderPastApplied; // Raider Captain: takedown quest stacks past the cap applied as damage this game
 unit[4] libAffx_RaynorBanshee; // Raider Captain: the escort Banshees (slots 1-3)
 fixed[4] libAffx_RaynorBansheeBackAt; // Raider Captain: when each empty slot may return
+int libAffx_RaynorBansheeSpeed = -1; // Raider Captain: Squadron speed stacks the Banshee buff was last added at
 fixed libAffx_RaynorLastFan = -1.0; // Penetrator: mission time of the last fan (its own rounds skip the event)
 bool libAffx_RaynorRoundRangeSet; // Penetrator: the 10% longer offsets were applied
 int libAffx_RaynorRoundShape = -1; // Penetrator: width and flight speed applied (speed stacks * 2, +1 for The Big One)
@@ -144,7 +145,7 @@ void libAffx_RaynorSyncPepper () {
         UnitBehaviorAdd(hero, "RaynorPepperPastCapDamage", hero, 1);
     }
 }
-// RaynorGoldenSquadronTokenCounter: stacks 1-40: 1% Banshee damage each; 41-80 respawn time, 81-100 Health, 100 a third Banshee (libAffx_RaynorBanshees_Func), then damage
+// RaynorGoldenSquadronTokenCounter: stacks 1-40: 0.5% Banshee Movement Speed each (libAffx_RaynorBanshees_Func re-adds the buff); 41-80 respawn time, 81-100 Health, 100 a third Banshee (libAffx_RaynorBanshees_Func), then damage
 void libAffx_RaynorSyncRaider () {
     unit hero = libAffx_RaynorHero();
     int stacks;
@@ -157,7 +158,7 @@ void libAffx_RaynorSyncRaider () {
     stacks = libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_RaynorRaiderAdded) {
-        libAffx_CatalogReferenceModify("Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorGoldenSquadron].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRaiderAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,RaynorGoldenBansheeArmor,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRaiderAdded) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_RaynorRaiderAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 0.2 seconds (1%) off the respawn each
@@ -376,6 +377,7 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     unit banshee;
     int count = 2;
     int i;
+    int speed;
     fixed now = GameGetMissionTime();
     fixed back;
     if (hero == null || !UnitHasBehavior2(hero, "RaynorRaiderMarker")) {
@@ -383,6 +385,18 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     }
     if (libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter") >= 100) {
         count = 3;
+    }
+    // Squadron stacks 1-40 changed the Banshees' Movement Speed: re-add their buff so the live ones get it
+    speed = MinI(40, libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"));
+    if (speed != libAffx_RaynorBansheeSpeed) {
+        libAffx_RaynorBansheeSpeed = speed;
+        for (i = 1; i <= 3; i += 1) {
+            banshee = libAffx_RaynorBanshee[i];
+            if (banshee != null && UnitIsAlive(banshee)) {
+                UnitBehaviorRemove(banshee, "RaynorGoldenBansheeArmor", 1);
+                UnitBehaviorAdd(banshee, "RaynorGoldenBansheeArmor", banshee, 1);
+            }
+        }
     }
     back = MaxF(1.0, CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "RaynorGoldenBansheeRespawn", "Duration", libAffx_player));
     for (i = 1; i <= 3; i += 1) {

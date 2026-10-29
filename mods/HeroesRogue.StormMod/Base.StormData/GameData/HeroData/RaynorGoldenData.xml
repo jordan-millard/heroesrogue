@@ -41,9 +41,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- Raider Captain: the Banshees' respawn time (never applied; the script reads its Duration, which the quest and Tight
        Formation lower) -->
   <!-- Raider Captain: the escort Banshees can't be controlled, so each one has 50 Armor (added by the script when it
-       spawns) -->
+       spawns), and Squadron stacks 1-40 add 0.5% Movement Speed each (the script re-adds it when that changes) -->
   <CBehaviorBuff id="RaynorGoldenBansheeArmor">
     <Alignment value="Positive" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
     <ArmorModification>
       <AllArmorBonus value="50" />
     </ArmorModification>
@@ -105,7 +108,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Raider Captain ===== -->
-  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 60% of their damage with 50 Armor (script), and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.2% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 1% Banshee damage each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
+  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 60% of their damage with 50 Armor (script), and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.2% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 0.5% Banshee Movement Speed each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="RaynorGoldenAirSupportTokenCounter" parent="StormQuestToken">
     <Face value="RaynorGoldenAirSupportTokenCounter" />
     <Max value="100000" />
@@ -127,7 +130,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="RaynorRaiderCommon" Modifier="0" />
     <MultiplicativeModifierArray index="RaynorRaiderHit" Accumulator="RaynorGoldenAirSupportTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="RaynorRaiderLegacy" Modifier="0" />
-    <MultiplicativeModifierArray index="RaynorGoldenSquadron" Modifier="0" />
   </CEffectDamage>
   <CButton id="RaynorGoldenAirSupportTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
