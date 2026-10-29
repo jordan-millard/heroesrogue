@@ -251,6 +251,30 @@ void libAffx_TychusOdinPilotSync () {
         UnitBehaviorAdd(hero, "TychusGoldenOdinOverdrive", hero, 1);
     }
 }
+// Haywire (Legendary): in the Odin, every 1.5 seconds a free Annihilate or Ragnarok Missiles (at random) is fired at a random
+// visible enemy Hero within 14
+bool libAffx_TychusHaywire_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_TychusHero();
+    unitgroup foes;
+    unit target;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "TychusHaywireMarker") || !UnitHasBehavior2(hero, "TychusOdin") || UnitHasBehavior2(hero, "TychusOdinStartupDelay")) {
+        return false;
+    }
+    foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(hero), 14.0), UnitFilter((1 << c_targetFilterHeroic) | (1 << c_targetFilterVisible), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterStasis - 32)) | (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32))), 0);
+    if (UnitGroupCount(foes, c_unitCountAlive) == 0) {
+        return true;
+    }
+    target = UnitGroupRandomUnit(foes, c_unitCountAlive);
+    if (target == null) {
+        return true;
+    }
+    if (RandomInt(1, 2) == 1) {
+        UnitCreateEffectPoint(hero, "TychusOdinAnnihilateCreatePersistent", UnitGetPosition(target));
+    } else {
+        UnitCreateEffectPoint(hero, "TychusOdinRagnarokMissilesTargetedInitialSet", UnitGetPosition(target));
+    }
+    return true;
+}
 bool libAffx_TychusTick_Func (bool testConds, bool runActions) {
     libAffx_TychusGrenadeSync();
     libAffx_TychusOdinPilotSync();
@@ -406,6 +430,7 @@ bool libAffx_TychusStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_TychusOverkillPrimary_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOverkillPrimaryTargetDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TychusOverkillSecond_Func"), 0.25, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_TychusBomblets_Func"), libAffx_player, "GrenadeTargetSearchSet");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_TychusHaywire_Func"), 1.5, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinEnd_Func"), null, "TychusOdin", c_unitBehaviorChangeDestroy);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_TychusSalvo_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "TychusOdinRagnarokMissilesTargetedDamage");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_TychusOdinStart_Func"), null, "TychusOdin", c_unitBehaviorChangeCreate);

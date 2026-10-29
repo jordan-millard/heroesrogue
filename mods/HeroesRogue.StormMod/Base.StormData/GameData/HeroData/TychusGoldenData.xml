@@ -8,6 +8,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="TychusMinigunMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="TychusGrenadeMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="TychusOdinMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="TychusHaywireMarker" parent="CarryBehaviorParent" />
   <!-- Minigun Maniac, Carnage at 100: Overkill also fires at a second enemy Hero in range for 50% (script) -->
   <CEffectDamage id="TychusGoldenOverkillSecondDamage" parent="TychusOverkillPrimaryTargetDamage">
     <MultiplicativeModifierArray index="TychusGoldenSecond" Modifier="-0.5" />
@@ -294,16 +295,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="TychusOdinAnnihilateSearchImpactSet">
     <EffectArray value="TychusGoldenConcussionSet" />
   </CEffectSet>
-  <!-- Haywire (Legendary): in the Odin, 50% less Attack Speed, 50% more Movement Speed and Unstoppable -->
-  <CBehaviorBuff id="TychusGoldenHaywire" parent="StormUnstoppableParent">
-    <BehaviorFlags index="Permanent" value="1" />
-    <BehaviorFlags index="EnabledWhileDead" value="1" />
-    <DisableValidatorArray value="CasterHasOdin" />
-    <Modification>
-      <AdditiveAttackSpeedFactor value="-0.5" />
-      <UnifiedMoveSpeedFactor value="0.5" />
-    </Modification>
-  </CBehaviorBuff>
   <!-- Salvo quest (50% kept): 5% Ragnarok Missiles damage per enemy Hero hit (the script adds the tokens) -->
   <CBehaviorTokenCounter id="TychusGoldenSalvoTokenCounter" parent="StormQuestToken">
     <Face value="TychusGoldenSalvoTokenCounter" />
