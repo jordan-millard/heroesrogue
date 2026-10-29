@@ -1014,6 +1014,9 @@ text libAffx_GetAffixTooltip(int affix) {
     int skipCurses = libAffx_affixes[affix].skipCurses;
     text tooltip = StringExternal("Affix/Tooltip/" + name);
     int flipShown = 0;
+    int i;
+    string talent;
+    string face;
 
     if (libAffx_affixes[affix].customTooltipForHero[libAffx_playersHeroIndex[libAffx_player]]) {
         tooltip = StringExternal("Affix/Tooltip/" + name + "/" + libCore_gf_GetHeroFromIndex(libAffx_playersHeroIndex[libAffx_player]));
@@ -1024,6 +1027,23 @@ text libAffx_GetAffixTooltip(int affix) {
     // Tooltip - Total stacking values
     if ((count > 0 && max != 1) || (count > 0 && libAffx_affixes[affix].alwaysAppendTooltip)) {
         tooltip += StringExternal("Affix/Tooltip/Append/" + name);
+    }
+
+    // Tooltip - the in-game name and tooltip of each talent the boon grants (starters list theirs in their own text)
+    if (libAffx_affixes[affix].rarity != libAffx_rarityStarter) {
+        for (i = 1; i <= libAffx_maxTalents; i += 1) {
+            talent = libAffx_affixes[affix].addTalents[i];
+            if (talent == "" || talent == null) {
+                continue;
+            }
+            face = CatalogFieldValueGet(c_gameCatalogTalent, talent, "Face", c_playerAny);
+            if (face == "" || face == null) {
+                continue;
+            }
+            TextExpressionSetToken("Param/Expression/AffixTalentTooltip", "A", StringExternal(CatalogFieldValueGet(c_gameCatalogButton, face, "Name", c_playerAny)));
+            TextExpressionSetToken("Param/Expression/AffixTalentTooltip", "B", StringExternal(CatalogFieldValueGet(c_gameCatalogButton, face, "Tooltip", c_playerAny)));
+            tooltip += TextExpressionAssemble("Param/Expression/AffixTalentTooltip");
+        }
     }
 
     // Tooltip - Stacks up to X
