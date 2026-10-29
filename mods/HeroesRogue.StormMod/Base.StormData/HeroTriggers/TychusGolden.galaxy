@@ -318,13 +318,17 @@ bool libAffx_TychusTick_Func (bool testConds, bool runActions) {
     libAffx_TychusOdinPilotSync();
     return true;
 }
-// Reinforced Plating (talent): commandeering the Odin shields Tychus for 30% of his maximum Health until it ends
+// Odin Pilot: commandeering the Odin shields Tychus for 10% of his maximum Health until it ends (40% with Reinforced Plating)
 bool libAffx_TychusOdinPlating_Func (bool testConds, bool runActions) {
     unit hero = libAffx_TychusHero();
-    if (hero == null || EventUnit() != hero || !PlayerHasTalent(libAffx_player, "TychusGoldenOdinPlating")) {
+    fixed amount = 0.1;
+    if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "TychusOdinMarker")) {
         return false;
     }
-    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinPlatingShield", "DamageResponse.ModifyLimit", libAffx_player, 0.3 * UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent));
+    if (PlayerHasTalent(libAffx_player, "TychusGoldenOdinPlating")) {
+        amount = 0.4;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinPlatingShield", "DamageResponse.ModifyLimit", libAffx_player, amount * UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent));
     UnitBehaviorRemove(hero, "TychusGoldenOdinPlatingShield", 1);
     UnitBehaviorAdd(hero, "TychusGoldenOdinPlatingShield", hero, 1);
     return true;
@@ -348,7 +352,7 @@ bool libAffx_TychusOdinStart_Func (bool testConds, bool runActions) {
     if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "TychusOdinMarker") || libAffx_TychusStacks("TychusGoldenPilotTokenCounter") < 100) {
         return false;
     }
-    Wait(2.5, c_timeGame);
+    Wait(1.3, c_timeGame);
     if (!UnitIsAlive(hero) || !UnitHasBehavior2(hero, "TychusOdin")) {
         return true;
     }

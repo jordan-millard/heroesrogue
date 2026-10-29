@@ -3780,7 +3780,9 @@ void libAffx_SaveBank() {
                     heroUnit = UnitGroupUnitFromEnd(heroGroup, groupCount);
                     if (groupCount <= 0) { break; }
                     if (heroUnit == null) { continue; }
-                    if (UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) > 0) {
+                    if (UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) > 0 && libAffx_affixes[i].questRetain[i2].retainGains) {
+                        BankValueSetFromFixed(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior, libAffx_affixes[i].questRetain[i2].startCount + MaxF(0.0, UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) - libAffx_affixes[i].questRetain[i2].startCount) * libAffx_affixes[i].questRetain[i2].retainModifier);
+                    } else if (UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) > 0) {
                         BankValueSetFromFixed(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior, UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) * libAffx_affixes[i].questRetain[i2].retainModifier);
                     }
                 }
@@ -3887,6 +3889,7 @@ void libAffx_LoadBank() {
         for (i2 = 1; i2 <= libAffx_maxQuests; i2 += 1) {
             if (BankKeyExists(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior)) {
                 libAffx_affixes[i].questRetain[i2].tokenCount = BankValueGetAsFixed(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior);
+                libAffx_affixes[i].questRetain[i2].startCount = libAffx_affixes[i].questRetain[i2].tokenCount;
             }
         }
         if (BankKeyExists(BankLastCreated(), libAffx_BankSection, affixName + "_Banned")) {
@@ -6565,6 +6568,7 @@ void libAffx_InitAffixes () {
                 if (questRetainModifier != "" && questRetainModifier != null) {
                     libAffx_affixes[i].questRetain[i2].retainModifier = StringToFixed(questRetainModifier);
                 }
+                libAffx_affixes[i].questRetain[i2].retainGains = (StringWord(questRetain, 3) == "gains");
             }
         }
         heroSpecific = UserDataGetString("Affix", affixInstance, "HeroSpecific", 1);

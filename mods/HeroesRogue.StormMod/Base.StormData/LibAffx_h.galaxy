@@ -518,6 +518,10 @@ struct libAffx_Quest {
     string tokenBehavior;
     fixed retainModifier;
     fixed tokenCount;
+    // QuestRetain "<token> <fraction> gains": the count carried into the map is kept in full and only that fraction of
+    // this map's gains is added to it
+    bool retainGains;
+    fixed startCount;
 };
 
 struct libAffx_QueuedAffix {

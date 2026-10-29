@@ -26134,6 +26134,7 @@
 
 
 
+
         <Instances Id="TychusMinigunManiac">
             <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
                 <Field Id="Icon" />
@@ -26162,7 +26163,7 @@
             <String String="TychusGoldenCarnageTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TychusGoldenBarrageTokenCounter 0.5">
+            <String String="TychusGoldenBarrageTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="TychusMasterAssassinQuestToken 0.5">
@@ -26332,7 +26333,7 @@
             <String String="TychusGoldenDemolitionTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TychusGoldenShellshockTokenCounter 0.5">
+            <String String="TychusGoldenShellshockTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="TychusMasterAssassinQuestToken 0.5">
@@ -26506,7 +26507,7 @@
             <String String="TychusGoldenPilotTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TychusGoldenDevastationTokenCounter 0.5">
+            <String String="TychusGoldenDevastationTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
             <String String="TychusMasterAssassinQuestToken 0.5">
@@ -26524,29 +26525,32 @@
             <String String="1 1 Multiply Behavior,TychusOdin,Duration 1.5">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Add Weapon,TychusOdin,Range 5.1">
+            <String String="1 1 Add Weapon,TychusOdin,Range 8.1">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Add Weapon,TychusOdin,MinScanRange 5.1">
+            <String String="1 1 Add Weapon,TychusOdin,MinScanRange 8.1">
                 <Field Id="CatalogModification" Index="4" />
             </String>
             <String String="1 1 Set Behavior,TychusOdin,ArmorModification.AllArmorBonus 75">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,TychusOdinWeaponDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+            <String String="1 1 Multiply Behavior,TychusOdinStartupDelay,Duration 0.5">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,OdinWeaponSplashDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+            <String String="1 1 Set Effect,TychusOdinWeaponDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,TychusOdinAnnihilateDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+            <String String="1 1 Set Effect,OdinWeaponSplashDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="8" />
             </String>
-            <String String="1 1 Set Effect,TychusOdinRagnarokMissilesTargetedDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+            <String String="1 1 Set Effect,TychusOdinAnnihilateDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="9" />
             </String>
-            <String String="1 1 Set Effect,TychusOdinNuclearBlastDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+            <String String="1 1 Set Effect,TychusOdinRagnarokMissilesTargetedDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
                 <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,TychusOdinNuclearBlastDamage,MultiplicativeModifierArray[TychusOdinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="11" />
             </String>
             <String String="AffixAdded libAffx_TychusStart">
                 <Field Id="Trigger" />
