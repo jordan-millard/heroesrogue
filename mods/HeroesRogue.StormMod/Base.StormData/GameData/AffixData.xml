@@ -26125,6 +26125,7 @@
         </Instances>
 
 
+
         <Instances Id="TychusMinigunManiac">
             <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
                 <Field Id="Icon" />
@@ -26350,14 +26351,11 @@
             <String String="1 1 Add Abil,TychusGrenade,Cost.Vital[Energy] -25">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,GrenadeTargetSearch,AreaArray[0].Radius 2.7">
+            <String String="1 1 Set Effect,TychusGrenadeDamage,MultiplicativeModifierArray[TychusGrenadePower].Modifier 0">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,TychusGrenadeDamage,MultiplicativeModifierArray[TychusGrenadePower].Modifier 0.2">
+            <String String="1 1 Set Effect,TychusGoldenBombletDamage,MultiplicativeModifierArray[TychusGrenadePower].Modifier 0">
                 <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="1 1 Set Effect,TychusGoldenBombletDamage,MultiplicativeModifierArray[TychusGrenadePower].Modifier 0.2">
-                <Field Id="CatalogModification" Index="8" />
             </String>
             <String String="AffixAdded libAffx_TychusStart">
                 <Field Id="Trigger" />

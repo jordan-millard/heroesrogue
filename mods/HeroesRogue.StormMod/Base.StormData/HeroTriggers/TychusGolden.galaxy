@@ -227,7 +227,7 @@ bool libAffx_TychusBomblets_Func (bool testConds, bool runActions) {
         return true;
     }
     for (k = 0; k <= 2; k += 1) {
-        UnitCreateEffectPoint(hero, "TychusGoldenBombletSearch", PointWithOffsetPolar(center, 1.75, 90.0 + 120.0 * IntToFixed(k)));
+        UnitCreateEffectPoint(hero, "TychusGoldenBombletSearch", PointWithOffsetPolar(center, 3.0, 90.0 + 120.0 * IntToFixed(k)));
     }
     return true;
 }

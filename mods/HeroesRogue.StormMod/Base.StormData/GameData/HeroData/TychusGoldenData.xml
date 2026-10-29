@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Tychus. Starters: Minigun Maniac (Overkill: half Mana, 20% damage, Spray n Pray and Can Do This All Day), Grenadier (Frag Grenade: 2 charges, half Mana, 20% radius and damage, Titan Grenade and Melting Point) and Odin Pilot (Commandeer Odin at level 1, 25 second cooldown from when it ends, 50% longer, 1.1 more Odin range; 35% less damage outside it; no Drakken Laser Drill). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/TychusGolden.galaxy. -->
+  <!-- Golden Tychus. Starters: Minigun Maniac (Overkill: half Mana, 20% damage, Spray n Pray and Can Do This All Day), Grenadier (Frag Grenade: 2 charges, half Mana, Titan Grenade and Melting Point) and Odin Pilot (Commandeer Odin at level 1, 25 second cooldown from when it ends, 50% longer, 1.1 more Odin range; 35% less damage outside it; no Drakken Laser Drill). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/TychusGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="TychusMinigunMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="TychusGrenadeMarker" parent="CarryBehaviorParent" />
@@ -61,7 +61,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Grenadier ===== -->
-  <!-- Frag Grenade stores 2 charges (7 second recharge), costs half Mana and has 20% more radius and damage; gain Titan Grenade and Melting Point. Shellshock quest (50% kept): 1.5% Frag Grenade damage per enemy Hero hit. Demolition quest: takedowns within 6 seconds of a hit; stacks 1-40 make Frag Grenade recharge 1% faster each, 41-80 make the grenade fly 1% faster (script) and 1% larger each, 81-100 make the knockback 1% stronger each, at 100 3 bomblets around the blast 0.5 seconds later for 30% each (script), then 1% Frag Grenade damage each. -->
+  <!-- Frag Grenade stores 2 charges (7 second recharge) and costs half Mana; gain Titan Grenade and Melting Point. Shellshock quest (50% kept): 0.5% Frag Grenade damage per enemy Hero hit. Demolition quest: takedowns within 6 seconds of a hit; stacks 1-40 make Frag Grenade recharge 1% faster each, 41-80 make the grenade fly 1% faster (script) and 1% larger each, 81-100 make the knockback 1% stronger each, at 100 3 bomblets around the blast 0.5 seconds later for 30% each (script), then 1% Frag Grenade damage each. -->
   <CBehaviorTokenCounter id="TychusGoldenShellshockTokenCounter" parent="StormQuestToken">
     <Face value="TychusGoldenShellshockTokenCounter" />
     <Max value="100000" />
@@ -75,7 +75,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="TychusGoldenShellshockTokenCounter" />
-    <Scale value="0.015" />
+    <Scale value="0.005" />
   </CAccumulatorToken>
   <CEffectDamage id="TychusGrenadeDamage">
     <MultiplicativeModifierArray index="TychusGrenadePower" Modifier="0" />
@@ -293,4 +293,26 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <DamageDealtFraction index="Ability" value="0" />
     </Modification>
   </CBehaviorBuff>
+  <!-- the bomblets and the second Overkill shot scale with level (and Spell Power) like the effects they copy -->
+  <CHero id="Tychus">
+    <LevelScalingArray Ability="TychusGrenade">
+      <Modifications>
+        <Catalog value="Effect" />
+        <Entry value="TychusGoldenBombletDamage" />
+        <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByAbilityPower value="1" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+    <LevelScalingArray Ability="TychusOverkillTargeted">
+      <Modifications>
+        <Catalog value="Effect" />
+        <Entry value="TychusGoldenOverkillSecondDamage" />
+        <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+  </CHero>
 </Catalog>
