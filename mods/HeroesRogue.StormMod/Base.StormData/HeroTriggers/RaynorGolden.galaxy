@@ -401,7 +401,46 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests are shared: each taken starter's takedown quest is kept at the highest count among them, so a starter
+// taken later starts with all of it, and a takedown that counts for several starters still adds only 1
+void libAffx_RaynorShareTakedowns () {
+    unit hero = libAffx_RaynorHero();
+    bool round;
+    bool pepper;
+    bool raider;
+    int shared = 0;
+    if (hero == null || !libAffx_bankLoaded) {
+        return;
+    }
+    round = UnitHasBehavior2(hero, "RaynorPenetratorMarker");
+    pepper = UnitHasBehavior2(hero, "RaynorPepperMarker");
+    raider = UnitHasBehavior2(hero, "RaynorRaiderMarker");
+    if (round) {
+        shared = MaxI(shared, libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter"));
+    }
+    if (pepper) {
+        shared = MaxI(shared, libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter"));
+    }
+    if (raider) {
+        shared = MaxI(shared, libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"));
+    }
+    if (round && libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter") < shared) {
+        libGame_gf_ModifyTokenCount(shared - libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter"), "RaynorGoldenBreachTokenCounter", hero);
+        libAffx_RaynorSyncRound();
+        libAffx_RaynorRoundSync();
+    }
+    if (pepper && libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter") < shared) {
+        libGame_gf_ModifyTokenCount(shared - libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter"), "RaynorGoldenSharpshooterTokenCounter", hero);
+        libAffx_RaynorSyncPepper();
+        libAffx_RaynorPepperSync();
+    }
+    if (raider && libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter") < shared) {
+        libGame_gf_ModifyTokenCount(shared - libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter"), "RaynorGoldenSquadronTokenCounter", hero);
+        libAffx_RaynorSyncRaider();
+    }
+}
 bool libAffx_RaynorTick_Func (bool testConds, bool runActions) {
+    libAffx_RaynorShareTakedowns();
     libAffx_RaynorRoundSync();
     libAffx_RaynorBigOneSync();
     libAffx_RaynorPepperSync();
@@ -475,6 +514,7 @@ bool libAffx_RaynorTakedown (bool testConds, bool runActions) {
         libAffx_RaynorSyncRaider();
         libAffx_RaynorQuestDing();
     }
+    libAffx_RaynorShareTakedowns();
     return true;
 }
 bool libAffx_RaynorStart (bool testConds, bool runActions) {
