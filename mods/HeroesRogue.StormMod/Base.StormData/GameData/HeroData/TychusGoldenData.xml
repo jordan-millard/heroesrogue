@@ -122,45 +122,35 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenDevastation" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="OdinWeaponSplashDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenDevastation" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="TychusOdinAnnihilateDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenDevastation" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="TychusOdinRagnarokMissilesTargetedDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenDevastation" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="TychusOdinNuclearBlastDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="TychusOdinWeaponDamage">
-    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
-  </CEffectDamage>
-  <CEffectDamage id="OdinWeaponSplashDamage">
-    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
-  </CEffectDamage>
-  <CEffectDamage id="TychusOdinAnnihilateDamage">
-    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
-  </CEffectDamage>
-  <CEffectDamage id="TychusOdinRagnarokMissilesTargetedDamage">
-    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
-  </CEffectDamage>
-  <CEffectDamage id="TychusOdinNuclearBlastDamage">
-    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="TychusGoldenDevastation" Modifier="0" />
   </CEffectDamage>
   <CButton id="TychusGoldenDevastationTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tychus_commandeerodin.dds" />

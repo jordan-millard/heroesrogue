@@ -255,7 +255,8 @@ bool libAffx_TychusBomblets_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Odin Pilot: past 100 Pilot, 2% damage per stack; Devastation's 1% per stack to all damage to non-Heroes
+// Odin Pilot: past 100 Pilot, 2% damage per stack; Devastation's 1% per stack to all Odin damage (each Odin damage effect)
+// and to Tychus's other damage to non-Heroes (the damage response)
 void libAffx_TychusOdinPilotSync () {
     unit hero = libAffx_TychusHero();
     int power;
@@ -266,6 +267,11 @@ void libAffx_TychusOdinPilotSync () {
     bane = libAffx_TychusStacks("TychusGoldenDevastationTokenCounter");
     if (bane != libAffx_TychusBaneApplied) {
         libAffx_TychusBaneApplied = bane;
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "TychusOdinWeaponDamage", "MultiplicativeModifierArray[TychusGoldenDevastation].Modifier", libAffx_player, 0.01 * IntToFixed(bane));
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "OdinWeaponSplashDamage", "MultiplicativeModifierArray[TychusGoldenDevastation].Modifier", libAffx_player, 0.01 * IntToFixed(bane));
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "TychusOdinAnnihilateDamage", "MultiplicativeModifierArray[TychusGoldenDevastation].Modifier", libAffx_player, 0.01 * IntToFixed(bane));
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "TychusOdinRagnarokMissilesTargetedDamage", "MultiplicativeModifierArray[TychusGoldenDevastation].Modifier", libAffx_player, 0.01 * IntToFixed(bane));
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "TychusOdinNuclearBlastDamage", "MultiplicativeModifierArray[TychusGoldenDevastation].Modifier", libAffx_player, 0.01 * IntToFixed(bane));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenDevastationBane", "DamageResponse.ModifyFraction", libAffx_player, 1.0 + 0.01 * IntToFixed(bane));
         UnitBehaviorRemove(hero, "TychusGoldenDevastationBane", 1);
     }
