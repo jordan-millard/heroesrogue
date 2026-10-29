@@ -31,6 +31,7 @@ unit[4] libAffx_RaynorBanshee; // Raider Captain: the escort Banshees (slots 1-3
 fixed[4] libAffx_RaynorBansheeBackAt; // Raider Captain: when each empty slot may return
 unit libAffx_RaynorLastAttacked; // Raider Captain: the last unit Raynor's Basic Attacks hit
 fixed libAffx_RaynorLastAttackedAt; // Raider Captain: when
+fixed libAffx_RaynorInspiredModifier = -1.0; // Raider Captain: the Inspired damage modifier last set
 int libAffx_RaynorBansheeSpeed = -1; // Raider Captain: Squadron speed stacks the Banshee buff was last added at
 fixed libAffx_RaynorLastFan = -1.0; // Penetrator: mission time of the last fan (its own rounds skip the event)
 bool libAffx_RaynorRoundRangeSet; // Penetrator: the 10% longer offsets were applied
@@ -389,6 +390,10 @@ unit libAffx_RaynorAttackTarget () {
     }
     return null;
 }
+// Raider Captain: one of the Banshee damage effect's modifiers (by its key)
+fixed libAffx_RaynorRaiderModifier (string key) {
+    return StringToFixed(CatalogReferenceGet("Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[" + key + "].Modifier", libAffx_player));
+}
 // Raider Captain: the last unit Raynor's Basic Attacks hit
 bool libAffx_RaynorAttackTrack_Func (bool testConds, bool runActions) {
     unit hero = libAffx_RaynorHero();
@@ -405,6 +410,7 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     unit hero = libAffx_RaynorHero();
     unit banshee;
     unit target;
+    fixed inspired;
     int count = 2;
     int i;
     int speed;
@@ -416,7 +422,13 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     if (libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter") >= 100) {
         count = 3;
     }
-    // Raynor's Inspire attack speed reaches the Banshees too (and doubles their damage) while it lasts
+    // Raynor's Inspire attack speed reaches the Banshees too (and doubles their damage) while it lasts. An effect's
+    // damage modifiers add up rather than multiply, so the Inspired one is kept equal to 1 plus all the others
+    inspired = 1.0 + libAffx_RaynorRaiderModifier("RaynorRaiderPower") + libAffx_RaynorRaiderModifier("RaynorRaiderCommon") + libAffx_RaynorRaiderModifier("RaynorRaiderLegacy") + UnitGetTokenCount(hero, "RaynorGoldenAirSupportTokenCounter") * 0.002;
+    if (inspired != libAffx_RaynorInspiredModifier) {
+        libAffx_RaynorInspiredModifier = inspired;
+        libAffx_CatalogReferenceSet("Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorGoldenInspired].Modifier", libAffx_player, FixedToString(MaxF(0.0, inspired), 4));
+    }
     for (i = 1; i <= 3; i += 1) {
         banshee = libAffx_RaynorBanshee[i];
         if (banshee != null && UnitIsAlive(banshee) && UnitHasBehavior2(hero, "RaynorInspireAttackSpeedSelf")) {
