@@ -64,12 +64,12 @@ void libAffx_JainaSyncFrostbolt () {
         libAffx_CatalogReferenceModify("Abil,JainaConeOfCold,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaFrostboltAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaFrostboltAdded = wanted;
     }
-    // stacks past 25: libAffx_JainaPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 25);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_JainaFrostboltPastApplied) {
         libAffx_JainaFrostboltPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaFrostboltPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaFrostboltPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaFrostboltPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaFrostboltPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "JainaFrostboltPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "JainaFrostboltPastCapDamage")) {
@@ -92,12 +92,12 @@ void libAffx_JainaSyncBlizzard () {
         libAffx_CatalogReferenceModify("Abil,JainaBlizzard,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaBlizzardAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaBlizzardAdded = wanted;
     }
-    // stacks past 40: libAffx_JainaPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_JainaBlizzardPastApplied) {
         libAffx_JainaBlizzardPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaBlizzardPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaBlizzardPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaBlizzardPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaBlizzardPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "JainaBlizzardPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "JainaBlizzardPastCapDamage")) {
@@ -120,12 +120,12 @@ void libAffx_JainaSyncElemental () {
         libAffx_CatalogReferenceModify("Abil,JainaSummonWaterElemental,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_JainaElementalAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_JainaElementalAdded = wanted;
     }
-    // stacks past 40: libAffx_JainaPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_JainaElementalPastApplied) {
         libAffx_JainaElementalPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaElementalPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaElementalPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_JainaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaElementalPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JainaElementalPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "JainaElementalPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "JainaElementalPastCapDamage")) {

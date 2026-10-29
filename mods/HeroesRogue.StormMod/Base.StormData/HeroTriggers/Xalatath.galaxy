@@ -64,12 +64,12 @@ void libAffx_XalatathSyncVolley () {
         libAffx_CatalogReferenceModify("Effect,XalatathVoidVolley2AoESearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathVolleyAdded) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_XalatathVolleyAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_XalatathVolleyPastApplied) {
         libAffx_XalatathVolleyPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathVolleyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathVolleyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathVolleyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathVolleyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "XalatathVolleyPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "XalatathVolleyPastCapDamage")) {
@@ -92,12 +92,12 @@ void libAffx_XalatathSyncMark () {
         libAffx_CatalogReferenceModify("Abil,XalatathShadowMark,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathMarkAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_XalatathMarkAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_XalatathMarkPastApplied) {
         libAffx_XalatathMarkPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathMarkPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathMarkPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathMarkPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathMarkPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "XalatathMarkPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "XalatathMarkPastCapDamage")) {
@@ -120,12 +120,12 @@ void libAffx_XalatathSyncHeart () {
         libAffx_CatalogReferenceModify("Abil,XalatathDarkHeartRitual,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_XalatathHeartAdded) * -0.15, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_XalatathHeartAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_XalatathHeartPastApplied) {
         libAffx_XalatathHeartPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathHeartPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathHeartPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathHeartPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "XalatathHeartPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "XalatathHeartPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "XalatathHeartPastCapDamage")) {

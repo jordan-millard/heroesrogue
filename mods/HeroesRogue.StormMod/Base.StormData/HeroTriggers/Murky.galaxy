@@ -100,7 +100,8 @@ void libAffx_MurkySyncRadius () {
         overflow = stacks - libAffx_murkyRadiusMaxStacks;
         stacks = libAffx_murkyRadiusMaxStacks;
     }
-    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenSlimeMountainPastCap", libAffx_murkyMountainDamagePerStack * overflow);
+    // every takedown quest: 2% to all damage per stack past 100 (overflow counts from the 75 cap)
+    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenSlimeMountainPastCap", 0.02 * MaxF(0.0, overflow - 25.0));
     wanted = libAffx_murkyRadiusPerStack * stacks;
     delta = wanted - libAffx_murkyRadiusAdded;
     if (AbsF(delta) < 0.01) {
@@ -134,7 +135,8 @@ void libAffx_MurkySyncPufferRadius () {
         overflow = stacks - libAffx_murkyPufferRadiusMaxStacks;
         stacks = libAffx_murkyPufferRadiusMaxStacks;
     }
-    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenCatchPastCap", libAffx_murkyCatchDamagePerStack * overflow);
+    // every takedown quest: 2% to all damage per stack past 100 (overflow counts from the 75 cap)
+    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenCatchPastCap", 0.02 * MaxF(0.0, overflow - 25.0));
     wanted = libAffx_murkyPufferRadiusPerStack * stacks;
     delta = wanted - libAffx_murkyPufferRadiusAdded;
     if (AbsF(delta) < 0.01) {

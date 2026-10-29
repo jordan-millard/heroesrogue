@@ -137,8 +137,8 @@ void libAffx_GazloweLazorSync () {
     power = MaxI(0, libAffx_GazloweStacks("GazloweGoldenAmplificationTokenCounter") - 100);
     if (power != libAffx_GazloweLazorPowerApplied) {
         libAffx_GazloweLazorPowerApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.01 * IntToFixed(power));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
         UnitBehaviorRemove(hero, "GazloweGoldenOverdrive", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "GazloweGoldenOverdrive")) {
@@ -201,9 +201,9 @@ void libAffx_GazloweEngineerSync () {
         libAffx_GazlowePowerApplied = power;
         tune = true;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.01 * IntToFixed(speed));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(power));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.01 * IntToFixed(power));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenTurretTuning", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GazloweGoldenOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
         UnitBehaviorRemove(hero, "GazloweGoldenOverdrive", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "GazloweGoldenOverdrive")) {

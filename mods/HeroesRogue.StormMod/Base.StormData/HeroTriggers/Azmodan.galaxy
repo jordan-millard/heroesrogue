@@ -80,12 +80,12 @@ void libAffx_AzmodanSyncGlobe () {
         libAffx_CatalogReferenceModify("Abil,AzmodanGlobeOfAnnihilation,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGlobeAdded3) * 0.3, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanGlobeAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_AzmodanGlobePastApplied) {
         libAffx_AzmodanGlobePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGlobePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGlobePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGlobePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGlobePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "AzmodanGlobePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "AzmodanGlobePastCapDamage")) {
@@ -115,12 +115,12 @@ void libAffx_AzmodanSyncSin () {
         libAffx_CatalogReferenceModify("Behavior,AzmodanAllShallBurnChannel,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanSinAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanSinAdded2 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_AzmodanSinPastApplied) {
         libAffx_AzmodanSinPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanSinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanSinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanSinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanSinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "AzmodanSinPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "AzmodanSinPastCapDamage")) {
@@ -145,12 +145,12 @@ void libAffx_AzmodanSyncGen () {
         libAffx_CatalogReferenceModify("Behavior,AzmodanGoldenWarriorHealth,Modification.VitalMaxFractionArray[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AzmodanGenAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AzmodanGenAdded = wanted;
     }
-    // stacks past 80: 0.025 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_AzmodanGenPastApplied) {
         libAffx_AzmodanGenPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGenPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGenPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGenPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AzmodanGenPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "AzmodanGenPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "AzmodanGenPastCapDamage")) {

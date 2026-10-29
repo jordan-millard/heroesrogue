@@ -71,12 +71,12 @@ void libAffx_TracerSyncGun () {
     if (wanted != libAffx_TracerGunAdded) {
         libAffx_TracerGunAdded = wanted;
     }
-    // stacks past 10: libAffx_TracerPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 10);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_TracerGunPastApplied) {
         libAffx_TracerGunPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerGunPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerGunPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerGunPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerGunPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "TracerGunPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "TracerGunPastCapDamage")) {
@@ -99,12 +99,12 @@ void libAffx_TracerSyncMelee () {
         libAffx_CatalogReferenceModify("Abil,TracerMelee,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TracerMeleeAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TracerMeleeAdded = wanted;
     }
-    // stacks past 40: libAffx_TracerPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_TracerMeleePastApplied) {
         libAffx_TracerMeleePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerMeleePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerMeleePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TracerPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerMeleePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerMeleePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "TracerMeleePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "TracerMeleePastCapDamage")) {
@@ -126,12 +126,12 @@ void libAffx_TracerSyncBomb () {
     if (wanted != libAffx_TracerBombAdded) {
         libAffx_TracerBombAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_TracerBombPastApplied) {
         libAffx_TracerBombPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBombPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBombPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBombPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TracerBombPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "TracerBombPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "TracerBombPastCapDamage")) {

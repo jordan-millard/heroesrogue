@@ -69,12 +69,12 @@ void libAffx_KerriganSyncRavage () {
         libAffx_CatalogReferenceModify("Effect,KerriganQueenOfBladesRegenHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganRavageAdded) * 0.0002, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganRavageAdded = wanted;
     }
-    // stacks past 50: libAffx_KerriganPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 50);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_KerriganRavagePastApplied) {
         libAffx_KerriganRavagePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganRavagePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganRavagePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganRavagePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganRavagePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "KerriganRavagePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "KerriganRavagePastCapDamage")) {
@@ -98,12 +98,12 @@ void libAffx_KerriganSyncBlades () {
         libAffx_CatalogReferenceModify("Abil,KerriganPrimalGrasp,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganBladesAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganBladesAdded = wanted;
     }
-    // stacks past 30: libAffx_KerriganPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_KerriganBladesPastApplied) {
         libAffx_KerriganBladesPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBladesPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBladesPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBladesPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganBladesPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "KerriganBladesPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "KerriganBladesPastCapDamage")) {
@@ -126,12 +126,12 @@ void libAffx_KerriganSyncUltra () {
         libAffx_CatalogReferenceModify("Abil,KerriganSummonUltralisk,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KerriganUltraAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KerriganUltraAdded = wanted;
     }
-    // stacks past 40: libAffx_KerriganPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_KerriganUltraPastApplied) {
         libAffx_KerriganUltraPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganUltraPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganUltraPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KerriganPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganUltraPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KerriganUltraPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "KerriganUltraPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "KerriganUltraPastCapDamage")) {

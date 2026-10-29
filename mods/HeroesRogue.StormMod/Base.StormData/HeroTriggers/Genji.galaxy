@@ -26,7 +26,7 @@ const fixed libAffx_genjiSwiftCooldownPerStack = 0.08; // Shimada Legacy: 1% of 
 const int libAffx_genjiSwiftCooldownMaxStacks = 25;
 const fixed libAffx_genjiDragonCooldownPerStack = 0.6; // Dragon Soul: 1% of Dragonblade's 60 second cooldown
 const int libAffx_genjiDragonCooldownMaxStacks = 40;
-const fixed libAffx_genjiPastCapDamagePerStack = 0.01;
+const fixed libAffx_genjiPastCapDamagePerStack = 0.02; // every takedown quest: 2% per stack past 100
 const fixed libAffx_genjiIaidoFraction = 0.08;
 const fixed libAffx_genjiExecuteLifePercent = 30.0;
 const fixed libAffx_genjiThousandBladesDelay = 0.3;
@@ -114,7 +114,7 @@ void libAffx_GenjiSyncSwift () {
         libAffx_CatalogReferenceModify("Abil,GenjiSwiftStrike,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(libAffx_genjiSwiftCooldownAdded - wanted, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_genjiSwiftCooldownAdded = wanted;
     }
-    power = MaxI(0, stacks - libAffx_genjiSwiftCooldownMaxStacks);
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_genjiSwiftPastApplied) {
         libAffx_genjiSwiftPastApplied = power;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenShimadaPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_genjiPastCapDamagePerStack);
@@ -142,7 +142,7 @@ void libAffx_GenjiSyncDragon () {
         libAffx_CatalogReferenceModify("Abil,GenjiDragonMasterUnleash,Cost.Cooldown.TimeUse", libAffx_player, delta, c_upgradeOperationAdd);
         libAffx_genjiDragonCooldownAdded = wanted;
     }
-    power = MaxI(0, stacks - libAffx_genjiDragonCooldownMaxStacks);
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_genjiDragonPastApplied) {
         libAffx_genjiDragonPastApplied = power;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenDragonPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_genjiPastCapDamagePerStack);

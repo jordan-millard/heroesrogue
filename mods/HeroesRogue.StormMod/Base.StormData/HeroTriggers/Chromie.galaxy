@@ -88,12 +88,12 @@ void libAffx_ChromieSyncSniper () {
         libAffx_CatalogReferenceModify("Effect,ChromieSandBlastMissileScan,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieSniperAdded3) * 0.0125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieSniperAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_ChromieSniperPastApplied) {
         libAffx_ChromieSniperPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieSniperPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieSniperPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieSniperPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieSniperPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ChromieSniperPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ChromieSniperPastCapDamage")) {
@@ -132,12 +132,12 @@ void libAffx_ChromieSyncBreath () {
         libAffx_CatalogReferenceModify("Actor,ChromieDragonsBreathEnemyWarningSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieBreathAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_ChromieBreathPastApplied) {
         libAffx_ChromieBreathPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieBreathPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieBreathPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieBreathPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieBreathPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ChromieBreathPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ChromieBreathPastCapDamage")) {
@@ -167,12 +167,12 @@ void libAffx_ChromieSyncChrono () {
         libAffx_CatalogReferenceModify("Abil,ChromieTemporalLoop,Cost[0].Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieChronoAdded2) * -0.6, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieChronoAdded2 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_ChromieChronoPastApplied) {
         libAffx_ChromieChronoPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieChronoPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieChronoPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieChronoPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChromieChronoPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ChromieChronoPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ChromieChronoPastCapDamage")) {

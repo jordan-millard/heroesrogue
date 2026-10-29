@@ -68,12 +68,12 @@ void libAffx_ZuljinSyncAxe () {
     if (wanted != libAffx_ZuljinAxeAdded) {
         libAffx_ZuljinAxeAdded = wanted;
     }
-    // stacks past 40: libAffx_ZuljinPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ZuljinAxePastApplied) {
         libAffx_ZuljinAxePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinAxePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinAxePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinAxePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinAxePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ZuljinAxePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ZuljinAxePastCapDamage")) {
@@ -96,12 +96,12 @@ void libAffx_ZuljinSyncCleave () {
         libAffx_CatalogReferenceModify("Abil,ZuljinTwinCleave,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinCleaveAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZuljinCleaveAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ZuljinCleavePastApplied) {
         libAffx_ZuljinCleavePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinCleavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinCleavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinCleavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinCleavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ZuljinCleavePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ZuljinCleavePastCapDamage")) {
@@ -124,12 +124,12 @@ void libAffx_ZuljinSyncHead () {
         libAffx_CatalogReferenceModify("Abil,ZuljinGrievousThrow,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZuljinHeadAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZuljinHeadAdded = wanted;
     }
-    // stacks past 40: libAffx_ZuljinPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ZuljinHeadPastApplied) {
         libAffx_ZuljinHeadPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinHeadPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinHeadPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZuljinPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinHeadPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZuljinHeadPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ZuljinHeadPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ZuljinHeadPastCapDamage")) {

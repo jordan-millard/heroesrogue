@@ -90,12 +90,12 @@ void libAffx_TychusSyncMinigun () {
         libAffx_CatalogReferenceModify("Behavior,TychusOverkillActive,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusMinigunAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TychusMinigunAdded3 = wanted;
     }
-    // stacks past 100: libAffx_TychusPastCapDamagePerStack each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_TychusMinigunPastApplied) {
         libAffx_TychusMinigunPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusMinigunPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusMinigunPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusMinigunPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusMinigunPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "TychusMinigunPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "TychusMinigunPastCapDamage")) {
@@ -130,12 +130,12 @@ void libAffx_TychusSyncGrenade () {
         libAffx_CatalogReferenceModify("Effect,TychusGrenadeApplyForce,Amount", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_TychusGrenadeAdded3) * 0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_TychusGrenadeAdded3 = wanted;
     }
-    // stacks past 100: libAffx_TychusPastCapDamagePerStack each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_TychusGrenadePastApplied) {
         libAffx_TychusGrenadePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGrenadePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGrenadePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_TychusPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGrenadePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGrenadePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "TychusGrenadePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "TychusGrenadePastCapDamage")) {
@@ -255,7 +255,7 @@ bool libAffx_TychusBomblets_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Odin Pilot: past 100 Pilot, 2.5% damage per stack; Devastation's 1% per stack to all damage to non-Heroes
+// Odin Pilot: past 100 Pilot, 2% damage per stack; Devastation's 1% per stack to all damage to non-Heroes
 void libAffx_TychusOdinPilotSync () {
     unit hero = libAffx_TychusHero();
     int power;
@@ -275,8 +275,8 @@ void libAffx_TychusOdinPilotSync () {
     power = MaxI(0, libAffx_TychusStacks("TychusGoldenPilotTokenCounter") - 100);
     if (power != libAffx_TychusOdinPowerApplied) {
         libAffx_TychusOdinPowerApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.025 * IntToFixed(power));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.025 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinOverdrive", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.02 * IntToFixed(power));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TychusGoldenOdinOverdrive", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.02 * IntToFixed(power));
         UnitBehaviorRemove(hero, "TychusGoldenOdinOverdrive", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "TychusGoldenOdinOverdrive")) {

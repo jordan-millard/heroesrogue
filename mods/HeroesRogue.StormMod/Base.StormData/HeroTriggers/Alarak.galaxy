@@ -90,12 +90,12 @@ void libAffx_AlarakSyncDiscord () {
         libAffx_CatalogReferenceModify("Actor,AlarakDiscordStrikePolygonGuide,Height", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.0625, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakDiscordAdded3 = wanted;
     }
-    // stacks past 120: 0.03 each to all damage
+    // stacks past 120: 0.02 each to all damage
     power = MaxI(0, stacks - 120);
     if (power != libAffx_AlarakDiscordPastApplied) {
         libAffx_AlarakDiscordPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "AlarakDiscordPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "AlarakDiscordPastCapDamage")) {
@@ -126,12 +126,12 @@ void libAffx_AlarakSyncSurge () {
         libAffx_CatalogReferenceModify("Actor,AlarakLightningSurgeRangeSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakSurgeAdded2) * 0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakSurgeAdded2 = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_AlarakSurgePastApplied) {
         libAffx_AlarakSurgePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakSurgePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakSurgePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakSurgePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakSurgePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "AlarakSurgePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "AlarakSurgePastCapDamage")) {
@@ -153,12 +153,12 @@ void libAffx_AlarakSyncBlade () {
     if (wanted != libAffx_AlarakBladeAdded) {
         libAffx_AlarakBladeAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_AlarakBladePastApplied) {
         libAffx_AlarakBladePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakBladePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakBladePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakBladePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakBladePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "AlarakBladePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "AlarakBladePastCapDamage")) {

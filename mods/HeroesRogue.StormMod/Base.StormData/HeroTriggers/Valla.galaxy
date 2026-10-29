@@ -63,12 +63,12 @@ void libAffx_VallaSyncHunger () {
         libAffx_CatalogReferenceModify("Abil,DemonHunterHungeringArrow,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_VallaHungerAdded), c_upgradeOperationAdd);
         libAffx_VallaHungerAdded = wanted;
     }
-    // stacks past 30: libAffx_VallaPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_VallaHungerPastApplied) {
         libAffx_VallaHungerPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaHungerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaHungerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaHungerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaHungerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "VallaHungerPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "VallaHungerPastCapDamage")) {
@@ -91,12 +91,12 @@ void libAffx_VallaSyncVolley () {
         libAffx_CatalogReferenceModify("Abil,DemonHunterMultishot,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_VallaVolleyAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_VallaVolleyAdded = wanted;
     }
-    // stacks past 30: libAffx_VallaPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_VallaVolleyPastApplied) {
         libAffx_VallaVolleyPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaVolleyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaVolleyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaVolleyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaVolleyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "VallaVolleyPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "VallaVolleyPastCapDamage")) {
@@ -119,12 +119,12 @@ void libAffx_VallaSyncStrafe () {
         libAffx_CatalogReferenceModify("Behavior,Strafe,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_VallaStrafeAdded) * 0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_VallaStrafeAdded = wanted;
     }
-    // stacks past 20: libAffx_VallaPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 20);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_VallaStrafePastApplied) {
         libAffx_VallaStrafePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaStrafePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaStrafePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_VallaPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaStrafePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "VallaStrafePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "VallaStrafePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "VallaStrafePastCapDamage")) {

@@ -63,12 +63,12 @@ void libAffx_ZeratulSyncCleave () {
         libAffx_CatalogReferenceModify("Abil,ZeratulBlinkStorm,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ZeratulCleaveAdded) * -0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ZeratulCleaveAdded = wanted;
     }
-    // stacks past 30: libAffx_ZeratulPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ZeratulCleavePastApplied) {
         libAffx_ZeratulCleavePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulCleavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZeratulPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulCleavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZeratulPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulCleavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulCleavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ZeratulCleavePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ZeratulCleavePastCapDamage")) {
@@ -91,12 +91,12 @@ void libAffx_ZeratulSyncSpike () {
         libAffx_CatalogReferenceModify("Abil,ZeratulSingularitySpike,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_ZeratulSpikeAdded), c_upgradeOperationAdd);
         libAffx_ZeratulSpikeAdded = wanted;
     }
-    // stacks past 30: libAffx_ZeratulPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ZeratulSpikePastApplied) {
         libAffx_ZeratulSpikePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulSpikePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZeratulPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulSpikePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZeratulPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulSpikePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulSpikePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ZeratulSpikePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ZeratulSpikePastCapDamage")) {
@@ -119,12 +119,12 @@ void libAffx_ZeratulSyncBlade () {
         libAffx_CatalogReferenceModify("Abil,VorpalBladeBlink,Cost[0].Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_ZeratulBladeAdded), c_upgradeOperationAdd);
         libAffx_ZeratulBladeAdded = wanted;
     }
-    // stacks past 20: libAffx_ZeratulPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 20);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ZeratulBladePastApplied) {
         libAffx_ZeratulBladePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulBladePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_ZeratulPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulBladePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_ZeratulPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulBladePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ZeratulBladePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ZeratulBladePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ZeratulBladePastCapDamage")) {

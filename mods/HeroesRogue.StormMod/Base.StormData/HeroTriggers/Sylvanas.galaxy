@@ -60,12 +60,12 @@ void libAffx_SylvanasSyncFire () {
         libAffx_CatalogReferenceModify("Abil,SylvanasWitheringFire,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasFireAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_SylvanasFireAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_SylvanasFirePastApplied) {
         libAffx_SylvanasFirePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasFirePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasFirePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasFirePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasFirePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "SylvanasFirePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "SylvanasFirePastCapDamage")) {
@@ -95,12 +95,12 @@ void libAffx_SylvanasSyncDagger () {
         libAffx_CatalogReferenceModify("Behavior,SylvanasShadowDaggerDummyBuffSpreadBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasDaggerAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_SylvanasDaggerAdded2 = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_SylvanasDaggerPastApplied) {
         libAffx_SylvanasDaggerPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDaggerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDaggerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDaggerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasDaggerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "SylvanasDaggerPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "SylvanasDaggerPastCapDamage")) {
@@ -129,12 +129,12 @@ void libAffx_SylvanasSyncWave () {
         libAffx_CatalogReferenceModify("Abil,SylvanasHauntingWave,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_SylvanasWaveAdded2) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_SylvanasWaveAdded2 = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_SylvanasWavePastApplied) {
         libAffx_SylvanasWavePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasWavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasWavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasWavePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "SylvanasWavePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "SylvanasWavePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "SylvanasWavePastCapDamage")) {

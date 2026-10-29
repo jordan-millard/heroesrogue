@@ -61,12 +61,12 @@ void libAffx_GuldanSyncFel () {
         libAffx_CatalogReferenceModify("Abil,GuldanFelFlame,Cost.Vital[Energy]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanFelAdded) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanFelAdded = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_GuldanFelPastApplied) {
         libAffx_GuldanFelPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanFelPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanFelPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanFelPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanFelPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "GuldanFelPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "GuldanFelPastCapDamage")) {
@@ -95,12 +95,12 @@ void libAffx_GuldanSyncDrain () {
         libAffx_CatalogReferenceModify("Effect,GuldanDrainLifeCreateHealer,MultiplicativeModifierArray[GuldanHarvestStage2].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanDrainAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanDrainAdded2 = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_GuldanDrainPastApplied) {
         libAffx_GuldanDrainPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanDrainPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanDrainPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanDrainPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanDrainPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "GuldanDrainPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "GuldanDrainPastCapDamage")) {
@@ -131,12 +131,12 @@ void libAffx_GuldanSyncCorruption () {
         libAffx_CatalogReferenceModify("Effect,GuldanCorruptionEchoedCorruptionSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_GuldanCorruptionAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_GuldanCorruptionAdded2 = wanted;
     }
-    // stacks past 80: 0.03 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_GuldanCorruptionPastApplied) {
         libAffx_GuldanCorruptionPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptionPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.03);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptionPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.03);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptionPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GuldanCorruptionPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "GuldanCorruptionPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "GuldanCorruptionPastCapDamage")) {

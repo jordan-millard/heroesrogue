@@ -81,12 +81,12 @@ void libAffx_KaelthasSyncFlamestrike () {
         libAffx_CatalogReferenceModify("Effect,KaelthasFlamestrikeVerdantSpheresIgniteSearchAreaUnnamed,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasFlamestrikeAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasFlamestrikeAdded = wanted;
     }
-    // stacks past 30: libAffx_KaelthasPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_KaelthasFlamestrikePastApplied) {
         libAffx_KaelthasFlamestrikePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasFlamestrikePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasFlamestrikePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasFlamestrikePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasFlamestrikePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "KaelthasFlamestrikePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "KaelthasFlamestrikePastCapDamage")) {
@@ -109,12 +109,12 @@ void libAffx_KaelthasSyncBomb () {
         libAffx_CatalogReferenceModify("Abil,KaelthasLivingBomb,Cost.Charge.CountMax", libAffx_player, IntToString(wanted - libAffx_KaelthasBombAdded), c_upgradeOperationAdd);
         libAffx_KaelthasBombAdded = wanted;
     }
-    // stacks past 30: libAffx_KaelthasPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 30);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_KaelthasBombPastApplied) {
         libAffx_KaelthasBombPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasBombPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasBombPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasBombPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasBombPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "KaelthasBombPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "KaelthasBombPastCapDamage")) {
@@ -137,12 +137,12 @@ void libAffx_KaelthasSyncPyro () {
         libAffx_CatalogReferenceModify("Abil,KaelthasPyroblast,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_KaelthasPyroAdded) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_KaelthasPyroAdded = wanted;
     }
-    // stacks past 40: libAffx_KaelthasPastCapDamagePerStack each to all damage
-    power = MaxI(0, stacks - 40);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_KaelthasPyroPastApplied) {
         libAffx_KaelthasPyroPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasPyroPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasPyroPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * libAffx_KaelthasPastCapDamagePerStack);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasPyroPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "KaelthasPyroPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "KaelthasPyroPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "KaelthasPyroPastCapDamage")) {

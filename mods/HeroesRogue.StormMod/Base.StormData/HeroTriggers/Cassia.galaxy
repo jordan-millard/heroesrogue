@@ -93,12 +93,12 @@ void libAffx_CassiaSyncJavelin () {
         libAffx_CatalogReferenceModify("Behavior,AmazonGoldenJavelinSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaJavelinAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CassiaJavelinAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_CassiaJavelinPastApplied) {
         libAffx_CassiaJavelinPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaJavelinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaJavelinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaJavelinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaJavelinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "CassiaJavelinPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "CassiaJavelinPastCapDamage")) {
@@ -134,12 +134,12 @@ void libAffx_CassiaSyncFend () {
         libAffx_CatalogReferenceModify("Effect,AmazonGoldenSteadfastPersistent,PeriodicPeriodArray[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_CassiaFendAdded3) * -0.00125, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CassiaFendAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_CassiaFendPastApplied) {
         libAffx_CassiaFendPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaFendPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaFendPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaFendPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaFendPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "CassiaFendPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "CassiaFendPastCapDamage")) {
@@ -161,12 +161,12 @@ void libAffx_CassiaSyncSkirm () {
     if (wanted != libAffx_CassiaSkirmAdded) {
         libAffx_CassiaSkirmAdded = wanted;
     }
-    // stacks past 100: 0.015 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_CassiaSkirmPastApplied) {
         libAffx_CassiaSkirmPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaSkirmPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.015);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaSkirmPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.015);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaSkirmPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "CassiaSkirmPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "CassiaSkirmPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "CassiaSkirmPastCapDamage")) {

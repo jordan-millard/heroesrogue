@@ -88,12 +88,12 @@ void libAffx_FenixSyncPlasma () {
         libAffx_CatalogReferenceModify("Behavior,FenixPlasmaCutterUnitBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixPlasmaAdded3) * -0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_FenixPlasmaAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_FenixPlasmaPastApplied) {
         libAffx_FenixPlasmaPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixPlasmaPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixPlasmaPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixPlasmaPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixPlasmaPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "FenixPlasmaPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "FenixPlasmaPastCapDamage")) {
@@ -130,12 +130,12 @@ void libAffx_FenixSyncWarp () {
     if (wanted != libAffx_FenixWarpAdded3) {
         libAffx_FenixWarpAdded3 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_FenixWarpPastApplied) {
         libAffx_FenixWarpPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixWarpPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixWarpPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixWarpPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixWarpPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "FenixWarpPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "FenixWarpPastCapDamage")) {
@@ -164,12 +164,12 @@ void libAffx_FenixSyncTwin () {
         libAffx_CatalogReferenceModify("Weapon,FenixHeroWeapon,MinScanRange", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_FenixTwinAdded2) * 0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_FenixTwinAdded2 = wanted;
     }
-    // stacks past 80: 0.025 each to all damage
-    power = MaxI(0, stacks - 80);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_FenixTwinPastApplied) {
         libAffx_FenixTwinPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixTwinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixTwinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixTwinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FenixTwinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "FenixTwinPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "FenixTwinPastCapDamage")) {
