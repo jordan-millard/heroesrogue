@@ -1,0 +1,500 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Raynor. Penetrator: Penetrating Round hits on enemy Heroes add Impact and open a 6 second takedown window; takedowns
+// add Breach: recharge, then flight speed and width, then knockback, then at 100 a fan of 3. Sergeant Pepper: the Gambit
+// (15% Pepper damage per stack) is carried between maps; takedowns after a Basic Attack hit add Sharpshooter: Attack
+// Speed, then range, then a chance to kill non-Heroes outright, then at 100 Pepper every other attack. Raider Captain:
+// Banshee hits on Heroes add Air Support; takedowns add Squadron: Banshee damage, then respawn time, then Health, then
+// at 100 a third Banshee. Past 100, every takedown quest adds 2% to all damage per stack.
+// ============================================================
+
+const fixed libAffx_RaynorTakedownWindow = 3.0;
+const fixed libAffx_RaynorPastCapDamagePerStack = 0.01;
+bool libAffx_RaynorStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_RaynorRoundTime; // per enemy player, last Penetrator hit
+int libAffx_RaynorRoundAdded; // Penetrator: takedown stacks already applied to the catalog this game
+int libAffx_RaynorRoundAdded2; // Penetrator: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_RaynorRoundAdded3; // Penetrator: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_RaynorRoundPastApplied; // Penetrator: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_RaynorPepperTime; // per enemy player, last Sergeant Pepper hit
+int libAffx_RaynorPepperAdded; // Sergeant Pepper: takedown stacks already applied to the catalog this game
+int libAffx_RaynorPepperAdded2; // Sergeant Pepper: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_RaynorPepperAdded3; // Sergeant Pepper: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_RaynorPepperPastApplied; // Sergeant Pepper: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_RaynorRaiderTime; // per enemy player, last Raider Captain hit
+int libAffx_RaynorRaiderAdded; // Raider Captain: takedown stacks already applied to the catalog this game
+int libAffx_RaynorRaiderAdded2; // Raider Captain: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_RaynorRaiderAdded3; // Raider Captain: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_RaynorRaiderPastApplied; // Raider Captain: takedown quest stacks past the cap applied as damage this game
+unit[4] libAffx_RaynorBanshee; // Raider Captain: the escort Banshees (slots 1-3)
+fixed[4] libAffx_RaynorBansheeBackAt; // Raider Captain: when each empty slot may return
+fixed libAffx_RaynorLastFan = -1.0; // Penetrator: mission time of the last fan (its own rounds skip the event)
+bool libAffx_RaynorRoundRangeSet; // Penetrator: the 10% longer offsets were applied
+int libAffx_RaynorRoundShape = -1; // Penetrator: width and flight speed applied (speed stacks * 2, +1 for The Big One)
+fixed libAffx_RaynorBigOneAt; // The Big One: when it is next ready
+bool libAffx_RaynorIsPepper; // Sergeant Pepper is taken (checked on death)
+bool libAffx_RaynorGambitGranted; // Sergeant Pepper: this map's 4 Gambit stacks were added
+int libAffx_RaynorGambitLost; // Sergeant Pepper: Gambit stacks lost to deaths this map (at most 4)
+int libAffx_RaynorPepperApplied = -1; // Sergeant Pepper: Sharpshooter stacks the Pepper buff was last added at
+
+unit libAffx_RaynorHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_RaynorIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_RaynorStacks(string tokenId) {
+    unit hero = libAffx_RaynorHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_RaynorQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_RaynorInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_RaynorTakedownWindow;
+}
+// RaynorGoldenBreachTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80 flight speed and width (libAffx_RaynorRoundSync), 81-100 knockback, 100 a fan of 3 (script), then damage
+void libAffx_RaynorSyncRound () {
+    unit hero = libAffx_RaynorHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorPenetratorMarker")) {
+        return;
+    }
+    stacks = libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_RaynorRoundAdded) {
+        libAffx_CatalogReferenceModify("Abil,RaynorPenetratingRound,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRoundAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorRoundAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): flight speed and width (libAffx_RaynorRoundSync)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_RaynorRoundAdded2) {
+        libAffx_RaynorRoundAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% stronger knockback each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_RaynorRoundAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,RaynorPenetratingRoundKnockback,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRoundAdded3) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,RaynorPenetratingRoundMediumKnockback,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRoundAdded3) * 0.001875, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,RaynorPenetratingRoundShortKnockback,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRoundAdded3) * 0.00125, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,RaynorPenetratingRoundApplyForce,Amount", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRoundAdded3) * 0.16, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorRoundAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_RaynorRoundPastApplied) {
+        libAffx_RaynorRoundPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "RaynorRoundPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "RaynorRoundPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "RaynorRoundPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "RaynorRoundPastCapDamage")) {
+        UnitBehaviorAdd(hero, "RaynorRoundPastCapDamage", hero, 1);
+    }
+}
+// RaynorGoldenSharpshooterTokenCounter: stacks 1-40: 0.5% Attack Speed each; 41-80 range, 81-100 the execute chance, 100 Pepper every other attack (libAffx_RaynorPepperSync), then damage
+void libAffx_RaynorSyncPepper () {
+    unit hero = libAffx_RaynorHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorPepperMarker")) {
+        return;
+    }
+    stacks = libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_RaynorPepperAdded) {
+        libAffx_CatalogReferenceModify("Behavior,RaynorGoldenPepperDrill,Modification.AdditiveAttackSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorPepperAdded) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorPepperAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.5% Basic Attack range each (of 5.5)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_RaynorPepperAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,RaynorGoldenPepperDrill,Modification.WeaponRange", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorPepperAdded2) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,RaynorGoldenPepperDrill,Modification.WeaponScanBonus", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorPepperAdded2) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorPepperAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% execute chance each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_RaynorPepperAdded3) {
+        libAffx_CatalogReferenceModify("Effect,RaynorGoldenPepperExecute,Chance", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorPepperAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorPepperAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_RaynorPepperPastApplied) {
+        libAffx_RaynorPepperPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "RaynorPepperPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "RaynorPepperPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "RaynorPepperPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "RaynorPepperPastCapDamage")) {
+        UnitBehaviorAdd(hero, "RaynorPepperPastCapDamage", hero, 1);
+    }
+}
+// RaynorGoldenSquadronTokenCounter: stacks 1-40: 1% Banshee damage each; 41-80 respawn time, 81-100 Health, 100 a third Banshee (libAffx_RaynorBanshees_Func), then damage
+void libAffx_RaynorSyncRaider () {
+    unit hero = libAffx_RaynorHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorRaiderMarker")) {
+        return;
+    }
+    stacks = libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_RaynorRaiderAdded) {
+        libAffx_CatalogReferenceModify("Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorGoldenSquadron].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRaiderAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorRaiderAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.2 seconds (1%) off the respawn each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_RaynorRaiderAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,RaynorGoldenBansheeRespawn,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRaiderAdded2) * -0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorRaiderAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% Banshee Health each (for Banshees that arrive afterwards)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_RaynorRaiderAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,RaynorRaynorsRaidersController,Modification.VitalMaxFractionArray[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_RaynorRaiderAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_RaynorRaiderAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_RaynorRaiderPastApplied) {
+        libAffx_RaynorRaiderPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "RaynorRaiderPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "RaynorRaiderPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "RaynorRaiderPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "RaynorRaiderPastCapDamage")) {
+        UnitBehaviorAdd(hero, "RaynorRaiderPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_RaynorSync_Func (bool testConds, bool runActions) {
+    libAffx_RaynorSyncRound();
+    libAffx_RaynorSyncPepper();
+    libAffx_RaynorSyncRaider();
+    return true;
+}
+// Penetrator: scales one of Penetrating Round's offsets (a "x,y,z" vector) forward by a factor
+void libAffx_RaynorRoundOffset (string effect, string field, fixed scale) {
+    string offset = StringReplaceWord(CatalogFieldValueGet(c_gameCatalogEffect, effect, field, libAffx_player), ",", " ", c_stringReplaceAll, c_stringCase);
+    fixed y = StringToFixed(StringWord(offset, 2)) * scale;
+    CatalogFieldValueSet(c_gameCatalogEffect, effect, field, libAffx_player, StringWord(offset, 1) + "," + FixedToString(y, 3) + "," + StringWord(offset, 3));
+}
+// Penetrator: 10% more range (once), 30% more width plus 1% per Breach stack 41-80, twice as wide with The Big One, and
+// the round flies 1% faster per stack 41-80 (the sweep only runs in 1/16 second steps, so from 20 of those stacks it
+// skips one of its three)
+void libAffx_RaynorRoundSync () {
+    unit hero = libAffx_RaynorHero();
+    int speed;
+    int shape;
+    int i;
+    fixed width;
+    fixed flight;
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorPenetratorMarker")) {
+        return;
+    }
+    if (!libAffx_RaynorRoundRangeSet) {
+        libAffx_RaynorRoundRangeSet = true;
+        for (i = 0; i <= 9; i += 1) {
+            libAffx_RaynorRoundOffset("RaynorPenetratingRoundCreateSearchPersistent", "PeriodicOffsetArray[" + IntToString(i) + "]", 1.1);
+        }
+        libAffx_RaynorRoundOffset("RaynorPenetratingRoundCreatePersistent", "PeriodicOffsetArray[0]", 1.1);
+    }
+    speed = MaxI(0, MinI(libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter") - 40, 40));
+    shape = speed * 2;
+    if (UnitHasBehavior2(hero, "RaynorGoldenBigOne")) {
+        shape += 1;
+    }
+    if (shape == libAffx_RaynorRoundShape) {
+        return;
+    }
+    libAffx_RaynorRoundShape = shape;
+    width = 0.8 * (1.3 + 0.01 * IntToFixed(speed));
+    if (UnitHasBehavior2(hero, "RaynorGoldenBigOne")) {
+        width = width * 2.0;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "RaynorPenetratingRoundMissileScan", "AreaArray[0].RectangleWidth", libAffx_player, width);
+    flight = 40.0 * (1.0 + 0.01 * IntToFixed(speed));
+    CatalogFieldValueSetFixed(c_gameCatalogMover, "RaynorPenetratingRoundMissile", "MotionPhases[0].Speed", libAffx_player, flight);
+    CatalogFieldValueSetFixed(c_gameCatalogMover, "RaynorPenetratingRoundMissile", "MotionPhases[0].MaxSpeed", libAffx_player, flight);
+    CatalogFieldValueSetFixed(c_gameCatalogMover, "RaynorPenetratingRoundMissile", "MotionPhases[1].Speed", libAffx_player, flight);
+    CatalogFieldValueSetFixed(c_gameCatalogMover, "RaynorPenetratingRoundMissile", "MotionPhases[1].MaxSpeed", libAffx_player, flight);
+    if (speed >= 20) {
+        CatalogFieldValueSet(c_gameCatalogEffect, "RaynorPenetratingRoundCreateSearchPersistent", "PeriodicPeriodArray[7]", libAffx_player, "0");
+    } else {
+        CatalogFieldValueSet(c_gameCatalogEffect, "RaynorPenetratingRoundCreateSearchPersistent", "PeriodicPeriodArray[7]", libAffx_player, "0.0625");
+    }
+}
+// the nearest visible enemy within range of a unit, a Hero if there is one
+unit libAffx_RaynorNearestFoe (unit from, fixed range) {
+    unitgroup foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(from), range), UnitFilter((1 << c_targetFilterVisible), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem) | (1 << c_targetFilterStructure), (1 << (c_targetFilterStasis - 32)) | (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32))), 0);
+    unit foe;
+    unit best;
+    unit bestHero;
+    fixed dist;
+    fixed bestDist = 999.0;
+    fixed bestHeroDist = 999.0;
+    int i = 1;
+    while (i <= UnitGroupCount(foes, c_unitCountAll)) {
+        foe = UnitGroupUnit(foes, i);
+        if (UnitIsAlive(foe)) {
+            dist = DistanceBetweenPoints(UnitGetPosition(from), UnitGetPosition(foe));
+            if (dist < bestDist) {
+                best = foe;
+                bestDist = dist;
+            }
+            if (UnitTypeTestAttribute(UnitGetType(foe), c_unitAttributeHeroic) && dist < bestHeroDist) {
+                bestHero = foe;
+                bestHeroDist = dist;
+            }
+        }
+        i += 1;
+    }
+    if (bestHero != null) {
+        return bestHero;
+    }
+    return best;
+}
+// Rockets Out (Epic): each Banshee fires a volley (a full two-missile attack) at the nearest enemy, a Hero if possible
+void libAffx_RaynorRocketsOut () {
+    int i;
+    unit banshee;
+    unit foe;
+    for (i = 1; i <= 3; i += 1) {
+        banshee = libAffx_RaynorBanshee[i];
+        if (banshee != null && UnitIsAlive(banshee) && !UnitHasBehavior2(banshee, "RaynorRaynorsBansheeAscend")) {
+            foe = libAffx_RaynorNearestFoe(banshee, 9.0);
+            if (foe != null) {
+                UnitCreateEffectUnit(banshee, "RaynorBansheeLaunchMissileSet", foe);
+            }
+        }
+    }
+}
+// Penetrating Round cast: Rockets Out; Breach at 100 also fires a round 20 degrees to each side (its own event is
+// skipped by time); The Big One is used up once the round has swept
+bool libAffx_RaynorRoundCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_RaynorHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    point origin;
+    fixed angle;
+    if (hero == null || target == null || GameGetMissionTime() == libAffx_RaynorLastFan) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "RaynorRocketsOutMarker")) {
+        libAffx_RaynorRocketsOut();
+    }
+    if (UnitHasBehavior2(hero, "RaynorPenetratorMarker") && libAffx_RaynorStacks("RaynorGoldenBreachTokenCounter") >= 100) {
+        libAffx_RaynorLastFan = GameGetMissionTime();
+        origin = UnitGetPosition(hero);
+        angle = AngleBetweenPoints(origin, target);
+        UnitCreateEffectPoint(hero, "RaynorPenetratingRoundCreateSet", PointWithOffsetPolar(origin, 10.0, angle + 20.0));
+        UnitCreateEffectPoint(hero, "RaynorPenetratingRoundCreateSet", PointWithOffsetPolar(origin, 10.0, angle - 20.0));
+    }
+    if (UnitHasBehavior2(hero, "RaynorGoldenBigOne")) {
+        Wait(0.5, c_timeGame);
+        UnitBehaviorRemove(hero, "RaynorGoldenBigOne", 1);
+        libAffx_RaynorBigOneAt = GameGetMissionTime() + 20.0;
+        libAffx_RaynorRoundSync();
+    }
+    return true;
+}
+// The Big One (Legendary): ready again 20 seconds after it was used
+void libAffx_RaynorBigOneSync () {
+    unit hero = libAffx_RaynorHero();
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorBigOneMarker") || UnitHasBehavior2(hero, "RaynorGoldenBigOne") || GameGetMissionTime() < libAffx_RaynorBigOneAt) {
+        return;
+    }
+    UnitBehaviorAdd(hero, "RaynorGoldenBigOne", hero, 1);
+    libAffx_RaynorQuestDing();
+    libAffx_RaynorRoundSync();
+}
+// Sergeant Pepper: the Pepper buff (re-added when Sharpshooter changes it), Pepper every other attack at 100, the base
+// Gambit replaced by the carried one, and this map's 4 Gambit stacks
+void libAffx_RaynorPepperSync () {
+    unit hero = libAffx_RaynorHero();
+    int stacks;
+    int loan;
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorPepperMarker")) {
+        return;
+    }
+    libAffx_RaynorIsPepper = true;
+    libAffx_RaynorSyncPepper();
+    stacks = libAffx_RaynorStacks("RaynorGoldenSharpshooterTokenCounter");
+    if (stacks != libAffx_RaynorPepperApplied) {
+        libAffx_RaynorPepperApplied = stacks;
+        UnitBehaviorRemove(hero, "RaynorGoldenPepperDrill", 1);
+        if (stacks >= 100) {
+            CatalogFieldValueSet(c_gameCatalogEffect, "RaynorGoldenPepperEveryOther", "Chance", libAffx_player, "1");
+        } else {
+            CatalogFieldValueSet(c_gameCatalogEffect, "RaynorGoldenPepperEveryOther", "Chance", libAffx_player, "0");
+        }
+    }
+    if (!UnitHasBehavior2(hero, "RaynorGoldenPepperDrill")) {
+        UnitBehaviorAdd(hero, "RaynorGoldenPepperDrill", hero, 1);
+    }
+    loan = FixedToInt(UnitGetTokenCount(hero, "RaynorGiveEmSomePepperVeteranMarksmanLoanToken"));
+    if (loan > 0) {
+        libGame_gf_ModifyTokenCount(-loan, "RaynorGiveEmSomePepperVeteranMarksmanLoanToken", hero);
+    }
+    if (!libAffx_RaynorGambitGranted) {
+        libAffx_RaynorGambitGranted = true;
+        libGame_gf_ModifyTokenCount(4, "RaynorGoldenGambitTokenCounter", hero);
+    }
+}
+// Sergeant Pepper: each death loses one of this map's 4 Gambit stacks (the carried ones can't be lost)
+bool libAffx_RaynorGambitDeath_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_RaynorHero();
+    if (hero == null || libGame_gf_HeroKilledUnit() != hero || !libAffx_RaynorIsPepper || !libAffx_RaynorGambitGranted) {
+        return false;
+    }
+    if (libAffx_RaynorGambitLost < 4) {
+        libAffx_RaynorGambitLost += 1;
+        libGame_gf_ModifyTokenCount(-1, "RaynorGoldenGambitTokenCounter", hero);
+    }
+    return true;
+}
+// Raider Captain: 2 Banshees escort Raynor (3 at 100 Squadron); each one returns a while after it dies (the respawn
+// behavior's Duration) and while Raynor is alive. They copy his attacks through the Raiders unit tracker.
+bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_RaynorHero();
+    unit banshee;
+    int count = 2;
+    int i;
+    fixed now = GameGetMissionTime();
+    fixed back;
+    if (hero == null || !UnitHasBehavior2(hero, "RaynorRaiderMarker")) {
+        return false;
+    }
+    if (libAffx_RaynorStacks("RaynorGoldenSquadronTokenCounter") >= 100) {
+        count = 3;
+    }
+    back = MaxF(1.0, CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, "RaynorGoldenBansheeRespawn", "Duration", libAffx_player));
+    for (i = 1; i <= 3; i += 1) {
+        banshee = libAffx_RaynorBanshee[i];
+        if (banshee != null && !UnitIsAlive(banshee)) {
+            libAffx_RaynorBanshee[i] = null;
+            libAffx_RaynorBansheeBackAt[i] = now + back;
+        }
+        if (libAffx_RaynorBanshee[i] == null && i <= count && now >= libAffx_RaynorBansheeBackAt[i] && UnitIsAlive(hero)) {
+            libNtve_gf_CreateUnitsAtPoint2(1, "RaynorRaynorsBanshee", 0, libAffx_player, libNtve_gf_PointOffsetTowardsPoint(UnitGetPosition(hero), 4.0, libGame_gv_players[libAffx_player].lv_spawnPoint), hero);
+            banshee = UnitLastCreated();
+            libAffx_RaynorBanshee[i] = banshee;
+            UnitCreateEffectUnit(hero, "RaynorBansheeApplyTimeoutBehavior", banshee);
+            UnitGroupAdd(libGame_gv_players[libAffx_player].lv_summonedUnitGroup, banshee);
+        }
+    }
+    return true;
+}
+bool libAffx_RaynorTick_Func (bool testConds, bool runActions) {
+    libAffx_RaynorRoundSync();
+    libAffx_RaynorBigOneSync();
+    libAffx_RaynorPepperSync();
+    return true;
+}
+// Penetrator hit on an enemy Hero: takedown window, RaynorGoldenImpactTokenCounter, the heal, and on-hit boons
+bool libAffx_RaynorRoundHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_RaynorHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_RaynorIsEnemyHero(victim) || !UnitHasBehavior2(hero, "RaynorPenetratorMarker")) {
+        return false;
+    }
+    libAffx_RaynorRoundTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "RaynorGoldenImpactTokenCounter", hero);
+    return true;
+}
+// Sergeant Pepper hit on an enemy Hero: takedown window, None, the heal, and on-hit boons
+bool libAffx_RaynorPepperHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_RaynorHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_RaynorIsEnemyHero(victim) || !UnitHasBehavior2(hero, "RaynorPepperMarker")) {
+        return false;
+    }
+    libAffx_RaynorPepperTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// Raider Captain hit on an enemy Hero: takedown window, RaynorGoldenAirSupportTokenCounter, the heal, and on-hit boons
+bool libAffx_RaynorRaiderHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_RaynorHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_RaynorIsEnemyHero(victim) || !UnitHasBehavior2(hero, "RaynorRaiderMarker")) {
+        return false;
+    }
+    libAffx_RaynorRaiderTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "RaynorGoldenAirSupportTokenCounter", hero);
+    if (UnitHasBehavior2(hero, "RaynorRaiderSwarmMarker")) {
+        UnitCreateEffectUnit(hero, "RaynorGoldenSwarmCooldown", hero);
+    }
+    return true;
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_RaynorTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_RaynorHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "RaynorPenetratorMarker") && libAffx_RaynorRoundTime[killedPlayer] > 0.0 && now - libAffx_RaynorRoundTime[killedPlayer] <= 6.0) {
+        libAffx_RaynorRoundTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "RaynorGoldenBreachTokenCounter", hero);
+        libAffx_RaynorSyncRound();
+        libAffx_RaynorQuestDing();
+        libAffx_RaynorRoundSync();
+    }
+    if (UnitHasBehavior2(hero, "RaynorPepperMarker") && libAffx_RaynorPepperTime[killedPlayer] > 0.0 && now - libAffx_RaynorPepperTime[killedPlayer] <= 6.0) {
+        libAffx_RaynorPepperTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "RaynorGoldenSharpshooterTokenCounter", hero);
+        libAffx_RaynorSyncPepper();
+        libAffx_RaynorQuestDing();
+        libAffx_RaynorPepperSync();
+    }
+    if (UnitHasBehavior2(hero, "RaynorRaiderMarker") && libAffx_RaynorRaiderTime[killedPlayer] > 0.0 && now - libAffx_RaynorRaiderTime[killedPlayer] <= 6.0) {
+        libAffx_RaynorRaiderTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "RaynorGoldenSquadronTokenCounter", hero);
+        libAffx_RaynorSyncRaider();
+        libAffx_RaynorQuestDing();
+    }
+    return true;
+}
+bool libAffx_RaynorStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_RaynorStarted) {
+        return true;
+    }
+    libAffx_RaynorStarted = true;
+    trig = TriggerCreate("libAffx_RaynorRoundHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorPenetratingRoundDamage");
+    trig = TriggerCreate("libAffx_RaynorPepperHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorHeroWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorGiveEmSomePepperWeaponDamage");
+    trig = TriggerCreate("libAffx_RaynorRaiderHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorRaynorsRaidersDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorBanshees_Func"), 0.25, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_RaynorRoundCast_Func"), libAffx_player, "RaynorPenetratingRoundCreateSet");
+    libGame_gf_HeroKilled(TriggerCreate("libAffx_RaynorGambitDeath_Func"));
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorSync_Func"), 1.0, c_timeGame);
+    return true;
+}

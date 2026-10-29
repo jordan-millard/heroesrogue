@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Raynor. Starters: Penetrator (Penetrating Round: 2 charges, half Mana, 30% wider, 10% longer), Sergeant Pepper (Veteran Marksman and Sergeant Pepper, +1 range, a Gambit carried between maps) and Raider Captain (2 Banshees escort Raynor all game for 30% of their damage; no Raynor's Raiders). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/RaynorGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="RaynorPenetratorMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="RaynorPepperMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="RaynorRaiderMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="RaynorBigOneMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="RaynorRocketsOutMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="RaynorRaiderSwarmMarker" parent="CarryBehaviorParent" />
+  <!-- Sergeant Pepper: the Gambit carried between maps (each stack is 15% Pepper damage; the script adds this map's 4 and
+       takes one per death, at most those 4; it is kept in full after a win) -->
+  <CBehaviorTokenCounter id="RaynorGoldenGambitTokenCounter" parent="StormQuestToken">
+    <Face value="RaynorGoldenGambitTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="RaynorGoldenGambitAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="RaynorGoldenGambitTokenCounter" />
+    <Scale value="0.15" />
+  </CAccumulatorToken>
+  <CButton id="RaynorGoldenGambitTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_raynor_acquireweakspot.dds" />
+  </CButton>
+  <!-- The Big One (Legendary): the next Penetrating Round deals double damage (and the script doubles its width) -->
+  <CBehaviorBuff id="RaynorGoldenBigOne">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_penetratinground.dds" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="RaynorGoldenHasBigOne">
+    <WhichUnit Value="Caster" />
+    <Value value="1" />
+    <Behavior value="RaynorGoldenBigOne" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- Raider Captain: the Banshees' respawn time (never applied; the script reads its Duration, which the quest and Tight
+       Formation lower) -->
+  <CBehaviorBuff id="RaynorGoldenBansheeRespawn">
+    <Duration value="20" />
+  </CBehaviorBuff>
+
+  <!-- ===== Penetrator ===== -->
+  <!-- Penetrating Round stores 2 charges (6 second recharge), costs half Mana, is 30% wider and reaches 10% farther (script). Impact quest (25% of each map gains kept for good): 2% Penetrating Round damage per enemy Hero hit. Breach quest: takedowns within 6 seconds of a hit; stacks 1-40 make it recharge 1% faster each, 41-80 make the round fly 1% faster and 1% wider each (script), 81-100 make the knockback 1% stronger each, at 100 it fires 3 rounds in a fan (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="RaynorGoldenImpactTokenCounter" parent="StormQuestToken">
+    <Face value="RaynorGoldenImpactTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="RaynorGoldenBreachTokenCounter" parent="StormQuestToken">
+    <Face value="RaynorGoldenBreachTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="RaynorGoldenImpactTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="RaynorGoldenImpactTokenCounter" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
+  <CEffectDamage id="RaynorPenetratingRoundDamage">
+    <MultiplicativeModifierArray index="RaynorRoundPower" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorRoundCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorRoundHit" Accumulator="RaynorGoldenImpactTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="RaynorRoundLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorGoldenBigOne" Validator="RaynorGoldenHasBigOne" Modifier="1" />
+  </CEffectDamage>
+  <CButton id="RaynorGoldenImpactTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_raynor_penetratinground.dds" />
+  </CButton>
+  <CButton id="RaynorGoldenBreachTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_raynor_penetratinground.dds" />
+  </CButton>
+
+  <!-- ===== Sergeant Pepper ===== -->
+  <!-- Gain Veteran Marksman and Sergeant Pepper and 1 Basic Attack range. The Gambit is replaced: its token (15% Pepper damage per stack, kept in full after a win) gets 4 stacks each map and loses one per death, at most those 4 (script); Veteran Marksman's own quest is not kept. Sharpshooter quest: takedowns within 6 seconds of a Basic Attack hit; stacks 1-40 add 0.5% Attack Speed each, 41-80 add 0.5% range each, 81-100 give Basic Attacks 1% chance each to kill a non-Heroic, non-structure, non-boss enemy outright, at 100 Pepper every other attack (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="RaynorGoldenSharpshooterTokenCounter" parent="StormQuestToken">
+    <Face value="RaynorGoldenSharpshooterTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="RaynorHeroWeaponDamage">
+    <MultiplicativeModifierArray index="RaynorPepperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorPepperCommon" Validator="RaynorHas3TokensOfGiveEmSomePepper" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorPepperLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorGoldenGambit" Validator="RaynorHas3TokensOfGiveEmSomePepper" Accumulator="RaynorGoldenGambitAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="RaynorGiveEmSomePepperWeaponDamage">
+    <MultiplicativeModifierArray index="RaynorPepperPower" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorPepperCommon" Validator="RaynorHas3TokensOfGiveEmSomePepper" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorPepperLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="RaynorGoldenSharpshooterTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_raynor_acquireweakspot.dds" />
+  </CButton>
+
+  <!-- ===== Raider Captain ===== -->
+  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 30% of their damage, and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.2% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 1% Banshee damage each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="RaynorGoldenAirSupportTokenCounter" parent="StormQuestToken">
+    <Face value="RaynorGoldenAirSupportTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="RaynorGoldenSquadronTokenCounter" parent="StormQuestToken">
+    <Face value="RaynorGoldenSquadronTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="RaynorGoldenAirSupportTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="RaynorGoldenAirSupportTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="RaynorRaynorsRaidersDamage">
+    <MultiplicativeModifierArray index="RaynorRaiderPower" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorRaiderCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorRaiderHit" Accumulator="RaynorGoldenAirSupportTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="RaynorRaiderLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="RaynorGoldenSquadron" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="RaynorGoldenAirSupportTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
+  </CButton>
+  <CButton id="RaynorGoldenSquadronTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
+  </CButton>
+  <!-- Penetrator: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="RaynorRoundPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Sergeant Pepper: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="RaynorPepperPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Raider Captain: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="RaynorRaiderPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Penetrator ===== -->
+  <!-- charges: the effects that lower Penetrating Round's cooldown also lower its recharge -->
+  <CEffectModifyUnit id="RaynorPenetratingRoundLineEmUpCooldownReduction">
+    <Cost Abil="RaynorPenetratingRound,Execute" CooldownOperation="Add" CooldownTimeUse="-3" ChargeTimeUse="-3" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="RaynorPenetratingRoundDebilitatingRoundModifyCooldownHero">
+    <Cost Abil="RaynorPenetratingRound,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="RaynorGiveEmSomePepperUnstableCompoundTalentModifyUnit">
+    <Cost Abil="RaynorPenetratingRound,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" ChargeTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <!-- Concussive Round (Epic): Heroes knocked back are Slowed by 80% for 2 seconds (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="RaynorGoldenConcussed" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_penetratinground.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.8" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="RaynorGoldenConcussiveApply" parent="StormSlowApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="RaynorGoldenConcussed" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="RaynorPenetratingRoundShortKnockbackInitialSet">
+    <EffectArray value="RaynorGoldenConcussiveApply" />
+  </CEffectSet>
+  <CEffectSet id="RaynorPenetratingRoundMediumKnockbackInitialSet">
+    <EffectArray value="RaynorGoldenConcussiveApply" />
+  </CEffectSet>
+  <CEffectSet id="RaynorPenetratingRoundLongKnockbackInitialSet">
+    <EffectArray value="RaynorGoldenConcussiveApply" />
+  </CEffectSet>
+  <!-- ===== Sergeant Pepper ===== -->
+  <!-- +1 Basic Attack range; Sharpshooter adds Attack Speed and range (the script re-adds it when they change) -->
+  <CBehaviorBuff id="RaynorGoldenPepperDrill" parent="CarryBehaviorParent">
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0" />
+      <WeaponRange value="1" />
+      <WeaponScanBonus value="1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Sharpshooter at 100: Pepper every other attack (one more attack token after each Pepper; Chance 0, the script turns
+       it on) -->
+  <CEffectModifyTokenCount id="RaynorGoldenPepperEveryOther" parent="BaseEffectModifyTokenCount">
+    <Chance value="0" />
+    <TokenId value="RaynorGiveEmSomePepperAttackToken" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="RaynorGiveEmSomePepperResetSet">
+    <EffectArray value="RaynorGoldenPepperEveryOther" />
+  </CEffectSet>
+  <!-- Sharpshooter 81-100: Basic Attacks have a chance to kill a non-Heroic, non-structure, non-boss enemy outright (the
+       chance is 1% per stack, set by the quest) -->
+  <CValidatorUnitFilters id="RaynorGoldenExecutable">
+    <Filters value="-;Self,Player,Ally,Heroic,Structure,MapBoss,Missile,Stasis,Dead,Invulnerable" />
+  </CValidatorUnitFilters>
+  <CEffectDamage id="RaynorGoldenPepperExecute" parent="StormSpell">
+    <Chance value="0" />
+    <ValidatorArray value="RaynorGoldenExecutable" />
+    <ArmorMitigationRule value="None" />
+    <Flags index="NoLeech" value="1" />
+    <Amount value="99999" />
+  </CEffectDamage>
+  <!-- Unstable Compound (Epic): Pepper hits on Heroes Slow them by 80% for 1 second; Raider's Roll (Legendary): they also
+       take 2 seconds off Adrenaline Rush's cooldown (Chance 0, the boons turn them on) -->
+  <CBehaviorBuff id="RaynorGoldenPepperSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_acquireweakspot.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.8" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="RaynorGoldenPepperSlowApply" parent="StormSlowApply">
+    <Chance value="0" />
+    <ValidatorArray value="RaynorHasGiveEmSomePepperPrimedDummyBehavior" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="RaynorGoldenPepperSlow" />
+  </CEffectApplyBehavior>
+  <CEffectModifyUnit id="RaynorGoldenRaidersRollCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="RaynorHasGiveEmSomePepperPrimedDummyBehavior" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="RaynorAdrenalineRush,Execute" CooldownOperation="Add" CooldownTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CEffectSet id="RaynorWeaponPostImpactSet">
+    <EffectArray value="RaynorGoldenPepperExecute" />
+    <EffectArray value="RaynorGoldenPepperSlowApply" />
+    <EffectArray value="RaynorGoldenRaidersRollCooldown" />
+  </CEffectSet>
+  <CEffectSet id="RaynorGiveEmSomePepperWeaponPostImpactSet">
+    <EffectArray value="RaynorGoldenPepperSlowApply" />
+    <EffectArray value="RaynorGoldenRaidersRollCooldown" />
+  </CEffectSet>
+  <!-- ===== Raider Captain ===== -->
+  <!-- Raider Swarm (Legendary): each Banshee hit on an enemy Hero takes 0.5 seconds off Hyperion's cooldown (1 second per
+       two-missile attack; the script casts it) -->
+  <CEffectModifyUnit id="RaynorGoldenSwarmCooldown">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="RaynorHyperion,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" />
+  </CEffectModifyUnit>
+</Catalog>
