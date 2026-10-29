@@ -42,8 +42,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
        Formation lower) -->
   <!-- Raider Captain: the escort Banshees can't be controlled, so each one has 50 Armor (added by the script when it
        spawns), and Squadron stacks 1-40 add 0.5% Movement Speed each (the script re-adds it when that changes) -->
-  <CBehaviorBuff id="RaynorGoldenBansheeArmor">
+  <CBehaviorBuff id="RaynorGoldenBansheeArmor" parent="StormArmor">
     <Alignment value="Positive" />
+    <Duration value="0" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />

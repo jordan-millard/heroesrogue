@@ -29,6 +29,8 @@ int libAffx_RaynorRaiderAdded3; // Raider Captain: takedown quest stage 3 stacks
 int libAffx_RaynorRaiderPastApplied; // Raider Captain: takedown quest stacks past the cap applied as damage this game
 unit[4] libAffx_RaynorBanshee; // Raider Captain: the escort Banshees (slots 1-3)
 fixed[4] libAffx_RaynorBansheeBackAt; // Raider Captain: when each empty slot may return
+unit libAffx_RaynorLastAttacked; // Raider Captain: the last unit Raynor's Basic Attacks hit
+fixed libAffx_RaynorLastAttackedAt; // Raider Captain: when
 int libAffx_RaynorBansheeSpeed = -1; // Raider Captain: Squadron speed stacks the Banshee buff was last added at
 fixed libAffx_RaynorLastFan = -1.0; // Penetrator: mission time of the last fan (its own rounds skip the event)
 bool libAffx_RaynorRoundRangeSet; // Penetrator: the 10% longer offsets were applied
@@ -370,11 +372,39 @@ bool libAffx_RaynorGambitDeath_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Raider Captain: what Raynor is attacking (his attack order's target, or the last unit his Basic Attacks hit in the last
+// 2 seconds), for the Banshees to attack too
+unit libAffx_RaynorAttackTarget () {
+    unit hero = libAffx_RaynorHero();
+    unit target;
+    if (UnitOrderCount(hero) > 0 && OrderGetAbilityCommand(UnitOrder(hero, 0)) == AbilityCommand("attack", 0)) {
+        target = OrderGetTargetUnit(UnitOrder(hero, 0));
+        if (target != null && UnitIsAlive(target) && UnitGetOwner(target) != libAffx_player) {
+            return target;
+        }
+    }
+    target = libAffx_RaynorLastAttacked;
+    if (target != null && UnitIsAlive(target) && GameGetMissionTime() - libAffx_RaynorLastAttackedAt <= 2.0) {
+        return target;
+    }
+    return null;
+}
+// Raider Captain: the last unit Raynor's Basic Attacks hit
+bool libAffx_RaynorAttackTrack_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_RaynorHero();
+    if (hero == null || EventUnitDamageSourceUnit() != hero || !UnitHasBehavior2(hero, "RaynorRaiderMarker")) {
+        return false;
+    }
+    libAffx_RaynorLastAttacked = EventUnit();
+    libAffx_RaynorLastAttackedAt = GameGetMissionTime();
+    return true;
+}
 // Raider Captain: 2 Banshees escort Raynor (3 at 100 Squadron); each one returns a while after it dies (the respawn
 // behavior's Duration) and while Raynor is alive. They copy his attacks through the Raiders unit tracker.
 bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     unit hero = libAffx_RaynorHero();
     unit banshee;
+    unit target;
     int count = 2;
     int i;
     int speed;
@@ -397,11 +427,23 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
             }
         }
     }
-    // every live Banshee keeps its Armor buff (re-added if anything removed it)
+    // every live Banshee keeps its Armor buff (re-added if anything removed it), attacks what Raynor attacks (if it
+    // isn't already), and flies back to him when it has nothing to do and has drifted away
+    target = libAffx_RaynorAttackTarget();
     for (i = 1; i <= 3; i += 1) {
         banshee = libAffx_RaynorBanshee[i];
-        if (banshee != null && UnitIsAlive(banshee) && !UnitHasBehavior2(banshee, "RaynorGoldenBansheeArmor")) {
+        if (banshee == null || !UnitIsAlive(banshee)) {
+            continue;
+        }
+        if (!UnitHasBehavior2(banshee, "RaynorGoldenBansheeArmor")) {
             UnitBehaviorAdd(banshee, "RaynorGoldenBansheeArmor", banshee, 1);
+        }
+        if (target != null && DistanceBetweenPoints(UnitGetPosition(banshee), UnitGetPosition(target)) <= 14.0) {
+            if (UnitOrderCount(banshee) == 0 || OrderGetAbilityCommand(UnitOrder(banshee, 0)) != AbilityCommand("attack", 0) || OrderGetTargetUnit(UnitOrder(banshee, 0)) != target) {
+                UnitIssueOrder(banshee, OrderTargetingUnit(AbilityCommand("attack", 0), target), c_orderQueueReplace);
+            }
+        } else if (UnitOrderCount(banshee) == 0 && DistanceBetweenPoints(UnitGetPosition(banshee), UnitGetPosition(hero)) > 5.0) {
+            UnitIssueOrder(banshee, OrderTargetingPoint(AbilityCommand("move", 0), UnitGetPosition(hero)), c_orderQueueReplace);
         }
     }
     // Squadron stacks 1-40 changed the Banshees' Movement Speed: re-add their buff so the live ones get it
@@ -562,6 +604,9 @@ bool libAffx_RaynorStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorRaynorsRaidersDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorTick_Func"), 1.0, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorBanshees_Func"), 0.25, c_timeGame);
+    trig = TriggerCreate("libAffx_RaynorAttackTrack_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorHeroWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorGiveEmSomePepperWeaponDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_RaynorRoundCast_Func"), libAffx_player, "RaynorPenetratingRoundCreateSet");
     libGame_gf_HeroKilled(TriggerCreate("libAffx_RaynorGambitDeath_Func"));
     // also picks up stacks loaded from the bank
