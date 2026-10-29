@@ -396,6 +396,7 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
             banshee = UnitLastCreated();
             libAffx_RaynorBanshee[i] = banshee;
             UnitCreateEffectUnit(hero, "RaynorBansheeApplyTimeoutBehavior", banshee);
+            UnitBehaviorAdd(banshee, "RaynorGoldenBansheeArmor", banshee, 1);
             UnitGroupAdd(libGame_gv_players[libAffx_player].lv_summonedUnitGroup, banshee);
         }
     }
