@@ -26126,6 +26126,7 @@
 
 
 
+
         <Instances Id="TychusMinigunManiac">
             <String String="Assets/Textures/storm_ui_icon_tychus_overkill.dds">
                 <Field Id="Icon" />
@@ -26474,22 +26475,34 @@
             <String String="1 0 TychusOdinMarker">
                 <Field Id="Behavior" />
             </String>
-            <String String="1 0 TychusGoldenPilotTokenCounter">
+            <String String="1 0 TychusGoldenDevastationTokenCounter">
                 <Field Id="Behavior" Index="1" />
             </String>
-            <String String="1 0 TychusGoldenGrounded">
+            <String String="1 0 TychusGoldenPilotTokenCounter">
                 <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 TychusGoldenGrounded">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="1 0 TychusGoldenSalvoTokenCounter">
+                <Field Id="Behavior" Index="4" />
             </String>
             <String String="TychusGoldenPilotTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
-            <String String="TychusMasterAssassinQuestToken 0.5">
+            <String String="TychusGoldenDevastationTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="TychusMinigunInTheRhythmVisualToken 0.5">
+            <String String="TychusMasterAssassinQuestToken 0.5">
                 <Field Id="QuestRetain" Index="2" />
             </String>
-            <String String="1 1 Set Abil,TychusOdinNoHealth,Cost.Cooldown.TimeUse 25">
+            <String String="TychusMinigunInTheRhythmVisualToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="TychusGoldenSalvoTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,TychusOdinNoHealth,Cost.Cooldown.TimeUse 30">
                 <Field Id="CatalogModification" />
             </String>
             <String String="1 1 Multiply Behavior,TychusOdin,Duration 1.5">

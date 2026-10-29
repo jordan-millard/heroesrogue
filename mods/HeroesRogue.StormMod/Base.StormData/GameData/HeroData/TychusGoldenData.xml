@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Tychus. Starters: Minigun Maniac (Overkill: half Mana, 20% damage, Spray n Pray and Can Do This All Day), Grenadier (Frag Grenade: 2 charges, half Mana, Titan Grenade and Melting Point) and Odin Pilot (Commandeer Odin at level 1, 25 second cooldown from when it ends, 50% longer, 1.1 more Odin range; 35% less damage outside it; no Drakken Laser Drill). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/TychusGolden.galaxy. -->
+  <!-- Golden Tychus. Starters: Minigun Maniac (Overkill: half Mana, 20% damage, Spray n Pray and Can Do This All Day), Grenadier (Frag Grenade: 2 charges, half Mana, Titan Grenade and Melting Point) and Odin Pilot (Commandeer Odin at level 1, 30 second cooldown from when it ends, 50% longer, 1.1 more Odin range; 35% less damage outside it; no Drakken Laser Drill). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/TychusGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="TychusMinigunMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="TychusGrenadeMarker" parent="CarryBehaviorParent" />
@@ -97,11 +97,22 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Odin Pilot ===== -->
-  <!-- Commandeer Odin from level 1 with a 25 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 1.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make the cooldown 1% shorter each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
+  <!-- Commandeer Odin from level 1 with a 30 second cooldown counted from when the Odin ends (script); the Odin lasts 50% longer and has 1.1 more attack range; outside it Tychus deals 35% less damage; Drakken Laser Drill cannot be taken. Devastation quest (50% kept): 1% Annihilate damage per enemy Hero hit. Salvo quest (50% kept, extra_data and script): 5% Ragnarok Missiles damage per enemy Hero hit. Pilot quest (100% kept): takedowns while in the Odin (script); stacks 1-40 make Annihilate, Ragnarok Missiles and Thrusters recharge 1% faster each, 41-80 make the Odin last 0.5% longer each, 81-100 add 1% Odin damage each, at 100 each Odin calls a Big Red Button strike on every visible enemy Hero (script), then 2.5% damage each (script). -->
+  <CBehaviorTokenCounter id="TychusGoldenDevastationTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenDevastationTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
   <CBehaviorTokenCounter id="TychusGoldenPilotTokenCounter" parent="StormQuestToken">
     <Face value="TychusGoldenPilotTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TychusGoldenDevastationTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TychusGoldenDevastationTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
   <CEffectDamage id="TychusOdinWeaponDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
@@ -125,6 +136,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="TychusOdinCommon" Modifier="0" />
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
+    <MultiplicativeModifierArray index="TychusGoldenSalvo" Accumulator="TychusGoldenSalvoTokenCounterAccumulator" />
   </CEffectDamage>
   <CEffectDamage id="TychusOdinNuclearBlastDamage">
     <MultiplicativeModifierArray index="TychusOdinPower" Modifier="0" />
@@ -132,6 +144,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="TychusOdinLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="TychusGoldenOdinDamage" Modifier="0" />
   </CEffectDamage>
+  <CEffectDamage id="TychusOdinAnnihilateDamage">
+    <MultiplicativeModifierArray index="TychusOdinHit" Accumulator="TychusGoldenDevastationTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="TychusGoldenDevastationTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_commandeerodin.dds" />
+  </CButton>
   <CButton id="TychusGoldenPilotTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tychus_commandeerodin.dds" />
   </CButton>
@@ -286,6 +304,21 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <UnifiedMoveSpeedFactor value="0.5" />
     </Modification>
   </CBehaviorBuff>
+  <!-- Salvo quest (50% kept): 5% Ragnarok Missiles damage per enemy Hero hit (the script adds the tokens) -->
+  <CBehaviorTokenCounter id="TychusGoldenSalvoTokenCounter" parent="StormQuestToken">
+    <Face value="TychusGoldenSalvoTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="TychusGoldenSalvoTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="TychusGoldenSalvoTokenCounter" />
+    <Scale value="0.05" />
+  </CAccumulatorToken>
+  <CButton id="TychusGoldenSalvoTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_tychus_ragnarokmissiles.dds" />
+  </CButton>
   <!-- Pilot past 100 stacks: Tychus's damage (the script sets the amount and re-adds it) -->
   <CBehaviorBuff id="TychusGoldenOdinOverdrive" parent="CarryBehaviorParent">
     <Modification>
