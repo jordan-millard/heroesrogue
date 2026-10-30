@@ -32,6 +32,9 @@ fixed[4] libAffx_RaynorBansheeBackAt; // Raider Captain: when each empty slot ma
 unit libAffx_RaynorLastAttacked; // Raider Captain: the last unit Raynor's Basic Attacks hit
 fixed libAffx_RaynorLastAttackedAt; // Raider Captain: when
 fixed libAffx_RaynorInspiredModifier = -1.0; // Raider Captain: the Inspired damage modifier last set
+string[39] libAffx_RaynorBoonBehaviors; // Raider Captain: the general boon behaviors the Banshees share at half
+string libAffx_RaynorBoonKey = ""; // Raider Captain: the Boons buff values last set
+fixed libAffx_RaynorBoonsAt; // Raider Captain: when the Boons buff is next recomputed
 int libAffx_RaynorBansheeSpeed = -1; // Raider Captain: Squadron speed stacks the Banshee buff was last added at
 fixed libAffx_RaynorLastFan = -1.0; // Penetrator: mission time of the last fan (its own rounds skip the event)
 bool libAffx_RaynorRoundRangeSet; // Penetrator: the 10% longer offsets were applied
@@ -406,6 +409,108 @@ bool libAffx_RaynorSharedRush_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Raider Captain: sets one field of the Banshees' Boons buff, for Raynor
+void libAffx_RaynorBoonSet (string field, fixed value) {
+    CatalogFieldValueSet(c_gameCatalogBehavior, "RaynorGoldenBansheeBoons", field, libAffx_player, FixedToString(value, 4));
+}
+// Raider Captain: one of a general boon behavior's fields, for Raynor
+fixed libAffx_RaynorBoonField (string b, string field) {
+    return CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, b, field, libAffx_player);
+}
+// Raider Captain: half of Raynor's general boon stats (from the boon behaviors he has right now) go into the Banshees'
+// Boons buff; true when they changed (the buff is then re-added to the live Banshees)
+bool libAffx_RaynorBansheeBoons () {
+    unit hero = libAffx_RaynorHero();
+    string b;
+    string key;
+    string[7] armorSet;
+    string[6] attribute;
+    fixed[7] armorBasic;
+    fixed[7] armorAbility;
+    fixed[6] attributeBonus;
+    fixed k;
+    fixed speed;
+    fixed attackSpeed;
+    fixed damage;
+    fixed scaled;
+    fixed leech;
+    fixed lifeFraction;
+    fixed life;
+    fixed regen;
+    fixed regenMultiplier;
+    fixed healTaken;
+    fixed range;
+    int i;
+    int j;
+    armorSet[1] = "Hero";
+    armorSet[2] = "Merc";
+    armorSet[3] = "Monster";
+    armorSet[4] = "Summon";
+    armorSet[5] = "Structure";
+    armorSet[6] = "Minion";
+    attribute[1] = "Structure";
+    attribute[2] = "Minion";
+    attribute[3] = "Merc";
+    attribute[4] = "Monster";
+    attribute[5] = "Summon";
+    for (i = 1; i <= 38; i += 1) {
+        b = libAffx_RaynorBoonBehaviors[i];
+        if (!UnitHasBehavior2(hero, b)) {
+            continue;
+        }
+        k = IntToFixed(UnitBehaviorCount(hero, b)) * 0.5;
+        // Movement Speed bonuses don't stack (the highest wins), so only the best one counts
+        speed = MaxF(speed, libAffx_RaynorBoonField(b, "Modification.UnifiedMoveSpeedFactor") * 0.5);
+        attackSpeed += k * libAffx_RaynorBoonField(b, "Modification.AdditiveAttackSpeedFactor");
+        // Banshee attacks are Ability damage: a boon's Basic or Ability bonus counts, whichever is bigger
+        damage += k * MaxF(libAffx_RaynorBoonField(b, "Modification.DamageDealtFraction[Basic]"), libAffx_RaynorBoonField(b, "Modification.DamageDealtFraction[Ability]"));
+        scaled += k * MaxF(libAffx_RaynorBoonField(b, "Modification.DamageDealtScaled[Basic]"), libAffx_RaynorBoonField(b, "Modification.DamageDealtScaled[Ability]"));
+        leech += k * MaxF(libAffx_RaynorBoonField(b, "Modification.VitalDamageLeechArray[Life].KindArray[Basic]"), libAffx_RaynorBoonField(b, "Modification.VitalDamageLeechArray[Life].KindArray[Ability]"));
+        lifeFraction += k * libAffx_RaynorBoonField(b, "Modification.VitalMaxFractionArray[Life]");
+        life += k * libAffx_RaynorBoonField(b, "Modification.VitalMaxArray[Life]");
+        regen += k * libAffx_RaynorBoonField(b, "Modification.VitalRegenArray[Life]");
+        regenMultiplier += k * libAffx_RaynorBoonField(b, "Modification.VitalRegenMultiplier[Life]");
+        healTaken += k * libAffx_RaynorBoonField(b, "Modification.HealTakenAdditiveMultiplier[Life]");
+        range += k * libAffx_RaynorBoonField(b, "Modification.WeaponRange");
+        for (j = 1; j <= 5; j += 1) {
+            attributeBonus[j] += k * libAffx_RaynorBoonField(b, "Modification.DamageDealtAttributeMultiplier[" + attribute[j] + "]");
+        }
+        for (j = 1; j <= 6; j += 1) {
+            armorBasic[j] += k * libAffx_RaynorBoonField(b, "ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Basic]");
+            armorAbility[j] += k * libAffx_RaynorBoonField(b, "ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Ability]");
+        }
+    }
+    key = FixedToString(speed, 4) + " " + FixedToString(attackSpeed, 4) + " " + FixedToString(damage, 4) + " " + FixedToString(scaled, 4) + " " + FixedToString(leech, 4) + " " + FixedToString(lifeFraction, 4) + " " + FixedToString(life, 4) + " " + FixedToString(regen, 4) + " " + FixedToString(regenMultiplier, 4) + " " + FixedToString(healTaken, 4) + " " + FixedToString(range, 4);
+    for (j = 1; j <= 5; j += 1) {
+        key = key + " " + FixedToString(attributeBonus[j], 4);
+    }
+    for (j = 1; j <= 6; j += 1) {
+        key = key + " " + FixedToString(armorBasic[j], 4) + " " + FixedToString(armorAbility[j], 4);
+    }
+    if (key == libAffx_RaynorBoonKey) {
+        return false;
+    }
+    libAffx_RaynorBoonKey = key;
+    libAffx_RaynorBoonSet("Modification.MoveSpeedMultiplier", 1.0 + speed);
+    libAffx_RaynorBoonSet("Modification.AdditiveAttackSpeedFactor", attackSpeed);
+    libAffx_RaynorBoonSet("Modification.DamageDealtFraction[Ability]", damage);
+    libAffx_RaynorBoonSet("Modification.DamageDealtScaled[Ability]", scaled);
+    libAffx_RaynorBoonSet("Modification.VitalDamageLeechArray[Life].KindArray[Ability]", leech);
+    libAffx_RaynorBoonSet("Modification.VitalMaxFractionArray[Life]", lifeFraction);
+    libAffx_RaynorBoonSet("Modification.VitalMaxArray[Life]", life);
+    libAffx_RaynorBoonSet("Modification.VitalRegenArray[Life]", regen);
+    libAffx_RaynorBoonSet("Modification.VitalRegenMultiplier[Life]", regenMultiplier);
+    libAffx_RaynorBoonSet("Modification.HealTakenAdditiveMultiplier[Life]", healTaken);
+    libAffx_RaynorBoonSet("Modification.WeaponRange", range);
+    for (j = 1; j <= 5; j += 1) {
+        libAffx_RaynorBoonSet("Modification.DamageDealtAttributeMultiplier[" + attribute[j] + "]", attributeBonus[j]);
+    }
+    for (j = 1; j <= 6; j += 1) {
+        libAffx_RaynorBoonSet("ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Basic]", armorBasic[j]);
+        libAffx_RaynorBoonSet("ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Ability]", armorAbility[j]);
+    }
+    return true;
+}
 // Raider Captain: one of the Banshee damage effect's modifiers (by its key)
 fixed libAffx_RaynorRaiderModifier (string key) {
     return StringToFixed(CatalogReferenceGet("Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[" + key + "].Modifier", libAffx_player));
@@ -455,6 +560,19 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
             }
         }
     }
+    // half of Raynor's general boon stats, recomputed every second
+    if (now >= libAffx_RaynorBoonsAt) {
+        libAffx_RaynorBoonsAt = now + 1.0;
+        if (libAffx_RaynorBansheeBoons()) {
+            for (i = 1; i <= 3; i += 1) {
+                banshee = libAffx_RaynorBanshee[i];
+                if (banshee != null && UnitIsAlive(banshee)) {
+                    UnitBehaviorRemove(banshee, "RaynorGoldenBansheeBoons", 1);
+                    UnitBehaviorAdd(banshee, "RaynorGoldenBansheeBoons", banshee, 1);
+                }
+            }
+        }
+    }
     // every live Banshee keeps its Armor buff (re-added if anything removed it), attacks what Raynor attacks (if it
     // isn't already), and flies back to him when it has nothing to do and has drifted away
     target = libAffx_RaynorAttackTarget();
@@ -465,6 +583,9 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
         }
         if (!UnitHasBehavior2(banshee, "RaynorGoldenBansheeArmor")) {
             UnitBehaviorAdd(banshee, "RaynorGoldenBansheeArmor", banshee, 1);
+        }
+        if (!UnitHasBehavior2(banshee, "RaynorGoldenBansheeBoons")) {
+            UnitBehaviorAdd(banshee, "RaynorGoldenBansheeBoons", banshee, 1);
         }
         if (target != null && DistanceBetweenPoints(UnitGetPosition(banshee), UnitGetPosition(target)) <= 14.0) {
             if (UnitOrderCount(banshee) == 0 || OrderGetAbilityCommand(UnitOrder(banshee, 0)) != AbilityCommand("attack", 0) || OrderGetTargetUnit(UnitOrder(banshee, 0)) != target) {
@@ -630,6 +751,44 @@ bool libAffx_RaynorStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorGiveEmSomePepperWeaponDamage");
     trig = TriggerCreate("libAffx_RaynorRaiderHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorRaynorsRaidersDamage");
+    libAffx_RaynorBoonBehaviors[1] = "AffixAllRounderBehavior";
+    libAffx_RaynorBoonBehaviors[2] = "AffixAmplificationBehavior";
+    libAffx_RaynorBoonBehaviors[3] = "AffixAmplifiedHealingBehavior";
+    libAffx_RaynorBoonBehaviors[4] = "AffixBlessingoftheDragons";
+    libAffx_RaynorBoonBehaviors[5] = "AffixBloodlust";
+    libAffx_RaynorBoonBehaviors[6] = "AffixBloodlustSpell";
+    libAffx_RaynorBoonBehaviors[7] = "AffixChronoBoostBehavior";
+    libAffx_RaynorBoonBehaviors[8] = "AffixDemolitionistBehavior";
+    libAffx_RaynorBoonBehaviors[9] = "AffixEfficientGunsBehavior";
+    libAffx_RaynorBoonBehaviors[10] = "AffixEnduranceBehavior";
+    libAffx_RaynorBoonBehaviors[11] = "AffixFastFeetBehavior";
+    libAffx_RaynorBoonBehaviors[12] = "AffixFirstAidBehavior";
+    libAffx_RaynorBoonBehaviors[13] = "AffixGatheringPowerBehavior";
+    libAffx_RaynorBoonBehaviors[14] = "AffixLifeStealBehavior";
+    libAffx_RaynorBoonBehaviors[15] = "AffixMercenaryLordBuff";
+    libAffx_RaynorBoonBehaviors[16] = "AffixMinionKillerBehavior";
+    libAffx_RaynorBoonBehaviors[17] = "AffixNanoBoost";
+    libAffx_RaynorBoonBehaviors[18] = "AffixNexusFrenzyBehavior";
+    libAffx_RaynorBoonBehaviors[19] = "AffixNexusRangeBuff";
+    libAffx_RaynorBoonBehaviors[20] = "AffixOverwhelmingPowerBehavior";
+    libAffx_RaynorBoonBehaviors[21] = "AffixPathoftheAssassinBehavior";
+    libAffx_RaynorBoonBehaviors[22] = "AffixPathoftheWarriorBehavior";
+    libAffx_RaynorBoonBehaviors[23] = "AffixPhysicalArmorBehavior";
+    libAffx_RaynorBoonBehaviors[24] = "AffixPhysicalLeechBehavior";
+    libAffx_RaynorBoonBehaviors[25] = "AffixPhysicalLeechSpell";
+    libAffx_RaynorBoonBehaviors[26] = "AffixPowerfulBehavior";
+    libAffx_RaynorBoonBehaviors[27] = "AffixResilienceBehavior";
+    libAffx_RaynorBoonBehaviors[28] = "AffixRingofRegenerationBehavior";
+    libAffx_RaynorBoonBehaviors[29] = "AffixSearingAttacksBehavior";
+    libAffx_RaynorBoonBehaviors[30] = "AffixSelfReliantBehavior";
+    libAffx_RaynorBoonBehaviors[31] = "AffixSelfReliantNoManaBehavior";
+    libAffx_RaynorBoonBehaviors[32] = "AffixSpellArmorBehavior";
+    libAffx_RaynorBoonBehaviors[33] = "AffixSpellLeechBehavior";
+    libAffx_RaynorBoonBehaviors[34] = "AffixSpellShieldActive";
+    libAffx_RaynorBoonBehaviors[35] = "AffixSpellcastingBehavior";
+    libAffx_RaynorBoonBehaviors[36] = "AffixStrength";
+    libAffx_RaynorBoonBehaviors[37] = "AffixSuperiorityBehavior";
+    libAffx_RaynorBoonBehaviors[38] = "PreparedDamageBehavior";
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorTick_Func"), 1.0, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorBanshees_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_RaynorSharedRush_Func"), null, "RaynorAdrenalineRushHoT", c_unitBehaviorChangeCreate);

@@ -85,6 +85,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <ChangeFraction value="0.0625" />
     </VitalArray>
   </CEffectModifyUnit>
+  <!-- Raider Captain: the Banshees share half of Raynor's general boon stats (Attack Speed, damage, Health, regeneration,
+       healing taken, lifesteal, Armor, range and Movement Speed). The script sets these fields from the boon behaviors
+       Raynor has and re-adds the buff when they change; the Banshee damage reads its bonuses from the Banshee -->
+  <CBehaviorBuff id="RaynorGoldenBansheeBoons" parent="StormArmor">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
+    <Duration value="0" />
+    <Modification>
+      <MoveSpeedMultiplier value="1" />
+    </Modification>
+  </CBehaviorBuff>
   <CBehaviorBuff id="RaynorGoldenBansheeRespawn">
     <Duration value="20" />
   </CBehaviorBuff>
@@ -165,6 +176,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="RaynorRaiderHit" Accumulator="RaynorGoldenAirSupportTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="RaynorRaiderLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="RaynorGoldenInspired" Validator="RaynorGoldenBansheeIsInspired" Modifier="1" />
+    <DamageModifierSource Value="Caster" />
   </CEffectDamage>
   <CButton id="RaynorGoldenAirSupportTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_raynor_raynorsraiders.dds" />
