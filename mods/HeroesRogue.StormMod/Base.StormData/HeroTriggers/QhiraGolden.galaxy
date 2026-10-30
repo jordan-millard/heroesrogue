@@ -281,6 +281,40 @@ void libAffx_QhiraBountyDamageSync () {
     }
 }
 // Bounty Hunter: the Bounty's debuffs (Trophies 1-40 Slow, Hunter's Mark)
+// Bounty Hunter: Qhira is alive and within 15 of the Bounty (the Trophies Slow and Health drain only work then)
+bool libAffx_QhiraNearBounty (unit target) {
+    unit hero = libAffx_QhiraHero();
+    if (hero == null || target == null || !UnitIsAlive(hero) || !UnitIsAlive(target)) {
+        return false;
+    }
+    return DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(target)) <= 15.0;
+}
+// Bounty Hunter, Trophies 1-40: the Bounty is Slowed while Qhira is near it (checked every 0.25 seconds)
+void libAffx_QhiraBountySlowSync () {
+    unit hero = libAffx_QhiraHero();
+    unit target;
+    int i;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
+        return;
+    }
+    for (i = 1; i <= 2; i += 1) {
+        target = libAffx_QhiraBounty[i];
+        if (target == null || !UnitIsAlive(target)) {
+            continue;
+        }
+        if (libAffx_QhiraSlowApplied > 0 && libAffx_QhiraNearBounty(target)) {
+            if (!UnitHasBehavior2(target, "QhiraGoldenBountySlow")) {
+                UnitBehaviorAdd(target, "QhiraGoldenBountySlow", hero, 1);
+            }
+        } else if (UnitHasBehavior2(target, "QhiraGoldenBountySlow")) {
+            UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
+        }
+    }
+}
+bool libAffx_QhiraBountyRange_Func (bool testConds, bool runActions) {
+    libAffx_QhiraBountySlowSync();
+    return true;
+}
 void libAffx_QhiraBountyDebuffs (unit target, bool reslow) {
     unit hero = libAffx_QhiraHero();
     if (target == null || !UnitIsAlive(target)) {
@@ -288,9 +322,6 @@ void libAffx_QhiraBountyDebuffs (unit target, bool reslow) {
     }
     if (reslow) {
         UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
-    }
-    if (libAffx_QhiraSlowApplied > 0 && !UnitHasBehavior2(target, "QhiraGoldenBountySlow")) {
-        UnitBehaviorAdd(target, "QhiraGoldenBountySlow", hero, 1);
     }
     if (UnitHasBehavior2(hero, "QhiraHuntersMarkMarker") && !UnitHasBehavior2(target, "QhiraGoldenBountyWeaken")) {
         UnitBehaviorAdd(target, "QhiraGoldenBountyWeaken", hero, 1);
@@ -467,7 +498,8 @@ void libAffx_QhiraBountyTick () {
     for (i = 1; i <= 2; i += 1) {
         if (libAffx_QhiraBounty[i] != null && UnitIsAlive(libAffx_QhiraBounty[i])) {
             libAffx_QhiraBountyDebuffs(libAffx_QhiraBounty[i], reslow);
-            if (drain > 0 && UnitIsAlive(hero)) {
+            libAffx_QhiraBountySlowSync();
+            if (drain > 0 && libAffx_QhiraNearBounty(libAffx_QhiraBounty[i])) {
                 UnitCreateEffectUnit(hero, "QhiraGoldenBountyDrain", libAffx_QhiraBounty[i]);
             }
         }
@@ -638,6 +670,7 @@ bool libAffx_QhiraStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterGrapplingHookKickDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterPulsingPainDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_QhiraTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_QhiraBountyRange_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_QhiraSweepCast_Func"), null, "NexusHunterRevolvingSweepCasterBehavior", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_QhiraKickArrive_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterGrapplingHookKickDamage");
     TriggerAddEventGeneric(TriggerCreate("libAffx_QhiraMountCosts_Func"), libGame_mountCostsChangedEventName);
