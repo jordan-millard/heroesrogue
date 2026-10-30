@@ -153,7 +153,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Raider Captain ===== -->
-  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 50% of their damage (100%, with Inspire's attack speed, while Raynor has Inspire; script) with 50 Armor (script), and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.2% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 0.5% Banshee Movement Speed each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
+  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 50% of their damage (100%, with Inspire's attack speed, while Raynor has Inspire; script) with 50 Armor (script), and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.1% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 0.5% Banshee Movement Speed each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="RaynorGoldenAirSupportTokenCounter" parent="StormQuestToken">
     <Face value="RaynorGoldenAirSupportTokenCounter" />
     <Max value="100000" />
@@ -168,7 +168,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="RaynorGoldenAirSupportTokenCounter" />
-    <Scale value="0.002" />
+    <Scale value="0.001" />
   </CAccumulatorToken>
   <CEffectDamage id="RaynorRaynorsRaidersDamage">
     <MultiplicativeModifierArray index="RaynorRaiderPower" Modifier="0" />
