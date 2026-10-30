@@ -304,6 +304,18 @@ void libAffx_QhiraClearBounty (int i) {
     UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
     UnitBehaviorRemove(target, "QhiraGoldenBountyWeaken", c_unitBehaviorCountAll);
 }
+// Bounty Hunter: a Hero that can be (or stay) the Bounty: alive, and not a ghost (Leoric's Undying counts as alive)
+bool libAffx_QhiraBountyAlive (unit target) {
+    int owner;
+    if (target == null || !UnitIsAlive(target) || UnitHasBehavior2(target, "LeoricUndying")) {
+        return false;
+    }
+    owner = UnitGetOwner(target);
+    if (owner >= 1 && owner <= libCore_gv_bALMaxPlayers && target == libGame_gv_players[owner].lv_heroUnit && libGame_gv_players[owner].lv_isDead) {
+        return false;
+    }
+    return true;
+}
 // Bounty Hunter: a random enemy Hero becomes the Bounty (two of them with Double Contract), if possible not one that was
 // just the Bounty
 void libAffx_QhiraPickBounties () {
@@ -326,7 +338,7 @@ void libAffx_QhiraPickBounties () {
         foe = UnitGroupUnit(foes, i);
         i += 1;
         // living enemy Heroes only (not clones or images)
-        if (!UnitIsAlive(foe) || !libAffx_QhiraIsEnemyHero(foe)) {
+        if (!libAffx_QhiraIsEnemyHero(foe) || !libAffx_QhiraBountyAlive(foe)) {
             continue;
         }
         // one per player: the player's Hero, or for the Lost Vikings any living Viking
@@ -429,7 +441,7 @@ void libAffx_QhiraBountyTick () {
         libAffx_QhiraSlowApplied = slow;
         reslow = true;
     }
-    if (libAffx_QhiraBounty[1] == null || !UnitIsAlive(libAffx_QhiraBounty[1]) || (libAffx_QhiraBounty[2] != null && !UnitIsAlive(libAffx_QhiraBounty[2])) || (libAffx_QhiraBounty[2] == null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker"))) {
+    if (!libAffx_QhiraBountyAlive(libAffx_QhiraBounty[1]) || (libAffx_QhiraBounty[2] != null && !libAffx_QhiraBountyAlive(libAffx_QhiraBounty[2])) || (libAffx_QhiraBounty[2] == null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker"))) {
         libAffx_QhiraPickBounties();
         return;
     }
