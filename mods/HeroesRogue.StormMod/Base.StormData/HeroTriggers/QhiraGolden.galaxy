@@ -274,6 +274,9 @@ void libAffx_QhiraBountyDamageSync () {
     if (!UnitHasBehavior2(hero, "QhiraGoldenBountyFocus")) {
         UnitBehaviorAdd(hero, "QhiraGoldenBountyFocus", hero, 1);
     }
+    if (!UnitHasBehavior2(hero, "QhiraGoldenBountyGuard")) {
+        UnitBehaviorAdd(hero, "QhiraGoldenBountyGuard", hero, 1);
+    }
 }
 // Bounty Hunter: the Bounty's debuffs (Trophies 1-40 Slow, Hunter's Mark)
 void libAffx_QhiraBountyDebuffs (unit target, bool reslow) {
