@@ -287,7 +287,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <CActorModel id="QhiraGoldenBountyMark" parent="StormModelAnimationStyleContinuousUnit">
     <On Terms="Behavior.QhiraGoldenBounty.On" Send="Create" />
-    <On Terms="Behavior.QhiraGoldenBounty.Off" Send="AnimBracketStop BSD" />
+    <On Terms="Behavior.QhiraGoldenBounty.Off" Send="Destroy" />
     <Model value="ButcherButchersBrandDebuffLoud" />
     <HostSiteOps Ops="SOpAttachOverhead" />
   </CActorModel>

@@ -315,6 +315,8 @@ void libAffx_QhiraPickBounties () {
     unit best;
     unit second;
     int i;
+    int owner;
+    bool[libCore_gv_bALMaxPlayers + 1] taken;
     if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
         return;
     }
@@ -327,9 +329,15 @@ void libAffx_QhiraPickBounties () {
         if (!UnitIsAlive(foe) || !libAffx_QhiraIsEnemyHero(foe)) {
             continue;
         }
-        if (foe != libGame_gv_players[UnitGetOwner(foe)].lv_heroUnit) {
+        // one per player: the player's Hero, or for the Lost Vikings any living Viking
+        owner = UnitGetOwner(foe);
+        if (taken[owner]) {
             continue;
         }
+        if (foe != libGame_gv_players[owner].lv_heroUnit && UnitGetType(foe) != "HeroErik" && UnitGetType(foe) != "HeroBaleog" && UnitGetType(foe) != "HeroOlaf") {
+            continue;
+        }
+        taken[owner] = true;
         if (foe == libAffx_QhiraBounty[1] || foe == libAffx_QhiraBounty[2]) {
             UnitGroupAdd(stale, foe);
         } else {
