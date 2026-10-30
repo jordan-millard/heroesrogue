@@ -548,10 +548,10 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
     }
     // An effect's damage modifiers add up rather than multiply, so two are kept by script as true multipliers: Raider
     // Payroll (its stacks are in a key that never counts) multiplies the other bonuses through the Common key, and
-    // Raynor's Inspire attack speed (which reaches the Banshees too while it lasts) doubles the total through the Inspired key
+    // Raynor's Inspire attack speed (which reaches the Banshees too while it lasts) adds 50% to the total through the Inspired key
     base = 1.0 + libAffx_RaynorRaiderModifier("RaynorRaiderPower") + libAffx_RaynorRaiderModifier("RaynorRaiderLegacy") + UnitGetTokenCount(hero, "RaynorGoldenAirSupportTokenCounter") * 0.001;
     payroll = MaxF(0.0, base) * libAffx_RaynorRaiderModifier("RaynorRaiderPayroll");
-    inspired = MaxF(0.0, base) + payroll;
+    inspired = (MaxF(0.0, base) + payroll) * 0.5;
     if (inspired != libAffx_RaynorInspiredModifier || payroll != libAffx_RaynorPayrollModifier) {
         libAffx_RaynorInspiredModifier = inspired;
         libAffx_RaynorPayrollModifier = payroll;
