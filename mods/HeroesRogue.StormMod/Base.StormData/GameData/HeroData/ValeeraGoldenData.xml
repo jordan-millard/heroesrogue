@@ -10,7 +10,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ValeeraScaredMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ValeeraTwinGarroteMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ValeeraLongShadowsMarker" parent="CarryBehaviorParent" />
-  <CBehaviorBuff id="ValeeraTurncoatMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraRallyBannerMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="ValeeraShadowPactMarker" parent="CarryBehaviorParent" />
   <!-- Eviscerator, Domino Effect (Legendary): Eviscerate splashes to non-Heroes within 5 of its target for 60% -->
   <CEffectDamage id="ValeeraGoldenDominoDamage" parent="ValeeraEviscerateDamage">
@@ -137,6 +137,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
   <CEffectSet id="ValeeraGoldenEviscerateHitSet">
     <EffectArray value="ValeeraGoldenFullComboApply" />
+    <EffectArray value="ValeeraGoldenTwoComboApply" />
     <EffectArray value="ValeeraEviscerateDamage" />
     <EffectArray value="ValeeraGoldenDominoSearch" />
     <EffectArray value="ValeeraGoldenRefundSwitch" />
@@ -154,6 +155,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="ValeeraHas3CP" />
     <WhichUnit Value="Caster" />
     <Behavior value="ValeeraGoldenFullCombo" />
+  </CEffectApplyBehavior>
+  <!-- Recruit (Scared Assassin talent): an Eviscerate with 2 Combo Points (this mark) or 3 gives back all but one -->
+  <CBehaviorBuff id="ValeeraGoldenTwoCombo">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenTwoComboApply">
+    <ValidatorArray value="ValeeraHas2CP" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenTwoCombo" />
   </CEffectApplyBehavior>
   <!-- Edge stacks 1-40: Eviscerate Slows 1% each for 2 seconds (the quest adds the Slow and turns the Chance on) -->
   <CBehaviorBuff id="ValeeraGoldenEviscerateSlow" parent="StormSlowParent">
@@ -355,10 +365,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Duration value="0.5" />
     <Modification>
       <AdditiveAttackSpeedFactor value="0" />
+      <DamageDealtFraction index="Basic" value="0.25" />
+      <DamageDealtFraction index="Ability" value="0.25" />
+      <VitalMaxFractionArray index="Life" value="0.25" />
+      <UnifiedMoveSpeedFactor value="0" />
     </Modification>
     <ArmorModification>
       <AllArmorBonus value="0" />
     </ArmorModification>
+    <!-- 40% less damage from Heroes (55% with Bulwark; the script sets it) -->
+    <DamageResponse Chance="1" TargetFilters="Heroic;-" ModifyFraction="0.6" />
   </CBehaviorBuff>
   <CBehaviorBuff id="ValeeraGoldenShadowBoons" parent="StormArmor">
     <Alignment value="Positive" />
@@ -368,6 +384,44 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <MoveSpeedMultiplier value="1" />
     </Modification>
   </CBehaviorBuff>
+  <!-- Scared Assassin talents (shown only with the starter): Bribe (the generic talent) at level 1, Recruit at 4, Call to Arms
+       (a heroic in Smoke Bomb's place: the script turns Smoke Bomb's effects off and Call to Arms on) at 10, Bulwark at 13 -->
+  <CTalent id="ValeeraGoldenRecruit">
+    <Face value="ValeeraGoldenRecruit" />
+    <Abil value="ValeeraEviscerate" />
+  </CTalent>
+  <CButton id="ValeeraGoldenRecruit" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
+  </CButton>
+  <CTalent id="ValeeraGoldenCallToArms">
+    <Face value="ValeeraGoldenCallToArms" />
+    <Abil value="ValeeraSmokeBomb" />
+    <RankArray>
+      <BehaviorArray value="Ultimate1Unlocked" />
+    </RankArray>
+    <Active value="1" />
+  </CTalent>
+  <CButton id="ValeeraGoldenCallToArms" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+  </CButton>
+  <CTalent id="ValeeraGoldenBulwark">
+    <Face value="ValeeraGoldenBulwark" />
+  </CTalent>
+  <CButton id="ValeeraGoldenBulwark" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_cloakofshadows.dds" />
+  </CButton>
+  <CEffectSet id="ValeeraGoldenCallToArmsSet">
+    <Chance value="0" />
+  </CEffectSet>
+  <CEffectSet id="ValeeraSmokeBombInitialSet">
+    <EffectArray value="ValeeraGoldenCallToArmsSet" />
+  </CEffectSet>
+  <CHero id="Valeera">
+    <TalentTreeArray Talent="GenericTalentBribe" Tier="1" Column="5" />
+    <TalentTreeArray Talent="ValeeraGoldenRecruit" Tier="2" Column="5" />
+    <TalentTreeArray Talent="ValeeraGoldenCallToArms" Tier="4" Column="3" />
+    <TalentTreeArray Talent="ValeeraGoldenBulwark" Tier="5" Column="4" />
+  </CHero>
   <!-- the support range, shown to Valeera's player only while stealthed (16 with Long Shadows) -->
   <CBehaviorBuff id="ValeeraGoldenShadowRing12" />
   <CBehaviorBuff id="ValeeraGoldenShadowRing16" />

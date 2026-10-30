@@ -27847,6 +27847,18 @@
             <String String="Valeera">
                 <Field Id="HeroSpecific" />
             </String>
+            <String String="GenericTalentBribe">
+                <Field Id="TalentsShow" />
+            </String>
+            <String String="ValeeraGoldenRecruit">
+                <Field Id="TalentsShow" Index="1" />
+            </String>
+            <String String="ValeeraGoldenCallToArms">
+                <Field Id="TalentsShow" Index="2" />
+            </String>
+            <String String="ValeeraGoldenBulwark">
+                <Field Id="TalentsShow" Index="3" />
+            </String>
             <String String="1 0 ValeeraScaredMarker">
                 <Field Id="Behavior" />
             </String>
@@ -27867,6 +27879,12 @@
             </String>
             <String String="1 1 Set Effect,ValeeraGoldenExposedApply,Chance 1">
                 <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Behavior,ValeeraStealthCloak,DamageResponse.Chance 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Behavior,ValeeraVanishUnrevealableCloak,Duration 3600">
+                <Field Id="CatalogModification" Index="2" />
             </String>
             <String String="AffixAdded libAffx_ValeeraStart">
                 <Field Id="Trigger" />
@@ -27892,7 +27910,7 @@
                 <Field Id="Behavior" />
             </String>
         </Instances>
-        <Instances Id="ValeeraTurncoat">
+        <Instances Id="ValeeraRallyBanner">
             <String String="Assets/Textures/storm_ui_icon_valeera_vanish.dds">
                 <Field Id="Icon" />
             </String>
@@ -27905,7 +27923,7 @@
             <User Type="Affix" Instance="ValeeraScaredAssassin">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="1 0 ValeeraTurncoatMarker">
+            <String String="1 0 ValeeraRallyBannerMarker">
                 <Field Id="Behavior" />
             </String>
         </Instances>
