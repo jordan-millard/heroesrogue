@@ -249,6 +249,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <HealTakenAdditiveMultiplier index="Life" value="-0.75" />
       <VitalRegenMultiplier index="Life" value="-0.75" />
     </Modification>
+    <!-- no "healing prevented" floaters (as Touch of Death), or regeneration spams them -->
+    <FloaterHealingPreventedDisplayType value="DisplayNothing" />
   </CBehaviorBuff>
   <CEffectApplyBehavior id="MalthaelGoldenMarkWoundApply">
     <Chance value="0" />
