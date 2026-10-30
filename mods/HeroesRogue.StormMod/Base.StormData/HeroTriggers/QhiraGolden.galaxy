@@ -33,7 +33,6 @@ bool libAffx_QhiraHoldApplied; // Whirling Huntress: the Huntress 100 Stun is on
 unit[3] libAffx_QhiraBounty; // Bounty Hunter: the Bounties (the second with Double Contract)
 int libAffx_QhiraBountyClock; // Bounty Hunter: seconds since the Bounty was picked
 fixed libAffx_QhiraBountyFactor = -99.0; // Bounty Hunter: the Bounty multiplier last set (its stacks)
-bool libAffx_QhiraBountyRegistered; // Bounty Hunter: the multipliers are registered with LibAffx
 int libAffx_QhiraSlowApplied; // Bounty Hunter: Trophies applied as the Bounty Slow
 bool libAffx_QhiraSteadyApplied; // Bounty Hunter: Trophies 100 (instant mount) applied
 
@@ -253,91 +252,27 @@ bool libAffx_QhiraKickArrive_Func (bool testConds, bool runActions) {
 bool libAffx_QhiraIsBounty (unit target) {
     return target != null && (target == libAffx_QhiraBounty[1] || target == libAffx_QhiraBounty[2]);
 }
-// Bounty Hunter: the Bounty multiplier, and the -90% against other enemy Heroes (registered once)
+// Bounty Hunter: x(4 x hit quest x Contract) against the Bounty and x0.1 against other enemy Heroes (attacker damage
+// responses on Qhira; a new Hunt value takes effect when the behavior is re-added)
 void libAffx_QhiraBountyDamageSync () {
     unit hero = libAffx_QhiraHero();
     fixed contract;
     fixed factor;
-    string value;
     if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
         return;
     }
     contract = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraContract].Modifier", libAffx_player));
-    factor = 4.0 * (1.0 + 0.002 * UnitGetTokenCount(hero, "QhiraGoldenBloodMoneyTokenCounter")) * (1.0 + contract) - 1.0;
+    factor = 4.0 * (1.0 + 0.002 * UnitGetTokenCount(hero, "QhiraGoldenBloodMoneyTokenCounter")) * (1.0 + contract);
     if (factor != libAffx_QhiraBountyFactor) {
         libAffx_QhiraBountyFactor = factor;
-        value = FixedToString(factor, 4);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterFinalStrikeDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDoTDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDelayedDeliveryDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepPersistentDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageMaximumEffortDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageTheThirstDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesFinalDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepFinalDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepInitialDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPureStrikesWeaponDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookKickDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPulsingPainDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogBehavior, "QhiraGoldenBountyHunt", "DamageResponse.ModifyFraction", libAffx_player, FixedToString(factor, 4));
+        UnitBehaviorRemove(hero, "QhiraGoldenBountyHunt", c_unitBehaviorCountAll);
     }
-    if (!libAffx_QhiraBountyRegistered) {
-        libAffx_QhiraBountyRegistered = true;
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterFinalStrikeDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterFinalStrikeDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterFinalStrikeDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDoTDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDoTDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDoTDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDelayedDeliveryDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDelayedDeliveryDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDelayedDeliveryDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepPersistentDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepPersistentDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepPersistentDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterWeaponDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterWeaponDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageMaximumEffortDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterCarnageMaximumEffortDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterCarnageMaximumEffortDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterCarnageDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterCarnageDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageTheThirstDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterCarnageTheThirstDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterCarnageTheThirstDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesFinalDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesFinalDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesFinalDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepFinalDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepFinalDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepFinalDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepInitialDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepInitialDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepInitialDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPureStrikesWeaponDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterPureStrikesWeaponDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterPureStrikesWeaponDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookKickDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
-        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPulsingPainDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
-        libAffx_MultiplierRegister("Effect,NexusHunterPulsingPainDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
-        libAffx_MultiplierRegister("Effect,NexusHunterPulsingPainDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+    if (!UnitHasBehavior2(hero, "QhiraGoldenBountyHunt")) {
+        UnitBehaviorAdd(hero, "QhiraGoldenBountyHunt", hero, 1);
+    }
+    if (!UnitHasBehavior2(hero, "QhiraGoldenBountyFocus")) {
+        UnitBehaviorAdd(hero, "QhiraGoldenBountyFocus", hero, 1);
     }
 }
 // Bounty Hunter: the Bounty's debuffs (Trophies 1-40 Slow, Hunter's Mark)

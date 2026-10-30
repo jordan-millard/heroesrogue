@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 8 second cooldown, 25 Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 4x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x, 4x and 0.1x are LibAffx multipliers (they multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
+  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 8 second cooldown, 25 Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 4x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x is a LibAffx multiplier, and the 4x and 0.1x are attacker damage responses on Qhira (both multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="QhiraWhirlMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="QhiraGrappleMarker" parent="CarryBehaviorParent" />
@@ -285,13 +285,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <HostSiteOps Ops="SOpAttachOverhead" />
   </CActorModel>
   <CValidatorUnitCompareBehaviorCount id="QhiraGoldenTargetIsBounty">
-    <WhichUnit Value="TargetUnit" />
+    <WhichUnit Value="Target" />
     <Compare value="GT" />
     <Value value="0" />
     <Behavior value="QhiraGoldenBounty" />
   </CValidatorUnitCompareBehaviorCount>
   <CValidatorUnitCompareBehaviorCount id="QhiraGoldenTargetNotBounty">
-    <WhichUnit Value="TargetUnit" />
+    <WhichUnit Value="Target" />
     <Compare value="EQ" />
     <Value value="0" />
     <Behavior value="QhiraGoldenBounty" />
@@ -301,110 +301,25 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="TargetIsHero" />
     <CombineArray value="QhiraGoldenTargetNotBounty" />
   </CValidatorCombine>
-  <!-- Bounty Hunter: Qhira's damage to the Bounty is multiplied by 4 (times the hit quest and Contract) and to other enemy
-       Heroes by 0.1, on top of all other bonuses (the LibAffx multipliers; the script sets the stacks) -->
-  <CEffectDamage id="NexusHunterFinalStrikeDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterBloodRageDoTDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterBloodRageDelayedDeliveryDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterBloodRageDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterRevolvingSweepPersistentDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterWeaponDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterCarnageMaximumEffortDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterCarnageDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterCarnageTheThirstDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterUnrelentingStrikesDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterUnrelentingStrikesFinalDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterRevolvingSweepFinalDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterRevolvingSweepInitialDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterPureStrikesWeaponDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterGrapplingHookDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterGrapplingHookKickDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="NexusHunterPulsingPainDamage">
-    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
-    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
-  </CEffectDamage>
+  <!-- Bounty Hunter: Qhira's damage to the Bounty is multiplied by 4 (the script folds in the hit quest and Contract and
+       re-adds it) and to other enemy Heroes by 0.1. Attacker damage responses act on the final damage, so they multiply
+       every other bonus. -->
+  <CBehaviorBuff id="QhiraGoldenBountyHunt" parent="CarryBehaviorParent">
+    <DamageResponse>
+      <Chance value="1" />
+      <Location value="Attacker" />
+      <ModifyFraction value="4" />
+      <ValidatorArray value="QhiraGoldenTargetIsBounty" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="QhiraGoldenBountyFocus" parent="CarryBehaviorParent">
+    <DamageResponse>
+      <Chance value="1" />
+      <Location value="Attacker" />
+      <ModifyFraction value="0.1" />
+      <ValidatorArray value="QhiraGoldenTargetIsOtherHero" />
+    </DamageResponse>
+  </CBehaviorBuff>
   <!-- Contract (Uncommon): its stacks are kept here (never counted) and the script folds them into the Bounty multiplier -->
   <CEffectDamage id="NexusHunterWeaponDamage">
     <MultiplicativeModifierArray index="QhiraContract" Validator="GoldenMultNever" Modifier="0" />
