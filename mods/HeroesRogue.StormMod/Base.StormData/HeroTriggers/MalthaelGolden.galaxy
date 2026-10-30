@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Malthael. Soul Ripper: Soul Rip hits on enemy Heroes add Harvest; takedowns add Reaping: recharge, then size, then
 // healing, then at 100 a second Soul Rip 1 second later for 50%. Death Shroud: the shroud hitting enemy Heroes adds Mist
-// (Basic Attack damage); takedowns add Dusk: recharge, then speed and width, then a longer Reaper's Mark, then at 100 a 10%
+// (Soul Rip healing); takedowns add Dusk: Reaper's Mark damage, then speed and width, then a longer Reaper's Mark, then at 100 a 10%
 // maximum Health hit. Wraithstalker: Wraith Strikes on enemy Heroes add Haunt; takedowns add Stalk: recharge, then range,
 // then at 100 no Reaper's Mark needed, then 2.5% damage per stack.
 // ============================================================
@@ -27,6 +27,7 @@ int libAffx_MalthaelWraithAdded2; // Wraithstalker: takedown quest stage 2 stack
 int libAffx_MalthaelWraithPastApplied; // Wraithstalker: takedown quest stacks past the cap applied as damage this game
 int libAffx_MalthaelShroudSpeed; // Death Shroud: Dusk stacks applied as flight speed
 bool libAffx_MalthaelReapOn; // Death Shroud: the 10% hit is on
+int libAffx_MalthaelShroudMist = -1; // Death Shroud: Mist stacks applied as healing
 bool libAffx_MalthaelCollectorApplied; // Soul Ripper: Soul Collector's cooldown cut is on the charges
 
 unit libAffx_MalthaelHero() {
@@ -95,7 +96,7 @@ void libAffx_MalthaelSyncSoulRip () {
         UnitBehaviorAdd(hero, "MalthaelSoulRipPastCapDamage", hero, 1);
     }
 }
-// MalthaelGoldenDuskTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 speed (libAffx_MalthaelSync) and width, 81-100 a longer Reaper's Mark (script), 100 the 10% hit, then damage
+// MalthaelGoldenDuskTokenCounter: stacks 1-40: Reaper's Mark deals 0.05% more maximum Health per second each (2% to 4%); 41-80 speed (libAffx_MalthaelSync) and width, 81-100 a longer Reaper's Mark (script), 100 the 10% hit, then damage
 void libAffx_MalthaelSyncShroud () {
     unit hero = libAffx_MalthaelHero();
     int stacks;
@@ -108,7 +109,7 @@ void libAffx_MalthaelSyncShroud () {
     stacks = libAffx_MalthaelStacks("MalthaelGoldenDuskTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_MalthaelShroudAdded) {
-        libAffx_CatalogReferenceModify("Abil,MalthaelDeathShroud,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelShroudAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MalthaelReapersMarkDamage,VitalFractionMax[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelShroudAdded) * 0.0005, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MalthaelShroudAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 1% wider each (the speed is script)
@@ -205,15 +206,23 @@ bool libAffx_MalthaelShroudMark_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// every second: Death Shroud's flight speed (Dusk 41-80) and its 10% hit (Dusk 100), Wraithstalker's Unbound (Stalk 100),
+// every second: Death Shroud's Mist healing, its flight speed (Dusk 41-80) and its 10% hit (Dusk 100), Wraithstalker's Unbound (Stalk 100),
 // and Soul Collector's 0.5 second cooldown cut moved onto Soul Rip's charges
 void libAffx_MalthaelSync () {
     unit hero = libAffx_MalthaelHero();
     int fast;
+    int mist;
     if (hero == null) {
         return;
     }
     if (UnitHasBehavior2(hero, "MalthaelShroudMarker")) {
+        mist = libAffx_MalthaelStacks("MalthaelGoldenMistTokenCounter");
+        if (mist != libAffx_MalthaelShroudMist || !UnitHasBehavior2(hero, "MalthaelGoldenShroudMend")) {
+            libAffx_MalthaelShroudMist = mist;
+            CatalogFieldValueSet(c_gameCatalogBehavior, "MalthaelGoldenShroudMend", "Modification.HealDealtAdditiveMultiplier[Life]", libAffx_player, FixedToString(0.01 * IntToFixed(mist), 4));
+            UnitBehaviorRemove(hero, "MalthaelGoldenShroudMend", c_unitBehaviorCountAll);
+            UnitBehaviorAdd(hero, "MalthaelGoldenShroudMend", hero, 1);
+        }
         fast = MaxI(0, MinI(libAffx_MalthaelStacks("MalthaelGoldenDuskTokenCounter") - 40, 40));
         if (fast != libAffx_MalthaelShroudSpeed) {
             libAffx_MalthaelShroudSpeed = fast;

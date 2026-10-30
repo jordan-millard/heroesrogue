@@ -52,7 +52,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Death Shroud ===== -->
-  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (25% of each map gains kept for good): 1% Basic Attack damage per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit; stacks 1-40 make Death Shroud recharge 1% faster each, 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
+  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (25% of each map gains kept for good): 1% more healing (MalthaelGoldenShroudMend, script) per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit; stacks 1-40 make Reaper's Mark deal 0.05% more maximum Health per second each (2% to 4%), 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MalthaelGoldenMistTokenCounter" parent="StormQuestToken">
     <Face value="MalthaelGoldenMistTokenCounter" />
     <Max value="100000" />
@@ -77,9 +77,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="MalthaelShroudPower" Modifier="0" />
     <MultiplicativeModifierArray index="MalthaelShroudCommon" Modifier="0" />
     <MultiplicativeModifierArray index="MalthaelShroudLegacy" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="MalthaelWeaponDamage">
-    <MultiplicativeModifierArray index="MalthaelShroudHit" Accumulator="MalthaelGoldenMistTokenCounterAccumulator" />
   </CEffectDamage>
   <CButton id="MalthaelGoldenMistTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_Malthael_DeathShroud.dds" />
@@ -240,6 +237,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="MalthaelGoldenGraspSet" />
   </CEffectSet>
   <!-- ===== Death Shroud ===== -->
+  <!-- Mist: 1% more healing (Soul Rip is Malthael's healing) per stack; the script sets the value (libAffx_MalthaelSync) -->
+  <CBehaviorBuff id="MalthaelGoldenShroudMend" parent="CarryBehaviorParent">
+    <Modification>
+      <HealDealtAdditiveMultiplier index="Life" value="0" />
+    </Modification>
+  </CBehaviorBuff>
   <!-- Dusk at 100: the shroud's hit also deals 10% of an enemy Hero's maximum Health (the script turns it on) -->
   <CEffectDamage id="MalthaelGoldenShroudReapDamage" parent="StormSpellDotPercentDamage">
     <Chance value="0" />
