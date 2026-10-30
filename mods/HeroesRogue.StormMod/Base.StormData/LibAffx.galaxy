@@ -3053,6 +3053,104 @@ void libAffx_ApplyCatalogModificationBase(string reference, int player, string v
 void libAffx_ApplyCatalogModificationString(string reference, int player, string value, int operation) {
     CatalogReferenceModify(reference, player, value, operation);
 }
+// Multiplicative boons: a boon that writes to a damage effect's "<Key>Mult" modifier (which never counts by itself, its
+// validator never passes) multiplies all of that effect's other damage modifiers. An effect's modifiers add up rather
+// than multiply, so every 0.25 seconds the "<Key>MultOut" modifier is set to stacks x (1 + the effect's other
+// modifiers), counting token accumulators (hit quests) by their tokens on the player's hero.
+const int libAffx_maxMultipliers = 96;
+int libAffx_multCount;
+string[libAffx_maxMultipliers + 1] libAffx_multEffect;
+string[libAffx_maxMultipliers + 1] libAffx_multKey;
+int[libAffx_maxMultipliers + 1] libAffx_multPlayer;
+fixed[libAffx_maxMultipliers + 1] libAffx_multLast;
+trigger libAffx_multTrigger;
+void libAffx_MultiplierSync(int i) {
+    string effect = libAffx_multEffect[i];
+    int player = libAffx_multPlayer[i];
+    unit hero = libGame_gv_players[player].lv_heroUnit;
+    string path;
+    string acc;
+    string token;
+    fixed stacks;
+    fixed others = 0.0;
+    fixed value;
+    int count;
+    int j;
+    stacks = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, effect, "MultiplicativeModifierArray[" + libAffx_multKey[i] + "Mult].Modifier", player));
+    count = CatalogFieldValueCount(c_gameCatalogEffect, effect, "MultiplicativeModifierArray", player);
+    for (j = 0; j < count; j += 1) {
+        path = "MultiplicativeModifierArray[" + IntToString(j) + "]";
+        // modifiers with a validator only count sometimes, so they are left out
+        if (CatalogFieldValueGet(c_gameCatalogEffect, effect, path + ".Validator", player) != "") {
+            continue;
+        }
+        others += StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, effect, path + ".Modifier", player));
+        acc = CatalogFieldValueGet(c_gameCatalogEffect, effect, path + ".Accumulator", player);
+        if (acc != "" && hero != null) {
+            token = CatalogFieldValueGet(c_gameCatalogAccumulator, acc, "TokenId", player);
+            if (token != "") {
+                others += UnitGetTokenCount(hero, token) * StringToFixed(CatalogFieldValueGet(c_gameCatalogAccumulator, acc, "Scale", player));
+            }
+        }
+    }
+    // the MultOut modifier itself is in the sum, and so are those of multipliers on this effect registered later (each
+    // multiplier counts only the earlier ones, so two of them multiply each other exactly once)
+    for (j = i; j <= libAffx_multCount; j += 1) {
+        if (libAffx_multEffect[j] == effect && libAffx_multPlayer[j] == player) {
+            others -= libAffx_multLast[j];
+        }
+    }
+    value = stacks * MaxF(0.0, 1.0 + others);
+    if (value != libAffx_multLast[i]) {
+        libAffx_multLast[i] = value;
+        CatalogFieldValueSet(c_gameCatalogEffect, effect, "MultiplicativeModifierArray[" + libAffx_multKey[i] + "MultOut].Modifier", player, FixedToString(value, 4));
+    }
+}
+bool libAffx_MultiplierPeriodic(bool testConds, bool runActions) {
+    int i;
+    for (i = 1; i <= libAffx_multCount; i += 1) {
+        libAffx_MultiplierSync(i);
+    }
+    return true;
+}
+void libAffx_MultiplierRegister(string reference, int player) {
+    int keyStart;
+    int keyEnd;
+    int comma;
+    string effect;
+    string key;
+    int i;
+    keyEnd = StringFind(reference, "Mult].Modifier", c_stringCase);
+    if (keyEnd == c_stringNotFound || StringSub(reference, 1, 7) != "Effect," || player > libCore_gv_bALMaxPlayers) {
+        return;
+    }
+    keyStart = StringFind(reference, "[", c_stringCase);
+    comma = StringFind(StringSub(reference, 8, StringLength(reference)), ",", c_stringCase);
+    if (keyStart == c_stringNotFound || comma == c_stringNotFound) {
+        return;
+    }
+    effect = StringSub(reference, 8, 6 + comma);
+    key = StringSub(reference, keyStart + 1, keyEnd - 1);
+    for (i = 1; i <= libAffx_multCount; i += 1) {
+        if (libAffx_multEffect[i] == effect && libAffx_multKey[i] == key && libAffx_multPlayer[i] == player) {
+            libAffx_MultiplierSync(i);
+            return;
+        }
+    }
+    if (libAffx_multCount >= libAffx_maxMultipliers) {
+        return;
+    }
+    libAffx_multCount += 1;
+    libAffx_multEffect[libAffx_multCount] = effect;
+    libAffx_multKey[libAffx_multCount] = key;
+    libAffx_multPlayer[libAffx_multCount] = player;
+    libAffx_multLast[libAffx_multCount] = 0.0;
+    if (libAffx_multTrigger == null) {
+        libAffx_multTrigger = TriggerCreate("libAffx_MultiplierPeriodic");
+        TriggerAddEventTimePeriodic(libAffx_multTrigger, 0.25, c_timeGame);
+    }
+    libAffx_MultiplierSync(libAffx_multCount);
+}
 void libAffx_ApplyCatalogModifications(int affix, int amount) {
     int i;
     int i2;
@@ -3124,6 +3222,7 @@ void libAffx_ApplyCatalogModifications(int affix, int amount) {
                 } else {
                     CatalogReferenceModify(catalogReference, catalogPlayer, catalogValueString, catalogOperation);
                 }
+                libAffx_MultiplierRegister(catalogReference, catalogPlayer);
             }
         }
     }
