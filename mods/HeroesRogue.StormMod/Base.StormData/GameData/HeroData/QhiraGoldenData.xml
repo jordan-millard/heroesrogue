@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Grapple Hunter ===== -->
-  <!-- Grappling Hook stores 2 charges (8 second recharge, from a 20 second cooldown) and deals 3x damage (a LibAffx multiplier: it multiplies the hit quest and boons too); gain Utility Belt and Upstage. Hookshot quest (25% of each map gains kept for good): 2% Grappling Hook damage per enemy Hero hit. Snare quest: takedowns within 6 seconds of a hit; stacks 1-40 make Grappling Hook recharge 1% faster each, 41-80 make the hook fly 1% faster and 1% wider each, 81-100 make a hook hit on an enemy Hero Shield Qhira for 1% of her maximum Health each until it breaks (script), at 100 arriving on a Hero sets off a free Revolving Sweep (script), then 2% damage each. -->
+  <!-- Grappling Hook stores 2 charges (8 second recharge, from a 20 second cooldown) and deals 3x damage (a LibAffx multiplier: it multiplies the hit quest and boons too); gain Utility Belt and Upstage. Hookshot quest (25% of each map gains kept for good): 2.5% Grappling Hook and Basic Attack damage per enemy Hero hit (Basic Attacks through their own accumulator entries). Snare quest: takedowns within 6 seconds of a hit; stacks 1-40 make Grappling Hook recharge 1% faster each, 41-80 make the hook fly 1% faster and 1% wider each, 81-100 make a hook hit on an enemy Hero Shield Qhira for 1% of her maximum Health each until it breaks (script), at 100 arriving on a Hero sets off a free Revolving Sweep (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="QhiraGoldenHookshotTokenCounter" parent="StormQuestToken">
     <Face value="QhiraGoldenHookshotTokenCounter" />
     <Max value="100000" />
@@ -68,7 +68,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="QhiraGoldenHookshotTokenCounter" />
-    <Scale value="0.02" />
+    <Scale value="0.025" />
   </CAccumulatorToken>
   <CEffectDamage id="NexusHunterGrapplingHookDamage">
     <MultiplicativeModifierArray index="QhiraGrapplePower" Modifier="0" />
@@ -225,6 +225,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Duration value="0" />
     <DamageResponse ModifyLimit="0" />
   </CBehaviorBuff>
+  <!-- Hookshot (hit quest): Basic Attacks get the same bonus as Grappling Hook -->
+  <CEffectDamage id="NexusHunterWeaponDamage">
+    <MultiplicativeModifierArray index="QhiraGrappleHitAttack" Accumulator="QhiraGoldenHookshotTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterPureStrikesWeaponDamage">
+    <MultiplicativeModifierArray index="QhiraGrappleHitAttack" Accumulator="QhiraGoldenHookshotTokenCounterAccumulator" />
+  </CEffectDamage>
   <!-- Anchor Point (Epic): a hooked Hero is Slowed by 75% for 1.5 seconds (Chance 0, the boon turns it on) -->
   <CBehaviorBuff id="QhiraGoldenAnchorSlow" parent="StormSlowParent">
     <Duration value="1.5" />
