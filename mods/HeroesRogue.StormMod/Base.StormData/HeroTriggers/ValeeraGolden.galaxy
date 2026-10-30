@@ -648,6 +648,10 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     keepLife = UnitGetPropertyFixed(target, c_unitPropLifeMax, c_unitPropCurrent);
     keepSapper = UnitHasBehavior2(target, "AffixSappersBehavior");
     UnitBehaviorAdd(target, "ValeeraGoldenRecruited", target, 1);
+    // a converted caster (wizard) minion still drops its Regeneration Globe, for Valeera's team (as Sylvanas's Possession does)
+    if (UnitGetType(target) == "WizardMinion") {
+        libNtve_gf_CreateUnitsWithDefaultFacing(1, "RegenGlobe", c_unitCreateIgnorePlacement, newOwner, UnitGetPosition(target), null);
+    }
     UnitSetOwner(target, newOwner, true);
     Wait(0.25, c_timeGame);
     if (!UnitIsAlive(target)) {
