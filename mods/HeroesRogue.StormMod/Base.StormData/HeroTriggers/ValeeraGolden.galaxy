@@ -42,7 +42,6 @@ fixed libAffx_ValeeraHealApplied = -1.0; // Scared Assassin: healing per 0.25 se
 int libAffx_ValeeraScaredKills; // Scared Assassin: enemy minion deaths toward the next Rally stack
 bool libAffx_ValeeraBulwarkApplied; // Scared Assassin: Bulwark applied to the aura
 bool libAffx_ValeeraBannerApplied; // Scared Assassin: Rally Banner applied to the aura
-bool libAffx_ValeeraRecruitApplied; // Scared Assassin: Recruit's 30 second Combo Point timer applied
 bool libAffx_ValeeraCallApplied; // Scared Assassin: Call to Arms put in Smoke Bomb's place
 int libAffx_ValeeraVeterans; // Scared Assassin: Veterans stacks this map
 int libAffx_ValeeraVeteransApplied; // Scared Assassin: Veterans stacks applied to the aura
@@ -421,8 +420,8 @@ void libAffx_ValeeraRing (unit hero, bool on, fixed range) {
         UnitBehaviorAdd(hero, want, hero, 1);
     }
 }
-// Scared Assassin: allied minions and mercenaries within reach of an exposed enemy Hero attack it for the first 3 seconds of
-// the exposure (a short Focused buff keeps the lane AI from taking them back; it lapses 0.5 seconds later)
+// Scared Assassin: allied minions and mercenaries within reach of an exposed enemy Hero attack it while it stays exposed (a
+// short Focused buff keeps the lane AI from taking them back; it lapses 0.5 seconds later)
 void libAffx_ValeeraFocus () {
     unitgroup foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionEntireMap(), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32))), 0);
     unitgroup mobs;
@@ -432,7 +431,7 @@ void libAffx_ValeeraFocus () {
     int j;
     for (i = 1; i <= UnitGroupCount(foes, c_unitCountAll); i += 1) {
         foe = UnitGroupUnit(foes, i);
-        if (!UnitIsAlive(foe) || !UnitHasBehavior2(foe, "ValeeraGoldenExposed") || UnitBehaviorDuration(foe, "ValeeraGoldenExposed") <= 3.0) {
+        if (!UnitIsAlive(foe) || !UnitHasBehavior2(foe, "ValeeraGoldenExposed")) {
             continue;
         }
         mobs = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(foe), libAffx_ValeeraShadowReach()), UnitFilter(0, 0, (1 << c_targetFilterHeroic) | (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
@@ -625,8 +624,8 @@ bool libAffx_ValeeraScaredDeath_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Recruit (Scared Assassin talent): Eviscerate on an enemy minion or mercenary makes it an allied one at full Health, pushing
-// the nearest lane, and costs only 1 Combo Point (the rest come back)
+// Recruit (Scared Assassin talent): a stealth opener (Ambush, Cheap Shot or Garrote) on an enemy minion or mercenary makes it an
+// allied one at full Health that keeps its enemy buffs, pushing the nearest lane
 bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ValeeraHero();
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
@@ -634,14 +633,8 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     int newOwner;
     fixed keepLife;
     bool keepSapper;
-    string refund = "";
     if (hero == null || target == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker") || !PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit")) {
         return false;
-    }
-    if (UnitHasBehavior2(hero, "ValeeraGoldenFullCombo")) {
-        refund = "ValeeraGoldenRefund2Set";
-    } else if (UnitHasBehavior2(hero, "ValeeraGoldenTwoCombo")) {
-        refund = "ValeeraGoldenRefund1Set";
     }
     Wait(0.0625, c_timeGame);
     if (!UnitIsAlive(target) || !libAffx_ValeeraIsMob(target)) {
@@ -665,9 +658,6 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     UnitIssueOrder(target, Order(libAIAI_gv_aIStopAbil), c_orderQueueReplace);
     libGame_gf_CalculateSpawnedMinionGoalPoints(newOwner, UnitGetPosition(target));
     libAIAI_gf_MinionAIStartMinionAI(-1, target, libGame_gv_spawnedMinionLane, libGame_gv_spawnedMinionFirstWaypointIndex, false, true, false, libGame_gf_EnemyTeam(team), false);
-    if (refund != "" && UnitIsAlive(hero)) {
-        UnitCreateEffectUnit(hero, refund, hero);
-    }
     return true;
 }
 // Call to Arms (Scared Assassin heroic, level 10): a full minion wave for Valeera's team at her position, pushing the nearest lane
@@ -703,15 +693,11 @@ bool libAffx_ValeeraCallToArms_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Scared Assassin talents, once taken: Recruit's 30 second Combo Point timer, and Call to Arms in Smoke Bomb's place
+// Scared Assassin talents, once taken: the Bribe button, and Call to Arms in Smoke Bomb's place
 void libAffx_ValeeraTalentSync () {
     unit hero = libAffx_ValeeraHero();
     if (hero == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
         return;
-    }
-    if (!libAffx_ValeeraRecruitApplied && PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit")) {
-        libAffx_ValeeraRecruitApplied = true;
-        CatalogFieldValueSet(c_gameCatalogBehavior, "ValeeraInCombatComboPoints", "Duration", libAffx_player, "30");
     }
     if (PlayerHasTalent(libAffx_player, "GenericTalentBribe") && !UnitHasBehavior2(hero, "ValeeraGoldenBribeButton")) {
         UnitBehaviorAdd(hero, "ValeeraGoldenBribeButton", hero, 1);
@@ -927,7 +913,10 @@ bool libAffx_ValeeraStart (bool testConds, bool runActions) {
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ValeeraScaredTick_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ValeeraMobDamage_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
     TriggerAddEventUnitDied(TriggerCreate("libAffx_ValeeraScaredDeath_Func"), null);
-    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraTurncoat_Func"), libAffx_player, "ValeeraEviscerateInitialSet");
+    trig = TriggerCreate("libAffx_ValeeraTurncoat_Func");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraAmbushInitialSet");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraCheapShotInitialSet");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraGarroteInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraCallToArms_Func"), libAffx_player, "ValeeraGoldenCallToArmsSet");
     trig = TriggerCreate("libAffx_ValeeraOpenerLinger_Func");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraAmbushInitialSet");
