@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 5 second cooldown, 25 Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 4x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x, 4x and 0.1x are LibAffx multipliers (they multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
+  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 8 second cooldown, 25 Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 4x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x, 4x and 0.1x are LibAffx multipliers (they multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="QhiraWhirlMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="QhiraGrappleMarker" parent="CarryBehaviorParent" />
@@ -12,7 +12,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="QhiraDoubleContractMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Whirling Huntress ===== -->
-  <!-- Revolving Sweep has a 5 second cooldown (16) and costs 25 Mana (70); gain Booming Kick and Lingering Ailment. Whirl quest (25% of each map gains kept for good): 2% Revolving Sweep damage per enemy Hero hit (once per Hero per cast). Huntress quest: takedowns within 6 seconds of a hit; stacks 1-40 Slow the attached Hero 1% each while Qhira swings, 41-80 add 1% bleed damage while swinging each, 81-100 heal 1% of maximum Health per stack over each swing, at 100 the attached Hero is Stunned while she swings (script), then 2% damage each. -->
+  <!-- Revolving Sweep has an 8 second cooldown (16) and costs 25 Mana (70); gain Booming Kick and Lingering Ailment. Whirl quest (25% of each map gains kept for good): 2% Revolving Sweep damage per enemy Hero hit (once per Hero per cast). Huntress quest: takedowns within 6 seconds of a hit; stacks 1-40 Slow the attached Hero 1% each while Qhira swings, 41-80 add 1% bleed damage while swinging each, 81-100 heal 1% of maximum Health per stack over each swing, at 100 the attached Hero is Stunned while she swings (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="QhiraGoldenWhirlTokenCounter" parent="StormQuestToken">
     <Face value="QhiraGoldenWhirlTokenCounter" />
     <Max value="100000" />
