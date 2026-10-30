@@ -289,11 +289,19 @@ bool libAffx_QhiraNearBounty (unit target) {
     }
     return DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(target)) <= 15.0;
 }
-// Bounty Hunter, Trophies 1-40: the Bounty is Slowed while Qhira is near it (checked every 0.25 seconds)
+// Bounty Hunter: Qhira faces the target (within 60 degrees of her facing)
+bool libAffx_QhiraFacing (unit hero, unit target) {
+    fixed diff = AngleBetweenPoints(UnitGetPosition(hero), UnitGetPosition(target)) - UnitGetFacing(hero);
+    diff = ModF(diff + 540.0, 360.0) - 180.0;
+    return AbsF(diff) <= 60.0;
+}
+// Bounty Hunter, Trophies 1-40: the Bounty is Slowed while Qhira is near it; and 15% Movement Speed while she faces a
+// Bounty near her (checked every 0.25 seconds)
 void libAffx_QhiraBountySlowSync () {
     unit hero = libAffx_QhiraHero();
     unit target;
     int i;
+    bool chase = false;
     if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
         return;
     }
@@ -302,6 +310,9 @@ void libAffx_QhiraBountySlowSync () {
         if (target == null || !UnitIsAlive(target)) {
             continue;
         }
+        if (libAffx_QhiraNearBounty(target) && libAffx_QhiraFacing(hero, target)) {
+            chase = true;
+        }
         if (libAffx_QhiraSlowApplied > 0 && libAffx_QhiraNearBounty(target)) {
             if (!UnitHasBehavior2(target, "QhiraGoldenBountySlow")) {
                 UnitBehaviorAdd(target, "QhiraGoldenBountySlow", hero, 1);
@@ -309,6 +320,11 @@ void libAffx_QhiraBountySlowSync () {
         } else if (UnitHasBehavior2(target, "QhiraGoldenBountySlow")) {
             UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
         }
+    }
+    if (chase && !UnitHasBehavior2(hero, "QhiraGoldenBountyChase")) {
+        UnitBehaviorAdd(hero, "QhiraGoldenBountyChase", hero, 1);
+    } else if (!chase && UnitHasBehavior2(hero, "QhiraGoldenBountyChase")) {
+        UnitBehaviorRemove(hero, "QhiraGoldenBountyChase", c_unitBehaviorCountAll);
     }
 }
 bool libAffx_QhiraBountyRange_Func (bool testConds, bool runActions) {
