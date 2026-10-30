@@ -370,6 +370,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="JunkratShowstopper" Accumulator="JunkratShowstopperAccumulator" />
   </CEffectDamage>
 
+  <!-- Explosive End (curse): clones from the Cloned curse don't drop Total Mayhem grenades (the behavior is self-cast) -->
+  <CBehaviorBuff id="JunkratTotalMayhemController">
+    <DisableValidatorArray value="CasterDoesNotHaveAffixClone" />
+  </CBehaviorBuff>
+
   <!-- Encore (Rare): Total Mayhem also goes off where RIP-Tire detonates -->
   <CEffectSet id="JunkratEncoreTireMayhem">
     <Chance value="0" />

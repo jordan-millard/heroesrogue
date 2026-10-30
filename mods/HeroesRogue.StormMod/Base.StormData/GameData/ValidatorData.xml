@@ -13,6 +13,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <Behavior value="AffixPossessionReadyBehavior" />
 </CValidatorUnitCompareBehaviorCount>
 
+<!-- the unit isn't a clone from the Cloned curse -->
+<CValidatorUnitCompareBehaviorCount id="CasterDoesNotHaveAffixClone">
+  <WhichUnit Value="Caster" />
+  <Value value="0" />
+  <Behavior value="AffixClone" />
+</CValidatorUnitCompareBehaviorCount>
+
 <CValidatorUnitCompareBehaviorCount id="CasterDoesNotHaveAffixBuddyDroneOwner">
   <WhichUnit Value="Caster" />
   <Value value="0" />
