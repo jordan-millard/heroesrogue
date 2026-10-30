@@ -52,7 +52,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Death Shroud ===== -->
-  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (25% of each map gains kept for good): 1% more healing (MalthaelGoldenShroudMend, script) and 1% Basic Attack damage per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit or a Reaper's Mark tick (so a Hero dying with the mark on counts); stacks 1-40 make Reaper's Mark deal 0.05% more maximum Health per second each (2% to 4%), 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
+  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; enemy Heroes with Reaper's Mark receive 75% less healing (MalthaelGoldenMarkWound); gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (25% of each map gains kept for good): 1% more healing (MalthaelGoldenShroudMend, script) and 1% Basic Attack damage per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit or a Reaper's Mark tick (so a Hero dying with the mark on counts); stacks 1-40 make Reaper's Mark deal 0.05% more maximum Health per second each (2% to 4%), 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MalthaelGoldenMistTokenCounter" parent="StormQuestToken">
     <Face value="MalthaelGoldenMistTokenCounter" />
     <Max value="100000" />
@@ -240,6 +240,30 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="MalthaelGoldenGraspSet" />
   </CEffectSet>
   <!-- ===== Death Shroud ===== -->
+  <!-- Death Shroud: enemy Heroes with Reaper's Mark receive 75% less healing. Put on when the mark lands and refreshed by each
+       tick (every second), so it ends just after the mark does (Chance 0, the starter turns it on) -->
+  <CBehaviorBuff id="MalthaelGoldenMarkWound" parent="StormHealReduction">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Malthael_ReapersMark.dds" />
+    <Duration value="1.1" />
+    <Modification>
+      <HealTakenAdditiveMultiplier index="Life" value="-0.75" />
+      <VitalRegenMultiplier index="Life" value="-0.75" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MalthaelGoldenMarkWoundApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="MalthaelGoldenMarkWound" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MalthaelReapersMarkApplySet">
+    <EffectArray value="MalthaelGoldenMarkWoundApply" />
+  </CEffectSet>
+  <CEffectSet id="MalthaelReapersMarkWeaponApplySet">
+    <EffectArray value="MalthaelGoldenMarkWoundApply" />
+  </CEffectSet>
+  <CEffectSet id="MalthaelReapersMarkImpactSet">
+    <EffectArray value="MalthaelGoldenMarkWoundApply" />
+  </CEffectSet>
   <!-- Mist: 1% more healing (Soul Rip is Malthael's healing) per stack; the script sets the value (libAffx_MalthaelSync) -->
   <CBehaviorBuff id="MalthaelGoldenShroudMend" parent="CarryBehaviorParent">
     <Modification>
