@@ -1,13 +1,13 @@
 include "AffixTriggers"
 
 // ============================================================
-// Golden Valeera. Eviscerator: Eviscerate hits on enemy Heroes add Cut and open a 6 second takedown window; takedowns
-// add Edge: a Slow, then range, then a chance to refund Combo Points, then at 100 a free Vanish, then 2% damage per stack.
+// Golden Valeera. Eviscerator: 3 Combo Point Eviscerates on enemy Heroes add Cut and open a 6 second takedown window; takedowns
+// add Edge: a Slow, then range, then a chance to refund Combo Points, then at 100 a free Vanish; 1% damage for every stack.
 // Garrote Specialist: Garrotes on enemy Heroes add Wire; takedowns add Hush: Vanish recharge, then a longer bleed, then a
-// longer Silence, then at 100 a free Smoke Bomb (once every 20 seconds), then 2% damage per stack. Scared Assassin: enemy
+// longer Silence, then at 100 a free Smoke Bomb (once every 20 seconds); 1% damage for every stack. Scared Assassin: enemy
 // minion and mercenary deaths near Valeera add Rally (1 per 10); enemy Hero deaths soon after allied minion or mercenary damage
 // near her add Shelter: Attack Speed, then Armor for the allies she supports, then a longer Cheap Shot Stun, then at 100
-// double healing, then 2% more minion and mercenary damage to exposed Heroes per stack.
+// double healing, and 1% more minion and mercenary damage to exposed Heroes for every stack.
 // ============================================================
 
 const fixed libAffx_ValeeraTakedownWindow = 3.0;
@@ -94,12 +94,12 @@ void libAffx_ValeeraSyncEviscerate () {
         libAffx_CatalogReferenceModify("Effect,ValeeraGoldenRefundSwitch,Chance", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraEviscerateAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ValeeraEviscerateAdded3 = wanted;
     }
-    // stacks past 100: 0.02 each to all damage
-    power = MaxI(0, stacks - 100);
+    // stacks past 0: 0.01 each to all damage
+    power = MaxI(0, stacks - 0);
     if (power != libAffx_ValeeraEvisceratePastApplied) {
         libAffx_ValeeraEvisceratePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.01);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.01);
         UnitBehaviorRemove(hero, "ValeeraEvisceratePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ValeeraEvisceratePastCapDamage")) {
@@ -134,12 +134,12 @@ void libAffx_ValeeraSyncGarrote () {
         libAffx_CatalogReferenceModify("Behavior,ValeeraGarroteSilence,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraGarroteAdded3) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ValeeraGarroteAdded3 = wanted;
     }
-    // stacks past 100: 0.02 each to all damage
-    power = MaxI(0, stacks - 100);
+    // stacks past 0: 0.01 each to all damage
+    power = MaxI(0, stacks - 0);
     if (power != libAffx_ValeeraGarrotePastApplied) {
         libAffx_ValeeraGarrotePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.01);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.01);
         UnitBehaviorRemove(hero, "ValeeraGarrotePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ValeeraGarrotePastCapDamage")) {
@@ -438,8 +438,8 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
         libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "ArmorModification.AllArmorBonus", IntToFixed(armor));
         refreshAura = true;
     }
-    // exposed Heroes: 100% more damage from minions and mercenaries, plus 1% per Rally stack and 2% per Shelter stack past 100
-    fraction = 2.0 + 0.01 * UnitGetTokenCount(hero, "ValeeraGoldenRallyTokenCounter") + 0.02 * IntToFixed(MaxI(0, stacks - 100));
+    // exposed Heroes: 100% more damage from minions and mercenaries, plus 1% per Rally stack and 1% per Shelter stack
+    fraction = 2.0 + 0.01 * UnitGetTokenCount(hero, "ValeeraGoldenRallyTokenCounter") + 0.01 * IntToFixed(stacks);
     if (fraction != libAffx_ValeeraExposedFraction) {
         libAffx_ValeeraExposedFraction = fraction;
         libAffx_ValeeraSetAll("ValeeraGoldenExposed", "DamageResponse.ModifyFraction", fraction);
@@ -580,7 +580,9 @@ bool libAffx_ValeeraEviscerateHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_ValeeraEviscerateTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    libGame_gf_ModifyTokenCount(1, "ValeeraGoldenCutTokenCounter", hero);
+    if (UnitHasBehavior2(hero, "ValeeraGoldenFullCombo")) {
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenCutTokenCounter", hero);
+    }
     return true;
 }
 // Garrote Specialist hit on an enemy Hero: takedown window, ValeeraGoldenWireTokenCounter, the heal, and on-hit boons
