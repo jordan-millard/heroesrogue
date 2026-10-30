@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Raynor. Starters: Penetrator (Penetrating Round: 2 charges, half Mana, 30% wider, 10% longer), Sergeant Pepper (Veteran Marksman and Sergeant Pepper, +1 range, a Gambit carried between maps) and Raider Captain (2 Banshees escort Raynor all game for 30% of their damage, 60% during Inspire, with 50 Armor; no Raynor's Raiders). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/RaynorGolden.galaxy. -->
+  <!-- Golden Raynor. Starters: Penetrator (Penetrating Round: 2 charges, half Mana, 30% wider, 10% longer), Sergeant Pepper (Veteran Marksman and Sergeant Pepper, +1 range, a Gambit carried between maps) and Raider Captain (2 Banshees escort Raynor all game for 50% of their damage, 100% during Inspire, with 50 Armor; no Raynor's Raiders). Each damage effect has its own multipliers: starter power, Common boon, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/RaynorGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="RaynorPenetratorMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="RaynorPepperMarker" parent="CarryBehaviorParent" />
@@ -11,6 +11,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="RaynorBigOneMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="RaynorRocketsOutMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="RaynorRaiderSwarmMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="RaynorSharedRushMarker" parent="CarryBehaviorParent" />
   <!-- Sergeant Pepper: the Gambit carried between maps (each stack is 15% Pepper damage; the script adds this map's 4 and
        takes one per death, at most those 4; it is kept in full after a win) -->
   <CBehaviorTokenCounter id="RaynorGoldenGambitTokenCounter" parent="StormQuestToken">
@@ -69,6 +70,21 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Compare value="GT" />
     <Behavior value="RaynorGoldenBansheeInspired" />
   </CValidatorUnitCompareBehaviorCount>
+  <!-- Shared Rush (Uncommon): when Raynor's Adrenaline Rush starts healing him, the script gives each live Banshee the
+       same heal (25% of its maximum Health over 1 second) -->
+  <CBehaviorBuff id="RaynorGoldenBansheeRush">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_raynor_adrenalinrush.dds" />
+    <Duration value="1" />
+    <Period value="0.25" />
+    <PeriodicEffect value="RaynorGoldenBansheeRushHeal" />
+  </CBehaviorBuff>
+  <CEffectModifyUnit id="RaynorGoldenBansheeRushHeal">
+    <ImpactUnit Value="Target" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.0625" />
+    </VitalArray>
+  </CEffectModifyUnit>
   <CBehaviorBuff id="RaynorGoldenBansheeRespawn">
     <Duration value="20" />
   </CBehaviorBuff>
@@ -126,7 +142,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Raider Captain ===== -->
-  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 30% of their damage (60%, with Inspire's attack speed, while Raynor has Inspire; script) with 50 Armor (script), and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.2% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 0.5% Banshee Movement Speed each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
+  <!-- Two Banshees escort Raynor all game (script, through the Raiders unit tracker and leash), dealing 50% of their damage (100%, with Inspire's attack speed, while Raynor has Inspire; script) with 50 Armor (script), and return 20 seconds after dying; Raynor's Raiders cannot be taken (Hyperion at level 10). Air Support quest (25% of each map gains kept for good): 0.2% Banshee damage per Banshee hit on an enemy Hero. Squadron quest: takedowns within 6 seconds of a Banshee hit; stacks 1-40 add 0.5% Banshee Movement Speed each, 41-80 make them return 1% (0.2 seconds) sooner each, 81-100 add 1% Banshee Health each, at 100 a third Banshee (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="RaynorGoldenAirSupportTokenCounter" parent="StormQuestToken">
     <Face value="RaynorGoldenAirSupportTokenCounter" />
     <Max value="100000" />

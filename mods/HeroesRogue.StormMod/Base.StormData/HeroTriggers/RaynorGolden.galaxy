@@ -390,6 +390,22 @@ unit libAffx_RaynorAttackTarget () {
     }
     return null;
 }
+// Shared Rush (Uncommon): Adrenaline Rush on Raynor heals each live Banshee too
+bool libAffx_RaynorSharedRush_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_RaynorHero();
+    unit banshee;
+    int i;
+    if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "RaynorSharedRushMarker")) {
+        return false;
+    }
+    for (i = 1; i <= 3; i += 1) {
+        banshee = libAffx_RaynorBanshee[i];
+        if (banshee != null && UnitIsAlive(banshee)) {
+            UnitBehaviorAdd(banshee, "RaynorGoldenBansheeRush", hero, 1);
+        }
+    }
+    return true;
+}
 // Raider Captain: one of the Banshee damage effect's modifiers (by its key)
 fixed libAffx_RaynorRaiderModifier (string key) {
     return StringToFixed(CatalogReferenceGet("Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[" + key + "].Modifier", libAffx_player));
@@ -616,6 +632,7 @@ bool libAffx_RaynorStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorRaynorsRaidersDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorTick_Func"), 1.0, c_timeGame);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_RaynorBanshees_Func"), 0.25, c_timeGame);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_RaynorSharedRush_Func"), null, "RaynorAdrenalineRushHoT", c_unitBehaviorChangeCreate);
     trig = TriggerCreate("libAffx_RaynorAttackTrack_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorHeroWeaponDamage");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "RaynorGiveEmSomePepperWeaponDamage");

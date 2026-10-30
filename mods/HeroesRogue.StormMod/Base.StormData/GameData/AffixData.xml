@@ -26987,7 +26987,7 @@
             <String String="RaynorGoldenAirSupportTokenCounter 0.25 gains">
                 <Field Id="QuestRetain" Index="1" />
             </String>
-            <String String="1 1 Set Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorRaiderPower].Modifier -0.7">
+            <String String="1 1 Set Effect,RaynorRaynorsRaidersDamage,MultiplicativeModifierArray[RaynorRaiderPower].Modifier -0.5">
                 <Field Id="CatalogModification" />
             </String>
             <String String="AffixAdded libAffx_RaynorStart">
@@ -27052,6 +27052,23 @@
             </User>
             <String String="RaynorInspireFuelTheRush">
                 <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="RaynorSharedRush">
+            <String String="Assets/Textures/storm_ui_icon_raynor_adrenalinrush.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Raynor">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="RaynorRaiderCaptain">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 RaynorSharedRushMarker">
+                <Field Id="Behavior" />
             </String>
         </Instances>
         <Instances Id="RaynorCavalrysArrivedBoon">
