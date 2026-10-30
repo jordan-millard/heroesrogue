@@ -90,7 +90,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Scared Assassin ===== -->
-  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response). While she is stealthed, allied non-Heroes within 12 heal 4% of their maximum Health per second (8% at 100 Shelter), gain 30% Attack Speed and share her general boons at full power (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
+  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response). While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share her general boons at full power (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
   <CBehaviorTokenCounter id="ValeeraGoldenRallyTokenCounter" parent="StormQuestToken">
     <Face value="ValeeraGoldenRallyTokenCounter" />
     <Max value="100000" />
@@ -349,13 +349,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <StateFlags index="Uncommandable" value="1" />
     </Modification>
   </CBehaviorBuff>
-  <!-- while stealthed (script, every 0.25 seconds): allied non-Heroes in range heal 4% of their maximum Health per second
-       (8% at 100 Shelter), and get the Shelter Attack Speed and Armor and a copy of Valeera's general boons (the script sets
+  <!-- while stealthed (script, every 0.25 seconds): allied non-Heroes in range heal 3% of their maximum Health per second
+       (6% at 100 Shelter), and get the Shelter Attack Speed and Armor and a copy of Valeera's general boons (the script sets
        the values for every player and refreshes the buffs) -->
   <CEffectModifyUnit id="ValeeraGoldenShadowMend">
     <ImpactUnit Value="Target" />
     <VitalArray index="Life">
-      <ChangeFraction value="0.01" />
+      <ChangeFraction value="0.0075" />
     </VitalArray>
   </CEffectModifyUnit>
   <CBehaviorBuff id="ValeeraGoldenShadowAura" parent="StormArmor">
@@ -416,7 +416,45 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="ValeeraSmokeBombInitialSet">
     <EffectArray value="ValeeraGoldenCallToArmsSet" />
   </CEffectSet>
+  <!-- Bribe on the Active bar (key 1): the base talent's button behavior is gone, so the script adds this one with it -->
+  <CUnit id="HeroValeera">
+    <AbilArray Link="TalentBucketBribe" />
+  </CUnit>
+  <CBehaviorAbility id="ValeeraGoldenBribeButton">
+    <Face value="ValeeraGoldenBribe" />
+    <Buttons Face="ValeeraGoldenBribe" Type="AbilCmd" AbilCmd="TalentBucketBribe,Execute" />
+  </CBehaviorAbility>
+  <CButton id="ValeeraGoldenBribe" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_talent_bribe.dds" />
+  </CButton>
+  <CButton id="GenericBribeTalent" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_talent_bribe.dds" />
+  </CButton>
+  <!-- Recruit: a converted minion keeps its enemy buffs (Sappers and the rest, see libAffx_UnitKeepsEnemyBuffs) -->
+  <CBehaviorBuff id="ValeeraGoldenRecruited" parent="CarryBehaviorParent" />
+  <!-- more Scared Assassin talents: Lingering Shadows (7), Veterans (16), Siege Call (20, Call to Arms also calls a catapult) -->
+  <CTalent id="ValeeraGoldenLingeringShadows">
+    <Face value="ValeeraGoldenLingeringShadows" />
+  </CTalent>
+  <CButton id="ValeeraGoldenLingeringShadows" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_smokebomb.dds" />
+  </CButton>
+  <CTalent id="ValeeraGoldenVeterans">
+    <Face value="ValeeraGoldenVeterans" />
+  </CTalent>
+  <CButton id="ValeeraGoldenVeterans" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_bladeflurry.dds" />
+  </CButton>
+  <CTalent id="ValeeraGoldenSiegeCall">
+    <Face value="ValeeraGoldenSiegeCall" />
+  </CTalent>
+  <CButton id="ValeeraGoldenSiegeCall" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+  </CButton>
   <CHero id="Valeera">
+    <TalentTreeArray Talent="ValeeraGoldenLingeringShadows" Tier="3" Column="4" />
+    <TalentTreeArray Talent="ValeeraGoldenVeterans" Tier="6" Column="4" />
+    <TalentTreeArray Talent="ValeeraGoldenSiegeCall" Tier="7" Column="5" />
     <TalentTreeArray Talent="GenericTalentBribe" Tier="1" Column="5" />
     <TalentTreeArray Talent="ValeeraGoldenRecruit" Tier="2" Column="5" />
     <TalentTreeArray Talent="ValeeraGoldenCallToArms" Tier="4" Column="3" />

@@ -44,6 +44,8 @@ bool libAffx_ValeeraBulwarkApplied; // Scared Assassin: Bulwark applied to the a
 bool libAffx_ValeeraBannerApplied; // Scared Assassin: Rally Banner applied to the aura
 bool libAffx_ValeeraRecruitApplied; // Scared Assassin: Recruit's 30 second Combo Point timer applied
 bool libAffx_ValeeraCallApplied; // Scared Assassin: Call to Arms put in Smoke Bomb's place
+int libAffx_ValeeraVeterans; // Scared Assassin: Veterans stacks this map
+int libAffx_ValeeraVeteransApplied; // Scared Assassin: Veterans stacks applied to the aura
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ValeeraMobTime; // Scared Assassin: per enemy player, last allied minion damage near Valeera
 
 unit libAffx_ValeeraHero() {
@@ -383,15 +385,19 @@ bool libAffx_ValeeraShadowBoons () {
 // Scared Assassin: keeps a shared buff on a unit in range (re-added when its values changed; it lapses 0.5 seconds after
 // the unit leaves the range or Valeera leaves stealth)
 void libAffx_ValeeraShare (unit u, unit hero, string b, bool refresh) {
+    fixed linger = 0.5;
+    // Lingering Shadows (talent): they last 3 seconds after the unit leaves the range or Valeera leaves stealth
+    if (PlayerHasTalent(libAffx_player, "ValeeraGoldenLingeringShadows")) {
+        linger = 3.5;
+    }
     if (refresh) {
         UnitBehaviorRemove(u, b, 1);
     }
-    if (UnitHasBehavior2(u, b)) {
-        if (UnitBehaviorDuration(u, b) < 0.5) {
-            UnitBehaviorSetDurationRemaining(u, b, 0.5);
-        }
-    } else {
+    if (!UnitHasBehavior2(u, b)) {
         UnitBehaviorAdd(u, b, hero, 1);
+    }
+    if (UnitBehaviorDuration(u, b) < linger) {
+        UnitBehaviorSetDurationRemaining(u, b, linger);
     }
 }
 // Scared Assassin: the range ring while stealthed
@@ -415,8 +421,8 @@ void libAffx_ValeeraRing (unit hero, bool on, fixed range) {
         UnitBehaviorAdd(hero, want, hero, 1);
     }
 }
-// Scared Assassin: allied minions and mercenaries within reach of an exposed enemy Hero attack it while it stays exposed (a
-// short Focused buff keeps the lane AI from taking them back; it lapses when the Hero is no longer exposed)
+// Scared Assassin: allied minions and mercenaries within reach of an exposed enemy Hero attack it for the first 3 seconds of
+// the exposure (a short Focused buff keeps the lane AI from taking them back; it lapses 0.5 seconds later)
 void libAffx_ValeeraFocus () {
     unitgroup foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionEntireMap(), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32))), 0);
     unitgroup mobs;
@@ -426,7 +432,7 @@ void libAffx_ValeeraFocus () {
     int j;
     for (i = 1; i <= UnitGroupCount(foes, c_unitCountAll); i += 1) {
         foe = UnitGroupUnit(foes, i);
-        if (!UnitIsAlive(foe) || !UnitHasBehavior2(foe, "ValeeraGoldenExposed")) {
+        if (!UnitIsAlive(foe) || !UnitHasBehavior2(foe, "ValeeraGoldenExposed") || UnitBehaviorDuration(foe, "ValeeraGoldenExposed") <= 3.0) {
             continue;
         }
         mobs = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(foe), libAffx_ValeeraShadowReach()), UnitFilter(0, 0, (1 << c_targetFilterHeroic) | (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
@@ -449,10 +455,11 @@ void libAffx_ValeeraFocus () {
 bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ValeeraHero();
     unitgroup allies;
+    unitgroup globes;
     unit u;
     fixed range;
     fixed fraction;
-    fixed heal = 0.01;
+    fixed heal = 0.0075;
     bool stealthed;
     bool refreshAura = false;
     bool refreshBoons = false;
@@ -479,7 +486,11 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     if (bulwark) {
         armor = armor * 2;
     }
-    if (speed != libAffx_ValeeraAuraSpeed || armor != libAffx_ValeeraAuraArmor || bulwark != libAffx_ValeeraBulwarkApplied || banner != libAffx_ValeeraBannerApplied) {
+    if (speed != libAffx_ValeeraAuraSpeed || armor != libAffx_ValeeraAuraArmor || bulwark != libAffx_ValeeraBulwarkApplied || banner != libAffx_ValeeraBannerApplied || libAffx_ValeeraVeterans != libAffx_ValeeraVeteransApplied) {
+        libAffx_ValeeraVeteransApplied = libAffx_ValeeraVeterans;
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "Modification.DamageDealtFraction[Basic]", 0.25 + 0.05 * IntToFixed(libAffx_ValeeraVeterans));
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "Modification.DamageDealtFraction[Ability]", 0.25 + 0.05 * IntToFixed(libAffx_ValeeraVeterans));
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "Modification.VitalMaxFractionArray[Life]", 0.25 + 0.05 * IntToFixed(libAffx_ValeeraVeterans));
         libAffx_ValeeraAuraSpeed = speed;
         libAffx_ValeeraAuraArmor = armor;
         libAffx_ValeeraBulwarkApplied = bulwark;
@@ -506,7 +517,7 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     }
     // Shelter at 100: the healing doubles
     if (stacks >= 100) {
-        heal = 0.02;
+        heal = 0.015;
     }
     if (heal != libAffx_ValeeraHealApplied) {
         libAffx_ValeeraHealApplied = heal;
@@ -519,6 +530,14 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     libAffx_ValeeraFocus();
     if (!stealthed) {
         return true;
+    }
+    // experience globes for her team within 20 fly to her (she picks them up as usual, so nothing is counted twice)
+    globes = UnitGroup("ExperienceGlobeMinion", c_playerAny, RegionCircle(UnitGetPosition(hero), 20.0), UnitFilter(0, 0, 0, 0), 0);
+    for (i = 1; i <= UnitGroupCount(globes, c_unitCountAll); i += 1) {
+        u = UnitGroupUnit(globes, i);
+        if (libGame_gf_TeamNumberOfPlayer(UnitGetOwner(u)) == libGame_gf_TeamNumberOfPlayer(libAffx_player) && UnitOrderCount(u) == 0) {
+            UnitIssueOrder(u, OrderTargetingUnit(AbilityCommand("move", 0), hero), c_orderQueueReplace);
+        }
     }
     pact = UnitHasBehavior2(hero, "ValeeraShadowPactMarker");
     allies = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(hero), range + 1.0), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
@@ -581,6 +600,9 @@ bool libAffx_ValeeraScaredDeath_Func (bool testConds, bool runActions) {
         if (libAffx_ValeeraMobTime[owner] > 0.0 && now - libAffx_ValeeraMobTime[owner] <= 6.0) {
             libAffx_ValeeraMobTime[owner] = 0.0;
             libGame_gf_ModifyTokenCount(1, "ValeeraGoldenShelterTokenCounter", hero);
+            if (PlayerHasTalent(libAffx_player, "ValeeraGoldenVeterans") && libAffx_ValeeraVeterans < 10) {
+                libAffx_ValeeraVeterans += 1;
+            }
             libAffx_ValeeraSyncScared();
             libAffx_ValeeraQuestDing();
         }
@@ -610,6 +632,8 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
     int team;
     int newOwner;
+    fixed keepLife;
+    bool keepSapper;
     string refund = "";
     if (hero == null || target == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker") || !PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit")) {
         return false;
@@ -628,10 +652,19 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
         return true;
     }
     newOwner = libGame_gf_ComputerPlayerInTeam(team);
+    keepLife = UnitGetPropertyFixed(target, c_unitPropLifeMax, c_unitPropCurrent);
+    keepSapper = UnitHasBehavior2(target, "AffixSappersBehavior");
+    UnitBehaviorAdd(target, "ValeeraGoldenRecruited", target, 1);
     UnitSetOwner(target, newOwner, true);
+    Wait(0.25, c_timeGame);
+    if (!UnitIsAlive(target)) {
+        return true;
+    }
+    libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats(target, keepLife, keepSapper);
     UnitSetPropertyFixed(target, c_unitPropLifePercent, 100.0);
+    UnitIssueOrder(target, Order(libAIAI_gv_aIStopAbil), c_orderQueueReplace);
     libGame_gf_CalculateSpawnedMinionGoalPoints(newOwner, UnitGetPosition(target));
-    libAIAI_gf_MinionAIStartMinionAI(-1, target, libGame_gv_spawnedMinionLane, libGame_gv_spawnedMinionFirstWaypointIndex, false, false, false, 0, true);
+    libAIAI_gf_MinionAIStartMinionAI(-1, target, libGame_gv_spawnedMinionLane, libGame_gv_spawnedMinionFirstWaypointIndex, false, true, false, libGame_gf_EnemyTeam(team), false);
     if (refund != "" && UnitIsAlive(hero)) {
         UnitCreateEffectUnit(hero, refund, hero);
     }
@@ -640,6 +673,7 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
 // Call to Arms (Scared Assassin heroic, level 10): a full minion wave for Valeera's team at her position, pushing the nearest lane
 bool libAffx_ValeeraCallToArms_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ValeeraHero();
+    unit catapult;
     int owner;
     int lane;
     point at;
@@ -657,6 +691,16 @@ bool libAffx_ValeeraCallToArms_Func (bool testConds, bool runActions) {
     for (k = 0; k <= 2; k += 1) {
         libGame_gf_MinionSpawnMinion(lane, owner, libCore_ge_MinionTypes_Ranged, PointWithOffsetPolar(at, 2.5, 60.0 + 120.0 * IntToFixed(k)), true);
     }
+    // Siege Call (talent): a catapult too (made here: the lane's own catapult rules would usually skip it)
+    if (PlayerHasTalent(libAffx_player, "ValeeraGoldenSiegeCall")) {
+        libNtve_gf_CreateUnitsAtPoint2(1, libCore_gf_DataMinionUnitTypeFromPreset(libCore_ge_MinionTypes_Catapult), 0, owner, PointWithOffsetPolar(at, -3.0, UnitGetFacing(hero)), null);
+        catapult = UnitLastCreated();
+        if (libGame_gv_minionScalingEnabled) {
+            libGame_gf_UpdateScalingForUnit(catapult, libGame_gv_scalingTicks, 0);
+        }
+        libGame_gf_CalculateSpawnedMinionGoalPoints(owner, UnitGetPosition(catapult));
+        libAIAI_gf_MinionAIStartMinionAI(-1, catapult, lane, libGame_gv_spawnedMinionFirstWaypointIndex, false, false, false, 0, false);
+    }
     return true;
 }
 // Scared Assassin talents, once taken: Recruit's 30 second Combo Point timer, and Call to Arms in Smoke Bomb's place
@@ -668,6 +712,9 @@ void libAffx_ValeeraTalentSync () {
     if (!libAffx_ValeeraRecruitApplied && PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit")) {
         libAffx_ValeeraRecruitApplied = true;
         CatalogFieldValueSet(c_gameCatalogBehavior, "ValeeraInCombatComboPoints", "Duration", libAffx_player, "30");
+    }
+    if (PlayerHasTalent(libAffx_player, "GenericTalentBribe") && !UnitHasBehavior2(hero, "ValeeraGoldenBribeButton")) {
+        UnitBehaviorAdd(hero, "ValeeraGoldenBribeButton", hero, 1);
     }
     if (!libAffx_ValeeraCallApplied && PlayerHasTalent(libAffx_player, "ValeeraGoldenCallToArms")) {
         libAffx_ValeeraCallApplied = true;
