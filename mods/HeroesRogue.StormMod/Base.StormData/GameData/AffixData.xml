@@ -27962,6 +27962,541 @@
             </String>
         </Instances>
 
+        <Instances Id="MalthaelSoulRipper">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MalthaelSoulSiphon">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MalthaelColdHand">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MalthaelSoulRipMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MalthaelGoldenHarvestTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MalthaelGoldenReapingTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 MalthaelGoldenRipMend">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="MalthaelGoldenReapingTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MalthaelGoldenHarvestTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelSoulRip,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelSoulRip,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelSoulRip,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelSoulRip,Cost.Charge.TimeUse 4">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelSoulRip,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelSoulRipDamage,MultiplicativeModifierArray[MalthaelSoulRipPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelGoldenSoulRipEchoDamage,MultiplicativeModifierArray[MalthaelSoulRipPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_MalthaelStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MalthaelTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelGrimHarvest">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelSoulRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MalthaelSoulRipDamage,MultiplicativeModifierArray[MalthaelSoulRipCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MalthaelGoldenSoulRipEchoDamage,MultiplicativeModifierArray[MalthaelSoulRipCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelQuickReap">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelSoulRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MalthaelSoulRip,Cost.Charge.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelDieAloneBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelSoulRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelDieAlone">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelSoulCollectorBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelSoulRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelSoulCollector">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelMarkOfTheReaper">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelSoulRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MalthaelGoldenRipMarkSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelDeathsGrasp">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_SoulRip.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelSoulRipper">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MalthaelGoldenGraspSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelDeathShroudStarter">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MalthaelBlackHarvest">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MalthaelThrowingShade">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MalthaelShroudMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MalthaelGoldenMistTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MalthaelGoldenDuskTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MalthaelGoldenDuskTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MalthaelGoldenMistTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="MalthaelReapersMarkBlackHarvestCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="MalthaelDeathShroudThrowingShadeCounter 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelDeathShroud,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelDeathShroud,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelDeathShroud,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelDeathShroud,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelDeathShroud,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,MalthaelDeathShroud,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelDeathShroudThrowingShadeDamage,MultiplicativeModifierArray[MalthaelShroudPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelGoldenShroudReapDamage,MultiplicativeModifierArray[MalthaelShroudPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_MalthaelStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MalthaelTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelShroudOfNight">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelDeathShroudStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MalthaelDeathShroudThrowingShadeDamage,MultiplicativeModifierArray[MalthaelShroudCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MalthaelGoldenShroudReapDamage,MultiplicativeModifierArray[MalthaelShroudCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelQuickShroud">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelDeathShroudStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MalthaelDeathShroud,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelColdHandBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelDeathShroudStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelColdHand">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelMortalityBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelDeathShroudStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelMortality">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelShroudOfDread">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelDeathShroudStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MalthaelGoldenDreadApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelFinalCurtainBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_DeathShroud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelDeathShroudStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelFinalCurtain">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelGoldenCurtainSlowApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelWraithstalker">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MalthaelLastRites">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MalthaelTormentedSouls">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 MalthaelWraithMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MalthaelGoldenHauntTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MalthaelGoldenStalkTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 MalthaelGoldenWraithHealth">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="MalthaelGoldenStalkTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MalthaelGoldenHauntTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="MalthaelLastRitesQuestCooldownToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelWraithStrike,Cost.Charge.CountMax 4">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelWraithStrike,Cost.Charge.CountStart 4">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelWraithStrike,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelWraithStrike,Cost.Charge.TimeUse 4">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MalthaelWraithStrike,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelGoldenWraithAttackReset,Chance 1">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelWraithStrikeDamage,MultiplicativeModifierArray[MalthaelWraithPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MalthaelGoldenDoorDamage,MultiplicativeModifierArray[MalthaelWraithPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_MalthaelStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MalthaelTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelReapersEdge">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelWraithstalker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MalthaelWraithStrikeDamage,MultiplicativeModifierArray[MalthaelWraithCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MalthaelGoldenDoorDamage,MultiplicativeModifierArray[MalthaelWraithCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelPhantomStep">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelWraithstalker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MalthaelWraithStrike,Cost.Charge.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelOnAPaleHorseBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelWraithstalker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelOnAPaleHorse">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelEtherealExistenceBoon">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelWraithstalker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MalthaelEtherealExistence">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelGhostWalk">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelWraithstalker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MalthaelGoldenGhostWalkSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MalthaelDeathsDoor">
+            <String String="Assets/Textures/storm_ui_icon_Malthael_WraithStrike.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Malthael">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MalthaelWraithstalker">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MalthaelGoldenDoorSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

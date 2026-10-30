@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Malthael. Starters: Soul Ripper (Soul Rip: 2 charges, 4 second recharge, Soul Siphon and Cold Hand), Death Shroud (2 charges, 8 second recharge, half Mana, Black Harvest and Throwing Shade) and Wraithstalker (Wraith Strike: 4 charges, 4 second recharge, resets the attack timer; 25% more Health; Last Rites at level 1, no Tormented Souls). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/MalthaelGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="MalthaelSoulRipMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MalthaelShroudMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MalthaelWraithMarker" parent="CarryBehaviorParent" />
+  <!-- Soul Ripper, Reaping at 100: Soul Rip goes off again 1 second later for 50% (script) -->
+  <CEffectDamage id="MalthaelGoldenSoulRipEchoDamage" parent="MalthaelSoulRipDamage">
+    <MultiplicativeModifierArray index="MalthaelGoldenEcho" Modifier="-0.5" />
+  </CEffectDamage>
+  <!-- Wraithstalker, Death's Door (Legendary): a second Wraith Strike hit (double damage) -->
+  <CEffectDamage id="MalthaelGoldenDoorDamage" parent="MalthaelWraithStrikeDamage" />
+
+  <!-- ===== Soul Ripper ===== -->
+  <!-- Soul Rip stores 2 charges (4 second recharge; Soul Collector's 0.5 second cut moves onto it, script); gain Soul Siphon and Cold Hand. Harvest quest (25% of each map gains kept for good): 0.5% Soul Rip damage per enemy Hero hit. Reaping quest: takedowns within 6 seconds of a hit; stacks 1-40 make Soul Rip recharge 1% faster each, 41-80 make it 1% larger each, 81-100 make it heal 1% more each, at 100 it goes off again 1 second later for 50% (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="MalthaelGoldenHarvestTokenCounter" parent="StormQuestToken">
+    <Face value="MalthaelGoldenHarvestTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MalthaelGoldenReapingTokenCounter" parent="StormQuestToken">
+    <Face value="MalthaelGoldenReapingTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MalthaelGoldenHarvestTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MalthaelGoldenHarvestTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MalthaelSoulRipDamage">
+    <MultiplicativeModifierArray index="MalthaelSoulRipPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelSoulRipCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelSoulRipHit" Accumulator="MalthaelGoldenHarvestTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MalthaelSoulRipLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MalthaelGoldenSoulRipEchoDamage">
+    <MultiplicativeModifierArray index="MalthaelSoulRipPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelSoulRipCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelSoulRipHit" Accumulator="MalthaelGoldenHarvestTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MalthaelSoulRipLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MalthaelGoldenHarvestTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Malthael_SoulRip.dds" />
+  </CButton>
+  <CButton id="MalthaelGoldenReapingTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Malthael_SoulRip.dds" />
+  </CButton>
+
+  <!-- ===== Death Shroud ===== -->
+  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (25% of each map gains kept for good): 1% Basic Attack damage per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit; stacks 1-40 make Death Shroud recharge 1% faster each, 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="MalthaelGoldenMistTokenCounter" parent="StormQuestToken">
+    <Face value="MalthaelGoldenMistTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MalthaelGoldenDuskTokenCounter" parent="StormQuestToken">
+    <Face value="MalthaelGoldenDuskTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MalthaelGoldenMistTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MalthaelGoldenMistTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MalthaelDeathShroudThrowingShadeDamage">
+    <MultiplicativeModifierArray index="MalthaelShroudPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelShroudCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelShroudLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MalthaelGoldenShroudReapDamage">
+    <MultiplicativeModifierArray index="MalthaelShroudPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelShroudCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelShroudLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MalthaelWeaponDamage">
+    <MultiplicativeModifierArray index="MalthaelShroudHit" Accumulator="MalthaelGoldenMistTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="MalthaelGoldenMistTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Malthael_DeathShroud.dds" />
+  </CButton>
+  <CButton id="MalthaelGoldenDuskTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Malthael_DeathShroud.dds" />
+  </CButton>
+
+  <!-- ===== Wraithstalker ===== -->
+  <!-- Wraith Strike stores 4 charges (4 second recharge) and resets the attack timer; 25% more Health; Last Rites at level 1 (Tormented Souls cannot be taken; its quest keeps half). Haunt quest (25% of each map gains kept for good): 0.5% Wraith Strike damage per Wraith Strike on an enemy Hero. Stalk quest: takedowns within 6 seconds of a hit; stacks 1-40 make Wraith Strike recharge 1% faster each, 41-80 make it reach 1% farther each, at 100 it no longer needs a target with Reaper's Mark (script), then 2.5% damage each. -->
+  <CBehaviorTokenCounter id="MalthaelGoldenHauntTokenCounter" parent="StormQuestToken">
+    <Face value="MalthaelGoldenHauntTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MalthaelGoldenStalkTokenCounter" parent="StormQuestToken">
+    <Face value="MalthaelGoldenStalkTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MalthaelGoldenHauntTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MalthaelGoldenHauntTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MalthaelWraithStrikeDamage">
+    <MultiplicativeModifierArray index="MalthaelWraithPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelWraithCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelWraithHit" Accumulator="MalthaelGoldenHauntTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MalthaelWraithLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MalthaelGoldenDoorDamage">
+    <MultiplicativeModifierArray index="MalthaelWraithPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelWraithCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MalthaelWraithHit" Accumulator="MalthaelGoldenHauntTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MalthaelWraithLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MalthaelGoldenHauntTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Malthael_WraithStrike.dds" />
+  </CButton>
+  <CButton id="MalthaelGoldenStalkTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_Malthael_WraithStrike.dds" />
+  </CButton>
+  <!-- Soul Ripper: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="MalthaelSoulRipPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Death Shroud: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="MalthaelShroudPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Wraithstalker: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="MalthaelWraithPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- the copies scale with level like the effects they copy -->
+  <CHero id="Malthael">
+    <LevelScalingArray Ability="MalthaelSoulRip">
+      <Modifications>
+        <Catalog value="Effect" />
+        <Entry value="MalthaelGoldenSoulRipEchoDamage" />
+        <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+    <LevelScalingArray Ability="MalthaelWraithStrike">
+      <Modifications>
+        <Catalog value="Effect" />
+        <Entry value="MalthaelGoldenDoorDamage" />
+        <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+  </CHero>
+  <!-- shared: weakened (30% less damage dealt for 3 seconds), used by Shroud of Dread -->
+  <CBehaviorBuff id="MalthaelGoldenWeaken">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Malthael_DeathShroud.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- ===== Soul Ripper ===== -->
+  <!-- Reaping 81-100: Soul Rip (Malthael's only healing) heals 1% more per stack (the quest adds it) -->
+  <CBehaviorBuff id="MalthaelGoldenRipMend" parent="CarryBehaviorParent">
+    <Modification>
+      <HealDealtAdditiveMultiplier index="Life" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Reaping at 100: the echo (the script casts it 1 second after Soul Rip) -->
+  <CEffectEnumArea id="MalthaelGoldenSoulRipEchoSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="MalthaelGoldenSoulRipEchoImpactSet">
+      <Radius value="6.5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="MalthaelGoldenSoulRipEchoImpactSet">
+    <ValidatorArray value="MalthaelReapersMarkTargetHasDebuff" />
+    <EffectArray value="ApplyAbilityImpactReveal" />
+    <EffectArray value="MalthaelGoldenSoulRipEchoDamage" />
+  </CEffectSet>
+  <CActorModel id="MalthaelGoldenSoulRipEchoImpact" parent="StormModelAnimationStyleOneShotUnit">
+    <Remove Terms="ActorCreation" Send="AnimBracketStart BSD Birth Stand Death" />
+    <On Terms="Effect.MalthaelGoldenSoulRipEchoDamage.Start; At Target" Send="Create" />
+    <On Terms="Effect.MalthaelGoldenSoulRipEchoDamage.Start; At Target" Send="AnimPlay Birth Birth,B 0 -1.000000 -1.000000 1.000000 AsTimeScale" />
+    <On Terms="AnimDone; AnimName Birth" Send="Destroy" />
+    <On Terms="ActorCreation" Send="Create Malthael_SoulRip_Punch" />
+    <HostSiteOps Ops="SOpAttachCenter SOpForwardCasterCenter" />
+    <Model value="MalthaelSoulRipImpactFX" />
+  </CActorModel>
+  <!-- Mark of the Reaper (Epic): Soul Rip refreshes Reaper's Mark; Death's Grasp (Legendary): Soul Rip pulls marked enemy
+       Heroes 1.5 toward Malthael and Slows them 40% for 1 second (Chance 0, the boons turn them on) -->
+  <CEffectSet id="MalthaelGoldenRipMarkSet">
+    <Chance value="0" />
+    <EffectArray value="MalthaelReapersMarkApplySet" />
+  </CEffectSet>
+  <CBehaviorBuff id="MalthaelGoldenGraspSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Malthael_SoulRip.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.4" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MalthaelGoldenGraspSlowApply">
+    <Behavior value="MalthaelGoldenGraspSlow" />
+  </CEffectApplyBehavior>
+  <CEffectApplyForce id="MalthaelGoldenGraspPull">
+    <WhichLocation Value="CasterPoint" />
+    <Amount value="-1.5" />
+  </CEffectApplyForce>
+  <CEffectSet id="MalthaelGoldenGraspSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectArray value="MalthaelGoldenGraspPull" />
+    <EffectArray value="MalthaelGoldenGraspSlowApply" />
+  </CEffectSet>
+  <CEffectSet id="MalthaelSoulRipImpactSet">
+    <EffectArray value="MalthaelGoldenRipMarkSet" />
+    <EffectArray value="MalthaelGoldenGraspSet" />
+  </CEffectSet>
+  <!-- ===== Death Shroud ===== -->
+  <!-- Dusk at 100: the shroud's hit also deals 10% of an enemy Hero's maximum Health (the script turns it on) -->
+  <CEffectDamage id="MalthaelGoldenShroudReapDamage" parent="StormSpellDotPercentDamage">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.1" />
+    <Minimum value="1" />
+    <SourceButtonFace value="MalthaelDeathShroud" />
+  </CEffectDamage>
+  <!-- Shroud of Dread (Epic) weakens Heroes, Final Curtain (Legendary) Slows 40% for 2 seconds (Chance 0, the boons turn them on) -->
+  <CEffectApplyBehavior id="MalthaelGoldenDreadApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="MalthaelGoldenWeaken" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="MalthaelGoldenCurtainSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_Malthael_DeathShroud.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.4" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MalthaelGoldenCurtainSlowApply">
+    <Chance value="0" />
+    <Behavior value="MalthaelGoldenCurtainSlow" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MalthaelDeathShroudImpactSet">
+    <EffectArray value="MalthaelGoldenShroudReapDamage" />
+    <EffectArray value="MalthaelGoldenDreadApply" />
+    <EffectArray value="MalthaelGoldenCurtainSlowApply" />
+  </CEffectSet>
+  <!-- ===== Wraithstalker ===== -->
+  <!-- 25% more Health -->
+  <CBehaviorBuff id="MalthaelGoldenWraithHealth" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0.25" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- every Wraith Strike resets the attack timer (after the base effect, which delays it to 1.1 seconds; Chance 0, the
+       starter turns it on) -->
+  <CEffectModifyUnit id="MalthaelGoldenWraithAttackReset">
+    <Chance value="0" />
+    <ImpactUnit Value="Caster" />
+    <Weapon Weapon="MalthaelHeroWeapon" CooldownOperation="Set" CooldownAmount="0" />
+  </CEffectModifyUnit>
+  <!-- Ghost Walk (Epic): 0.5 seconds of Unstoppable, at most once every 6 seconds -->
+  <CBehaviorBuff id="MalthaelGoldenGhostWalk" parent="StormUnstoppableParent">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MalthaelGoldenGhostWalkCooldown">
+    <Duration value="6" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="MalthaelGoldenGhostWalkReady">
+    <WhichUnit Value="Caster" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="MalthaelGoldenGhostWalkCooldown" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="MalthaelGoldenGhostWalkApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MalthaelGoldenGhostWalk" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="MalthaelGoldenGhostWalkCooldownApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MalthaelGoldenGhostWalkCooldown" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MalthaelGoldenGhostWalkSet">
+    <Chance value="0" />
+    <ValidatorArray value="MalthaelGoldenGhostWalkReady" />
+    <EffectArray value="MalthaelGoldenGhostWalkCooldownApply" />
+    <EffectArray value="MalthaelGoldenGhostWalkApply" />
+  </CEffectSet>
+  <CEffectSet id="MalthaelWraithStrikeTeleportSet">
+    <EffectArray value="MalthaelGoldenWraithAttackReset" />
+    <EffectArray value="MalthaelGoldenGhostWalkSet" />
+  </CEffectSet>
+  <!-- Death's Door (Legendary): a Wraith Strike on an enemy Hero below 30% Health (checked before the hit) deals double
+       damage and makes Malthael Protected for 1 second, at most once every 8 seconds -->
+  <CBehaviorBuff id="MalthaelGoldenDoorProtect" parent="StormProtect">
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MalthaelGoldenDoorCooldown">
+    <Duration value="8" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="MalthaelGoldenDoorReady">
+    <WhichUnit Value="Caster" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="MalthaelGoldenDoorCooldown" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareVital id="MalthaelGoldenDoorTargetLow">
+    <Compare value="LT" />
+    <Type value="Fraction" />
+    <Value value="0.3" />
+    <Vital value="Life" />
+  </CValidatorUnitCompareVital>
+  <CEffectApplyBehavior id="MalthaelGoldenDoorProtectApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MalthaelGoldenDoorProtect" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="MalthaelGoldenDoorCooldownApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="MalthaelGoldenDoorCooldown" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="MalthaelGoldenDoorSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="MalthaelGoldenDoorReady" />
+    <ValidatorArray value="MalthaelGoldenDoorTargetLow" />
+    <EffectArray value="MalthaelGoldenDoorCooldownApply" />
+    <EffectArray value="MalthaelGoldenDoorProtectApply" />
+    <EffectArray value="MalthaelGoldenDoorDamage" />
+  </CEffectSet>
+  <!-- the first entry of Wraith Strike's impact (a camera shake) becomes a set that also runs Death's Door, before the hit -->
+  <CEffectSet id="MalthaelGoldenWraithFirstSet">
+    <EffectArray value="CameraShakeLightTauntingTotemSet" />
+    <EffectArray value="MalthaelGoldenDoorSet" />
+  </CEffectSet>
+  <CEffectSet id="MalthaelWraithStrikeImpactSet">
+    <EffectArray index="0" value="MalthaelGoldenWraithFirstSet" />
+  </CEffectSet>
+  <!-- Stalk at 100: Wraith Strike no longer needs a target with Reaper's Mark (the script gives Malthael Unbound) -->
+  <CBehaviorBuff id="MalthaelGoldenUnbound" parent="CarryBehaviorParent" />
+  <CValidatorUnitCompareBehaviorCount id="MalthaelGoldenCasterUnbound">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Value value="0" />
+    <Behavior value="MalthaelGoldenUnbound" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="MalthaelGoldenWraithTargetMarked">
+    <Type value="Or" />
+    <CombineArray value="MalthaelReapersMarkTargetHasDebuff" />
+    <CombineArray value="MalthaelGoldenCasterUnbound" />
+  </CValidatorCombine>
+  <CValidatorCombine id="MalthaelGoldenWraithAnyMarked">
+    <Type value="Or" />
+    <CombineArray value="MalthaelWraithStrikeEnemyWithinProximity" />
+    <CombineArray value="MalthaelGoldenCasterUnbound" />
+  </CValidatorCombine>
+  <CEffectSet id="MalthaelWraithStrikeInitialSet">
+    <ValidatorArray index="0" value="MalthaelGoldenWraithTargetMarked" />
+    <ValidatorArray index="1" value="MalthaelGoldenWraithAnyMarked" />
+  </CEffectSet>
+</Catalog>

@@ -2772,6 +2772,70 @@ Behavior/Name/ValeeraGoldenShadowAura=Shelter
 Behavior/Tooltip/ValeeraGoldenShadowAura=Attack Speed and Armor from Valeera's shadows.
 Behavior/Name/ValeeraGoldenShadowBoons=Shadow Boons
 Behavior/Tooltip/ValeeraGoldenShadowBoons=Valeera's general boons.
+Affix/Name/MalthaelSoulRipper=Soul Ripper
+Affix/Tooltip/MalthaelSoulRipper=Gain <c val="#TooltipNumbers">Soul Siphon</c> and <c val="#TooltipNumbers">Cold Hand</c>. Soul Rip stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">4</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each Soul Rip hit on an enemy Hero adds <c val="#TooltipNumbers">0.5%</c> Soul Rip damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Soul Rip hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make it larger (up to <c val="#TooltipNumbers">40%</c>), then make it heal more (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, Soul Rip goes off again <c val="#TooltipNumbers">1</c> second later for <c val="#TooltipNumbers">50%</c> damage. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/MalthaelGrimHarvest=Grim Harvest
+Affix/Tooltip/MalthaelGrimHarvest=Soul Rip deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/MalthaelQuickReap=Quick Reap
+Affix/Tooltip/MalthaelQuickReap=Soul Rip recharges <c val="#TooltipNumbers">0.25</c> seconds faster.
+Affix/Name/MalthaelDieAloneBoon=Die Alone
+Affix/Tooltip/MalthaelDieAloneBoon=Gain the talent <c val="#TooltipNumbers">Die Alone</c>.
+Affix/Name/MalthaelSoulCollectorBoon=Soul Collector
+Affix/Tooltip/MalthaelSoulCollectorBoon=Gain the talent <c val="#TooltipNumbers">Soul Collector</c>: Soul Rip recharges faster and reaches farther.
+Affix/Name/MalthaelMarkOfTheReaper=Mark of the Reaper
+Affix/Tooltip/MalthaelMarkOfTheReaper=Soul Rip refreshes Reaper's Mark on the enemies it hits.
+Affix/Name/MalthaelDeathsGrasp=Death's Grasp
+Affix/Tooltip/MalthaelDeathsGrasp=Soul Rip pulls the enemy Heroes it hits <c val="#TooltipNumbers">1.5</c> toward you and Slows them by <c val="#TooltipNumbers">40%</c> for <c val="#TooltipNumbers">1</c> second.
+Button/Name/MalthaelGoldenHarvestTokenCounter=Harvest
+Button/Tooltip/MalthaelGoldenHarvestTokenCounter=<c val="#TooltipQuest">Bonus Soul Rip damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MalthaelGoldenHarvestTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/MalthaelGoldenReapingTokenCounter=Reaping
+Button/Tooltip/MalthaelGoldenReapingTokenCounter=<c val="#TooltipQuest">Reaping stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MalthaelGoldenReapingTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Soul Rip recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it <c val="#TooltipNumbers">1%</c> larger. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make it heal <c val="#TooltipNumbers">1%</c> more. At <c val="#TooltipNumbers">100</c> stacks, Soul Rip goes off again <c val="#TooltipNumbers">1</c> second later for <c val="#TooltipNumbers">50%</c> damage. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/MalthaelDeathShroudStarter=Death Shroud
+Affix/Tooltip/MalthaelDeathShroudStarter=Gain <c val="#TooltipNumbers">Black Harvest</c> and <c val="#TooltipNumbers">Throwing Shade</c>. Death Shroud costs half Mana and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">8</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero the shroud hits adds <c val="#TooltipNumbers">1%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a shroud hit make Death Shroud recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make the shroud travel faster and wider (up to <c val="#TooltipNumbers">40%</c>), then make its Reaper's Mark last longer (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, the shroud's hit also deals <c val="#TooltipNumbers">10%</c> of an enemy Hero's maximum Health. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/MalthaelShroudOfNight=Shroud of Night
+Affix/Tooltip/MalthaelShroudOfNight=Death Shroud deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/MalthaelQuickShroud=Quick Shroud
+Affix/Tooltip/MalthaelQuickShroud=Death Shroud recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/MalthaelColdHandBoon=Cold Hand
+Affix/Tooltip/MalthaelColdHandBoon=Gain the talent <c val="#TooltipNumbers">Cold Hand</c>.
+Affix/Name/MalthaelMortalityBoon=Mortality
+Affix/Tooltip/MalthaelMortalityBoon=Gain the talent <c val="#TooltipNumbers">Mortality</c>: Wraith Strike deals bonus damage based on the Hero's maximum Health.
+Affix/Name/MalthaelShroudOfDread=Shroud of Dread
+Affix/Tooltip/MalthaelShroudOfDread=Enemy Heroes hit by Death Shroud deal <c val="#TooltipNumbers">30%</c> less damage for <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/MalthaelFinalCurtainBoon=Final Curtain
+Affix/Tooltip/MalthaelFinalCurtainBoon=Gain the talent <c val="#TooltipNumbers">Final Curtain</c>, and the shroud Slows the enemies it hits by <c val="#TooltipNumbers">40%</c> for <c val="#TooltipNumbers">2</c> seconds.
+Button/Name/MalthaelGoldenMistTokenCounter=Mist
+Button/Tooltip/MalthaelGoldenMistTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MalthaelGoldenMistTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/MalthaelGoldenDuskTokenCounter=Dusk
+Button/Tooltip/MalthaelGoldenDuskTokenCounter=<c val="#TooltipQuest">Dusk stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MalthaelGoldenDuskTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Death Shroud recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the shroud travel <c val="#TooltipNumbers">1%</c> faster and <c val="#TooltipNumbers">1%</c> wider. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make the shroud's Reaper's Mark last <c val="#TooltipNumbers">1%</c> longer. At <c val="#TooltipNumbers">100</c> stacks, the shroud's hit also deals <c val="#TooltipNumbers">10%</c> of an enemy Hero's maximum Health. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/MalthaelWraithstalker=Wraithstalker
+Affix/Tooltip/MalthaelWraithstalker=Gain <c val="#TooltipNumbers">Last Rites</c> at level <c val="#TooltipNumbers">1</c> (you can't take <c val="#TooltipNumbers">Tormented Souls</c>). Wraith Strike stores <c val="#TooltipNumbers">4</c> charges (<c val="#TooltipNumbers">4</c> second recharge) and resets your attack timer. You have <c val="#TooltipNumbers">25%</c> more Health.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Wraith Strike on an enemy Hero adds <c val="#TooltipNumbers">0.5%</c> Wraith Strike damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Wraith Strike make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make it reach farther (up to <c val="#TooltipNumbers">40%</c>). At <c val="#TooltipNumbers">100</c>, Wraith Strike no longer needs a target with Reaper's Mark. Each stack past <c val="#TooltipNumbers">100</c> also adds <c val="#TooltipNumbers">2.5%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/MalthaelReapersEdge=Reaper's Edge
+Affix/Tooltip/MalthaelReapersEdge=Wraith Strike deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/MalthaelPhantomStep=Phantom Step
+Affix/Tooltip/MalthaelPhantomStep=Wraith Strike recharges <c val="#TooltipNumbers">0.25</c> seconds faster.
+Affix/Name/MalthaelOnAPaleHorseBoon=On a Pale Horse
+Affix/Tooltip/MalthaelOnAPaleHorseBoon=Gain the talent <c val="#TooltipNumbers">On a Pale Horse</c>.
+Affix/Name/MalthaelEtherealExistenceBoon=Ethereal Existence
+Affix/Tooltip/MalthaelEtherealExistenceBoon=Gain the talent <c val="#TooltipNumbers">Ethereal Existence</c>: Armor for each enemy Hero with Reaper's Mark.
+Affix/Name/MalthaelGhostWalk=Ghost Walk
+Affix/Tooltip/MalthaelGhostWalk=Wraith Strike makes you Unstoppable for <c val="#TooltipNumbers">0.5</c> seconds (at most once every <c val="#TooltipNumbers">6</c> seconds).
+Affix/Name/MalthaelDeathsDoor=Death's Door
+Affix/Tooltip/MalthaelDeathsDoor=A Wraith Strike on an enemy Hero below <c val="#TooltipNumbers">30%</c> Health deals double damage and makes you Protected for <c val="#TooltipNumbers">1</c> second (at most once every <c val="#TooltipNumbers">8</c> seconds).
+Button/Name/MalthaelGoldenHauntTokenCounter=Haunt
+Button/Tooltip/MalthaelGoldenHauntTokenCounter=<c val="#TooltipQuest">Bonus Wraith Strike damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MalthaelGoldenHauntTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/MalthaelGoldenStalkTokenCounter=Stalk
+Button/Tooltip/MalthaelGoldenStalkTokenCounter=<c val="#TooltipQuest">Stalk stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MalthaelGoldenStalkTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Wraith Strike recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make it reach <c val="#TooltipNumbers">1%</c> farther. At <c val="#TooltipNumbers">100</c> stacks, Wraith Strike no longer needs a target with Reaper's Mark. Each stack past <c val="#TooltipNumbers">100</c> also adds <c val="#TooltipNumbers">2.5%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/MalthaelGoldenWeaken=Shroud of Dread
+Behavior/Tooltip/MalthaelGoldenWeaken=Dealing 30% less damage.
+Behavior/Name/MalthaelGoldenGraspSlow=Death's Grasp
+Behavior/Tooltip/MalthaelGoldenGraspSlow=Slowed.
+Behavior/Name/MalthaelGoldenCurtainSlow=Final Curtain
+Behavior/Tooltip/MalthaelGoldenCurtainSlow=Slowed.
+Behavior/Name/MalthaelGoldenGhostWalk=Ghost Walk
+Behavior/Tooltip/MalthaelGoldenGhostWalk=Unstoppable.
+Behavior/Name/MalthaelGoldenDoorProtect=Death's Door
+Behavior/Tooltip/MalthaelGoldenDoorProtect=Protected.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

@@ -1,0 +1,363 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Malthael. Soul Ripper: Soul Rip hits on enemy Heroes add Harvest; takedowns add Reaping: recharge, then size, then
+// healing, then at 100 a second Soul Rip 1 second later for 50%. Death Shroud: the shroud hitting enemy Heroes adds Mist
+// (Basic Attack damage); takedowns add Dusk: recharge, then speed and width, then a longer Reaper's Mark, then at 100 a 10%
+// maximum Health hit. Wraithstalker: Wraith Strikes on enemy Heroes add Haunt; takedowns add Stalk: recharge, then range,
+// then at 100 no Reaper's Mark needed, then 2.5% damage per stack.
+// ============================================================
+
+const fixed libAffx_MalthaelTakedownWindow = 3.0;
+const fixed libAffx_MalthaelPastCapDamagePerStack = 0.01;
+bool libAffx_MalthaelStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MalthaelSoulRipTime; // per enemy player, last Soul Ripper hit
+int libAffx_MalthaelSoulRipAdded; // Soul Ripper: takedown stacks already applied to the catalog this game
+int libAffx_MalthaelSoulRipAdded2; // Soul Ripper: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MalthaelSoulRipAdded3; // Soul Ripper: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_MalthaelSoulRipPastApplied; // Soul Ripper: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MalthaelShroudTime; // per enemy player, last Death Shroud hit
+int libAffx_MalthaelShroudAdded; // Death Shroud: takedown stacks already applied to the catalog this game
+int libAffx_MalthaelShroudAdded2; // Death Shroud: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MalthaelShroudAdded3; // Death Shroud: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_MalthaelShroudPastApplied; // Death Shroud: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MalthaelWraithTime; // per enemy player, last Wraithstalker hit
+int libAffx_MalthaelWraithAdded; // Wraithstalker: takedown stacks already applied to the catalog this game
+int libAffx_MalthaelWraithAdded2; // Wraithstalker: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MalthaelWraithPastApplied; // Wraithstalker: takedown quest stacks past the cap applied as damage this game
+int libAffx_MalthaelShroudSpeed; // Death Shroud: Dusk stacks applied as flight speed
+bool libAffx_MalthaelReapOn; // Death Shroud: the 10% hit is on
+bool libAffx_MalthaelCollectorApplied; // Soul Ripper: Soul Collector's cooldown cut is on the charges
+
+unit libAffx_MalthaelHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_MalthaelIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_MalthaelStacks(string tokenId) {
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_MalthaelQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_MalthaelInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_MalthaelTakedownWindow;
+}
+// MalthaelGoldenReapingTokenCounter: stacks 1-40: 1% of the 4 second recharge each; 41-80 size, 81-100 healing, 100 echo (script), then damage
+void libAffx_MalthaelSyncSoulRip () {
+    unit hero = libAffx_MalthaelHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MalthaelSoulRipMarker")) {
+        return;
+    }
+    stacks = libAffx_MalthaelStacks("MalthaelGoldenReapingTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MalthaelSoulRipAdded) {
+        libAffx_CatalogReferenceModify("Abil,MalthaelSoulRip,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelSoulRipAdded) * -0.04, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelSoulRipAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% larger each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MalthaelSoulRipAdded2) {
+        libAffx_CatalogReferenceModify("Effect,MalthaelSoulRipSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelSoulRipAdded2) * 0.065, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MalthaelGoldenSoulRipEchoSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelSoulRipAdded2) * 0.065, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Validator,MalthaelSoulRipTargetWithinRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelSoulRipAdded2) * 0.0575, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Validator,MalthaelSoulRipSoulCollectorTargetWithinRange,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelSoulRipAdded2) * 0.07375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelSoulRipAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% more healing each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MalthaelSoulRipAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,MalthaelGoldenRipMend,Modification.HealDealtAdditiveMultiplier[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelSoulRipAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelSoulRipAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MalthaelSoulRipPastApplied) {
+        libAffx_MalthaelSoulRipPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelSoulRipPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelSoulRipPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "MalthaelSoulRipPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MalthaelSoulRipPastCapDamage")) {
+        UnitBehaviorAdd(hero, "MalthaelSoulRipPastCapDamage", hero, 1);
+    }
+}
+// MalthaelGoldenDuskTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 speed (libAffx_MalthaelSync) and width, 81-100 a longer Reaper's Mark (script), 100 the 10% hit, then damage
+void libAffx_MalthaelSyncShroud () {
+    unit hero = libAffx_MalthaelHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MalthaelShroudMarker")) {
+        return;
+    }
+    stacks = libAffx_MalthaelStacks("MalthaelGoldenDuskTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MalthaelShroudAdded) {
+        libAffx_CatalogReferenceModify("Abil,MalthaelDeathShroud,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelShroudAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelShroudAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% wider each (the speed is script)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MalthaelShroudAdded2) {
+        libAffx_CatalogReferenceModify("Effect,MalthaelDeathShroudSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelShroudAdded2) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MalthaelDeathShroudFinalCurtainSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelShroudAdded2) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelShroudAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the shroud's Reaper's Mark lasts 1% longer each (libAffx_MalthaelShroudMark_Func)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MalthaelShroudAdded3) {
+        libAffx_MalthaelShroudAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MalthaelShroudPastApplied) {
+        libAffx_MalthaelShroudPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelShroudPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelShroudPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "MalthaelShroudPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MalthaelShroudPastCapDamage")) {
+        UnitBehaviorAdd(hero, "MalthaelShroudPastCapDamage", hero, 1);
+    }
+}
+// MalthaelGoldenStalkTokenCounter: stacks 1-40: 1% of the 4 second recharge each; 41-80 range, 100 no Reaper's Mark needed (libAffx_MalthaelSync), then 2.5% damage
+void libAffx_MalthaelSyncWraith () {
+    unit hero = libAffx_MalthaelHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MalthaelWraithMarker")) {
+        return;
+    }
+    stacks = libAffx_MalthaelStacks("MalthaelGoldenStalkTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MalthaelWraithAdded) {
+        libAffx_CatalogReferenceModify("Abil,MalthaelWraithStrike,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelWraithAdded) * -0.04, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelWraithAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% farther each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MalthaelWraithAdded2) {
+        libAffx_CatalogReferenceModify("Abil,MalthaelWraithStrike,Range[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelWraithAdded2) * 0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MalthaelWraithAdded2 = wanted;
+    }
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MalthaelWraithPastApplied) {
+        libAffx_MalthaelWraithPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelWraithPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelWraithPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "MalthaelWraithPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MalthaelWraithPastCapDamage")) {
+        UnitBehaviorAdd(hero, "MalthaelWraithPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_MalthaelSync_Func (bool testConds, bool runActions) {
+    libAffx_MalthaelSyncSoulRip();
+    libAffx_MalthaelSyncShroud();
+    libAffx_MalthaelSyncWraith();
+    return true;
+}
+// Soul Ripper, Reaping at 100: Soul Rip goes off again 1 second later for 50%
+bool libAffx_MalthaelSoulRipEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MalthaelSoulRipMarker") || libAffx_MalthaelStacks("MalthaelGoldenReapingTokenCounter") < 100) {
+        return false;
+    }
+    Wait(1.0, c_timeGame);
+    if (UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "MalthaelGoldenSoulRipEchoSearch", hero);
+    }
+    return true;
+}
+// Death Shroud, Dusk 81-100: Reaper's Mark from the shroud lasts 1% longer per stack
+bool libAffx_MalthaelShroudMark_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MalthaelHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    int longer;
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "MalthaelShroudMarker")) {
+        return false;
+    }
+    longer = MaxI(0, MinI(libAffx_MalthaelStacks("MalthaelGoldenDuskTokenCounter") - 80, 20));
+    if (longer == 0) {
+        return true;
+    }
+    Wait(0.0625, c_timeGame);
+    if (UnitIsAlive(target) && UnitHasBehavior2(target, "MalthaelReapersMarkDebuff")) {
+        UnitBehaviorSetDurationRemaining(target, "MalthaelReapersMarkDebuff", UnitBehaviorDurationTotal(target, "MalthaelReapersMarkDebuff") * (1.0 + 0.01 * IntToFixed(longer)));
+    }
+    return true;
+}
+// every second: Death Shroud's flight speed (Dusk 41-80) and its 10% hit (Dusk 100), Wraithstalker's Unbound (Stalk 100),
+// and Soul Collector's 0.5 second cooldown cut moved onto Soul Rip's charges
+void libAffx_MalthaelSync () {
+    unit hero = libAffx_MalthaelHero();
+    int fast;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "MalthaelShroudMarker")) {
+        fast = MaxI(0, MinI(libAffx_MalthaelStacks("MalthaelGoldenDuskTokenCounter") - 40, 40));
+        if (fast != libAffx_MalthaelShroudSpeed) {
+            libAffx_MalthaelShroudSpeed = fast;
+            CatalogFieldValueSet(c_gameCatalogMover, "MalthaelDeathShroudMissileMover", "MotionPhases[0].Speed", libAffx_player, FixedToString(10.0 * (1.0 + 0.01 * IntToFixed(fast)), 4));
+            CatalogFieldValueSet(c_gameCatalogMover, "MalthaelDeathShroudMissileMover", "MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(10.0 * (1.0 + 0.01 * IntToFixed(fast)), 4));
+        }
+        if (!libAffx_MalthaelReapOn && libAffx_MalthaelStacks("MalthaelGoldenDuskTokenCounter") >= 100) {
+            libAffx_MalthaelReapOn = true;
+            CatalogFieldValueSet(c_gameCatalogEffect, "MalthaelGoldenShroudReapDamage", "Chance", libAffx_player, "1");
+        }
+    }
+    if (UnitHasBehavior2(hero, "MalthaelWraithMarker") && libAffx_MalthaelStacks("MalthaelGoldenStalkTokenCounter") >= 100 && !UnitHasBehavior2(hero, "MalthaelGoldenUnbound")) {
+        UnitBehaviorAdd(hero, "MalthaelGoldenUnbound", hero, 1);
+    }
+    if (!libAffx_MalthaelCollectorApplied && UnitHasBehavior2(hero, "MalthaelSoulRipMarker") && PlayerHasTalent(libAffx_player, "MalthaelSoulCollector")) {
+        libAffx_MalthaelCollectorApplied = true;
+        libAffx_CatalogReferenceModify("Abil,MalthaelSoulRip,Cost[0].Charge.TimeUse", libAffx_player, "-0.5", c_upgradeOperationAdd);
+    }
+}
+bool libAffx_MalthaelTick_Func (bool testConds, bool runActions) {
+    libAffx_MalthaelSync();
+    return true;
+}
+// Soul Ripper hit on an enemy Hero: takedown window, MalthaelGoldenHarvestTokenCounter, the heal, and on-hit boons
+bool libAffx_MalthaelSoulRipHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MalthaelIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MalthaelSoulRipMarker")) {
+        return false;
+    }
+    libAffx_MalthaelSoulRipTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MalthaelGoldenHarvestTokenCounter", hero);
+    return true;
+}
+// Death Shroud hit on an enemy Hero: takedown window, MalthaelGoldenMistTokenCounter, the heal, and on-hit boons
+bool libAffx_MalthaelShroudHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MalthaelIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MalthaelShroudMarker")) {
+        return false;
+    }
+    libAffx_MalthaelShroudTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MalthaelGoldenMistTokenCounter", hero);
+    return true;
+}
+// Wraithstalker hit on an enemy Hero: takedown window, MalthaelGoldenHauntTokenCounter, the heal, and on-hit boons
+bool libAffx_MalthaelWraithHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MalthaelIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MalthaelWraithMarker")) {
+        return false;
+    }
+    libAffx_MalthaelWraithTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MalthaelGoldenHauntTokenCounter", hero);
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_MalthaelTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_MalthaelTakedownCrossStart () {
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_MalthaelTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenReapingTokenCounter"));
+    libAffx_MalthaelTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenDuskTokenCounter"));
+    libAffx_MalthaelTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenStalkTokenCounter"));
+}
+void libAffx_MalthaelTakedownCross () {
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenReapingTokenCounter")) == libAffx_MalthaelTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenDuskTokenCounter")) == libAffx_MalthaelTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenStalkTokenCounter")) == libAffx_MalthaelTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "MalthaelSoulRipMarker") && FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenReapingTokenCounter")) == libAffx_MalthaelTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "MalthaelGoldenReapingTokenCounter", hero);
+        libAffx_MalthaelSyncSoulRip();
+    }
+    if (UnitHasBehavior2(hero, "MalthaelShroudMarker") && FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenDuskTokenCounter")) == libAffx_MalthaelTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "MalthaelGoldenDuskTokenCounter", hero);
+        libAffx_MalthaelSyncShroud();
+        libAffx_MalthaelSync();
+    }
+    if (UnitHasBehavior2(hero, "MalthaelWraithMarker") && FixedToInt(UnitGetTokenCount(hero, "MalthaelGoldenStalkTokenCounter")) == libAffx_MalthaelTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "MalthaelGoldenStalkTokenCounter", hero);
+        libAffx_MalthaelSyncWraith();
+        libAffx_MalthaelSync();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_MalthaelTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_MalthaelHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_MalthaelTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "MalthaelSoulRipMarker") && libAffx_MalthaelSoulRipTime[killedPlayer] > 0.0 && now - libAffx_MalthaelSoulRipTime[killedPlayer] <= 6.0) {
+        libAffx_MalthaelSoulRipTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MalthaelGoldenReapingTokenCounter", hero);
+        libAffx_MalthaelSyncSoulRip();
+        libAffx_MalthaelQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "MalthaelShroudMarker") && libAffx_MalthaelShroudTime[killedPlayer] > 0.0 && now - libAffx_MalthaelShroudTime[killedPlayer] <= 6.0) {
+        libAffx_MalthaelShroudTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MalthaelGoldenDuskTokenCounter", hero);
+        libAffx_MalthaelSyncShroud();
+        libAffx_MalthaelQuestDing();
+        libAffx_MalthaelSync();
+    }
+    if (UnitHasBehavior2(hero, "MalthaelWraithMarker") && libAffx_MalthaelWraithTime[killedPlayer] > 0.0 && now - libAffx_MalthaelWraithTime[killedPlayer] <= 6.0) {
+        libAffx_MalthaelWraithTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MalthaelGoldenStalkTokenCounter", hero);
+        libAffx_MalthaelSyncWraith();
+        libAffx_MalthaelQuestDing();
+        libAffx_MalthaelSync();
+    }
+    libAffx_MalthaelTakedownCross();
+    return true;
+}
+bool libAffx_MalthaelStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_MalthaelStarted) {
+        return true;
+    }
+    libAffx_MalthaelStarted = true;
+    trig = TriggerCreate("libAffx_MalthaelSoulRipHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelSoulRipDamage");
+    trig = TriggerCreate("libAffx_MalthaelShroudHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelDeathShroudThrowingShadeDamage");
+    trig = TriggerCreate("libAffx_MalthaelWraithHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelWraithStrikeDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MalthaelSoulRipEcho_Func"), libAffx_player, "MalthaelSoulRipInitialSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MalthaelShroudMark_Func"), libAffx_player, "MalthaelDeathShroudImpactSet");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MalthaelTick_Func"), 1.0, c_timeGame);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MalthaelSync_Func"), 1.0, c_timeGame);
+    return true;
+}
