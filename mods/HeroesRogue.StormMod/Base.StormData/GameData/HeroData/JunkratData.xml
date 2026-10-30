@@ -370,9 +370,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="JunkratShowstopper" Accumulator="JunkratShowstopperAccumulator" />
   </CEffectDamage>
 
-  <!-- Explosive End (curse): clones from the Cloned curse don't drop Total Mayhem grenades (the behavior is self-cast) -->
+  <!-- Explosive End (curse): hallucinations (Nova's Holo Clone, Samuro's Mirror Images, the Cloned curse's clones) don't
+       drop Total Mayhem grenades. TargetNotHallucination checks the unit with the behavior; the Cloned curse's clones are
+       also checked by their own marker (the behavior is self-cast there) -->
   <CBehaviorBuff id="JunkratTotalMayhemController">
     <DisableValidatorArray value="CasterDoesNotHaveAffixClone" />
+    <DisableValidatorArray value="TargetNotHallucination" />
   </CBehaviorBuff>
 
   <!-- Encore (Rare): Total Mayhem also goes off where RIP-Tire detonates -->
