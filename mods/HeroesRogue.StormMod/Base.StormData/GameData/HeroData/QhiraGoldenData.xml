@@ -181,8 +181,28 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <Behavior value="QhiraGoldenSwingHealBuff" />
   </CEffectApplyBehavior>
+  <!-- Rending Rotation (Epic): the attached Hero loses 4% of its maximum Health per second while Qhira swings
+       around it (1% every 0.25 seconds; Chance 0, the boon turns it on) -->
+  <CEffectDamage id="QhiraGoldenSwingRendDamage" parent="StormSpellPercentDamage">
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.01" />
+    <SourceButtonFace value="NexusHunterRevolvingSweep" />
+  </CEffectDamage>
+  <CBehaviorBuff id="QhiraGoldenSwingRend">
+    <Alignment value="Negative" />
+    <Duration value="3600" />
+    <Period value="0.25" />
+    <PeriodicEffect value="QhiraGoldenSwingRendDamage" />
+    <RemoveValidatorArray value="NexusHunterRevolvingSweepCasterHasMainBehavior" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenSwingRendApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="QhiraGoldenSwingRend" />
+  </CEffectApplyBehavior>
   <!-- the attach: after the base effects (Qhira has her swing behavior by then) -->
   <CEffectSet id="NexusHunterRevolvingSweepImpactSet">
+    <EffectArray value="QhiraGoldenSwingRendApply" />
     <EffectArray value="QhiraGoldenSweepSlowApply" />
     <EffectArray value="QhiraGoldenSweepHoldApply" />
     <EffectArray value="QhiraGoldenSwingHealApply" />
