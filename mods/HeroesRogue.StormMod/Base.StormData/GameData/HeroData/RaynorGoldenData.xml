@@ -176,6 +176,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="RaynorRaiderHit" Accumulator="RaynorGoldenAirSupportTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="RaynorRaiderLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="RaynorGoldenInspired" Validator="RaynorGoldenBansheeIsInspired" Modifier="1" />
+    <MultiplicativeModifierArray index="RaynorRaiderPayroll" Validator="RaynorGoldenNever" Modifier="0" />
     <DamageModifierSource Value="Caster" />
   </CEffectDamage>
   <CButton id="RaynorGoldenAirSupportTokenCounter" parent="StormButtonParent">
@@ -304,10 +305,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="RaynorGoldenRaidersRollCooldown" />
   </CEffectSet>
   <!-- ===== Raider Captain ===== -->
-  <!-- Raider Swarm (Legendary): each Banshee hit on an enemy Hero takes 0.5 seconds off Hyperion's cooldown (1 second per
+  <!-- Raider Swarm (Legendary): each Banshee hit on an enemy Hero also deals 0.25% of that Hero's maximum Health (0.5% per
        two-missile attack; the script casts it) -->
-  <CEffectModifyUnit id="RaynorGoldenSwarmCooldown">
-    <ImpactUnit Value="Caster" />
-    <Cost Abil="RaynorHyperion,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" />
-  </CEffectModifyUnit>
+  <CEffectDamage id="RaynorGoldenSwarmDamage" parent="StormSpellPercentDamage">
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.0025" />
+    <SourceButtonFace value="RaynorRaynorsRaider" />
+  </CEffectDamage>
+  <!-- Raider Payroll (Common): its stacks go into this key, which never counts by itself (the validator never passes);
+       the script reads it and turns it into a true multiplier through the Common key -->
+  <CValidatorUnitCompareBehaviorCount id="RaynorGoldenNever">
+    <WhichUnit Value="Caster" />
+    <Compare value="LT" />
+    <Value value="0" />
+    <Behavior value="RaynorGoldenBansheeInspired" />
+  </CValidatorUnitCompareBehaviorCount>
 </Catalog>

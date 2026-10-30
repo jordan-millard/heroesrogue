@@ -2606,11 +2606,9 @@ Button/Tooltip/RaynorGoldenSharpshooterTokenCounter=<c val="#TooltipQuest">Sharp
 Affix/Name/RaynorRaiderCaptain=Raider Captain
 Affix/Tooltip/RaynorRaiderCaptain=Two Banshees escort you all game, attacking your targets for <c val="#TooltipNumbers">50%</c> of Raynor's Raiders' damage (<c val="#TooltipNumbers">100%</c> and Inspire's Attack Speed while you have Inspire), with <c val="#TooltipNumbers">50</c> Armor. They return <c val="#TooltipNumbers">20</c> seconds after dying. You can't take <c val="#TooltipNumbers">Raynor's Raiders</c>; <c val="#TooltipNumbers">Hyperion</c> is available at level <c val="#TooltipNumbers">10</c>. They also get half of your general boons' stats.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Banshee hit on an enemy Hero adds <c val="#TooltipNumbers">0.2%</c> Banshee damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Banshee hit add Banshee Movement Speed (up to <c val="#TooltipNumbers">20%</c>), then make them return sooner (up to <c val="#TooltipNumbers">40%</c>), then add Banshee Health (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, a third Banshee joins. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
 Affix/Name/RaynorRaiderPayroll=Raider Payroll
-Affix/Tooltip/RaynorRaiderPayroll=Banshees deal <c val="#TooltipNumbers">20%</c> more damage.
+Affix/Tooltip/RaynorRaiderPayroll=Banshees deal <c val="#TooltipNumbers">20%</c> more damage. This multiplies all their other damage bonuses (stacks of it add together).
 Affix/Name/RaynorTightFormation=Tight Formation
 Affix/Tooltip/RaynorTightFormation=Banshees return <c val="#TooltipNumbers">2</c> seconds sooner.
-Affix/Name/RaynorFuelTheRushBoon=Fuel the Rush
-Affix/Tooltip/RaynorFuelTheRushBoon=Gain the talent <c val="#TooltipNumbers">Fuel the Rush</c>.
 Affix/Name/RaynorSharedRush=Shared Rush
 Affix/Tooltip/RaynorSharedRush=Adrenaline Rush also heals your Banshees for <c val="#TooltipNumbers">25%</c> of their maximum Health over <c val="#TooltipNumbers">1</c> second.
 Affix/Name/RaynorCavalrysArrivedBoon=Cavalry's Arrived
@@ -2618,7 +2616,7 @@ Affix/Tooltip/RaynorCavalrysArrivedBoon=Gain the talent <c val="#TooltipNumbers"
 Affix/Name/RaynorRocketsOut=Rockets Out
 Affix/Tooltip/RaynorRocketsOut=When you cast Penetrating Round, each Banshee fires a volley (a full Banshee attack) at the nearest enemy, a Hero if possible.
 Affix/Name/RaynorRaiderSwarm=Raider Swarm
-Affix/Tooltip/RaynorRaiderSwarm=Each Banshee attack on an enemy Hero takes <c val="#TooltipNumbers">1</c> second off Hyperion's cooldown.
+Affix/Tooltip/RaynorRaiderSwarm=Each Banshee attack on an enemy Hero also deals <c val="#TooltipNumbers">0.5%</c> of that Hero's maximum Health.
 Button/Name/RaynorGoldenAirSupportTokenCounter=Air Support
 Button/Tooltip/RaynorGoldenAirSupportTokenCounter=<c val="#TooltipQuest">Bonus Banshee damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:RaynorGoldenAirSupportTokenCounter$*0.2" precision="1"/>%</c></c>
 Button/Name/RaynorGoldenSquadronTokenCounter=Squadron
