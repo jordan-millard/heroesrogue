@@ -459,6 +459,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
   <!-- Recruit: a converted minion keeps its enemy buffs (Sappers and the rest, see libAffx_UnitKeepsEnemyBuffs) -->
   <CBehaviorBuff id="ValeeraGoldenRecruited" parent="CarryBehaviorParent" />
+  <!-- Recruit: the stealth openers (and Garrote's bleed) deal no damage to non-Heroes (the script adds this with the talent) -->
+  <CBehaviorBuff id="ValeeraGoldenRecruitGentle" parent="CarryBehaviorParent">
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="-;Heroic,Structure" ModifyFraction="0">
+      <RequireEffectArray value="ValeeraAmbushDamage" />
+      <RequireEffectArray value="ValeeraCheapShotDamage" />
+      <RequireEffectArray value="ValeeraGarroteDamage" />
+      <RequireEffectArray value="ValeeraGarroteDoTDamage" />
+    </DamageResponse>
+  </CBehaviorBuff>
   <!-- more Scared Assassin talents: Lingering Shadows (7), Veterans (16), Siege Call (20, Call to Arms also calls a catapult) -->
   <CTalent id="ValeeraGoldenLingeringShadows">
     <Face value="ValeeraGoldenLingeringShadows" />

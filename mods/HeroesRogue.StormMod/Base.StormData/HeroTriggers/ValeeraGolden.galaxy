@@ -654,6 +654,12 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
         return true;
     }
     libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats(target, keepLife, keepSapper);
+    // the opener's own debuffs come off the new ally
+    UnitBehaviorRemove(target, "ValeeraGarrote", c_unitBehaviorCountAll);
+    UnitBehaviorRemove(target, "ValeeraGarroteSilence", c_unitBehaviorCountAll);
+    UnitBehaviorRemove(target, "ValeeraCheapShotStun", c_unitBehaviorCountAll);
+    UnitBehaviorRemove(target, "ValeeraCheapShotBlind", c_unitBehaviorCountAll);
+    UnitBehaviorRemove(target, "ValeeraCheapShotNonHeroesBlind", c_unitBehaviorCountAll);
     UnitSetPropertyFixed(target, c_unitPropLifePercent, 100.0);
     UnitIssueOrder(target, Order(libAIAI_gv_aIStopAbil), c_orderQueueReplace);
     libGame_gf_CalculateSpawnedMinionGoalPoints(newOwner, UnitGetPosition(target));
@@ -698,6 +704,9 @@ void libAffx_ValeeraTalentSync () {
     unit hero = libAffx_ValeeraHero();
     if (hero == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
         return;
+    }
+    if (PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit") && !UnitHasBehavior2(hero, "ValeeraGoldenRecruitGentle")) {
+        UnitBehaviorAdd(hero, "ValeeraGoldenRecruitGentle", hero, 1);
     }
     if (PlayerHasTalent(libAffx_player, "GenericTalentBribe") && !UnitHasBehavior2(hero, "ValeeraGoldenBribeButton")) {
         UnitBehaviorAdd(hero, "ValeeraGoldenBribeButton", hero, 1);
