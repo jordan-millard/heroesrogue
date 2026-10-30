@@ -25,13 +25,6 @@ int libAffx_mapChoiceDialog = c_invalidDialogId;
 int libAffx_mapChoiceSelected;
 bool libAffx_mapChoiceAram; // offering the ARAM challenge instead of the next round
 bool libAffx_mapChoiceTriggerRegistered;
-// Map bans: every 4 maps won earns one. A ban takes that option off the screen (it isn't replaced) and keeps the map out of
-// the rest of the run's choices. Saved in the run's bank section, so a new run starts without any.
-const int libAffx_mapChoiceMapsPerBan = 4;
-int[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceBanButtons;
-int[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceBannedLabels;
-bool[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceBanned;
-int libAffx_mapChoiceBansLabel = c_invalidDialogControlId;
 
 // Maps that can occupy the rotating slot
 int libAffx_MapChoiceRotationMap(int index) {
@@ -135,52 +128,6 @@ string libAffx_MapChoiceGetMapImage(int map) {
         return "Assets/Textures/heroesrogue_mapchoice_warheadjunction.png";
     }
     return "";
-}
-
-// ------------------------------------------------------------
-// Map bans
-// ------------------------------------------------------------
-int libAffx_MapChoiceBansLeft() {
-    if (libAffx_mapChoiceAram) {
-        return 0;
-    }
-    return MaxI(0, libAffx_currentRun / libAffx_mapChoiceMapsPerBan - libAffx_BankLoadValueInt("MapBansUsed"));
-}
-bool libAffx_MapChoiceIsBanned(int map) {
-    return map != 0 && StringContains(libAffx_BankLoadValueString("BannedMaps"), " " + IntToString(map) + " ", c_stringAnywhere, c_stringCase);
-}
-void libAffx_MapChoiceBan(int map) {
-    string banned = libAffx_BankLoadValueString("BannedMaps");
-    if (banned == "" || banned == null) {
-        banned = " ";
-    }
-    libAffx_BankSaveValueString("BannedMaps", banned + IntToString(map) + " ");
-    libAffx_BankSaveValueInt("MapBansUsed", libAffx_BankLoadValueInt("MapBansUsed") + 1);
-}
-int libAffx_MapChoiceOptionsLeft() {
-    int option;
-    int count = 0;
-    for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
-        if (libAffx_mapChoiceMaps[option] != 0 && !libAffx_mapChoiceBanned[option]) {
-            count += 1;
-        }
-    }
-    return count;
-}
-// Ban buttons show while a ban is left and more than one option would remain
-void libAffx_MapChoiceUpdateBans() {
-    int option;
-    bool canBan = libAffx_MapChoiceBansLeft() > 0 && libAffx_MapChoiceOptionsLeft() > 1;
-    for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
-        if (libAffx_mapChoiceBanButtons[option] != 0) {
-            libAffx_SetDialogControlVisible(libAffx_mapChoiceBanButtons[option], canBan && !libAffx_mapChoiceBanned[option]);
-        }
-    }
-    if (libAffx_mapChoiceBansLabel != c_invalidDialogControlId) {
-        TextExpressionSetToken("MapChoice/BansLeft", "A", IntToText(libAffx_MapChoiceBansLeft()));
-        libAffx_SetDialogControlText(libAffx_mapChoiceBansLabel, TextExpressionAssemble("MapChoice/BansLeft"));
-        libAffx_SetDialogControlVisible(libAffx_mapChoiceBansLabel, libAffx_MapChoiceBansLeft() > 0);
-    }
 }
 
 // ------------------------------------------------------------
@@ -318,41 +265,28 @@ void libAffx_MapChoiceRollMaps(bool includeCurrentMap) {
     int pick;
     int option;
     int i;
-    int pass;
-    bool skipBanned;
     if (includeCurrentMap) {
         currentMap = 0;
     }
 
-    // banned maps stay out, unless that would leave nothing to pick
-    for (pass = 1; pass <= 2 && poolCount == 0; pass += 1) {
-        skipBanned = pass == 1;
-        if (libAffx_mapChoiceAram) {
-            for (i = 1; i <= libAffx_aramMapCount; i += 1) {
-                poolCount += 1;
-                pool[poolCount] = libAffx_MapChoiceAramMap(i);
-            }
-        } else {
-            if (libAffx_map1 != currentMap && !(skipBanned && libAffx_MapChoiceIsBanned(libAffx_map1))) { poolCount += 1; pool[poolCount] = libAffx_map1; }
-            if (libAffx_map2 != currentMap && !(skipBanned && libAffx_MapChoiceIsBanned(libAffx_map2))) { poolCount += 1; pool[poolCount] = libAffx_map2; }
-            if (libAffx_map3 != currentMap && !(skipBanned && libAffx_MapChoiceIsBanned(libAffx_map3))) { poolCount += 1; pool[poolCount] = libAffx_map3; }
-            for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
-                if (libAffx_MapChoiceRotationMap(i) == currentMap) { continue; }
-                if (libAffx_MapChoiceRotationMap(i) != libAffx_map4 && !libAffx_MapChoiceExtraMapsEnabled()) { continue; }
-                if (skipBanned && libAffx_MapChoiceIsBanned(libAffx_MapChoiceRotationMap(i))) { continue; }
-                poolCount += 1;
-                pool[poolCount] = libAffx_MapChoiceRotationMap(i);
-            }
+    if (libAffx_mapChoiceAram) {
+        for (i = 1; i <= libAffx_aramMapCount; i += 1) {
+            poolCount += 1;
+            pool[poolCount] = libAffx_MapChoiceAramMap(i);
+        }
+    } else {
+        if (libAffx_map1 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map1; }
+        if (libAffx_map2 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map2; }
+        if (libAffx_map3 != currentMap) { poolCount += 1; pool[poolCount] = libAffx_map3; }
+        for (i = 1; i <= libAffx_rotationMapCount; i += 1) {
+            if (libAffx_MapChoiceRotationMap(i) == currentMap) { continue; }
+            if (libAffx_MapChoiceRotationMap(i) != libAffx_map4 && !libAffx_MapChoiceExtraMapsEnabled()) { continue; }
+            poolCount += 1;
+            pool[poolCount] = libAffx_MapChoiceRotationMap(i);
         }
     }
 
     for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
-        libAffx_mapChoiceBanned[option] = false;
-        // fewer maps than options (after bans): the rest stay empty and aren't shown
-        if (poolCount == 0) {
-            libAffx_mapChoiceMaps[option] = 0;
-            continue;
-        }
         pick = RandomInt(1, poolCount);
         libAffx_MapChoiceRollOption(option, pool[pick]);
         // remove picked map so all options differ
@@ -403,15 +337,7 @@ void libAffx_MapChoiceCreateDialog() {
         libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Title"), "Affix_Gameover",
             1600, 120, c_anchorTop, 0, 20, ColorWithAlpha(0, 0, 0, 0), false);
     }
-    libAffx_mapChoiceBansLabel = libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringToText(""), "Affix_Dialog",
-        1600, 50, c_anchorTop, 0, 190, ColorWithAlpha(0, 0, 0, 0), false);
     for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
-        libAffx_mapChoiceButtons[option] = 0;
-        libAffx_mapChoiceBanButtons[option] = 0;
-        libAffx_mapChoiceBannedLabels[option] = 0;
-        if (libAffx_mapChoiceMaps[option] == 0) {
-            continue;
-        }
         x = (option * 2 - libAffx_mapChoiceOptions - 1) * libAffx_mapChoiceColumnOffsetX / 2;
         frame = DialogControlCreateFromTemplate(libAffx_mapChoiceDialog, c_triggerControlTypeImage, "StandardTemplates/StandardContextMenuFrame");
         libAffx_SetDialogControlSize(frame, libAffx_mapChoiceFrameWidth, libAffx_mapChoiceFrameHeight);
@@ -434,15 +360,7 @@ void libAffx_MapChoiceCreateDialog() {
         libAffx_SetDialogControlSize(libAffx_mapChoiceButtons[option], libAffx_gameoverButtonWidth, libAffx_gameoverButtonHeight);
         libAffx_SetDialogControlPosition(libAffx_mapChoiceButtons[option], c_anchorCenter, x, 400);
         libAffx_SetDialogControlText(libAffx_mapChoiceButtons[option], StringExternal("MapChoice/Choose"));
-        libAffx_mapChoiceBanButtons[option] = libAffx_CreateDialogControlButton(libAffx_mapChoiceDialog);
-        libAffx_SetDialogControlSize(libAffx_mapChoiceBanButtons[option], libAffx_gameoverButtonWidth, libAffx_gameoverButtonHeight);
-        libAffx_SetDialogControlPosition(libAffx_mapChoiceBanButtons[option], c_anchorCenter, x, 470);
-        libAffx_SetDialogControlText(libAffx_mapChoiceBanButtons[option], StringExternal("MapChoice/Ban"));
-        libAffx_mapChoiceBannedLabels[option] = libAffx_CreateDialogControlLabel(libAffx_mapChoiceDialog, StringExternal("MapChoice/Banned"), "Affix_Gameover",
-            580, 120, c_anchorCenter, x, 400, ColorWithAlpha(0, 0, 0, 0), false);
-        libAffx_SetDialogControlVisible(libAffx_mapChoiceBannedLabels[option], false);
     }
-    libAffx_MapChoiceUpdateBans();
 }
 bool libAffx_MapChoiceClicked_Func (bool testConds, bool runActions) {
     int eventDialog = EventDialogControl();
@@ -451,17 +369,8 @@ bool libAffx_MapChoiceClicked_Func (bool testConds, bool runActions) {
         return true;
     }
     for (option = 1; option <= libAffx_mapChoiceOptions; option += 1) {
-        if (eventDialog == libAffx_mapChoiceButtons[option] && libAffx_mapChoiceButtons[option] != 0 && !libAffx_mapChoiceBanned[option]) {
+        if (eventDialog == libAffx_mapChoiceButtons[option] && libAffx_mapChoiceButtons[option] != 0) {
             libAffx_mapChoiceSelected = option;
-        }
-        // a ban takes the option away (no replacement) and keeps its map out for the rest of the run
-        if (eventDialog == libAffx_mapChoiceBanButtons[option] && libAffx_mapChoiceBanButtons[option] != 0 && !libAffx_mapChoiceBanned[option]
-            && libAffx_MapChoiceBansLeft() > 0 && libAffx_MapChoiceOptionsLeft() > 1) {
-            libAffx_mapChoiceBanned[option] = true;
-            libAffx_MapChoiceBan(libAffx_mapChoiceMaps[option]);
-            libAffx_SetDialogControlVisible(libAffx_mapChoiceButtons[option], false);
-            libAffx_SetDialogControlVisible(libAffx_mapChoiceBannedLabels[option], true);
-            libAffx_MapChoiceUpdateBans();
         }
     }
     return true;
