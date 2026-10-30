@@ -595,6 +595,12 @@ bool libAffx_RaynorBanshees_Func (bool testConds, bool runActions) {
         if (!UnitHasBehavior2(banshee, "RaynorGoldenBansheeBoons")) {
             UnitBehaviorAdd(banshee, "RaynorGoldenBansheeBoons", banshee, 1);
         }
+        // Raynor went through a portal, hearthed or otherwise jumped far away: the Banshee follows him there
+        if (UnitIsAlive(hero) && DistanceBetweenPoints(UnitGetPosition(banshee), UnitGetPosition(hero)) > 20.0) {
+            UnitSetPosition(banshee, PointWithOffsetPolar(UnitGetPosition(hero), 2.0, RandomFixed(0.0, 360.0)), false);
+            UnitIssueOrder(banshee, Order(AbilityCommand("stop", 0)), c_orderQueueReplace);
+            continue;
+        }
         if (target != null && DistanceBetweenPoints(UnitGetPosition(banshee), UnitGetPosition(target)) <= 14.0) {
             if (UnitOrderCount(banshee) == 0 || OrderGetAbilityCommand(UnitOrder(banshee, 0)) != AbilityCommand("attack", 0) || OrderGetTargetUnit(UnitOrder(banshee, 0)) != target) {
                 UnitIssueOrder(banshee, OrderTargetingUnit(AbilityCommand("attack", 0), target), c_orderQueueReplace);
