@@ -624,27 +624,16 @@ bool libAffx_ValeeraScaredDeath_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Recruit (Scared Assassin talent): a stealth opener (Ambush, Cheap Shot or Garrote) on an enemy minion or mercenary makes it an
-// allied one at full Health that keeps its enemy buffs, pushing the nearest lane
-bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_ValeeraHero();
-    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
-    int team;
-    int newOwner;
+// Scared Assassin: makes an enemy minion or mercenary an allied one at full Health that keeps its enemy buffs (as Sylvanas's
+// Possession does), pushing the nearest lane
+void libAffx_ValeeraConvert (unit target) {
+    int team = libGame_gf_TeamNumberOfPlayer(libAffx_player);
+    int newOwner = libGame_gf_ComputerPlayerInTeam(team);
     fixed keepLife;
     bool keepSapper;
-    if (hero == null || target == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker") || !PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit")) {
-        return false;
-    }
-    Wait(0.0625, c_timeGame);
-    if (!UnitIsAlive(target) || !libAffx_ValeeraIsMob(target)) {
-        return true;
-    }
-    team = libGame_gf_TeamNumberOfPlayer(libAffx_player);
     if (libGame_gf_TeamNumberOfPlayer(UnitGetOwner(target)) == team) {
-        return true;
+        return;
     }
-    newOwner = libGame_gf_ComputerPlayerInTeam(team);
     keepLife = UnitGetPropertyFixed(target, c_unitPropLifeMax, c_unitPropCurrent);
     keepSapper = UnitHasBehavior2(target, "AffixSappersBehavior");
     UnitBehaviorAdd(target, "ValeeraGoldenRecruited", target, 1);
@@ -655,7 +644,7 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     UnitSetOwner(target, newOwner, true);
     Wait(0.25, c_timeGame);
     if (!UnitIsAlive(target)) {
-        return true;
+        return;
     }
     libGDHL_gf_HeroSylvanasPossessionKeepEnemyStats(target, keepLife, keepSapper);
     // the opener's own debuffs come off the new ally
@@ -668,8 +657,38 @@ bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
     UnitIssueOrder(target, Order(libAIAI_gv_aIStopAbil), c_orderQueueReplace);
     libGame_gf_CalculateSpawnedMinionGoalPoints(newOwner, UnitGetPosition(target));
     libAIAI_gf_MinionAIStartMinionAI(-1, target, libGame_gv_spawnedMinionLane, libGame_gv_spawnedMinionFirstWaypointIndex, false, true, false, libGame_gf_EnemyTeam(team), false);
+}
+// Recruit (Scared Assassin talent): a stealth opener (Ambush, Cheap Shot or Garrote) on an enemy minion or mercenary makes it an
+// allied one at full Health that keeps its enemy buffs, pushing the nearest lane
+bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker") || !PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit")) {
+        return false;
+    }
+    Wait(0.0625, c_timeGame);
+    if (!UnitIsAlive(target) || !libAffx_ValeeraIsMob(target)) {
+        return true;
+    }
+    libAffx_ValeeraConvert(target);
     return true;
 }
+// Mercenary Contract (talent): converts an enemy team's mercenary pushing a lane; anything else gets the cooldown back
+bool libAffx_ValeeraContract_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    if (hero == null || !PlayerHasTalent(libAffx_player, "ValeeraGoldenContract")) {
+        return false;
+    }
+    if (target == null || !UnitIsAlive(target) || !UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeMerc) || !libAffx_ValeeraIsMob(target)
+        || libGame_gf_TeamNumberOfPlayer(UnitGetOwner(target)) != libGame_gf_EnemyTeamNumberOfPlayer(libAffx_player)) {
+        UnitModifyCooldown(hero, "Abil/ValeeraGoldenContract", 0.0, c_cooldownOperationSet);
+        return true;
+    }
+    libAffx_ValeeraConvert(target);
+    return true;
+}
+
 // Call to Arms (Scared Assassin heroic, level 10): a full minion wave for Valeera's team at her position, pushing the nearest lane
 bool libAffx_ValeeraCallToArms_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ValeeraHero();
@@ -703,7 +722,7 @@ bool libAffx_ValeeraCallToArms_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Scared Assassin talents, once taken: the Bribe button, and Call to Arms in Smoke Bomb's place
+// Scared Assassin talents, once taken: Recruit's gentle openers, and Call to Arms in Smoke Bomb's place
 void libAffx_ValeeraTalentSync () {
     unit hero = libAffx_ValeeraHero();
     if (hero == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
@@ -711,9 +730,6 @@ void libAffx_ValeeraTalentSync () {
     }
     if (PlayerHasTalent(libAffx_player, "ValeeraGoldenRecruit") && !UnitHasBehavior2(hero, "ValeeraGoldenRecruitGentle")) {
         UnitBehaviorAdd(hero, "ValeeraGoldenRecruitGentle", hero, 1);
-    }
-    if (PlayerHasTalent(libAffx_player, "GenericTalentBribe") && !UnitHasBehavior2(hero, "ValeeraGoldenBribeButton")) {
-        UnitBehaviorAdd(hero, "ValeeraGoldenBribeButton", hero, 1);
     }
     if (!libAffx_ValeeraCallApplied && PlayerHasTalent(libAffx_player, "ValeeraGoldenCallToArms")) {
         libAffx_ValeeraCallApplied = true;
@@ -931,6 +947,7 @@ bool libAffx_ValeeraStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraCheapShotInitialSet");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraGarroteInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraCallToArms_Func"), libAffx_player, "ValeeraGoldenCallToArmsSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraContract_Func"), libAffx_player, "ValeeraGoldenContractSet");
     trig = TriggerCreate("libAffx_ValeeraOpenerLinger_Func");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraAmbushInitialSet");
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "ValeeraCheapShotInitialSet");
