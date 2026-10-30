@@ -12,7 +12,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="QhiraDoubleContractMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Whirling Huntress ===== -->
-  <!-- Revolving Sweep has an 8 second cooldown (16) and costs 25 Mana (70); gain Booming Kick and Lingering Ailment. Whirl quest (25% of each map gains kept for good): 2% Revolving Sweep damage per enemy Hero hit (once per Hero per cast). Huntress quest: takedowns within 6 seconds of a hit; stacks 1-40 Slow the attached Hero 1% each while Qhira swings, 41-80 add 1% bleed damage while swinging each, 81-100 heal 1% of maximum Health per stack over each swing, at 100 the attached Hero is Stunned while she swings (script), then 2% damage each. -->
+  <!-- Revolving Sweep has an 8 second cooldown (16) and costs 25 Mana (70); gain Booming Kick and Lingering Ailment. Whirl quest (25% of each map gains kept for good): 1% Revolving Sweep damage per enemy Hero hit (once per Hero per cast). Huntress quest: takedowns within 6 seconds of a hit; stacks 1-40 Slow the attached Hero 1% each while Qhira swings, 41-80 add 1% bleed damage while swinging each, 81-100 heal 1% of maximum Health per stack over each swing, at 100 the attached Hero is Stunned while she swings (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="QhiraGoldenWhirlTokenCounter" parent="StormQuestToken">
     <Face value="QhiraGoldenWhirlTokenCounter" />
     <Max value="100000" />
@@ -26,7 +26,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="QhiraGoldenWhirlTokenCounter" />
-    <Scale value="0.02" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="NexusHunterRevolvingSweepInitialDamage">
     <MultiplicativeModifierArray index="QhiraWhirlPower" Modifier="0" />
