@@ -31,6 +31,8 @@ int libAffx_QhiraSweepCast; // Whirling Huntress: Revolving Sweep casts this gam
 int[libCore_gv_bALMaxPlayers + 1] libAffx_QhiraSweepCounted; // per enemy player, the last cast that counted a hit
 bool libAffx_QhiraHoldApplied; // Whirling Huntress: the Huntress 100 Stun is on
 unit[3] libAffx_QhiraBounty; // Bounty Hunter: the Bounties (the second with Double Contract)
+int[3] libAffx_QhiraBountyPing; // Bounty Hunter: the minimap marker on each Bounty
+bool[3] libAffx_QhiraBountyPinged; // Bounty Hunter: that marker exists
 bool libAffx_QhiraDeathPicked; // Bounty Hunter: a new Bounty was picked for this death of Qhira
 fixed libAffx_QhiraBountyFactor = -99.0; // Bounty Hunter: the Bounty multiplier last set (its stacks)
 int libAffx_QhiraSlowApplied; // Bounty Hunter: Trophies applied as the Bounty Slow
@@ -297,12 +299,26 @@ void libAffx_QhiraBountyDebuffs (unit target, bool reslow) {
 void libAffx_QhiraClearBounty (int i) {
     unit target = libAffx_QhiraBounty[i];
     libAffx_QhiraBounty[i] = null;
+    if (libAffx_QhiraBountyPinged[i]) {
+        libAffx_QhiraBountyPinged[i] = false;
+        PingDestroy(libAffx_QhiraBountyPing[i]);
+    }
     if (target == null) {
         return;
     }
     UnitBehaviorRemove(target, "QhiraGoldenBounty", c_unitBehaviorCountAll);
     UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
     UnitBehaviorRemove(target, "QhiraGoldenBountyWeaken", c_unitBehaviorCountAll);
+}
+// Bounty Hunter: a red minimap marker that follows Bounty i (only Qhira's player sees it; silent)
+void libAffx_QhiraBountyPingAdd (int i) {
+    if (libAffx_QhiraBountyPinged[i]) {
+        PingDestroy(libAffx_QhiraBountyPing[i]);
+    }
+    libCore_gf_CreateMinimapPingStorm(libCore_gv_playerGroupFromPlayer[libAffx_player], "StormAlertSilent", UnitGetPosition(libAffx_QhiraBounty[i]), Color(100.00, 0.00, 0.00), 3600.0);
+    libAffx_QhiraBountyPing[i] = PingLastCreated();
+    libAffx_QhiraBountyPinged[i] = true;
+    PingSetUnit(libAffx_QhiraBountyPing[i], libAffx_QhiraBounty[i]);
 }
 // Bounty Hunter: a Hero that can be (or stay) the Bounty: alive, and not a ghost (Leoric's Undying counts as alive)
 bool libAffx_QhiraBountyAlive (unit target) {
@@ -375,10 +391,12 @@ void libAffx_QhiraPickBounties () {
     }
     libAffx_QhiraBounty[1] = best;
     UnitBehaviorAdd(best, "QhiraGoldenBounty", hero, 1);
+    libAffx_QhiraBountyPingAdd(1);
     libAffx_QhiraBountyDebuffs(best, false);
     if (second != null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker")) {
         libAffx_QhiraBounty[2] = second;
         UnitBehaviorAdd(second, "QhiraGoldenBounty", hero, 1);
+        libAffx_QhiraBountyPingAdd(2);
         libAffx_QhiraBountyDebuffs(second, false);
     }
 }
@@ -503,7 +521,7 @@ bool libAffx_QhiraBountyHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_QhiraBountyTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    if (UnitHasBehavior2(victim, "QhiraGoldenBounty") && EventUnitDamageEffect() != "NexusHunterBloodRageDoTDamage") {
+    if (UnitHasBehavior2(victim, "QhiraGoldenBounty") && EventUnitDamageEffect() != "NexusHunterBloodRageDoTDamage" && EventUnitDamageEffect() != "NexusHunterRevolvingSweepPersistentDamage") {
         libAffx_QhiraBountyHits += 1;
         if (libAffx_QhiraBountyHits >= 10) {
             libAffx_QhiraBountyHits = 0;
