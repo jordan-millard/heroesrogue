@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Valeera. Starters: Eviscerator (Eviscerate: no Energy cost). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/ValeeraGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ValeeraEviscerateMarker" parent="CarryBehaviorParent" />
+  <!-- Eviscerator, Domino Effect (Legendary): Eviscerate splashes to non-Heroes within 5 of its target for 60% -->
+  <CEffectDamage id="ValeeraGoldenDominoDamage" parent="ValeeraEviscerateDamage">
+    <MultiplicativeModifierArray index="ValeeraGoldenDomino" Modifier="-0.4" />
+  </CEffectDamage>
+
+  <!-- ===== Eviscerator ===== -->
+  <!-- Eviscerate costs no Energy. Cut quest (15% of each map gains kept for good): 1% Eviscerate damage per enemy Hero hit. Edge quest: takedowns within 6 seconds of a hit; stacks 1-40 make Eviscerate Slow 1% each for 2 seconds, 41-80 add 1% range each, 81-100 add a 1% chance each to refund the spent Combo Points, at 100 Eviscerate also casts a free Vanish (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="ValeeraGoldenCutTokenCounter" parent="StormQuestToken">
+    <Face value="ValeeraGoldenCutTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ValeeraGoldenEdgeTokenCounter" parent="StormQuestToken">
+    <Face value="ValeeraGoldenEdgeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ValeeraGoldenCutTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ValeeraGoldenCutTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ValeeraEviscerateDamage">
+    <MultiplicativeModifierArray index="ValeeraEvisceratePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraEviscerateCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraEviscerateHit" Accumulator="ValeeraGoldenCutTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ValeeraEviscerateLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ValeeraGoldenDominoDamage">
+    <MultiplicativeModifierArray index="ValeeraEvisceratePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraEviscerateCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraEviscerateHit" Accumulator="ValeeraGoldenCutTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ValeeraEviscerateLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ValeeraGoldenCutTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
+  </CButton>
+  <CButton id="ValeeraGoldenEdgeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
+  </CButton>
+  <!-- Eviscerator: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ValeeraEvisceratePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Eviscerator ===== -->
+  <!-- Eviscerate's damage is replaced (index 0) by a set that starts with it, so everything here still sees the Combo
+       Points it spent (the base set resets them right after). Every added effect is Chance 0 until the starter's quest or a
+       boon turns it on, so other Valeeras are unchanged. -->
+  <CEffectSet id="ValeeraEviscerateInitialSet">
+    <EffectArray index="0" value="ValeeraGoldenEviscerateHitSet" />
+  </CEffectSet>
+  <CEffectSet id="ValeeraGoldenEviscerateHitSet">
+    <EffectArray value="ValeeraEviscerateDamage" />
+    <EffectArray value="ValeeraGoldenDominoSearch" />
+    <EffectArray value="ValeeraGoldenRefundSwitch" />
+    <EffectArray value="ValeeraGoldenSlowApply" />
+    <EffectArray value="ValeeraGoldenKidneyApply" />
+    <EffectArray value="ValeeraGoldenFeintApply" />
+    <EffectArray value="ValeeraGoldenShroudApply" />
+  </CEffectSet>
+  <!-- Edge stacks 1-40: Eviscerate Slows 1% each for 2 seconds (the quest adds the Slow and turns the Chance on) -->
+  <CBehaviorBuff id="ValeeraGoldenEviscerateSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenSlowApply">
+    <Chance value="0" />
+    <Behavior value="ValeeraGoldenEviscerateSlow" />
+  </CEffectApplyBehavior>
+  <!-- Edge stacks 81-100: 1% chance each to refund the Combo Points Eviscerate spent. The switch reads them before the
+       reset; the refund behavior's final effect gives them back 0.25 seconds later. -->
+  <CEffectSwitch id="ValeeraGoldenRefundSwitch">
+    <Chance value="0" />
+    <CaseArray Validator="ValeeraHas3CP" Effect="ValeeraGoldenRefund3Apply" />
+    <CaseArray Validator="ValeeraHas2CP" Effect="ValeeraGoldenRefund2Apply" />
+    <CaseDefault value="ValeeraGoldenRefund1Apply" />
+  </CEffectSwitch>
+  <CEffectApplyBehavior id="ValeeraGoldenRefund1Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenRefund1" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ValeeraGoldenRefund2Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenRefund2" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ValeeraGoldenRefund3Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenRefund3" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ValeeraGoldenRefund1">
+    <Duration value="0.25" />
+    <FinalEffect value="ValeeraGoldenRefund1Set" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="ValeeraGoldenRefund2">
+    <Duration value="0.25" />
+    <FinalEffect value="ValeeraGoldenRefund2Set" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="ValeeraGoldenRefund3">
+    <Duration value="0.25" />
+    <FinalEffect value="ValeeraGoldenRefund3Set" />
+  </CBehaviorBuff>
+  <CEffectModifyTokenCount id="ValeeraGoldenRefund1Token" parent="BaseEffectModifyTokenCount">
+    <TokenId value="ValeeraComboPointsToken" />
+    <Operation value="Set" />
+    <Value value="1" />
+  </CEffectModifyTokenCount>
+  <CEffectModifyTokenCount id="ValeeraGoldenRefund2Token" parent="BaseEffectModifyTokenCount">
+    <TokenId value="ValeeraComboPointsToken" />
+    <Operation value="Set" />
+    <Value value="2" />
+  </CEffectModifyTokenCount>
+  <CEffectModifyTokenCount id="ValeeraGoldenRefund3Token" parent="BaseEffectModifyTokenCount">
+    <TokenId value="ValeeraComboPointsToken" />
+    <Operation value="Set" />
+    <Value value="3" />
+  </CEffectModifyTokenCount>
+  <CEffectApplyBehavior id="ValeeraGoldenRefundPointsApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraComboPoints" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ValeeraGoldenRefund1Set">
+    <EffectArray value="ValeeraGoldenRefund1Token" />
+    <EffectArray value="ValeeraGoldenRefundPointsApply" />
+    <EffectArray value="ValeeraInCombatComboPointsApply" />
+  </CEffectSet>
+  <CEffectSet id="ValeeraGoldenRefund2Set">
+    <EffectArray value="ValeeraGoldenRefund2Token" />
+    <EffectArray value="ValeeraGoldenRefundPointsApply" />
+    <EffectArray value="ValeeraInCombatComboPointsApply" />
+  </CEffectSet>
+  <CEffectSet id="ValeeraGoldenRefund3Set">
+    <EffectArray value="ValeeraGoldenRefund3Token" />
+    <EffectArray value="ValeeraGoldenRefundPointsApply" />
+    <EffectArray value="ValeeraInCombatComboPointsApply" />
+  </CEffectSet>
+  <!-- Feint (Uncommon): Eviscerating an enemy Hero gives 30 Armor for 10 seconds (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="ValeeraGoldenFeint">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
+    <Duration value="10" />
+    <ArmorModification>
+      <AllArmorBonus value="30" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenFeintApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenFeint" />
+  </CEffectApplyBehavior>
+  <!-- Shadow Shroud (Rare): Eviscerating an enemy Hero Shields Valeera for 30% of her maximum Health for 10 seconds -->
+  <CBehaviorBuff id="ValeeraGoldenShroud" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_cloakofshadows.dds" />
+    <Duration value="10" />
+    <DamageResponse>
+      <ModifyLimitVitalMaxFractionArray index="Life" value="0.3" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenShroudApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenShroud" />
+  </CEffectApplyBehavior>
+  <!-- Kidney Shot (Epic): Eviscerate Stuns for 0.25 seconds -->
+  <CBehaviorBuff id="ValeeraGoldenKidneyStun" parent="StormStun">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenKidneyApply">
+    <Chance value="0" />
+    <Behavior value="ValeeraGoldenKidneyStun" />
+  </CEffectApplyBehavior>
+  <!-- Domino Effect (Legendary): non-Heroes within 5 of the target (not the target itself) take 60% -->
+  <CEffectEnumArea id="ValeeraGoldenDominoSearch">
+    <Chance value="0" />
+    <ImpactLocation Value="TargetUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,Heroic,Structure,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <ExcludeArray Effect="ValeeraEviscerateInitialSet" Value="Target" />
+    <AreaArray Effect="ValeeraGoldenDominoDamage">
+      <Radius value="5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CActorModel id="ValeeraGoldenDominoImpact" parent="StormModelAnimationStyleOneShotUnit">
+    <Remove Terms="ActorCreation" Send="AnimBracketStart BSD Birth Stand Death ContentPlayOnce" />
+    <On Terms="Effect.ValeeraGoldenDominoDamage.Start; At Target" Send="Create" />
+    <On Terms="ActorCreation" Send="AnimPlay Birth Birth" />
+    <On Terms="AnimDone; AnimName Birth" Send="Destroy" />
+    <HostSiteOps Ops="SOpAttachCenter" />
+    <Model value="ValeeraEviscerateImpact" />
+  </CActorModel>
+</Catalog>

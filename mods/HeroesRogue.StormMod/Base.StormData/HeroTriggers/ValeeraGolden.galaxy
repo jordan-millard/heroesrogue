@@ -1,0 +1,168 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Valeera. Eviscerator: Eviscerate hits on enemy Heroes add Cut and open a 6 second takedown window; takedowns
+// add Edge: a Slow, then range, then a chance to refund Combo Points, then at 100 a free Vanish, then 2% damage per stack.
+// ============================================================
+
+const fixed libAffx_ValeeraTakedownWindow = 3.0;
+const fixed libAffx_ValeeraPastCapDamagePerStack = 0.01;
+bool libAffx_ValeeraStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ValeeraEviscerateTime; // per enemy player, last Eviscerator hit
+int libAffx_ValeeraEviscerateAdded; // Eviscerator: takedown stacks already applied to the catalog this game
+int libAffx_ValeeraEviscerateAdded2; // Eviscerator: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ValeeraEviscerateAdded3; // Eviscerator: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_ValeeraEvisceratePastApplied; // Eviscerator: takedown quest stacks past the cap applied as damage this game
+
+unit libAffx_ValeeraHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ValeeraIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_ValeeraStacks(string tokenId) {
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_ValeeraQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_ValeeraInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_ValeeraTakedownWindow;
+}
+// ValeeraGoldenEdgeTokenCounter: stacks 1-40: 1% Slow each (the first stack turns it on); 41-80 range, 81-100 Combo Point refund chance, 100 free Vanish (script), then damage
+void libAffx_ValeeraSyncEviscerate () {
+    unit hero = libAffx_ValeeraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "ValeeraEviscerateMarker")) {
+        return;
+    }
+    stacks = libAffx_ValeeraStacks("ValeeraGoldenEdgeTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ValeeraEviscerateAdded) {
+        libAffx_CatalogReferenceModify("Behavior,ValeeraGoldenEviscerateSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraEviscerateAdded) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,ValeeraGoldenSlowApply,Chance", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraEviscerateAdded) * 1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraEviscerateAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% range each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ValeeraEviscerateAdded2) {
+        libAffx_CatalogReferenceModify("Abil,ValeeraEviscerate,Range[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraEviscerateAdded2) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraEviscerateAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% chance each to refund the spent Combo Points
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_ValeeraEviscerateAdded3) {
+        libAffx_CatalogReferenceModify("Effect,ValeeraGoldenRefundSwitch,Chance", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraEviscerateAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraEviscerateAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ValeeraEvisceratePastApplied) {
+        libAffx_ValeeraEvisceratePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "ValeeraEvisceratePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ValeeraEvisceratePastCapDamage")) {
+        UnitBehaviorAdd(hero, "ValeeraEvisceratePastCapDamage", hero, 1);
+    }
+}
+bool libAffx_ValeeraSync_Func (bool testConds, bool runActions) {
+    libAffx_ValeeraSyncEviscerate();
+    return true;
+}
+// Eviscerator, Edge at 100: every Eviscerate also casts a free Vanish (Vanish's own cooldown isn't used)
+bool libAffx_ValeeraEviscerateVanish_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "ValeeraEviscerateMarker") || libAffx_ValeeraStacks("ValeeraGoldenEdgeTokenCounter") < 100) {
+        return false;
+    }
+    Wait(0.0625, c_timeGame);
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    UnitCreateEffectUnit(hero, "ValeeraVanishPrepSet", hero);
+    UnitCreateEffectUnit(hero, "ValeeraStealthInitialSet", hero);
+    return true;
+}
+// Eviscerator hit on an enemy Hero: takedown window, ValeeraGoldenCutTokenCounter, the heal, and on-hit boons
+bool libAffx_ValeeraEviscerateHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ValeeraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ValeeraEviscerateMarker")) {
+        return false;
+    }
+    libAffx_ValeeraEviscerateTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ValeeraGoldenCutTokenCounter", hero);
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[2] libAffx_ValeeraTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ValeeraTakedownCrossStart () {
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ValeeraTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter"));
+}
+void libAffx_ValeeraTakedownCross () {
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter")) == libAffx_ValeeraTakedownBefore[1]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ValeeraEviscerateMarker") && FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter")) == libAffx_ValeeraTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenEdgeTokenCounter", hero);
+        libAffx_ValeeraSyncEviscerate();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_ValeeraTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_ValeeraHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_ValeeraTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "ValeeraEviscerateMarker") && libAffx_ValeeraEviscerateTime[killedPlayer] > 0.0 && now - libAffx_ValeeraEviscerateTime[killedPlayer] <= 6.0) {
+        libAffx_ValeeraEviscerateTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenEdgeTokenCounter", hero);
+        libAffx_ValeeraSyncEviscerate();
+        libAffx_ValeeraQuestDing();
+    }
+    libAffx_ValeeraTakedownCross();
+    return true;
+}
+bool libAffx_ValeeraStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_ValeeraStarted) {
+        return true;
+    }
+    libAffx_ValeeraStarted = true;
+    trig = TriggerCreate("libAffx_ValeeraEviscerateHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ValeeraEviscerateDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraEviscerateVanish_Func"), libAffx_player, "ValeeraEviscerateInitialSet");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ValeeraSync_Func"), 1.0, c_timeGame);
+    return true;
+}

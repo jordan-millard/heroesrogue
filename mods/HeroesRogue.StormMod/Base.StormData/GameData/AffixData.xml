@@ -27572,6 +27572,139 @@
             </String>
         </Instances>
 
+        <Instances Id="ValeeraEviscerator">
+            <String String="Assets/Textures/storm_ui_icon_valeera_eviscerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Valeera">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 ValeeraEviscerateMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ValeeraGoldenCutTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ValeeraGoldenEdgeTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ValeeraGoldenEdgeTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ValeeraGoldenCutTokenCounter 0.15 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ValeeraEviscerate,Cost.Vital[Energy] 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ValeeraEviscerateDamage,MultiplicativeModifierArray[ValeeraEvisceratePower].Modifier 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ValeeraGoldenDominoDamage,MultiplicativeModifierArray[ValeeraEvisceratePower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_ValeeraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ValeeraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ValeeraRazorsEdge">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_valeera_eviscerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Valeera">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ValeeraEviscerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ValeeraEviscerateDamage,MultiplicativeModifierArray[ValeeraEviscerateCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ValeeraGoldenDominoDamage,MultiplicativeModifierArray[ValeeraEviscerateCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ValeeraFeint">
+            <String String="Assets/Textures/storm_ui_icon_valeera_eviscerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Valeera">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ValeeraEviscerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ValeeraGoldenFeintApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ValeeraShadowShroud">
+            <String String="Assets/Textures/storm_ui_icon_valeera_eviscerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Valeera">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ValeeraEviscerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ValeeraGoldenShroudApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ValeeraKidneyShot">
+            <String String="Assets/Textures/storm_ui_icon_valeera_eviscerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Valeera">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ValeeraEviscerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ValeeraGoldenKidneyApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ValeeraDominoEffect">
+            <String String="Assets/Textures/storm_ui_icon_valeera_eviscerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Valeera">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ValeeraEviscerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ValeeraGoldenDominoSearch,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
