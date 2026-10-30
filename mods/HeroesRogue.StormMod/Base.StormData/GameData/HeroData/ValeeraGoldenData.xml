@@ -90,7 +90,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Scared Assassin ===== -->
-  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response). While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share her general boons at full power (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
+  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response); Eviscerate Stuns them for 0.25, 0.75 or 1.5 seconds by its 1, 2 or 3 Combo Points. While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share her general boons at full power (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
   <CBehaviorTokenCounter id="ValeeraGoldenRallyTokenCounter" parent="StormQuestToken">
     <Face value="ValeeraGoldenRallyTokenCounter" />
     <Max value="100000" />
@@ -145,7 +145,35 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="ValeeraGoldenKidneyApply" />
     <EffectArray value="ValeeraGoldenFeintApply" />
     <EffectArray value="ValeeraGoldenShroudApply" />
+    <EffectArray value="ValeeraGoldenScaredStunSwitch" />
   </CEffectSet>
+  <!-- Scared Assassin: Eviscerate Stuns enemy Heroes by the Combo Points it spends: 1 for 0.25 seconds, 2 for 0.75, 3 for 1.5
+       (read before the points are reset; Chance 0, the starter turns it on) -->
+  <CEffectSwitch id="ValeeraGoldenScaredStunSwitch">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <CaseArray Validator="ValeeraHas3CP" Effect="ValeeraGoldenScaredStun3Apply" />
+    <CaseArray Validator="ValeeraHas2CP" Effect="ValeeraGoldenScaredStun2Apply" />
+    <CaseDefault value="ValeeraGoldenScaredStun1Apply" />
+  </CEffectSwitch>
+  <CBehaviorBuff id="ValeeraGoldenScaredStun1" parent="StormStun">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="ValeeraGoldenScaredStun2" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="ValeeraGoldenScaredStun3" parent="StormStun">
+    <Duration value="1.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenScaredStun1Apply">
+    <Behavior value="ValeeraGoldenScaredStun1" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ValeeraGoldenScaredStun2Apply">
+    <Behavior value="ValeeraGoldenScaredStun2" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ValeeraGoldenScaredStun3Apply">
+    <Behavior value="ValeeraGoldenScaredStun3" />
+  </CEffectApplyBehavior>
   <!-- Cut quest: only an Eviscerate with 3 Combo Points counts; this mark (put on Valeera before the damage, while the
        points are still there) tells the script -->
   <CBehaviorBuff id="ValeeraGoldenFullCombo">
