@@ -90,7 +90,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Scared Assassin ===== -->
-  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response); Eviscerate Stuns them for 0.25, 0.75 or 1.5 seconds by its 1, 2 or 3 Combo Points. While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share her general boons at full power (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
+  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response); Eviscerate Stuns them for 0.25, 0.75 or 1.5 seconds by its 1, 2 or 3 Combo Points. While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share half of her general boons (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
   <CBehaviorTokenCounter id="ValeeraGoldenRallyTokenCounter" parent="StormQuestToken">
     <Face value="ValeeraGoldenRallyTokenCounter" />
     <Max value="100000" />
@@ -378,7 +378,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <!-- while stealthed (script, every 0.25 seconds): allied non-Heroes in range heal 3% of their maximum Health per second
-       (6% at 100 Shelter), and get the Shelter Attack Speed and Armor and a copy of Valeera's general boons (the script sets
+       (6% at 100 Shelter), and get the Shelter Attack Speed and Armor and half of Valeera's general boons (the script sets
        the values for every player and refreshes the buffs) -->
   <CEffectModifyUnit id="ValeeraGoldenShadowMend">
     <ImpactUnit Value="Target" />

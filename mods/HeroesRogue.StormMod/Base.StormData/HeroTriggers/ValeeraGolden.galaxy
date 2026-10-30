@@ -284,7 +284,7 @@ bool libAffx_ValeeraIsMob (unit u) {
 fixed libAffx_ValeeraBoonField (string b, string field) {
     return CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, b, field, libAffx_player);
 }
-// Scared Assassin: Valeera's general boon stats (the boon behaviors she has right now, at full power) go into the shared
+// Scared Assassin: Valeera's general boon stats (the boon behaviors she has right now, at half strength) go into the shared
 // Boons buff; true when they changed (the buff is then re-added)
 bool libAffx_ValeeraShadowBoons () {
     unit hero = libAffx_ValeeraHero();
@@ -325,9 +325,9 @@ bool libAffx_ValeeraShadowBoons () {
         if (!UnitHasBehavior2(hero, b)) {
             continue;
         }
-        k = IntToFixed(UnitBehaviorCount(hero, b));
+        k = IntToFixed(UnitBehaviorCount(hero, b)) * 0.5;
         // Movement Speed bonuses don't stack (the highest wins), so only the best one counts
-        speed = MaxF(speed, libAffx_ValeeraBoonField(b, "Modification.UnifiedMoveSpeedFactor"));
+        speed = MaxF(speed, libAffx_ValeeraBoonField(b, "Modification.UnifiedMoveSpeedFactor") * 0.5);
         attackSpeed += k * libAffx_ValeeraBoonField(b, "Modification.AdditiveAttackSpeedFactor");
         // a boon's Basic or Ability bonus counts, whichever is bigger, for both kinds of damage
         damage += k * MaxF(libAffx_ValeeraBoonField(b, "Modification.DamageDealtFraction[Basic]"), libAffx_ValeeraBoonField(b, "Modification.DamageDealtFraction[Ability]"));
