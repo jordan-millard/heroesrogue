@@ -268,6 +268,16 @@ bool libAffx_MalthaelShroudHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "MalthaelGoldenMistTokenCounter", hero);
     return true;
 }
+// Death Shroud: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_MalthaelShroudWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MalthaelHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MalthaelIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MalthaelShroudMarker")) {
+        return false;
+    }
+    libAffx_MalthaelShroudTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
 // Wraithstalker hit on an enemy Hero: takedown window, MalthaelGoldenHauntTokenCounter, the heal, and on-hit boons
 bool libAffx_MalthaelWraithHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -361,6 +371,9 @@ bool libAffx_MalthaelStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelSoulRipDamage");
     trig = TriggerCreate("libAffx_MalthaelShroudHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelDeathShroudThrowingShadeDamage");
+    trig = TriggerCreate("libAffx_MalthaelShroudWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelReapersMarkDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelReapersMarkMementoMoriDamage");
     trig = TriggerCreate("libAffx_MalthaelWraithHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MalthaelWraithStrikeDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MalthaelSoulRipEcho_Func"), libAffx_player, "MalthaelSoulRipInitialSet");
