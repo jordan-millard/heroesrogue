@@ -263,6 +263,10 @@ fixed libAffx_ValeeraShadowRange () {
     }
     return 12.0;
 }
+// Scared Assassin: how far the support reaches: the range plus 1, so units touching the ring count
+fixed libAffx_ValeeraShadowReach () {
+    return libAffx_ValeeraShadowRange() + 1.0;
+}
 // Scared Assassin: a minion or mercenary (not a Hero, structure or map boss)
 bool libAffx_ValeeraIsMob (unit u) {
     string kind = UnitGetType(u);
@@ -405,6 +409,36 @@ void libAffx_ValeeraRing (unit hero, bool on, fixed range) {
         UnitBehaviorAdd(hero, want, hero, 1);
     }
 }
+// Scared Assassin: allied minions and mercenaries within reach of an exposed enemy Hero attack it while it stays exposed (a
+// short Focused buff keeps the lane AI from taking them back; it lapses when the Hero is no longer exposed)
+void libAffx_ValeeraFocus () {
+    unitgroup foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionEntireMap(), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32))), 0);
+    unitgroup mobs;
+    unit foe;
+    unit mob;
+    int i;
+    int j;
+    for (i = 1; i <= UnitGroupCount(foes, c_unitCountAll); i += 1) {
+        foe = UnitGroupUnit(foes, i);
+        if (!UnitIsAlive(foe) || !UnitHasBehavior2(foe, "ValeeraGoldenExposed")) {
+            continue;
+        }
+        mobs = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(foe), libAffx_ValeeraShadowReach()), UnitFilter(0, 0, (1 << c_targetFilterHeroic) | (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+        for (j = 1; j <= UnitGroupCount(mobs, c_unitCountAll); j += 1) {
+            mob = UnitGroupUnit(mobs, j);
+            if (!UnitIsAlive(mob) || !libAffx_ValeeraIsMob(mob)) {
+                continue;
+            }
+            if (UnitHasBehavior2(mob, "ValeeraGoldenFocused") && UnitOrderCount(mob) > 0 && OrderGetTargetUnit(UnitOrder(mob, 0)) == foe) {
+                UnitBehaviorSetDurationRemaining(mob, "ValeeraGoldenFocused", 0.5);
+                continue;
+            }
+            UnitBehaviorRemove(mob, "ValeeraGoldenFocused", 1);
+            UnitIssueOrder(mob, OrderTargetingUnit(AbilityCommand("attack", 0), foe), c_orderQueueReplace);
+            UnitBehaviorAdd(mob, "ValeeraGoldenFocused", mob, 1);
+        }
+    }
+}
 // Scared Assassin, every 0.25 seconds: the quest values, and while stealthed the healing and shared buffs in range
 bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ValeeraHero();
@@ -412,7 +446,7 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     unit u;
     fixed range;
     fixed fraction;
-    fixed heal = 0.005;
+    fixed heal = 0.01;
     bool stealthed;
     bool refreshAura = false;
     bool refreshBoons = false;
@@ -428,13 +462,13 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     stealthed = UnitIsAlive(hero) && UnitHasBehavior2(hero, "ValeeraStealthCloak");
     libAffx_ValeeraRing(hero, stealthed, range);
     stacks = libAffx_ValeeraStacks("ValeeraGoldenShelterTokenCounter");
-    // Shelter 1-40: 1% Attack Speed each, 41-80: 1 Armor each
+    // 30% Attack Speed baseline; Shelter 1-40: 1% more each, 41-80: 1 Armor each
     speed = MinI(stacks, 40);
     armor = MaxI(0, MinI(stacks - 40, 40));
     if (speed != libAffx_ValeeraAuraSpeed || armor != libAffx_ValeeraAuraArmor) {
         libAffx_ValeeraAuraSpeed = speed;
         libAffx_ValeeraAuraArmor = armor;
-        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "Modification.AdditiveAttackSpeedFactor", 0.01 * IntToFixed(speed));
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "Modification.AdditiveAttackSpeedFactor", 0.3 + 0.01 * IntToFixed(speed));
         libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "ArmorModification.AllArmorBonus", IntToFixed(armor));
         refreshAura = true;
     }
@@ -446,7 +480,7 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
     }
     // Shelter at 100: the healing doubles
     if (stacks >= 100) {
-        heal = 0.01;
+        heal = 0.02;
     }
     if (heal != libAffx_ValeeraHealApplied) {
         libAffx_ValeeraHealApplied = heal;
@@ -456,11 +490,12 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
         libAffx_ValeeraBoonsAt = GameGetMissionTime() + 1.0;
         refreshBoons = libAffx_ValeeraShadowBoons();
     }
+    libAffx_ValeeraFocus();
     if (!stealthed) {
         return true;
     }
     pact = UnitHasBehavior2(hero, "ValeeraShadowPactMarker");
-    allies = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(hero), range), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    allies = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(hero), range + 1.0), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
     for (i = 1; i <= UnitGroupCount(allies, c_unitCountAll); i += 1) {
         u = UnitGroupUnit(allies, i);
         if (u == hero || !UnitIsAlive(u)) {
@@ -474,9 +509,7 @@ bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
             continue;
         }
         UnitCreateEffectUnit(hero, "ValeeraGoldenShadowMend", u);
-        if (speed + armor > 0) {
-            libAffx_ValeeraShare(u, hero, "ValeeraGoldenShadowAura", refreshAura);
-        }
+        libAffx_ValeeraShare(u, hero, "ValeeraGoldenShadowAura", refreshAura);
         libAffx_ValeeraShare(u, hero, "ValeeraGoldenShadowBoons", refreshBoons);
     }
     return true;
@@ -502,7 +535,7 @@ bool libAffx_ValeeraMobDamage_Func (bool testConds, bool runActions) {
     if (libGame_gf_TeamNumberOfPlayer(UnitGetOwner(source)) != libGame_gf_TeamNumberOfPlayer(libAffx_player)) {
         return false;
     }
-    if (DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(victim)) > libAffx_ValeeraShadowRange()) {
+    if (DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(victim)) > libAffx_ValeeraShadowReach()) {
         return false;
     }
     libAffx_ValeeraMobTime[UnitGetOwner(victim)] = GameGetMissionTime();
@@ -533,7 +566,7 @@ bool libAffx_ValeeraScaredDeath_Func (bool testConds, bool runActions) {
     if (libGame_gf_TeamNumberOfPlayer(owner) == libGame_gf_TeamNumberOfPlayer(libAffx_player)) {
         return false;
     }
-    if (DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(dead)) > libAffx_ValeeraShadowRange()) {
+    if (DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(dead)) > libAffx_ValeeraShadowReach()) {
         return false;
     }
     libAffx_ValeeraScaredKills += 1;
