@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 8 second cooldown, 25 Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 4x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x is a LibAffx multiplier, and the 4x and 0.1x are attacker damage responses on Qhira (both multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
+  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 8 second cooldown, 25 Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 2x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x is a LibAffx multiplier, and the 2x and 0.1x are attacker damage responses on Qhira (both multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="QhiraWhirlMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="QhiraGrappleMarker" parent="CarryBehaviorParent" />
@@ -90,7 +90,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Bounty Hunter ===== -->
-  <!-- A random enemy Hero (not the last Bounty, if possible) becomes the Bounty for 60 seconds (marked with Butcher's brand and revealed; a new one at once when it dies): Qhira deals 4x damage to it and 0.1x to other enemy Heroes (LibAffx multipliers on all her damage, so they multiply everything else; minions, camps and structures are unchanged); a Bounty takedown heals her to full and picks a new Bounty; Final Strike at level 1 (no Unrelenting Strikes); +80% Mount Speed. Blood Money quest (25% of each map gains kept for good): 0.2% more damage to the Bounty per hit on it (not bleed ticks), added in batches of 10, multiplying the 4x. Trophies quest (100% kept): Bounty takedowns (script); stacks 1-40 Slow the Bounty 1% each, 41-80 drain up to 1% of its maximum Health per second, 81-100 add 1% life leech against it each (script), at 100 instant mount, no dismount from damage and 75 Armor while mounted (script), then 2% damage each. -->
+  <!-- A random enemy Hero (not the last Bounty, if possible) becomes the Bounty for 60 seconds (marked with Butcher's brand and revealed; a new one at once when it dies): Qhira deals 2x damage to it and 0.1x to other enemy Heroes (attacker damage responses on all her damage, so they multiply everything else; minions, camps and structures are unchanged); a Bounty takedown heals her to full and picks a new Bounty; Final Strike at level 1 (no Unrelenting Strikes); +80% Mount Speed. Blood Money quest (25% of each map gains kept for good): 1% more Blood Rage bleed damage (against every target) per hit on the Bounty (not bleed ticks), added in batches of 10. Trophies quest (100% kept): Bounty takedowns (script); stacks 1-40 Slow the Bounty 1% each, 41-80 drain up to 1% of its maximum Health per second, 81-100 add 1% life leech against it each (script), at 100 instant mount, no dismount from damage and 75 Armor while mounted (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="QhiraGoldenBloodMoneyTokenCounter" parent="StormQuestToken">
     <Face value="QhiraGoldenBloodMoneyTokenCounter" />
     <Max value="100000" />
@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="QhiraGoldenBloodMoneyTokenCounter" />
-    <Scale value="0.002" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="NexusHunterWeaponDamage">
     <MultiplicativeModifierArray index="QhiraBountyPower" Modifier="0" />
@@ -301,17 +301,20 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="TargetIsHero" />
     <CombineArray value="QhiraGoldenTargetNotBounty" />
   </CValidatorCombine>
-  <!-- Bounty Hunter: Qhira's damage to the Bounty is multiplied by 4 (the script folds in the hit quest and Contract and
-       re-adds it) and to other enemy Heroes by 0.1. Attacker damage responses act on the final damage, so they multiply
+  <!-- Bounty Hunter: Qhira's damage to the Bounty is multiplied by 2 (the script folds in Contract and re-adds it) and to other enemy Heroes by 0.1. Attacker damage responses act on the final damage, so they multiply
        every other bonus. -->
   <CBehaviorBuff id="QhiraGoldenBountyHunt" parent="CarryBehaviorParent">
     <DamageResponse>
       <Chance value="1" />
       <Location value="Attacker" />
-      <ModifyFraction value="4" />
+      <ModifyFraction value="2" />
       <ValidatorArray value="QhiraGoldenTargetIsBounty" />
     </DamageResponse>
   </CBehaviorBuff>
+  <!-- Blood Money (hit quest): Blood Rage's bleed deals 1% more damage per stack, against every target -->
+  <CEffectDamage id="NexusHunterBloodRageDoTDamage">
+    <MultiplicativeModifierArray index="QhiraBountyHit" Accumulator="QhiraGoldenBloodMoneyTokenCounterAccumulator" />
+  </CEffectDamage>
   <CBehaviorBuff id="QhiraGoldenBountyFocus" parent="CarryBehaviorParent">
     <DamageResponse>
       <Chance value="1" />

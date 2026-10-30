@@ -5,8 +5,8 @@ include "AffixTriggers"
 // window; takedowns add Huntress: Slow on the attached Hero, then bleed damage while swinging, then healing while swinging, then
 // at 100 the attached Hero is Stunned. Grapple Hunter: Grappling Hook hits on enemy Heroes add Hookshot; takedowns add Snare:
 // recharge, then hook speed and width, then a Shield on hook hits, then at 100 a free Revolving Sweep on arrival. Bounty Hunter:
-// a random enemy Hero is the Bounty (4x damage to it, 0.1x to other Heroes); hits on it add Blood Money (more
-// Bounty damage); Bounty takedowns add Trophies: Slow, then Health drain, then leech, then at 100 a steady armored mount.
+// a random enemy Hero is the Bounty (2x damage to it, 0.1x to other Heroes); hits on it add Blood Money (more
+// bleed damage); Bounty takedowns add Trophies: Slow, then Health drain, then leech, then at 100 a steady armored mount.
 // ============================================================
 
 const fixed libAffx_QhiraTakedownWindow = 3.0;
@@ -252,7 +252,7 @@ bool libAffx_QhiraKickArrive_Func (bool testConds, bool runActions) {
 bool libAffx_QhiraIsBounty (unit target) {
     return target != null && (target == libAffx_QhiraBounty[1] || target == libAffx_QhiraBounty[2]);
 }
-// Bounty Hunter: x(4 x hit quest x Contract) against the Bounty and x0.1 against other enemy Heroes (attacker damage
+// Bounty Hunter: x(2 x Contract) against the Bounty and x0.1 against other enemy Heroes (attacker damage
 // responses on Qhira; a new Hunt value takes effect when the behavior is re-added)
 void libAffx_QhiraBountyDamageSync () {
     unit hero = libAffx_QhiraHero();
@@ -262,7 +262,7 @@ void libAffx_QhiraBountyDamageSync () {
         return;
     }
     contract = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraContract].Modifier", libAffx_player));
-    factor = 4.0 * (1.0 + 0.002 * UnitGetTokenCount(hero, "QhiraGoldenBloodMoneyTokenCounter")) * (1.0 + contract);
+    factor = 2.0 * (1.0 + contract);
     if (factor != libAffx_QhiraBountyFactor) {
         libAffx_QhiraBountyFactor = factor;
         CatalogFieldValueSet(c_gameCatalogBehavior, "QhiraGoldenBountyHunt", "DamageResponse.ModifyFraction", libAffx_player, FixedToString(factor, 4));
