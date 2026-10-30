@@ -31,7 +31,7 @@ int libAffx_QhiraSweepCast; // Whirling Huntress: Revolving Sweep casts this gam
 int[libCore_gv_bALMaxPlayers + 1] libAffx_QhiraSweepCounted; // per enemy player, the last cast that counted a hit
 bool libAffx_QhiraHoldApplied; // Whirling Huntress: the Huntress 100 Stun is on
 unit[3] libAffx_QhiraBounty; // Bounty Hunter: the Bounties (the second with Double Contract)
-int libAffx_QhiraBountyClock; // Bounty Hunter: seconds since the Bounty was picked
+bool libAffx_QhiraDeathPicked; // Bounty Hunter: a new Bounty was picked for this death of Qhira
 fixed libAffx_QhiraBountyFactor = -99.0; // Bounty Hunter: the Bounty multiplier last set (its stacks)
 int libAffx_QhiraSlowApplied; // Bounty Hunter: Trophies applied as the Bounty Slow
 bool libAffx_QhiraSteadyApplied; // Bounty Hunter: Trophies 100 (instant mount) applied
@@ -338,7 +338,6 @@ void libAffx_QhiraPickBounties () {
     }
     libAffx_QhiraClearBounty(1);
     libAffx_QhiraClearBounty(2);
-    libAffx_QhiraBountyClock = 0;
     if (UnitGroupCount(fresh, c_unitCountAlive) > 0) {
         best = UnitGroupRandomUnit(fresh, c_unitCountAlive);
         UnitGroupRemove(fresh, best);
@@ -396,8 +395,8 @@ bool libAffx_QhiraMountCosts_Func (bool testConds, bool runActions) {
     libAffx_CatalogReferenceSet("Abil,Mount,CastIntroTime[0]", libAffx_player, "0");
     return true;
 }
-// Bounty Hunter: every second the Bounty loses Health (Trophies 41-80) and keeps its debuffs; a new Bounty every 60 seconds,
-// or at once when the Bounty is dead
+// Bounty Hunter: every second the Bounty loses Health (Trophies 41-80) and keeps its debuffs; a new Bounty only when the
+// Bounty dies or Qhira dies
 void libAffx_QhiraBountyTick () {
     unit hero = libAffx_QhiraHero();
     int slow;
@@ -407,6 +406,14 @@ void libAffx_QhiraBountyTick () {
     if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
         return;
     }
+    if (!UnitIsAlive(hero)) {
+        if (!libAffx_QhiraDeathPicked) {
+            libAffx_QhiraDeathPicked = true;
+            libAffx_QhiraPickBounties();
+        }
+        return;
+    }
+    libAffx_QhiraDeathPicked = false;
     libAffx_QhiraBountyDamageSync();
     libAffx_QhiraMountSync();
     slow = MaxI(0, MinI(libAffx_QhiraStacks("QhiraGoldenTrophyTokenCounter"), 40));
@@ -414,8 +421,7 @@ void libAffx_QhiraBountyTick () {
         libAffx_QhiraSlowApplied = slow;
         reslow = true;
     }
-    libAffx_QhiraBountyClock += 1;
-    if (libAffx_QhiraBountyClock >= 60 || libAffx_QhiraBounty[1] == null || !UnitIsAlive(libAffx_QhiraBounty[1]) || (libAffx_QhiraBounty[2] != null && !UnitIsAlive(libAffx_QhiraBounty[2])) || (libAffx_QhiraBounty[2] == null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker"))) {
+    if (libAffx_QhiraBounty[1] == null || !UnitIsAlive(libAffx_QhiraBounty[1]) || (libAffx_QhiraBounty[2] != null && !UnitIsAlive(libAffx_QhiraBounty[2])) || (libAffx_QhiraBounty[2] == null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker"))) {
         libAffx_QhiraPickBounties();
         return;
     }
