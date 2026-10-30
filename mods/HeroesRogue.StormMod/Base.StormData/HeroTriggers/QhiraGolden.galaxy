@@ -5,7 +5,7 @@ include "AffixTriggers"
 // window; takedowns add Huntress: Slow on the attached Hero, then bleed damage while swinging, then healing while swinging, then
 // at 100 the attached Hero is Stunned. Grapple Hunter: Grappling Hook hits on enemy Heroes add Hookshot; takedowns add Snare:
 // recharge, then hook speed and width, then a Shield on hook hits, then at 100 a free Revolving Sweep on arrival. Bounty Hunter:
-// the enemy Hero with the most Health is the Bounty (4x damage to it, 0.1x to other Heroes); hits on it add Blood Money (more
+// a random enemy Hero is the Bounty (4x damage to it, 0.1x to other Heroes); hits on it add Blood Money (more
 // Bounty damage); Bounty takedowns add Trophies: Slow, then Health drain, then leech, then at 100 a steady armored mount.
 // ============================================================
 
@@ -301,23 +301,20 @@ void libAffx_QhiraClearBounty (int i) {
     UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
     UnitBehaviorRemove(target, "QhiraGoldenBountyWeaken", c_unitBehaviorCountAll);
 }
-// Bounty Hunter: the enemy Hero with the most Health becomes the Bounty (two of them with Double Contract)
+// Bounty Hunter: a random enemy Hero becomes the Bounty (two of them with Double Contract), if possible not one that was
+// just the Bounty
 void libAffx_QhiraPickBounties () {
     unit hero = libAffx_QhiraHero();
     unitgroup foes;
+    unitgroup fresh = UnitGroupEmpty();
+    unitgroup stale = UnitGroupEmpty();
     unit foe;
     unit best;
     unit second;
-    fixed bestLife = -1.0;
-    fixed secondLife = -1.0;
-    fixed life;
     int i;
     if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
         return;
     }
-    libAffx_QhiraClearBounty(1);
-    libAffx_QhiraClearBounty(2);
-    libAffx_QhiraBountyClock = 0;
     foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionEntireMap(), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
     i = 1;
     while (i <= UnitGroupCount(foes, c_unitCountAll)) {
@@ -330,19 +327,29 @@ void libAffx_QhiraPickBounties () {
         if (foe != libGame_gv_players[UnitGetOwner(foe)].lv_heroUnit) {
             continue;
         }
-        life = UnitGetPropertyFixed(foe, c_unitPropLife, c_unitPropCurrent);
-        if (life > bestLife) {
-            second = best;
-            secondLife = bestLife;
-            best = foe;
-            bestLife = life;
-        } else if (life > secondLife) {
-            second = foe;
-            secondLife = life;
+        if (foe == libAffx_QhiraBounty[1] || foe == libAffx_QhiraBounty[2]) {
+            UnitGroupAdd(stale, foe);
+        } else {
+            UnitGroupAdd(fresh, foe);
         }
+    }
+    libAffx_QhiraClearBounty(1);
+    libAffx_QhiraClearBounty(2);
+    libAffx_QhiraBountyClock = 0;
+    if (UnitGroupCount(fresh, c_unitCountAlive) > 0) {
+        best = UnitGroupRandomUnit(fresh, c_unitCountAlive);
+        UnitGroupRemove(fresh, best);
+    } else if (UnitGroupCount(stale, c_unitCountAlive) > 0) {
+        best = UnitGroupRandomUnit(stale, c_unitCountAlive);
+        UnitGroupRemove(stale, best);
     }
     if (best == null) {
         return;
+    }
+    if (UnitGroupCount(fresh, c_unitCountAlive) > 0) {
+        second = UnitGroupRandomUnit(fresh, c_unitCountAlive);
+    } else if (UnitGroupCount(stale, c_unitCountAlive) > 0) {
+        second = UnitGroupRandomUnit(stale, c_unitCountAlive);
     }
     libAffx_QhiraBounty[1] = best;
     UnitBehaviorAdd(best, "QhiraGoldenBounty", hero, 1);
