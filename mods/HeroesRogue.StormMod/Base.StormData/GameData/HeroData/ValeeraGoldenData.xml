@@ -3,9 +3,15 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Valeera. Starters: Eviscerator (Eviscerate: no Energy cost). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/ValeeraGolden.galaxy. -->
+  <!-- Golden Valeera. Starters: Eviscerator (Eviscerate: no Energy cost), Garrote Specialist (Garrote: no Energy cost, Vanish 2 charges, Rupture) and Scared Assassin (no damage to enemy Heroes; while stealthed, allied non-Heroes nearby heal and share her general boons; stealth openers make Heroes take double damage from minions and mercenaries). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/ValeeraGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="ValeeraEviscerateMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraGarroteMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraScaredMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraTwinGarroteMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraLongShadowsMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraTurncoatMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ValeeraShadowPactMarker" parent="CarryBehaviorParent" />
   <!-- Eviscerator, Domino Effect (Legendary): Eviscerate splashes to non-Heroes within 5 of its target for 60% -->
   <CEffectDamage id="ValeeraGoldenDominoDamage" parent="ValeeraEviscerateDamage">
     <MultiplicativeModifierArray index="ValeeraGoldenDomino" Modifier="-0.4" />
@@ -46,8 +52,75 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="ValeeraGoldenEdgeTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
   </CButton>
+
+  <!-- ===== Garrote Specialist ===== -->
+  <!-- Garrote costs no Energy; Vanish stores 2 charges (8 second recharge); gain Rupture. Wire quest (15% of each map gains kept for good): 0.5% Garrote damage per Garrote on an enemy Hero. Hush quest: takedowns within 6 seconds of a Garrote; stacks 1-40 make Vanish recharge 1% faster each, 41-80 make the bleed last 1% longer each (more ticks, script), 81-100 make the Silence last 1% longer each, at 100 Garrote also casts a free Smoke Bomb at most once every 20 seconds (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="ValeeraGoldenWireTokenCounter" parent="StormQuestToken">
+    <Face value="ValeeraGoldenWireTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ValeeraGoldenHushTokenCounter" parent="StormQuestToken">
+    <Face value="ValeeraGoldenHushTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ValeeraGoldenWireTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ValeeraGoldenWireTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ValeeraGarroteDamage">
+    <MultiplicativeModifierArray index="ValeeraGarrotePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraGarroteCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraGarroteHit" Accumulator="ValeeraGoldenWireTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ValeeraGarroteLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ValeeraGarroteDoTDamage">
+    <MultiplicativeModifierArray index="ValeeraGarrotePower" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraGarroteCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ValeeraGarroteHit" Accumulator="ValeeraGoldenWireTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ValeeraGarroteLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ValeeraGoldenWireTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_garrote.dds" />
+  </CButton>
+  <CButton id="ValeeraGoldenHushTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_garrote.dds" />
+  </CButton>
+
+  <!-- ===== Scared Assassin ===== -->
+  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response). While she is stealthed, allied non-Heroes within 12 heal 2% of their maximum Health per second and share her general boons at full power (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, then 2% more bonus damage each. -->
+  <CBehaviorTokenCounter id="ValeeraGoldenRallyTokenCounter" parent="StormQuestToken">
+    <Face value="ValeeraGoldenRallyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ValeeraGoldenShelterTokenCounter" parent="StormQuestToken">
+    <Face value="ValeeraGoldenShelterTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ValeeraGoldenRallyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ValeeraGoldenRallyTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CButton id="ValeeraGoldenRallyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+  </CButton>
+  <CButton id="ValeeraGoldenShelterTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+  </CButton>
   <!-- Eviscerator: takedown quest stacks past the cap add damage to all of the hero's damage -->
   <CBehaviorBuff id="ValeeraEvisceratePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Garrote Specialist: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ValeeraGarrotePastCapDamage" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
@@ -150,7 +223,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="ValeeraInCombatComboPointsApply" />
   </CEffectSet>
   <!-- Feint (Uncommon): Eviscerating an enemy Hero gives 30 Armor for 10 seconds (Chance 0, the boon turns it on) -->
-  <CBehaviorBuff id="ValeeraGoldenFeint">
+  <CBehaviorBuff id="ValeeraGoldenFeint" parent="StormArmor">
     <Alignment value="Positive" />
     <InfoFlags index="Hidden" value="0" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_eviscerate.dds" />
@@ -205,4 +278,95 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <HostSiteOps Ops="SOpAttachCenter" />
     <Model value="ValeeraEviscerateImpact" />
   </CActorModel>
+  <!-- ===== Garrote Specialist ===== -->
+  <!-- Vanish's charges: its end-of-stealth cooldown (the ability's Cooldown, 0.5 seconds) only spaces the charges -->
+  <!-- Shadow Dance (Legendary): Garrote makes Valeera Invulnerable for 0.75 seconds (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="ValeeraGoldenShadowDance" parent="StormInvulnerable">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenShadowDanceApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ValeeraGoldenShadowDance" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ValeeraGarroteImpactSet">
+    <EffectArray value="ValeeraGoldenShadowDanceApply" />
+    <EffectArray value="ValeeraGoldenExposedApply" />
+  </CEffectSet>
+  <!-- ===== Scared Assassin ===== -->
+  <!-- Valeera deals no damage to enemy Heroes -->
+  <CBehaviorBuff id="ValeeraGoldenPacifist" parent="CarryBehaviorParent">
+    <DamageResponse Chance="1" Location="Attacker" TargetFilters="Heroic;Player,Ally" ModifyFraction="0" />
+  </CBehaviorBuff>
+  <!-- stealth openers (Ambush, Cheap Shot, Garrote; the teleport versions use the same sets) expose enemy Heroes: they take
+       100% more damage from non-Hero, non-structure attackers for 6 seconds (Chance 0, the starter turns it on; the script
+       sets the fraction from the quests) -->
+  <CBehaviorBuff id="ValeeraGoldenExposed">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+    <Duration value="6" />
+    <DamageResponse Chance="1" TargetFilters="-;Heroic,Structure" ModifyFraction="2" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ValeeraGoldenExposedApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="ValeeraGoldenExposed" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ValeeraAmbushInitialSet">
+    <EffectArray value="ValeeraGoldenExposedApply" />
+  </CEffectSet>
+  <CEffectSet id="ValeeraCheapShotImpactSet">
+    <EffectArray value="ValeeraGoldenExposedApply" />
+  </CEffectSet>
+  <!-- while stealthed (script, every 0.25 seconds): allied non-Heroes in range heal 2% of their maximum Health per second
+       (4% at 100 Shelter), and get the Shelter Attack Speed and Armor and a copy of Valeera's general boons (the script sets
+       the values for every player and refreshes the buffs) -->
+  <CEffectModifyUnit id="ValeeraGoldenShadowMend">
+    <ImpactUnit Value="Target" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.005" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="ValeeraGoldenShadowAura" parent="StormArmor">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+    <Duration value="0.5" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0" />
+    </Modification>
+    <ArmorModification>
+      <AllArmorBonus value="0" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="ValeeraGoldenShadowBoons" parent="StormArmor">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_valeera_vanish.dds" />
+    <Duration value="0.5" />
+    <Modification>
+      <MoveSpeedMultiplier value="1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- the support range, shown to Valeera's player only while stealthed (16 with Long Shadows) -->
+  <CBehaviorBuff id="ValeeraGoldenShadowRing12" />
+  <CBehaviorBuff id="ValeeraGoldenShadowRing16" />
+  <CActorRange id="ValeeraGoldenShadowRing12Range">
+    <Filter index="All" value="1" />
+    <VisibleTo index="Self" value="1" />
+    <Inherits index="TeamColor" value="1" />
+    <On Terms="Behavior.ValeeraGoldenShadowRing12.On" Send="Create" />
+    <On Terms="Behavior.ValeeraGoldenShadowRing12.Off" Send="Destroy" />
+    <On Terms="Behavior.Dead.On" Send="Destroy" />
+    <Range value="12" />
+  </CActorRange>
+  <CActorRange id="ValeeraGoldenShadowRing16Range">
+    <Filter index="All" value="1" />
+    <VisibleTo index="Self" value="1" />
+    <Inherits index="TeamColor" value="1" />
+    <On Terms="Behavior.ValeeraGoldenShadowRing16.On" Send="Create" />
+    <On Terms="Behavior.ValeeraGoldenShadowRing16.Off" Send="Destroy" />
+    <On Terms="Behavior.Dead.On" Send="Destroy" />
+    <Range value="16" />
+  </CActorRange>
 </Catalog>

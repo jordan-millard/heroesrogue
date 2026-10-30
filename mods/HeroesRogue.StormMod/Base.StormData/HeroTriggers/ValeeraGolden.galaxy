@@ -3,6 +3,11 @@ include "AffixTriggers"
 // ============================================================
 // Golden Valeera. Eviscerator: Eviscerate hits on enemy Heroes add Cut and open a 6 second takedown window; takedowns
 // add Edge: a Slow, then range, then a chance to refund Combo Points, then at 100 a free Vanish, then 2% damage per stack.
+// Garrote Specialist: Garrotes on enemy Heroes add Wire; takedowns add Hush: Vanish recharge, then a longer bleed, then a
+// longer Silence, then at 100 a free Smoke Bomb (once every 20 seconds), then 2% damage per stack. Scared Assassin: enemy
+// minion and mercenary deaths near Valeera add Rally (1 per 10); enemy Hero deaths soon after allied minion or mercenary damage
+// near her add Shelter: Attack Speed, then Armor for the allies she supports, then a longer Cheap Shot Stun, then at 100
+// double healing, then 2% more minion and mercenary damage to exposed Heroes per stack.
 // ============================================================
 
 const fixed libAffx_ValeeraTakedownWindow = 3.0;
@@ -13,6 +18,29 @@ int libAffx_ValeeraEviscerateAdded; // Eviscerator: takedown stacks already appl
 int libAffx_ValeeraEviscerateAdded2; // Eviscerator: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_ValeeraEviscerateAdded3; // Eviscerator: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_ValeeraEvisceratePastApplied; // Eviscerator: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ValeeraGarroteTime; // per enemy player, last Garrote Specialist hit
+int libAffx_ValeeraGarroteAdded; // Garrote Specialist: takedown stacks already applied to the catalog this game
+int libAffx_ValeeraGarroteAdded2; // Garrote Specialist: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ValeeraGarroteAdded3; // Garrote Specialist: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_ValeeraGarrotePastApplied; // Garrote Specialist: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ValeeraScaredTime; // per enemy player, last Scared Assassin hit
+int libAffx_ValeeraScaredAdded; // Scared Assassin: takedown stacks already applied to the catalog this game
+int libAffx_ValeeraScaredAdded2; // Scared Assassin: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ValeeraScaredAdded3; // Scared Assassin: takedown quest stage 3 stacks already applied to the catalog this game
+bool libAffx_ValeeraFreeVanish; // Eviscerator: the current stealth is the free Vanish
+fixed libAffx_ValeeraFreeVanishCooldown; // Eviscerator: Vanish cooldown left when the free Vanish was cast
+fixed libAffx_ValeeraFreeVanishAt; // Eviscerator: when the free Vanish was cast
+int libAffx_ValeeraGarroteTicks = 7; // Garrote Specialist: the bleed's tick count applied
+fixed libAffx_ValeeraSmokeAt; // Garrote Specialist: when the free Smoke Bomb is next ready
+string[39] libAffx_ValeeraBoonBehaviors; // Scared Assassin: the general boon behaviors she shares
+string libAffx_ValeeraBoonKey = ""; // Scared Assassin: the shared Boons buff values last set
+fixed libAffx_ValeeraBoonsAt; // Scared Assassin: when the shared Boons buff is next recomputed
+int libAffx_ValeeraAuraSpeed = -1; // Scared Assassin: Shelter Attack Speed stacks applied
+int libAffx_ValeeraAuraArmor = -1; // Scared Assassin: Shelter Armor stacks applied
+fixed libAffx_ValeeraExposedFraction = -1.0; // Scared Assassin: the exposed damage fraction applied
+fixed libAffx_ValeeraHealApplied = -1.0; // Scared Assassin: healing per 0.25 seconds applied
+int libAffx_ValeeraScaredKills; // Scared Assassin: enemy minion deaths toward the next Rally stack
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ValeeraMobTime; // Scared Assassin: per enemy player, last allied minion damage near Valeera
 
 unit libAffx_ValeeraHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -78,22 +106,470 @@ void libAffx_ValeeraSyncEviscerate () {
         UnitBehaviorAdd(hero, "ValeeraEvisceratePastCapDamage", hero, 1);
     }
 }
+// ValeeraGoldenHushTokenCounter: stacks 1-40: 1% of the 8 second Vanish recharge each; 41-80 a longer bleed, 81-100 a longer Silence, 100 free Smoke Bomb (script), then damage
+void libAffx_ValeeraSyncGarrote () {
+    unit hero = libAffx_ValeeraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "ValeeraGarroteMarker")) {
+        return;
+    }
+    stacks = libAffx_ValeeraStacks("ValeeraGoldenHushTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ValeeraGarroteAdded) {
+        libAffx_CatalogReferenceModify("Abil,ValeeraStealth,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraGarroteAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraGarroteAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the bleed lasts 1% longer each (libAffx_ValeeraGarroteSync adds the ticks)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ValeeraGarroteAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,ValeeraGarrote,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraGarroteAdded2) * 0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraGarroteAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the Silence lasts 1% longer each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_ValeeraGarroteAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,ValeeraGarroteSilence,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraGarroteAdded3) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraGarroteAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ValeeraGarrotePastApplied) {
+        libAffx_ValeeraGarrotePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "ValeeraGarrotePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ValeeraGarrotePastCapDamage")) {
+        UnitBehaviorAdd(hero, "ValeeraGarrotePastCapDamage", hero, 1);
+    }
+}
+// ValeeraGoldenShelterTokenCounter: stacks 1-40 Attack Speed and 41-80 Armor for supported allies (libAffx_ValeeraScaredTick_Func), 81-100 a longer Cheap Shot Stun, 100 double healing, then more exposed damage (script)
+void libAffx_ValeeraSyncScared () {
+    unit hero = libAffx_ValeeraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    if (hero == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
+        return;
+    }
+    stacks = libAffx_ValeeraStacks("ValeeraGoldenShelterTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ValeeraScaredAdded) {
+        libAffx_ValeeraScaredAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1 Armor each for supported allies (script)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ValeeraScaredAdded2) {
+        libAffx_ValeeraScaredAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Cheap Shot Stuns 2% longer each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_ValeeraScaredAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,ValeeraCheapShotStun,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraScaredAdded3) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ValeeraScaredAdded3 = wanted;
+    }
+    bonus = FixedToString(IntToFixed(MaxI(0, stacks - 100)) * 0.0, c_fixedPrecisionAny);
+}
 bool libAffx_ValeeraSync_Func (bool testConds, bool runActions) {
     libAffx_ValeeraSyncEviscerate();
+    libAffx_ValeeraSyncGarrote();
+    libAffx_ValeeraSyncScared();
     return true;
 }
-// Eviscerator, Edge at 100: every Eviscerate also casts a free Vanish (Vanish's own cooldown isn't used)
+// Eviscerator, Edge at 100: every Eviscerate also casts a free Vanish. Its stealth ending would put Vanish on cooldown,
+// so the cooldown Vanish had before is put back then (libAffx_ValeeraVanishRestore_Func).
 bool libAffx_ValeeraEviscerateVanish_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ValeeraHero();
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "ValeeraEviscerateMarker") || libAffx_ValeeraStacks("ValeeraGoldenEdgeTokenCounter") < 100) {
         return false;
     }
     Wait(0.0625, c_timeGame);
-    if (!UnitIsAlive(hero)) {
+    if (!UnitIsAlive(hero) || UnitHasBehavior2(hero, "ValeeraStealthCloak")) {
         return true;
     }
+    libAffx_ValeeraFreeVanish = true;
+    libAffx_ValeeraFreeVanishCooldown = UnitGetCooldown(hero, "Abil/ValeeraStealth");
+    libAffx_ValeeraFreeVanishAt = GameGetMissionTime();
     UnitCreateEffectUnit(hero, "ValeeraVanishPrepSet", hero);
     UnitCreateEffectUnit(hero, "ValeeraStealthInitialSet", hero);
+    return true;
+}
+bool libAffx_ValeeraVanishRestore_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null || EventUnit() != hero || !libAffx_ValeeraFreeVanish) {
+        return false;
+    }
+    libAffx_ValeeraFreeVanish = false;
+    UnitModifyCooldown(hero, "Abil/ValeeraStealth", MaxF(0.0, libAffx_ValeeraFreeVanishCooldown - (GameGetMissionTime() - libAffx_ValeeraFreeVanishAt)), c_cooldownOperationSet);
+    return true;
+}
+// Garrote Specialist, Hush 41-80: the bleed's ticks follow its longer Duration (7 ticks, 1 second apart)
+void libAffx_ValeeraGarroteSync () {
+    unit hero = libAffx_ValeeraHero();
+    int ticks;
+    if (hero == null || !UnitHasBehavior2(hero, "ValeeraGarroteMarker")) {
+        return;
+    }
+    ticks = 7 + (MaxI(0, MinI(libAffx_ValeeraStacks("ValeeraGoldenHushTokenCounter") - 40, 40)) * 7) / 100;
+    if (ticks != libAffx_ValeeraGarroteTicks) {
+        libAffx_ValeeraGarroteTicks = ticks;
+        CatalogFieldValueSet(c_gameCatalogBehavior, "ValeeraGarrote", "PeriodCount", libAffx_player, IntToString(ticks));
+    }
+}
+// Twin Garrote (Rare): a Garrote on an enemy Hero also Silences the nearest other enemy Hero within 6 of it
+void libAffx_ValeeraTwinGarrote (unit hero, unit victim) {
+    unitgroup foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionCircle(UnitGetPosition(victim), 6.0), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterStasis - 32)) | (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32)) | (1 << (c_targetFilterInvulnerable - 32))), 0);
+    unit foe;
+    unit best;
+    fixed bestDist = 999.0;
+    int i;
+    for (i = 1; i <= UnitGroupCount(foes, c_unitCountAll); i += 1) {
+        foe = UnitGroupUnit(foes, i);
+        if (foe != victim && UnitIsAlive(foe) && libAffx_ValeeraIsEnemyHero(foe) && DistanceBetweenPoints(UnitGetPosition(victim), UnitGetPosition(foe)) < bestDist) {
+            best = foe;
+            bestDist = DistanceBetweenPoints(UnitGetPosition(victim), UnitGetPosition(foe));
+        }
+    }
+    if (best != null) {
+        UnitCreateEffectUnit(hero, "ValeeraGarroteSilenceApply", best);
+    }
+}
+// Garrote Specialist, Hush at 100: Garrote also casts a free Smoke Bomb, at most once every 20 seconds
+bool libAffx_ValeeraGarroteSmoke_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "ValeeraGarroteMarker") || libAffx_ValeeraStacks("ValeeraGoldenHushTokenCounter") < 100 || GameGetMissionTime() < libAffx_ValeeraSmokeAt) {
+        return false;
+    }
+    libAffx_ValeeraSmokeAt = GameGetMissionTime() + 20.0;
+    UnitCreateEffectPoint(hero, "ValeeraSmokeBombInitialSet", UnitGetPosition(hero));
+    return true;
+}
+// Scared Assassin: sets a behavior field for every player (the buffs land on allied minions, mercenaries and Heroes owned by
+// other players)
+void libAffx_ValeeraSetAll (string id, string field, fixed value) {
+    int p;
+    for (p = 0; p <= 15; p += 1) {
+        CatalogFieldValueSet(c_gameCatalogBehavior, id, field, p, FixedToString(value, 4));
+    }
+}
+// Scared Assassin: the support range (16 with Long Shadows)
+fixed libAffx_ValeeraShadowRange () {
+    unit hero = libAffx_ValeeraHero();
+    if (hero != null && UnitHasBehavior2(hero, "ValeeraLongShadowsMarker")) {
+        return 16.0;
+    }
+    return 12.0;
+}
+// Scared Assassin: a minion or mercenary (not a Hero, structure or map boss)
+bool libAffx_ValeeraIsMob (unit u) {
+    string kind = UnitGetType(u);
+    if (UnitTypeTestAttribute(kind, c_unitAttributeHeroic) || UnitTypeTestAttribute(kind, c_unitAttributeStructure) || UnitTypeTestAttribute(kind, c_unitAttributeMapBoss)) {
+        return false;
+    }
+    return UnitTypeTestAttribute(kind, c_unitAttributeMinion) || UnitTypeTestAttribute(kind, c_unitAttributeMerc);
+}
+// Scared Assassin: one of a general boon behavior's fields, for Valeera
+fixed libAffx_ValeeraBoonField (string b, string field) {
+    return CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, b, field, libAffx_player);
+}
+// Scared Assassin: Valeera's general boon stats (the boon behaviors she has right now, at full power) go into the shared
+// Boons buff; true when they changed (the buff is then re-added)
+bool libAffx_ValeeraShadowBoons () {
+    unit hero = libAffx_ValeeraHero();
+    string b;
+    string key;
+    string[7] armorSet;
+    string[6] attribute;
+    fixed[7] armorBasic;
+    fixed[7] armorAbility;
+    fixed[6] attributeBonus;
+    fixed k;
+    fixed speed;
+    fixed attackSpeed;
+    fixed damage;
+    fixed scaled;
+    fixed leech;
+    fixed lifeFraction;
+    fixed life;
+    fixed regen;
+    fixed regenMultiplier;
+    fixed healTaken;
+    fixed range;
+    int i;
+    int j;
+    armorSet[1] = "Hero";
+    armorSet[2] = "Merc";
+    armorSet[3] = "Monster";
+    armorSet[4] = "Summon";
+    armorSet[5] = "Structure";
+    armorSet[6] = "Minion";
+    attribute[1] = "Structure";
+    attribute[2] = "Minion";
+    attribute[3] = "Merc";
+    attribute[4] = "Monster";
+    attribute[5] = "Summon";
+    for (i = 1; i <= 38; i += 1) {
+        b = libAffx_ValeeraBoonBehaviors[i];
+        if (!UnitHasBehavior2(hero, b)) {
+            continue;
+        }
+        k = IntToFixed(UnitBehaviorCount(hero, b));
+        // Movement Speed bonuses don't stack (the highest wins), so only the best one counts
+        speed = MaxF(speed, libAffx_ValeeraBoonField(b, "Modification.UnifiedMoveSpeedFactor"));
+        attackSpeed += k * libAffx_ValeeraBoonField(b, "Modification.AdditiveAttackSpeedFactor");
+        // a boon's Basic or Ability bonus counts, whichever is bigger, for both kinds of damage
+        damage += k * MaxF(libAffx_ValeeraBoonField(b, "Modification.DamageDealtFraction[Basic]"), libAffx_ValeeraBoonField(b, "Modification.DamageDealtFraction[Ability]"));
+        scaled += k * MaxF(libAffx_ValeeraBoonField(b, "Modification.DamageDealtScaled[Basic]"), libAffx_ValeeraBoonField(b, "Modification.DamageDealtScaled[Ability]"));
+        leech += k * MaxF(libAffx_ValeeraBoonField(b, "Modification.VitalDamageLeechArray[Life].KindArray[Basic]"), libAffx_ValeeraBoonField(b, "Modification.VitalDamageLeechArray[Life].KindArray[Ability]"));
+        lifeFraction += k * libAffx_ValeeraBoonField(b, "Modification.VitalMaxFractionArray[Life]");
+        life += k * libAffx_ValeeraBoonField(b, "Modification.VitalMaxArray[Life]");
+        regen += k * libAffx_ValeeraBoonField(b, "Modification.VitalRegenArray[Life]");
+        regenMultiplier += k * libAffx_ValeeraBoonField(b, "Modification.VitalRegenMultiplier[Life]");
+        healTaken += k * libAffx_ValeeraBoonField(b, "Modification.HealTakenAdditiveMultiplier[Life]");
+        range += k * libAffx_ValeeraBoonField(b, "Modification.WeaponRange");
+        for (j = 1; j <= 5; j += 1) {
+            attributeBonus[j] += k * libAffx_ValeeraBoonField(b, "Modification.DamageDealtAttributeMultiplier[" + attribute[j] + "]");
+        }
+        for (j = 1; j <= 6; j += 1) {
+            armorBasic[j] += k * libAffx_ValeeraBoonField(b, "ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Basic]");
+            armorAbility[j] += k * libAffx_ValeeraBoonField(b, "ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Ability]");
+        }
+    }
+    key = FixedToString(speed, 4) + " " + FixedToString(attackSpeed, 4) + " " + FixedToString(damage, 4) + " " + FixedToString(scaled, 4) + " " + FixedToString(leech, 4) + " " + FixedToString(lifeFraction, 4) + " " + FixedToString(life, 4) + " " + FixedToString(regen, 4) + " " + FixedToString(regenMultiplier, 4) + " " + FixedToString(healTaken, 4) + " " + FixedToString(range, 4);
+    for (j = 1; j <= 5; j += 1) {
+        key = key + " " + FixedToString(attributeBonus[j], 4);
+    }
+    for (j = 1; j <= 6; j += 1) {
+        key = key + " " + FixedToString(armorBasic[j], 4) + " " + FixedToString(armorAbility[j], 4);
+    }
+    if (key == libAffx_ValeeraBoonKey) {
+        return false;
+    }
+    libAffx_ValeeraBoonKey = key;
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.MoveSpeedMultiplier", 1.0 + speed);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.AdditiveAttackSpeedFactor", attackSpeed);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.DamageDealtFraction[Basic]", damage);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.DamageDealtFraction[Ability]", damage);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.DamageDealtScaled[Basic]", scaled);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.DamageDealtScaled[Ability]", scaled);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.VitalDamageLeechArray[Life].KindArray[Basic]", leech);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.VitalDamageLeechArray[Life].KindArray[Ability]", leech);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.VitalMaxFractionArray[Life]", lifeFraction);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.VitalMaxArray[Life]", life);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.VitalRegenArray[Life]", regen);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.VitalRegenMultiplier[Life]", regenMultiplier);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.HealTakenAdditiveMultiplier[Life]", healTaken);
+    libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.WeaponRange", range);
+    for (j = 1; j <= 5; j += 1) {
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "Modification.DamageDealtAttributeMultiplier[" + attribute[j] + "]", attributeBonus[j]);
+    }
+    for (j = 1; j <= 6; j += 1) {
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Basic]", armorBasic[j]);
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowBoons", "ArmorModification.ArmorSet[" + armorSet[j] + "].ArmorMitigationTable[Ability]", armorAbility[j]);
+    }
+    return true;
+}
+// Scared Assassin: keeps a shared buff on a unit in range (re-added when its values changed; it lapses 0.5 seconds after
+// the unit leaves the range or Valeera leaves stealth)
+void libAffx_ValeeraShare (unit u, unit hero, string b, bool refresh) {
+    if (refresh) {
+        UnitBehaviorRemove(u, b, 1);
+    }
+    if (UnitHasBehavior2(u, b)) {
+        UnitBehaviorSetDurationRemaining(u, b, 0.5);
+    } else {
+        UnitBehaviorAdd(u, b, hero, 1);
+    }
+}
+// Scared Assassin: the range ring while stealthed
+void libAffx_ValeeraRing (unit hero, bool on, fixed range) {
+    string want = "ValeeraGoldenShadowRing12";
+    string other = "ValeeraGoldenShadowRing16";
+    if (range > 12.0) {
+        want = "ValeeraGoldenShadowRing16";
+        other = "ValeeraGoldenShadowRing12";
+    }
+    if (UnitHasBehavior2(hero, other)) {
+        UnitBehaviorRemove(hero, other, 1);
+    }
+    if (!on) {
+        if (UnitHasBehavior2(hero, want)) {
+            UnitBehaviorRemove(hero, want, 1);
+        }
+        return;
+    }
+    if (!UnitHasBehavior2(hero, want)) {
+        UnitBehaviorAdd(hero, want, hero, 1);
+    }
+}
+// Scared Assassin, every 0.25 seconds: the quest values, and while stealthed the healing and shared buffs in range
+bool libAffx_ValeeraScaredTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    unitgroup allies;
+    unit u;
+    fixed range;
+    fixed fraction;
+    fixed heal = 0.005;
+    bool stealthed;
+    bool refreshAura = false;
+    bool refreshBoons = false;
+    bool pact;
+    int stacks;
+    int speed;
+    int armor;
+    int i;
+    if (hero == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
+        return false;
+    }
+    range = libAffx_ValeeraShadowRange();
+    stealthed = UnitIsAlive(hero) && UnitHasBehavior2(hero, "ValeeraStealthCloak");
+    libAffx_ValeeraRing(hero, stealthed, range);
+    stacks = libAffx_ValeeraStacks("ValeeraGoldenShelterTokenCounter");
+    // Shelter 1-40: 1% Attack Speed each, 41-80: 1 Armor each
+    speed = MinI(stacks, 40);
+    armor = MaxI(0, MinI(stacks - 40, 40));
+    if (speed != libAffx_ValeeraAuraSpeed || armor != libAffx_ValeeraAuraArmor) {
+        libAffx_ValeeraAuraSpeed = speed;
+        libAffx_ValeeraAuraArmor = armor;
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "Modification.AdditiveAttackSpeedFactor", 0.01 * IntToFixed(speed));
+        libAffx_ValeeraSetAll("ValeeraGoldenShadowAura", "ArmorModification.AllArmorBonus", IntToFixed(armor));
+        refreshAura = true;
+    }
+    // exposed Heroes: 100% more damage from minions and mercenaries, plus 1% per Rally stack and 2% per Shelter stack past 100
+    fraction = 2.0 + 0.01 * UnitGetTokenCount(hero, "ValeeraGoldenRallyTokenCounter") + 0.02 * IntToFixed(MaxI(0, stacks - 100));
+    if (fraction != libAffx_ValeeraExposedFraction) {
+        libAffx_ValeeraExposedFraction = fraction;
+        libAffx_ValeeraSetAll("ValeeraGoldenExposed", "DamageResponse.ModifyFraction", fraction);
+    }
+    // Shelter at 100: the healing doubles
+    if (stacks >= 100) {
+        heal = 0.01;
+    }
+    if (heal != libAffx_ValeeraHealApplied) {
+        libAffx_ValeeraHealApplied = heal;
+        CatalogFieldValueSet(c_gameCatalogEffect, "ValeeraGoldenShadowMend", "VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(heal, 4));
+    }
+    if (GameGetMissionTime() >= libAffx_ValeeraBoonsAt) {
+        libAffx_ValeeraBoonsAt = GameGetMissionTime() + 1.0;
+        refreshBoons = libAffx_ValeeraShadowBoons();
+    }
+    if (!stealthed) {
+        return true;
+    }
+    pact = UnitHasBehavior2(hero, "ValeeraShadowPactMarker");
+    allies = UnitGroupAlliance(libAffx_player, c_unitAllianceAlly, RegionCircle(UnitGetPosition(hero), range), UnitFilter(0, 0, (1 << c_targetFilterStructure) | (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    for (i = 1; i <= UnitGroupCount(allies, c_unitCountAll); i += 1) {
+        u = UnitGroupUnit(allies, i);
+        if (u == hero || !UnitIsAlive(u)) {
+            continue;
+        }
+        // Shadow Pact (Legendary): allied Heroes get the shared boons too (no healing)
+        if (UnitTypeTestAttribute(UnitGetType(u), c_unitAttributeHeroic)) {
+            if (pact) {
+                libAffx_ValeeraShare(u, hero, "ValeeraGoldenShadowBoons", refreshBoons);
+            }
+            continue;
+        }
+        UnitCreateEffectUnit(hero, "ValeeraGoldenShadowMend", u);
+        if (speed + armor > 0) {
+            libAffx_ValeeraShare(u, hero, "ValeeraGoldenShadowAura", refreshAura);
+        }
+        libAffx_ValeeraShare(u, hero, "ValeeraGoldenShadowBoons", refreshBoons);
+    }
+    return true;
+}
+// Scared Assassin: an allied minion or mercenary (not a Hero or structure) damaging an enemy Hero within Valeera's range
+// opens a 6 second takedown window on that Hero
+bool libAffx_ValeeraMobDamage_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit source = EventUnitDamageSourceUnit();
+    unit hero;
+    string kind;
+    if (!libAffx_ValeeraIsEnemyHero(victim) || source == null) {
+        return false;
+    }
+    hero = libAffx_ValeeraHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
+        return false;
+    }
+    kind = UnitGetType(source);
+    if (UnitTypeTestAttribute(kind, c_unitAttributeHeroic) || UnitTypeTestAttribute(kind, c_unitAttributeStructure)) {
+        return false;
+    }
+    if (libGame_gf_TeamNumberOfPlayer(UnitGetOwner(source)) != libGame_gf_TeamNumberOfPlayer(libAffx_player)) {
+        return false;
+    }
+    if (DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(victim)) > libAffx_ValeeraShadowRange()) {
+        return false;
+    }
+    libAffx_ValeeraMobTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// Scared Assassin: deaths. An enemy Hero that dies within 6 seconds of allied minion or mercenary damage near Valeera adds
+// Shelter (no participation needed); every 10 enemy minions or mercenaries that die within her range add Rally.
+bool libAffx_ValeeraScaredDeath_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    unit dead = EventUnit();
+    int owner = UnitGetOwner(dead);
+    fixed now = GameGetMissionTime();
+    if (hero == null || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
+        return false;
+    }
+    if (libAffx_ValeeraIsEnemyHero(dead)) {
+        if (libAffx_ValeeraMobTime[owner] > 0.0 && now - libAffx_ValeeraMobTime[owner] <= 6.0) {
+            libAffx_ValeeraMobTime[owner] = 0.0;
+            libGame_gf_ModifyTokenCount(1, "ValeeraGoldenShelterTokenCounter", hero);
+            libAffx_ValeeraSyncScared();
+            libAffx_ValeeraQuestDing();
+        }
+        return true;
+    }
+    if (!UnitIsAlive(hero) || !libAffx_ValeeraIsMob(dead)) {
+        return false;
+    }
+    if (libGame_gf_TeamNumberOfPlayer(owner) == libGame_gf_TeamNumberOfPlayer(libAffx_player)) {
+        return false;
+    }
+    if (DistanceBetweenPoints(UnitGetPosition(hero), UnitGetPosition(dead)) > libAffx_ValeeraShadowRange()) {
+        return false;
+    }
+    libAffx_ValeeraScaredKills += 1;
+    if (libAffx_ValeeraScaredKills >= 10) {
+        libAffx_ValeeraScaredKills = 0;
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenRallyTokenCounter", hero);
+        libAffx_ValeeraQuestDing();
+    }
+    return true;
+}
+// Turncoat (Rare): Eviscerate on an enemy minion or mercenary makes it an allied one at full Health, pushing the nearest lane
+bool libAffx_ValeeraTurncoat_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ValeeraHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    int team;
+    int newOwner;
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "ValeeraTurncoatMarker")) {
+        return false;
+    }
+    Wait(0.0625, c_timeGame);
+    if (!UnitIsAlive(target) || !libAffx_ValeeraIsMob(target)) {
+        return true;
+    }
+    team = libGame_gf_TeamNumberOfPlayer(libAffx_player);
+    if (libGame_gf_TeamNumberOfPlayer(UnitGetOwner(target)) == team) {
+        return true;
+    }
+    newOwner = libGame_gf_ComputerPlayerInTeam(team);
+    UnitSetOwner(target, newOwner, true);
+    UnitSetPropertyFixed(target, c_unitPropLifePercent, 100.0);
+    libGame_gf_CalculateSpawnedMinionGoalPoints(newOwner, UnitGetPosition(target));
+    libAIAI_gf_MinionAIStartMinionAI(-1, target, libGame_gv_spawnedMinionLane, libGame_gv_spawnedMinionFirstWaypointIndex, false, false, false, 0, true);
+    return true;
+}
+bool libAffx_ValeeraTick_Func (bool testConds, bool runActions) {
+    libAffx_ValeeraGarroteSync();
     return true;
 }
 // Eviscerator hit on an enemy Hero: takedown window, ValeeraGoldenCutTokenCounter, the heal, and on-hit boons
@@ -107,27 +583,63 @@ bool libAffx_ValeeraEviscerateHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "ValeeraGoldenCutTokenCounter", hero);
     return true;
 }
+// Garrote Specialist hit on an enemy Hero: takedown window, ValeeraGoldenWireTokenCounter, the heal, and on-hit boons
+bool libAffx_ValeeraGarroteHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ValeeraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ValeeraGarroteMarker")) {
+        return false;
+    }
+    libAffx_ValeeraGarroteTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ValeeraGoldenWireTokenCounter", hero);
+    if (UnitHasBehavior2(hero, "ValeeraTwinGarroteMarker")) {
+        libAffx_ValeeraTwinGarrote(hero, victim);
+    }
+    return true;
+}
+// Scared Assassin hit on an enemy Hero: takedown window, ValeeraGoldenRallyTokenCounter, the heal, and on-hit boons
+bool libAffx_ValeeraScaredHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ValeeraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ValeeraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ValeeraScaredMarker")) {
+        return false;
+    }
+    libAffx_ValeeraScaredTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ValeeraGoldenRallyTokenCounter", hero);
+    return true;
+}
 // Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
 // own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
-int[2] libAffx_ValeeraTakedownBefore; // each starter's takedown stacks before this takedown
+int[4] libAffx_ValeeraTakedownBefore; // each starter's takedown stacks before this takedown
 void libAffx_ValeeraTakedownCrossStart () {
     unit hero = libAffx_ValeeraHero();
     if (hero == null) {
         return;
     }
     libAffx_ValeeraTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter"));
+    libAffx_ValeeraTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenHushTokenCounter"));
+    libAffx_ValeeraTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenShelterTokenCounter"));
 }
 void libAffx_ValeeraTakedownCross () {
     unit hero = libAffx_ValeeraHero();
     if (hero == null) {
         return;
     }
-    if (FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter")) == libAffx_ValeeraTakedownBefore[1]) {
+    if (FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter")) == libAffx_ValeeraTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenHushTokenCounter")) == libAffx_ValeeraTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenShelterTokenCounter")) == libAffx_ValeeraTakedownBefore[3]) {
         return;
     }
     if (UnitHasBehavior2(hero, "ValeeraEviscerateMarker") && FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenEdgeTokenCounter")) == libAffx_ValeeraTakedownBefore[1]) {
         libGame_gf_ModifyTokenCount(1, "ValeeraGoldenEdgeTokenCounter", hero);
         libAffx_ValeeraSyncEviscerate();
+    }
+    if (UnitHasBehavior2(hero, "ValeeraGarroteMarker") && FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenHushTokenCounter")) == libAffx_ValeeraTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenHushTokenCounter", hero);
+        libAffx_ValeeraSyncGarrote();
+        libAffx_ValeeraGarroteSync();
+    }
+    if (UnitHasBehavior2(hero, "ValeeraScaredMarker") && FixedToInt(UnitGetTokenCount(hero, "ValeeraGoldenShelterTokenCounter")) == libAffx_ValeeraTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenShelterTokenCounter", hero);
+        libAffx_ValeeraSyncScared();
     }
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -150,6 +662,19 @@ bool libAffx_ValeeraTakedown (bool testConds, bool runActions) {
         libAffx_ValeeraSyncEviscerate();
         libAffx_ValeeraQuestDing();
     }
+    if (UnitHasBehavior2(hero, "ValeeraGarroteMarker") && libAffx_ValeeraGarroteTime[killedPlayer] > 0.0 && now - libAffx_ValeeraGarroteTime[killedPlayer] <= 6.0) {
+        libAffx_ValeeraGarroteTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenHushTokenCounter", hero);
+        libAffx_ValeeraSyncGarrote();
+        libAffx_ValeeraQuestDing();
+        libAffx_ValeeraGarroteSync();
+    }
+    if (UnitHasBehavior2(hero, "ValeeraScaredMarker") && libAffx_ValeeraScaredTime[killedPlayer] > 0.0 && now - libAffx_ValeeraScaredTime[killedPlayer] <= -1.0) {
+        libAffx_ValeeraScaredTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ValeeraGoldenShelterTokenCounter", hero);
+        libAffx_ValeeraSyncScared();
+        libAffx_ValeeraQuestDing();
+    }
     libAffx_ValeeraTakedownCross();
     return true;
 }
@@ -161,7 +686,55 @@ bool libAffx_ValeeraStart (bool testConds, bool runActions) {
     libAffx_ValeeraStarted = true;
     trig = TriggerCreate("libAffx_ValeeraEviscerateHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ValeeraEviscerateDamage");
+    trig = TriggerCreate("libAffx_ValeeraGarroteHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ValeeraGarroteDamage");
+    trig = TriggerCreate("libAffx_ValeeraScaredHit_Func");
+    libAffx_ValeeraBoonBehaviors[1] = "AffixAllRounderBehavior";
+    libAffx_ValeeraBoonBehaviors[2] = "AffixAmplificationBehavior";
+    libAffx_ValeeraBoonBehaviors[3] = "AffixAmplifiedHealingBehavior";
+    libAffx_ValeeraBoonBehaviors[4] = "AffixBlessingoftheDragons";
+    libAffx_ValeeraBoonBehaviors[5] = "AffixBloodlust";
+    libAffx_ValeeraBoonBehaviors[6] = "AffixBloodlustSpell";
+    libAffx_ValeeraBoonBehaviors[7] = "AffixChronoBoostBehavior";
+    libAffx_ValeeraBoonBehaviors[8] = "AffixDemolitionistBehavior";
+    libAffx_ValeeraBoonBehaviors[9] = "AffixEfficientGunsBehavior";
+    libAffx_ValeeraBoonBehaviors[10] = "AffixEnduranceBehavior";
+    libAffx_ValeeraBoonBehaviors[11] = "AffixFastFeetBehavior";
+    libAffx_ValeeraBoonBehaviors[12] = "AffixFirstAidBehavior";
+    libAffx_ValeeraBoonBehaviors[13] = "AffixGatheringPowerBehavior";
+    libAffx_ValeeraBoonBehaviors[14] = "AffixLifeStealBehavior";
+    libAffx_ValeeraBoonBehaviors[15] = "AffixMercenaryLordBuff";
+    libAffx_ValeeraBoonBehaviors[16] = "AffixMinionKillerBehavior";
+    libAffx_ValeeraBoonBehaviors[17] = "AffixNanoBoost";
+    libAffx_ValeeraBoonBehaviors[18] = "AffixNexusFrenzyBehavior";
+    libAffx_ValeeraBoonBehaviors[19] = "AffixNexusRangeBuff";
+    libAffx_ValeeraBoonBehaviors[20] = "AffixOverwhelmingPowerBehavior";
+    libAffx_ValeeraBoonBehaviors[21] = "AffixPathoftheAssassinBehavior";
+    libAffx_ValeeraBoonBehaviors[22] = "AffixPathoftheWarriorBehavior";
+    libAffx_ValeeraBoonBehaviors[23] = "AffixPhysicalArmorBehavior";
+    libAffx_ValeeraBoonBehaviors[24] = "AffixPhysicalLeechBehavior";
+    libAffx_ValeeraBoonBehaviors[25] = "AffixPhysicalLeechSpell";
+    libAffx_ValeeraBoonBehaviors[26] = "AffixPowerfulBehavior";
+    libAffx_ValeeraBoonBehaviors[27] = "AffixResilienceBehavior";
+    libAffx_ValeeraBoonBehaviors[28] = "AffixRingofRegenerationBehavior";
+    libAffx_ValeeraBoonBehaviors[29] = "AffixSearingAttacksBehavior";
+    libAffx_ValeeraBoonBehaviors[30] = "AffixSelfReliantBehavior";
+    libAffx_ValeeraBoonBehaviors[31] = "AffixSelfReliantNoManaBehavior";
+    libAffx_ValeeraBoonBehaviors[32] = "AffixSpellArmorBehavior";
+    libAffx_ValeeraBoonBehaviors[33] = "AffixSpellLeechBehavior";
+    libAffx_ValeeraBoonBehaviors[34] = "AffixSpellShieldActive";
+    libAffx_ValeeraBoonBehaviors[35] = "AffixSpellcastingBehavior";
+    libAffx_ValeeraBoonBehaviors[36] = "AffixStrength";
+    libAffx_ValeeraBoonBehaviors[37] = "AffixSuperiorityBehavior";
+    libAffx_ValeeraBoonBehaviors[38] = "PreparedDamageBehavior";
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraEviscerateVanish_Func"), libAffx_player, "ValeeraEviscerateInitialSet");
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_ValeeraVanishRestore_Func"), null, "ValeeraStealthCloak", c_unitBehaviorChangeDestroy);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraGarroteSmoke_Func"), libAffx_player, "ValeeraGarroteImpactSet");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ValeeraTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ValeeraScaredTick_Func"), 0.25, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_ValeeraMobDamage_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
+    TriggerAddEventUnitDied(TriggerCreate("libAffx_ValeeraScaredDeath_Func"), null);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ValeeraTurncoat_Func"), libAffx_player, "ValeeraEviscerateInitialSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ValeeraSync_Func"), 1.0, c_timeGame);
     return true;
