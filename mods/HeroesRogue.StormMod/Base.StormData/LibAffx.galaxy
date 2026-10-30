@@ -3063,6 +3063,7 @@ string[libAffx_maxMultipliers + 1] libAffx_multEffect;
 string[libAffx_maxMultipliers + 1] libAffx_multKey;
 int[libAffx_maxMultipliers + 1] libAffx_multPlayer;
 fixed[libAffx_maxMultipliers + 1] libAffx_multLast;
+bool[libAffx_maxMultipliers + 1] libAffx_multValidated; // the MultOut entry has a validator (e.g. only against one target)
 trigger libAffx_multTrigger;
 void libAffx_MultiplierSync(int i) {
     string effect = libAffx_multEffect[i];
@@ -3094,10 +3095,14 @@ void libAffx_MultiplierSync(int i) {
         }
     }
     // the MultOut modifier itself is in the sum, and so are those of multipliers on this effect registered later (each
-    // multiplier counts only the earlier ones, so two of them multiply each other exactly once)
-    for (j = i; j <= libAffx_multCount; j += 1) {
-        if (libAffx_multEffect[j] == effect && libAffx_multPlayer[j] == player) {
-            others -= libAffx_multLast[j];
+    // multiplier counts only the earlier ones, so two of them multiply each other exactly once). A MultOut with a
+    // validator (a conditional multiplier, e.g. only against one target) isn't in the sum, and it multiplies all the
+    // unconditional ones.
+    if (!libAffx_multValidated[i]) {
+        for (j = i; j <= libAffx_multCount; j += 1) {
+            if (libAffx_multEffect[j] == effect && libAffx_multPlayer[j] == player && !libAffx_multValidated[j]) {
+                others -= libAffx_multLast[j];
+            }
         }
     }
     value = stacks * MaxF(0.0, 1.0 + others);
@@ -3145,6 +3150,7 @@ void libAffx_MultiplierRegister(string reference, int player) {
     libAffx_multKey[libAffx_multCount] = key;
     libAffx_multPlayer[libAffx_multCount] = player;
     libAffx_multLast[libAffx_multCount] = 0.0;
+    libAffx_multValidated[libAffx_multCount] = CatalogFieldValueGet(c_gameCatalogEffect, effect, "MultiplicativeModifierArray[" + key + "MultOut].Validator", player) != "";
     if (libAffx_multTrigger == null) {
         libAffx_multTrigger = TriggerCreate("libAffx_MultiplierPeriodic");
         TriggerAddEventTimePeriodic(libAffx_multTrigger, 0.25, c_timeGame);
@@ -6516,6 +6522,7 @@ void libAffx_InitVariables () {
     libAffx_SetGoldenHero("L90ETC");
     libAffx_SetGoldenHero("Murky");
     libAffx_SetGoldenHero("Genji");
+    libAffx_SetGoldenHero("NexusHunter");
     libAffx_SetGoldenHero("Raynor");
     libAffx_SetGoldenHero("Tychus");
     libAffx_SetGoldenHero("Mephisto");

@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Qhira. Starters: Whirling Huntress (Revolving Sweep: 5 second cooldown, half Mana, Booming Kick and Lingering Ailment), Grapple Hunter (Grappling Hook: 2 charges, 8 second recharge, 3x damage, Utility Belt and Upstage) and Bounty Hunter (one enemy Hero at a time is the Bounty: 4x damage to it, 90% less to other Heroes; Final Strike at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon, hit quest (accumulator) and takedown quest past its cap; the 3x, 4x and 0.1x are LibAffx multipliers (they multiply everything else). Hits, quests and script boons are in HeroTriggers/QhiraGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="QhiraWhirlMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="QhiraGrappleMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="QhiraBountyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="QhiraHuntersMarkMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="QhiraDoubleContractMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Whirling Huntress ===== -->
+  <!-- Revolving Sweep has a 5 second cooldown (16) and costs half Mana; gain Booming Kick and Lingering Ailment. Whirl quest (25% of each map gains kept for good): 0.5% Revolving Sweep damage per enemy Hero hit (once per Hero per cast). Huntress quest: takedowns within 6 seconds of a hit; stacks 1-40 Slow the attached Hero 1% each while Qhira swings, 41-80 add 1% bleed damage while swinging each, 81-100 heal 1% of maximum Health per stack over each swing, at 100 the attached Hero is Stunned while she swings (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="QhiraGoldenWhirlTokenCounter" parent="StormQuestToken">
+    <Face value="QhiraGoldenWhirlTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="QhiraGoldenHuntressTokenCounter" parent="StormQuestToken">
+    <Face value="QhiraGoldenHuntressTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="QhiraGoldenWhirlTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="QhiraGoldenWhirlTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="NexusHunterRevolvingSweepInitialDamage">
+    <MultiplicativeModifierArray index="QhiraWhirlPower" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraWhirlCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraWhirlHit" Accumulator="QhiraGoldenWhirlTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="QhiraWhirlLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterRevolvingSweepPersistentDamage">
+    <MultiplicativeModifierArray index="QhiraWhirlPower" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraWhirlCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraWhirlHit" Accumulator="QhiraGoldenWhirlTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="QhiraWhirlLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterRevolvingSweepFinalDamage">
+    <MultiplicativeModifierArray index="QhiraWhirlPower" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraWhirlCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraWhirlHit" Accumulator="QhiraGoldenWhirlTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="QhiraWhirlLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="QhiraGoldenWhirlTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nexushunter_e.dds" />
+  </CButton>
+  <CButton id="QhiraGoldenHuntressTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nexushunter_e.dds" />
+  </CButton>
+
+  <!-- ===== Grapple Hunter ===== -->
+  <!-- Grappling Hook stores 2 charges (8 second recharge, from a 20 second cooldown) and deals 3x damage (a LibAffx multiplier: it multiplies the hit quest and boons too); gain Utility Belt and Upstage. Hookshot quest (25% of each map gains kept for good): 2% Grappling Hook damage per enemy Hero hit. Snare quest: takedowns within 6 seconds of a hit; stacks 1-40 make Grappling Hook recharge 1% faster each, 41-80 make the hook fly 1% faster and 1% wider each, 81-100 make a hook hit on an enemy Hero Shield Qhira for 1% of her maximum Health each until it breaks (script), at 100 arriving on a Hero sets off a free Revolving Sweep (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="QhiraGoldenHookshotTokenCounter" parent="StormQuestToken">
+    <Face value="QhiraGoldenHookshotTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="QhiraGoldenSnareTokenCounter" parent="StormQuestToken">
+    <Face value="QhiraGoldenSnareTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="QhiraGoldenHookshotTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="QhiraGoldenHookshotTokenCounter" />
+    <Scale value="0.02" />
+  </CAccumulatorToken>
+  <CEffectDamage id="NexusHunterGrapplingHookDamage">
+    <MultiplicativeModifierArray index="QhiraGrapplePower" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraGrappleCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraGrappleHit" Accumulator="QhiraGoldenHookshotTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="QhiraGrappleLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterGrapplingHookKickDamage">
+    <MultiplicativeModifierArray index="QhiraGrapplePower" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraGrappleCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraGrappleHit" Accumulator="QhiraGoldenHookshotTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="QhiraGrappleLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="QhiraGoldenHookshotTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nexushunter_d.dds" />
+  </CButton>
+  <CButton id="QhiraGoldenSnareTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nexushunter_d.dds" />
+  </CButton>
+
+  <!-- ===== Bounty Hunter ===== -->
+  <!-- The enemy Hero with the most Health becomes the Bounty for 60 seconds (marked with Butcher's brand and revealed; a new one at once when it dies): Qhira deals 4x damage to it and 0.1x to other enemy Heroes (LibAffx multipliers on all her damage, so they multiply everything else; minions, camps and structures are unchanged); a Bounty takedown heals her to full and picks a new Bounty; Final Strike at level 1 (no Unrelenting Strikes); +80% Mount Speed. Blood Money quest (25% of each map gains kept for good): 0.2% more damage to the Bounty per hit on it (not bleed ticks), added in batches of 10, multiplying the 4x. Trophies quest (100% kept): Bounty takedowns (script); stacks 1-40 Slow the Bounty 1% each, 41-80 drain up to 1% of its maximum Health per second, 81-100 add 1% life leech against it each (script), at 100 instant mount, no dismount from damage and 75 Armor while mounted (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="QhiraGoldenBloodMoneyTokenCounter" parent="StormQuestToken">
+    <Face value="QhiraGoldenBloodMoneyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="QhiraGoldenTrophyTokenCounter" parent="StormQuestToken">
+    <Face value="QhiraGoldenTrophyTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="QhiraGoldenBloodMoneyTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="QhiraGoldenBloodMoneyTokenCounter" />
+    <Scale value="0.002" />
+  </CAccumulatorToken>
+  <CEffectDamage id="NexusHunterWeaponDamage">
+    <MultiplicativeModifierArray index="QhiraBountyPower" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="QhiraGoldenBloodMoneyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nexushunter_passive_alt_1.dds" />
+  </CButton>
+  <CButton id="QhiraGoldenTrophyTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_nexushunter_passive_alt_1.dds" />
+  </CButton>
+  <!-- Whirling Huntress: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="QhiraWhirlPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Grapple Hunter: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="QhiraGrapplePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bounty Hunter: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="QhiraBountyPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Whirling Huntress ===== -->
+  <!-- Huntress 1-40: the attached Hero is Slowed while Qhira swings around it (the quest sets the amount) -->
+  <CBehaviorBuff id="QhiraGoldenSweepSlow" parent="StormSlowParent">
+    <Duration value="3600" />
+    <RemoveValidatorArray value="NexusHunterRevolvingSweepCasterHasMainBehavior" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenSweepSlowApply">
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="QhiraGoldenSweepSlow" />
+  </CEffectApplyBehavior>
+  <!-- Huntress at 100: the attached Hero is Stunned while Qhira swings around it (the script turns it on) -->
+  <CBehaviorBuff id="QhiraGoldenSweepHold" parent="StormStun">
+    <Duration value="3600" />
+    <RemoveValidatorArray value="NexusHunterRevolvingSweepCasterHasMainBehavior" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenSweepHoldApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="QhiraGoldenSweepHold" />
+  </CEffectApplyBehavior>
+  <!-- Huntress 81-100: Qhira heals while swinging, 1% of her maximum Health per stack over the 2.75 second swing (11
+       ticks; the quest sets the amount) -->
+  <CEffectModifyUnit id="QhiraGoldenSwingHeal">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="QhiraGoldenSwingHealBuff">
+    <Duration value="3600" />
+    <Period value="0.25" />
+    <PeriodicEffect value="QhiraGoldenSwingHeal" />
+    <RemoveValidatorArray value="NexusHunterRevolvingSweepCasterHasMainBehavior" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenSwingHealApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="QhiraGoldenSwingHealBuff" />
+  </CEffectApplyBehavior>
+  <!-- the attach: after the base effects (Qhira has her swing behavior by then) -->
+  <CEffectSet id="NexusHunterRevolvingSweepImpactSet">
+    <EffectArray value="QhiraGoldenSweepSlowApply" />
+    <EffectArray value="QhiraGoldenSweepHoldApply" />
+    <EffectArray value="QhiraGoldenSwingHealApply" />
+  </CEffectSet>
+  <!-- Huntress 41-80: Blood Rage's bleed deals more damage while Qhira swings (the quest sets the amount) -->
+  <CEffectDamage id="NexusHunterBloodRageDoTDamage">
+    <MultiplicativeModifierArray index="QhiraGoldenSwingBleed" Validator="NexusHunterRevolvingSweepCasterHasMainBehavior" Modifier="0" />
+  </CEffectDamage>
+  <!-- Bloody Whirl (charges): the swing's cooldown reductions also work on charges -->
+  <CEffectModifyUnit id="NexusHunterRevolvingSweepSwingLifeAwayCooldownReduction">
+    <Cost Abil="NexusHunterRevolvingSweep,Execute" CooldownOperation="Add" CooldownTimeUse="-0.1562" ChargeTimeUse="-0.1562" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="NexusHunterRevolvingSweepFuelTheFireCDR">
+    <Cost Abil="NexusHunterRevolvingSweep,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <!-- ===== Grapple Hunter ===== -->
+  <!-- Snare 81-100: hooking an enemy Hero Shields Qhira until the Shield breaks (the script sets the amount) -->
+  <CBehaviorBuff id="QhiraGoldenHookShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_nexushunter_d.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <!-- Anchor Point (Epic): a hooked Hero is Slowed by 75% for 1.5 seconds (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="QhiraGoldenAnchorSlow" parent="StormSlowParent">
+    <Duration value="1.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.75" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenAnchorApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="QhiraGoldenAnchorSlow" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="NexusHunterGrapplingHookUnitSearchImpactSet">
+    <EffectArray value="QhiraGoldenAnchorApply" />
+  </CEffectSet>
+  <!-- Chain Grapple (Legendary): arriving on the hooked Hero Stuns it for 0.75 seconds and makes Qhira Unstoppable for 2
+       seconds (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="QhiraGoldenChainStun" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="QhiraGoldenChainUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="2" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenChainStunApply">
+    <Behavior value="QhiraGoldenChainStun" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="QhiraGoldenChainUnstoppableApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="QhiraGoldenChainUnstoppable" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="QhiraGoldenChainSet">
+    <Chance value="0" />
+    <EffectArray value="QhiraGoldenChainStunApply" />
+    <EffectArray value="QhiraGoldenChainUnstoppableApply" />
+  </CEffectSet>
+  <CEffectSet id="NexusHunterGrapplingHookDamageSet">
+    <EffectArray value="QhiraGoldenChainSet" />
+  </CEffectSet>
+  <!-- ===== Bounty Hunter ===== -->
+  <!-- the Bounty: marked (Butcher's brand) and revealed; the script picks it -->
+  <CBehaviorBuff id="QhiraGoldenBounty">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_nexushunter_passive_alt_1.dds" />
+    <InfoFlags index="Hidden" value="0" />
+    <Period value="0.5" />
+    <PeriodicEffect value="QhiraGoldenBountyRevealApply" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="QhiraGoldenBountyRevealApply">
+    <Behavior value="QhiraGoldenBountyRevealed" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="QhiraGoldenBountyRevealed" parent="StormReveal">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CActorModel id="QhiraGoldenBountyMark" parent="StormModelAnimationStyleContinuousUnit">
+    <On Terms="Behavior.QhiraGoldenBounty.On" Send="Create" />
+    <On Terms="Behavior.QhiraGoldenBounty.Off" Send="AnimBracketStop BSD" />
+    <Model value="ButcherButchersBrandDebuffLoud" />
+    <HostSiteOps Ops="SOpAttachOverhead" />
+  </CActorModel>
+  <CValidatorUnitCompareBehaviorCount id="QhiraGoldenTargetIsBounty">
+    <WhichUnit Value="TargetUnit" />
+    <Compare value="GT" />
+    <Value value="0" />
+    <Behavior value="QhiraGoldenBounty" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="QhiraGoldenTargetNotBounty">
+    <WhichUnit Value="TargetUnit" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="QhiraGoldenBounty" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="QhiraGoldenTargetIsOtherHero">
+    <Type value="And" />
+    <CombineArray value="TargetIsHero" />
+    <CombineArray value="QhiraGoldenTargetNotBounty" />
+  </CValidatorCombine>
+  <!-- Bounty Hunter: Qhira's damage to the Bounty is multiplied by 4 (times the hit quest and Contract) and to other enemy
+       Heroes by 0.1, on top of all other bonuses (the LibAffx multipliers; the script sets the stacks) -->
+  <CEffectDamage id="NexusHunterFinalStrikeDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterBloodRageDoTDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterBloodRageDelayedDeliveryDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterBloodRageDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterRevolvingSweepPersistentDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterWeaponDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterCarnageMaximumEffortDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterCarnageDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterCarnageTheThirstDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterUnrelentingStrikesDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterUnrelentingStrikesFinalDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterRevolvingSweepFinalDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterRevolvingSweepInitialDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterPureStrikesWeaponDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterGrapplingHookDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterGrapplingHookKickDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="NexusHunterPulsingPainDamage">
+    <MultiplicativeModifierArray index="QhiraBountyMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraBountyMultOut" Validator="QhiraGoldenTargetIsBounty" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMult" Validator="GoldenMultNever" Modifier="0" />
+    <MultiplicativeModifierArray index="QhiraOthersMultOut" Validator="QhiraGoldenTargetIsOtherHero" Modifier="0" />
+  </CEffectDamage>
+  <!-- Contract (Uncommon): its stacks are kept here (never counted) and the script folds them into the Bounty multiplier -->
+  <CEffectDamage id="NexusHunterWeaponDamage">
+    <MultiplicativeModifierArray index="QhiraContract" Validator="GoldenMultNever" Modifier="0" />
+  </CEffectDamage>
+  <!-- Trophies 1-40: the Bounty is Slowed (the quest sets the amount; the script re-adds it) -->
+  <CBehaviorBuff id="QhiraGoldenBountySlow" parent="StormSlowParent">
+    <Duration value="0" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Trophies 41-80: the Bounty loses up to 1% of its maximum Health per second (the script casts it every second) -->
+  <CEffectDamage id="QhiraGoldenBountyDrain" parent="StormSpellPercentDamage">
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0" />
+    <SourceButtonFace value="NexusHunterHuntersVengeanceNoSanctuary" />
+  </CEffectDamage>
+  <!-- Hunter's Mark (Epic): the Bounty deals 30% less damage -->
+  <CBehaviorBuff id="QhiraGoldenBountyWeaken">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_nexushunter_passive_alt_1.dds" />
+    <InfoFlags index="Hidden" value="0" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Bounty Hunter: +80% Mount Speed (the mount's own bonus is 30%; the highest bonus counts) -->
+  <CBehaviorBuff id="QhiraGoldenBountyMount" parent="CarryBehaviorParent">
+    <DisableValidatorArray value="IsMounted" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="1.1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Trophies at 100: damage doesn't dismount Qhira, and she has 75 Armor while mounted (the script adds the buff; the
+       mount's cast time is set to 0 by the script) -->
+  <CBehaviorBuff id="QhiraGoldenSteadyMount" parent="StormArmor">
+    <BehaviorFlags index="Permanent" value="1" />
+    <DisableValidatorArray value="IsMounted" />
+    <ArmorModification>
+      <AllArmorBonus value="75" />
+    </ArmorModification>
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="QhiraGoldenCasterSteadyMount">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Value value="0" />
+    <Behavior value="QhiraGoldenSteadyMount" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="NotinCombatorHasSwiftStormCombine">
+    <CombineArray value="QhiraGoldenCasterSteadyMount" />
+  </CValidatorCombine>
+</Catalog>

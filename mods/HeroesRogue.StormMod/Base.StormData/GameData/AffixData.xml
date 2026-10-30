@@ -27106,6 +27106,487 @@
             </String>
         </Instances>
 
+        <Instances Id="QhiraWhirlingHuntress">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="NexusHunterRevolvingSweepBoomingKick">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="NexusHunterRevolvingSweepLingeringAilment">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 QhiraWhirlMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 QhiraGoldenWhirlTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 QhiraGoldenHuntressTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="QhiraGoldenHuntressTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="QhiraGoldenWhirlTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="NexusHunterBloodRageDamageToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="NexusHunterFatalWoundsToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Cooldown.TimeUse 5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Vital[Energy] 35">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterRevolvingSweepInitialDamage,MultiplicativeModifierArray[QhiraWhirlPower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterRevolvingSweepPersistentDamage,MultiplicativeModifierArray[QhiraWhirlPower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterRevolvingSweepFinalDamage,MultiplicativeModifierArray[QhiraWhirlPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_QhiraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_QhiraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraSerratedBlade">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraWhirlingHuntress">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,NexusHunterRevolvingSweepInitialDamage,MultiplicativeModifierArray[QhiraWhirlCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,NexusHunterRevolvingSweepPersistentDamage,MultiplicativeModifierArray[QhiraWhirlCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,NexusHunterRevolvingSweepFinalDamage,MultiplicativeModifierArray[QhiraWhirlCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraSwingLifeAwayBoon">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraWhirlingHuntress">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NexusHunterRevolvingSweepSwingLifeAway">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraPulsingPainBoon">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraWhirlingHuntress">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NexusHunterPulsingPain">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraBloodyWhirl">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraWhirlingHuntress">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Charge.TimeUse 5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterRevolvingSweep,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraEndlessRotation">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraWhirlingHuntress">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Behavior,NexusHunterRevolvingSweepCasterBehavior,Duration 3600">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Behavior,NexusHunterEnsnaringSwingPrimarySlow,Duration 3600">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Kinetic,NexusHunterRevolvingSweepFollowKinetic,Cycles 1310">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Kinetic,NexusHunterRevolvingSweepRotateKinetic,Cycles 1310">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Kinetic,NexusHunterRevolvingSweepDistanceKinetic,Cycles 1310">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Kinetic,NexusHunterRevolvingSweepTranslateKinetic,Cycles 1310">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraGrappleHunter">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_d.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="NexusHunterGrapplingHookUtilityBelt">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="NexusHunterUpstage">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 QhiraGrappleMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 QhiraGoldenHookshotTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 QhiraGoldenSnareTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="QhiraGoldenSnareTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="QhiraGoldenHookshotTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="NexusHunterBloodRageDamageToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="NexusHunterFatalWoundsToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterGrapplingHook,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterGrapplingHook,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterGrapplingHook,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterGrapplingHook,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,NexusHunterGrapplingHook,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraGrappleTripleMult].Modifier 2">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraGrappleTripleMult].Modifier 2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraGrapplePower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraGrapplePower].Modifier 0">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_QhiraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_QhiraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraBarbedHook">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_d.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraGrappleHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraGrappleCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraGrappleCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraEnsnaringSwingBoon">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_e.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraGrappleHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NexusHunterEnsnaringSwing">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraTheHuntedBoon">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_passive.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraGrappleHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NexusHunterTheHunted">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraAnchorPoint">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_d.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraGrappleHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,QhiraGoldenAnchorApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraChainGrapple">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_d.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraGrappleHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,QhiraGoldenChainSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraBountyHunter">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_passive_alt_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="NexusHunterFinalStrike">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="NexusHunterUnrelentingStrikes">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 QhiraBountyMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 QhiraGoldenBloodMoneyTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 QhiraGoldenTrophyTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 QhiraGoldenBountyMount">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="QhiraGoldenTrophyTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="QhiraGoldenBloodMoneyTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="NexusHunterBloodRageDamageToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="NexusHunterFatalWoundsToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,NexusHunterWeaponDamage,MultiplicativeModifierArray[QhiraBountyPower].Modifier 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="AffixAdded libAffx_QhiraStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_QhiraTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraContract">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_passive_alt_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraBountyHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,NexusHunterWeaponDamage,MultiplicativeModifierArray[QhiraContract].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraFatalWoundsBoon">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_w.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraBountyHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NexusHunterFatalWounds">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraNoSanctuaryBoon">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_passive_alt_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraBountyHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="NexusHunterHuntersVengeanceNoSanctuary">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraHuntersMark">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_passive_alt_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraBountyHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 QhiraHuntersMarkMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="QhiraDoubleContract">
+            <String String="Assets/Textures/storm_ui_icon_nexushunter_passive_alt_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="NexusHunter">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="QhiraBountyHunter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 QhiraDoubleContractMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

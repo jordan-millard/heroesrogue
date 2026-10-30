@@ -1,0 +1,658 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Qhira. Whirling Huntress: one Revolving Sweep hit per enemy Hero per cast adds Whirl and opens a 6 second takedown
+// window; takedowns add Huntress: Slow on the attached Hero, then bleed damage while swinging, then healing while swinging, then
+// at 100 the attached Hero is Stunned. Grapple Hunter: Grappling Hook hits on enemy Heroes add Hookshot; takedowns add Snare:
+// recharge, then hook speed and width, then a Shield on hook hits, then at 100 a free Revolving Sweep on arrival. Bounty Hunter:
+// the enemy Hero with the most Health is the Bounty (4x damage to it, 0.1x to other Heroes); hits on it add Blood Money (more
+// Bounty damage); Bounty takedowns add Trophies: Slow, then Health drain, then leech, then at 100 a steady armored mount.
+// ============================================================
+
+const fixed libAffx_QhiraTakedownWindow = 3.0;
+const fixed libAffx_QhiraPastCapDamagePerStack = 0.01;
+bool libAffx_QhiraStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_QhiraWhirlTime; // per enemy player, last Whirling Huntress hit
+int libAffx_QhiraWhirlAdded; // Whirling Huntress: takedown stacks already applied to the catalog this game
+int libAffx_QhiraWhirlAdded2; // Whirling Huntress: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_QhiraWhirlAdded3; // Whirling Huntress: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_QhiraWhirlPastApplied; // Whirling Huntress: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_QhiraGrappleTime; // per enemy player, last Grapple Hunter hit
+int libAffx_QhiraGrappleAdded; // Grapple Hunter: takedown stacks already applied to the catalog this game
+int libAffx_QhiraGrappleAdded2; // Grapple Hunter: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_QhiraGrappleAdded3; // Grapple Hunter: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_QhiraGrapplePastApplied; // Grapple Hunter: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_QhiraBountyTime; // per enemy player, last Bounty Hunter hit
+int libAffx_QhiraBountyAdded; // Bounty Hunter: takedown stacks already applied to the catalog this game
+int libAffx_QhiraBountyAdded2; // Bounty Hunter: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_QhiraBountyAdded3; // Bounty Hunter: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_QhiraBountyPastApplied; // Bounty Hunter: takedown quest stacks past the cap applied as damage this game
+int libAffx_QhiraSweepCast; // Whirling Huntress: Revolving Sweep casts this game
+int[libCore_gv_bALMaxPlayers + 1] libAffx_QhiraSweepCounted; // per enemy player, the last cast that counted a hit
+bool libAffx_QhiraHoldApplied; // Whirling Huntress: the Huntress 100 Stun is on
+unit[3] libAffx_QhiraBounty; // Bounty Hunter: the Bounties (the second with Double Contract)
+int libAffx_QhiraBountyClock; // Bounty Hunter: seconds since the Bounty was picked
+fixed libAffx_QhiraBountyFactor = -99.0; // Bounty Hunter: the Bounty multiplier last set (its stacks)
+bool libAffx_QhiraBountyRegistered; // Bounty Hunter: the multipliers are registered with LibAffx
+int libAffx_QhiraSlowApplied; // Bounty Hunter: Trophies applied as the Bounty Slow
+bool libAffx_QhiraSteadyApplied; // Bounty Hunter: Trophies 100 (instant mount) applied
+
+unit libAffx_QhiraHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_QhiraIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_QhiraStacks(string tokenId) {
+    unit hero = libAffx_QhiraHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_QhiraQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_QhiraInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_QhiraTakedownWindow;
+}
+// QhiraGoldenHuntressTokenCounter: stacks 1-40: 1% Slow on the attached Hero each; 41-80 bleed damage while swinging, 81-100 healing while swinging, 100 Stun (libAffx_QhiraWhirlSync), then damage
+void libAffx_QhiraSyncWhirl () {
+    unit hero = libAffx_QhiraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraWhirlMarker")) {
+        return;
+    }
+    stacks = libAffx_QhiraStacks("QhiraGoldenHuntressTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_QhiraWhirlAdded) {
+        libAffx_CatalogReferenceModify("Behavior,QhiraGoldenSweepSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraWhirlAdded) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraWhirlAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% bleed damage while swinging each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_QhiraWhirlAdded2) {
+        libAffx_CatalogReferenceModify("Effect,NexusHunterBloodRageDoTDamage,MultiplicativeModifierArray[QhiraGoldenSwingBleed].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraWhirlAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraWhirlAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% of maximum Health healed over each 2.75 second swing (11 ticks) each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_QhiraWhirlAdded3) {
+        libAffx_CatalogReferenceModify("Effect,QhiraGoldenSwingHeal,VitalArray[Life].ChangeFraction", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraWhirlAdded3) * 0.000909, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraWhirlAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_QhiraWhirlPastApplied) {
+        libAffx_QhiraWhirlPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraWhirlPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraWhirlPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "QhiraWhirlPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "QhiraWhirlPastCapDamage")) {
+        UnitBehaviorAdd(hero, "QhiraWhirlPastCapDamage", hero, 1);
+    }
+}
+// QhiraGoldenSnareTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 hook speed and width, 81-100 Shield on hook hits (libAffx_QhiraHookShield), 100 free Revolving Sweep (script), then damage
+void libAffx_QhiraSyncGrapple () {
+    unit hero = libAffx_QhiraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraGrappleMarker")) {
+        return;
+    }
+    stacks = libAffx_QhiraStacks("QhiraGoldenSnareTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_QhiraGrappleAdded) {
+        libAffx_CatalogReferenceModify("Abil,NexusHunterGrapplingHook,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraGrappleAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraGrappleAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% faster and wider each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_QhiraGrappleAdded2) {
+        libAffx_CatalogReferenceModify("Mover,NexusHunterGrapplingHookTerrainMissileMover,MotionPhases[0].Speed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraGrappleAdded2) * 0.25, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,NexusHunterGrapplingHookTerrainMissileMover,MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraGrappleAdded2) * 0.25, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,NexusHunterGrapplingHookUnitSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraGrappleAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraGrappleAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the Shield is script
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_QhiraGrappleAdded3) {
+        libAffx_QhiraGrappleAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_QhiraGrapplePastApplied) {
+        libAffx_QhiraGrapplePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraGrapplePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraGrapplePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "QhiraGrapplePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "QhiraGrapplePastCapDamage")) {
+        UnitBehaviorAdd(hero, "QhiraGrapplePastCapDamage", hero, 1);
+    }
+}
+// QhiraGoldenTrophyTokenCounter: stacks 1-40: 1% Bounty Slow each (re-added by libAffx_QhiraBountyTick); 41-80 Health drain, 81-100 leech (libAffx_QhiraLeech), 100 steady mount (libAffx_QhiraMountSync), then damage
+void libAffx_QhiraSyncBounty () {
+    unit hero = libAffx_QhiraHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
+        return;
+    }
+    stacks = libAffx_QhiraStacks("QhiraGoldenTrophyTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_QhiraBountyAdded) {
+        libAffx_CatalogReferenceModify("Behavior,QhiraGoldenBountySlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraBountyAdded) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraBountyAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.025% of the Bounty's maximum Health per second each (1% at 80)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_QhiraBountyAdded2) {
+        libAffx_CatalogReferenceModify("Effect,QhiraGoldenBountyDrain,VitalFractionMax[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_QhiraBountyAdded2) * 0.00025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_QhiraBountyAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the leech is script
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_QhiraBountyAdded3) {
+        libAffx_QhiraBountyAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_QhiraBountyPastApplied) {
+        libAffx_QhiraBountyPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraBountyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraBountyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "QhiraBountyPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "QhiraBountyPastCapDamage")) {
+        UnitBehaviorAdd(hero, "QhiraBountyPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_QhiraSync_Func (bool testConds, bool runActions) {
+    libAffx_QhiraSyncWhirl();
+    libAffx_QhiraSyncGrapple();
+    libAffx_QhiraSyncBounty();
+    return true;
+}
+// Whirling Huntress: each Revolving Sweep cast counts one hit per enemy Hero
+bool libAffx_QhiraSweepFirstHit (unit victim) {
+    int owner = UnitGetOwner(victim);
+    if (owner < 1 || owner > libCore_gv_bALMaxPlayers || libAffx_QhiraSweepCounted[owner] == libAffx_QhiraSweepCast) {
+        return false;
+    }
+    libAffx_QhiraSweepCounted[owner] = libAffx_QhiraSweepCast;
+    return true;
+}
+bool libAffx_QhiraSweepCast_Func (bool testConds, bool runActions) {
+    if (EventUnit() != libAffx_QhiraHero()) {
+        return false;
+    }
+    libAffx_QhiraSweepCast += 1;
+    return true;
+}
+// Whirling Huntress, Huntress at 100: the attached Hero is Stunned while Qhira swings
+void libAffx_QhiraWhirlSync () {
+    unit hero = libAffx_QhiraHero();
+    bool hold;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraWhirlMarker")) {
+        return;
+    }
+    hold = libAffx_QhiraStacks("QhiraGoldenHuntressTokenCounter") >= 100;
+    if (hold != libAffx_QhiraHoldApplied) {
+        libAffx_QhiraHoldApplied = hold;
+        if (hold) {
+            CatalogFieldValueSet(c_gameCatalogEffect, "QhiraGoldenSweepHoldApply", "Chance", libAffx_player, "1");
+        } else {
+            CatalogFieldValueSet(c_gameCatalogEffect, "QhiraGoldenSweepHoldApply", "Chance", libAffx_player, "0");
+        }
+    }
+}
+// Grapple Hunter, Snare 81-100: each Grappling Hook hit on an enemy Hero Shields Qhira for 1% of her maximum Health per
+// stack until the Shield breaks
+void libAffx_QhiraHookShield () {
+    unit hero = libAffx_QhiraHero();
+    int shield;
+    if (hero == null || !UnitIsAlive(hero)) {
+        return;
+    }
+    shield = MaxI(0, MinI(libAffx_QhiraStacks("QhiraGoldenSnareTokenCounter") - 80, 20));
+    if (shield == 0) {
+        return;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "QhiraGoldenHookShield", "DamageResponse.ModifyLimit", libAffx_player, 0.01 * IntToFixed(shield) * UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent));
+    UnitBehaviorRemove(hero, "QhiraGoldenHookShield", 1);
+    UnitBehaviorAdd(hero, "QhiraGoldenHookShield", hero, 1);
+}
+// Grapple Hunter, Snare at 100: arriving on a Hero with Grappling Hook sets off a free Revolving Sweep on it
+bool libAffx_QhiraKickArrive_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_QhiraHero();
+    unit victim = EventUnit();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_QhiraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "QhiraGrappleMarker") || libAffx_QhiraStacks("QhiraGoldenSnareTokenCounter") < 100) {
+        return false;
+    }
+    Wait(0.0625, c_timeGame);
+    if (!UnitIsAlive(hero) || !UnitIsAlive(victim) || UnitHasBehavior2(hero, "NexusHunterRevolvingSweepCasterBehavior")) {
+        return true;
+    }
+    UnitCreateEffectUnit(hero, "NexusHunterRevolvingSweepImpactSet", victim);
+    return true;
+}
+// Bounty Hunter: whether this unit is one of the Bounties
+bool libAffx_QhiraIsBounty (unit target) {
+    return target != null && (target == libAffx_QhiraBounty[1] || target == libAffx_QhiraBounty[2]);
+}
+// Bounty Hunter: the Bounty multiplier, and the -90% against other enemy Heroes (registered once)
+void libAffx_QhiraBountyDamageSync () {
+    unit hero = libAffx_QhiraHero();
+    fixed contract;
+    fixed factor;
+    string value;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
+        return;
+    }
+    contract = StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraContract].Modifier", libAffx_player));
+    factor = 4.0 * (1.0 + 0.002 * UnitGetTokenCount(hero, "QhiraGoldenBloodMoneyTokenCounter")) * (1.0 + contract) - 1.0;
+    if (factor != libAffx_QhiraBountyFactor) {
+        libAffx_QhiraBountyFactor = factor;
+        value = FixedToString(factor, 4);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterFinalStrikeDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDoTDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDelayedDeliveryDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepPersistentDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageMaximumEffortDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageTheThirstDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesFinalDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepFinalDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepInitialDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPureStrikesWeaponDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookKickDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPulsingPainDamage", "MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player, value);
+    }
+    if (!libAffx_QhiraBountyRegistered) {
+        libAffx_QhiraBountyRegistered = true;
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterFinalStrikeDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterFinalStrikeDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterFinalStrikeDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDoTDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDoTDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDoTDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDelayedDeliveryDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDelayedDeliveryDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDelayedDeliveryDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterBloodRageDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterBloodRageDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepPersistentDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepPersistentDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepPersistentDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterWeaponDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterWeaponDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterWeaponDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageMaximumEffortDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterCarnageMaximumEffortDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterCarnageMaximumEffortDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterCarnageDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterCarnageDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterCarnageTheThirstDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterCarnageTheThirstDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterCarnageTheThirstDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterUnrelentingStrikesFinalDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesFinalDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterUnrelentingStrikesFinalDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepFinalDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepFinalDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepFinalDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterRevolvingSweepInitialDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepInitialDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterRevolvingSweepInitialDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPureStrikesWeaponDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterPureStrikesWeaponDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterPureStrikesWeaponDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterGrapplingHookKickDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterGrapplingHookKickDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+        CatalogFieldValueSet(c_gameCatalogEffect, "NexusHunterPulsingPainDamage", "MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player, "-0.9");
+        libAffx_MultiplierRegister("Effect,NexusHunterPulsingPainDamage,MultiplicativeModifierArray[QhiraBountyMult].Modifier", libAffx_player);
+        libAffx_MultiplierRegister("Effect,NexusHunterPulsingPainDamage,MultiplicativeModifierArray[QhiraOthersMult].Modifier", libAffx_player);
+    }
+}
+// Bounty Hunter: the Bounty's debuffs (Trophies 1-40 Slow, Hunter's Mark)
+void libAffx_QhiraBountyDebuffs (unit target, bool reslow) {
+    unit hero = libAffx_QhiraHero();
+    if (target == null || !UnitIsAlive(target)) {
+        return;
+    }
+    if (reslow) {
+        UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
+    }
+    if (libAffx_QhiraSlowApplied > 0 && !UnitHasBehavior2(target, "QhiraGoldenBountySlow")) {
+        UnitBehaviorAdd(target, "QhiraGoldenBountySlow", hero, 1);
+    }
+    if (UnitHasBehavior2(hero, "QhiraHuntersMarkMarker") && !UnitHasBehavior2(target, "QhiraGoldenBountyWeaken")) {
+        UnitBehaviorAdd(target, "QhiraGoldenBountyWeaken", hero, 1);
+    }
+}
+void libAffx_QhiraClearBounty (int i) {
+    unit target = libAffx_QhiraBounty[i];
+    libAffx_QhiraBounty[i] = null;
+    if (target == null) {
+        return;
+    }
+    UnitBehaviorRemove(target, "QhiraGoldenBounty", c_unitBehaviorCountAll);
+    UnitBehaviorRemove(target, "QhiraGoldenBountySlow", c_unitBehaviorCountAll);
+    UnitBehaviorRemove(target, "QhiraGoldenBountyWeaken", c_unitBehaviorCountAll);
+}
+// Bounty Hunter: the enemy Hero with the most Health becomes the Bounty (two of them with Double Contract)
+void libAffx_QhiraPickBounties () {
+    unit hero = libAffx_QhiraHero();
+    unitgroup foes;
+    unit foe;
+    unit best;
+    unit second;
+    fixed bestLife = -1.0;
+    fixed secondLife = -1.0;
+    fixed life;
+    int i;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
+        return;
+    }
+    libAffx_QhiraClearBounty(1);
+    libAffx_QhiraClearBounty(2);
+    libAffx_QhiraBountyClock = 0;
+    foes = UnitGroupAlliance(libAffx_player, c_unitAllianceEnemy, RegionEntireMap(), UnitFilter((1 << c_targetFilterHeroic), 0, (1 << c_targetFilterMissile) | (1 << c_targetFilterItem), (1 << (c_targetFilterDead - 32)) | (1 << (c_targetFilterHidden - 32))), 0);
+    i = 1;
+    while (i <= UnitGroupCount(foes, c_unitCountAll)) {
+        foe = UnitGroupUnit(foes, i);
+        i += 1;
+        // living enemy Heroes only (not clones or images)
+        if (!UnitIsAlive(foe) || !libAffx_QhiraIsEnemyHero(foe)) {
+            continue;
+        }
+        if (foe != libGame_gv_players[UnitGetOwner(foe)].lv_heroUnit) {
+            continue;
+        }
+        life = UnitGetPropertyFixed(foe, c_unitPropLife, c_unitPropCurrent);
+        if (life > bestLife) {
+            second = best;
+            secondLife = bestLife;
+            best = foe;
+            bestLife = life;
+        } else if (life > secondLife) {
+            second = foe;
+            secondLife = life;
+        }
+    }
+    if (best == null) {
+        return;
+    }
+    libAffx_QhiraBounty[1] = best;
+    UnitBehaviorAdd(best, "QhiraGoldenBounty", hero, 1);
+    libAffx_QhiraBountyDebuffs(best, false);
+    if (second != null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker")) {
+        libAffx_QhiraBounty[2] = second;
+        UnitBehaviorAdd(second, "QhiraGoldenBounty", hero, 1);
+        libAffx_QhiraBountyDebuffs(second, false);
+    }
+}
+// Bounty Hunter, Trophies 81-100: 1% life leech per stack against the Bounty
+void libAffx_QhiraLeech (unit victim, fixed amount) {
+    unit hero = libAffx_QhiraHero();
+    int leech;
+    if (!UnitHasBehavior2(victim, "QhiraGoldenBounty") || !UnitIsAlive(hero)) {
+        return;
+    }
+    leech = MaxI(0, MinI(libAffx_QhiraStacks("QhiraGoldenTrophyTokenCounter") - 80, 20));
+    if (leech > 0) {
+        UnitSetPropertyFixed(hero, c_unitPropLife, UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent) + amount * 0.01 * IntToFixed(leech));
+    }
+}
+// Bounty Hunter, Trophies at 100: Qhira mounts instantly, damage doesn't dismount her, and she has 75 Armor while mounted
+void libAffx_QhiraMountSync () {
+    unit hero = libAffx_QhiraHero();
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker") || libAffx_QhiraStacks("QhiraGoldenTrophyTokenCounter") < 100) {
+        return;
+    }
+    if (!libAffx_QhiraSteadyApplied) {
+        libAffx_QhiraSteadyApplied = true;
+        libAffx_CatalogReferenceSet("Abil,Mount,CastIntroTime[0]", libAffx_player, "0");
+    }
+    if (!UnitHasBehavior2(hero, "QhiraGoldenSteadyMount")) {
+        UnitBehaviorAdd(hero, "QhiraGoldenSteadyMount", hero, 1);
+    }
+}
+bool libAffx_QhiraMountCosts_Func (bool testConds, bool runActions) {
+    if (libGame_EventMountCostsChangedPlayer() != libAffx_player || !libAffx_QhiraSteadyApplied) {
+        return false;
+    }
+    libAffx_CatalogReferenceSet("Abil,Mount,CastIntroTime[0]", libAffx_player, "0");
+    return true;
+}
+// Bounty Hunter: every second the Bounty loses Health (Trophies 41-80) and keeps its debuffs; a new Bounty every 60 seconds,
+// or at once when the Bounty is dead
+void libAffx_QhiraBountyTick () {
+    unit hero = libAffx_QhiraHero();
+    int slow;
+    int drain;
+    int i;
+    bool reslow = false;
+    if (hero == null || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
+        return;
+    }
+    libAffx_QhiraBountyDamageSync();
+    libAffx_QhiraMountSync();
+    slow = MaxI(0, MinI(libAffx_QhiraStacks("QhiraGoldenTrophyTokenCounter"), 40));
+    if (slow != libAffx_QhiraSlowApplied) {
+        libAffx_QhiraSlowApplied = slow;
+        reslow = true;
+    }
+    libAffx_QhiraBountyClock += 1;
+    if (libAffx_QhiraBountyClock >= 60 || libAffx_QhiraBounty[1] == null || !UnitIsAlive(libAffx_QhiraBounty[1]) || (libAffx_QhiraBounty[2] != null && !UnitIsAlive(libAffx_QhiraBounty[2])) || (libAffx_QhiraBounty[2] == null && UnitHasBehavior2(hero, "QhiraDoubleContractMarker"))) {
+        libAffx_QhiraPickBounties();
+        return;
+    }
+    drain = MaxI(0, MinI(libAffx_QhiraStacks("QhiraGoldenTrophyTokenCounter") - 40, 40));
+    for (i = 1; i <= 2; i += 1) {
+        if (libAffx_QhiraBounty[i] != null && UnitIsAlive(libAffx_QhiraBounty[i])) {
+            libAffx_QhiraBountyDebuffs(libAffx_QhiraBounty[i], reslow);
+            if (drain > 0 && UnitIsAlive(hero)) {
+                UnitCreateEffectUnit(hero, "QhiraGoldenBountyDrain", libAffx_QhiraBounty[i]);
+            }
+        }
+    }
+}
+// Bounty Hunter: a Bounty takedown heals Qhira to full and picks a new Bounty at once
+void libAffx_QhiraBountyClaimed () {
+    unit hero = libAffx_QhiraHero();
+    if (UnitIsAlive(hero)) {
+        UnitSetPropertyFixed(hero, c_unitPropLifePercent, 100.0);
+    }
+    libAffx_QhiraPickBounties();
+}
+bool libAffx_QhiraTick_Func (bool testConds, bool runActions) {
+    libAffx_QhiraWhirlSync();
+    libAffx_QhiraBountyTick();
+    return true;
+}
+// Whirling Huntress hit on an enemy Hero: takedown window, QhiraGoldenWhirlTokenCounter, the heal, and on-hit boons
+bool libAffx_QhiraWhirlHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_QhiraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_QhiraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "QhiraWhirlMarker")) {
+        return false;
+    }
+    libAffx_QhiraWhirlTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_QhiraSweepFirstHit(victim)) {
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenWhirlTokenCounter", hero);
+    }
+    return true;
+}
+// Grapple Hunter hit on an enemy Hero: takedown window, QhiraGoldenHookshotTokenCounter, the heal, and on-hit boons
+bool libAffx_QhiraGrappleHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_QhiraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_QhiraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "QhiraGrappleMarker")) {
+        return false;
+    }
+    libAffx_QhiraGrappleTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "QhiraGoldenHookshotTokenCounter", hero);
+    libAffx_QhiraHookShield();
+    return true;
+}
+// Bounty Hunter: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_QhiraBountyHits;
+// Bounty Hunter hit on an enemy Hero: takedown window, QhiraGoldenBloodMoneyTokenCounter, the heal, and on-hit boons
+bool libAffx_QhiraBountyHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_QhiraHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_QhiraIsEnemyHero(victim) || !UnitHasBehavior2(hero, "QhiraBountyMarker")) {
+        return false;
+    }
+    libAffx_QhiraBountyTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (UnitHasBehavior2(victim, "QhiraGoldenBounty") && EventUnitDamageEffect() != "NexusHunterBloodRageDoTDamage") {
+        libAffx_QhiraBountyHits += 1;
+        if (libAffx_QhiraBountyHits >= 10) {
+            libAffx_QhiraBountyHits = 0;
+            libGame_gf_ModifyTokenCount(10, "QhiraGoldenBloodMoneyTokenCounter", hero);
+        }
+    }
+    libAffx_QhiraLeech(victim, EventUnitDamageAmount());
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_QhiraTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_QhiraTakedownCrossStart () {
+    unit hero = libAffx_QhiraHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_QhiraTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenHuntressTokenCounter"));
+    libAffx_QhiraTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenSnareTokenCounter"));
+    libAffx_QhiraTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenTrophyTokenCounter"));
+}
+void libAffx_QhiraTakedownCross () {
+    unit hero = libAffx_QhiraHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenHuntressTokenCounter")) == libAffx_QhiraTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenSnareTokenCounter")) == libAffx_QhiraTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenTrophyTokenCounter")) == libAffx_QhiraTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "QhiraWhirlMarker") && FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenHuntressTokenCounter")) == libAffx_QhiraTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenHuntressTokenCounter", hero);
+        libAffx_QhiraSyncWhirl();
+        libAffx_QhiraWhirlSync();
+    }
+    if (UnitHasBehavior2(hero, "QhiraGrappleMarker") && FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenSnareTokenCounter")) == libAffx_QhiraTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenSnareTokenCounter", hero);
+        libAffx_QhiraSyncGrapple();
+    }
+    if (UnitHasBehavior2(hero, "QhiraBountyMarker") && FixedToInt(UnitGetTokenCount(hero, "QhiraGoldenTrophyTokenCounter")) == libAffx_QhiraTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenTrophyTokenCounter", hero);
+        libAffx_QhiraSyncBounty();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_QhiraTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_QhiraHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_QhiraTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "QhiraBountyMarker") && libAffx_QhiraIsBounty(libGame_gf_HeroParticipatedInTakedownKilledHero())) {
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenTrophyTokenCounter", hero);
+        libAffx_QhiraSyncBounty();
+        libAffx_QhiraQuestDing();
+        libAffx_QhiraBountyClaimed();
+    }
+    if (UnitHasBehavior2(hero, "QhiraWhirlMarker") && libAffx_QhiraWhirlTime[killedPlayer] > 0.0 && now - libAffx_QhiraWhirlTime[killedPlayer] <= 6.0) {
+        libAffx_QhiraWhirlTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenHuntressTokenCounter", hero);
+        libAffx_QhiraSyncWhirl();
+        libAffx_QhiraQuestDing();
+        libAffx_QhiraWhirlSync();
+    }
+    if (UnitHasBehavior2(hero, "QhiraGrappleMarker") && libAffx_QhiraGrappleTime[killedPlayer] > 0.0 && now - libAffx_QhiraGrappleTime[killedPlayer] <= 6.0) {
+        libAffx_QhiraGrappleTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenSnareTokenCounter", hero);
+        libAffx_QhiraSyncGrapple();
+        libAffx_QhiraQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "QhiraBountyMarker") && libAffx_QhiraBountyTime[killedPlayer] > 0.0 && now - libAffx_QhiraBountyTime[killedPlayer] <= -1.0) {
+        libAffx_QhiraBountyTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "QhiraGoldenTrophyTokenCounter", hero);
+        libAffx_QhiraSyncBounty();
+        libAffx_QhiraQuestDing();
+    }
+    libAffx_QhiraTakedownCross();
+    return true;
+}
+bool libAffx_QhiraStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_QhiraStarted) {
+        return true;
+    }
+    libAffx_QhiraStarted = true;
+    trig = TriggerCreate("libAffx_QhiraWhirlHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterRevolvingSweepInitialDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterRevolvingSweepPersistentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterRevolvingSweepFinalDamage");
+    trig = TriggerCreate("libAffx_QhiraGrappleHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterGrapplingHookDamage");
+    trig = TriggerCreate("libAffx_QhiraBountyHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterFinalStrikeDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterBloodRageDoTDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterBloodRageDelayedDeliveryDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterBloodRageDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterRevolvingSweepPersistentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterCarnageMaximumEffortDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterCarnageDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterCarnageTheThirstDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterUnrelentingStrikesDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterUnrelentingStrikesFinalDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterRevolvingSweepFinalDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterRevolvingSweepInitialDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterPureStrikesWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterGrapplingHookDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterGrapplingHookKickDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterPulsingPainDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_QhiraTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_QhiraSweepCast_Func"), null, "NexusHunterRevolvingSweepCasterBehavior", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_QhiraKickArrive_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "NexusHunterGrapplingHookKickDamage");
+    TriggerAddEventGeneric(TriggerCreate("libAffx_QhiraMountCosts_Func"), libGame_mountCostsChangedEventName);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_QhiraSync_Func"), 1.0, c_timeGame);
+    return true;
+}

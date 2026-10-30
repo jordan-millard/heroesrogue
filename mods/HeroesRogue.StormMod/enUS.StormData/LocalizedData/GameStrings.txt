@@ -2637,6 +2637,70 @@ Behavior/Name/RaynorGoldenConcussed=Concussive Round
 Behavior/Tooltip/RaynorGoldenConcussed=Slowed.
 Behavior/Name/RaynorGoldenPepperSlow=Unstable Compound
 Behavior/Tooltip/RaynorGoldenPepperSlow=Slowed.
+Affix/Name/QhiraWhirlingHuntress=Whirling Huntress
+Affix/Tooltip/QhiraWhirlingHuntress=Gain <c val="#TooltipNumbers">Booming Kick</c> and <c val="#TooltipNumbers">Lingering Ailment</c>. Revolving Sweep costs half Mana and its cooldown is <c val="#TooltipNumbers">5</c> seconds.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Revolving Sweep that hits an enemy Hero adds <c val="#TooltipNumbers">0.5%</c> Revolving Sweep damage (once per Hero per cast).<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Revolving Sweep hit Slow the Hero you swing around (up to <c val="#TooltipNumbers">40%</c>), then make Blood Rage's bleed deal more damage while you swing (up to <c val="#TooltipNumbers">40%</c>), then heal you while you swing (up to <c val="#TooltipNumbers">20%</c> of your maximum Health per swing). At <c val="#TooltipNumbers">100</c>, the Hero you swing around is Stunned the whole time. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/QhiraSerratedBlade=Serrated Blade
+Affix/Tooltip/QhiraSerratedBlade=Revolving Sweep deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/QhiraSwingLifeAwayBoon=Swing Life Away
+Affix/Tooltip/QhiraSwingLifeAwayBoon=Gain the talent <c val="#TooltipNumbers">Swing Life Away</c>.
+Affix/Name/QhiraPulsingPainBoon=Pulsing Pain
+Affix/Tooltip/QhiraPulsingPainBoon=Gain the talent <c val="#TooltipNumbers">Pulsing Pain</c>: each other enemy Hero the swing hits deals extra damage to the Hero you swing around.
+Affix/Name/QhiraBloodyWhirl=Bloody Whirl
+Affix/Tooltip/QhiraBloodyWhirl=Revolving Sweep stores <c val="#TooltipNumbers">2</c> charges.
+Affix/Name/QhiraEndlessRotation=Endless Rotation
+Affix/Tooltip/QhiraEndlessRotation=Revolving Sweep keeps swinging until you reactivate it (or the Hero dies, gets out of range, or you are interrupted).
+Button/Name/QhiraGoldenWhirlTokenCounter=Whirl
+Button/Tooltip/QhiraGoldenWhirlTokenCounter=<c val="#TooltipQuest">Bonus Revolving Sweep damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:QhiraGoldenWhirlTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/QhiraGoldenHuntressTokenCounter=Huntress
+Button/Tooltip/QhiraGoldenHuntressTokenCounter=<c val="#TooltipQuest">Huntress stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:QhiraGoldenHuntressTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each Slow the Hero Qhira is swinging around by <c val="#TooltipNumbers">1%</c> more. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Blood Rage's bleed deal <c val="#TooltipNumbers">1%</c> more damage while she swings. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each heal her for <c val="#TooltipNumbers">1%</c> of her maximum Health over each swing. At <c val="#TooltipNumbers">100</c> stacks, the Hero she swings around is Stunned the whole time. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/QhiraGrappleHunter=Grapple Hunter
+Affix/Tooltip/QhiraGrappleHunter=Gain <c val="#TooltipNumbers">Utility Belt</c> and <c val="#TooltipNumbers">Upstage</c>. Grappling Hook stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">8</c> second recharge) and deals <c val="#TooltipNumbers">3x</c> damage (<c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses).<n/><n/><c val="#TooltipQuest">Quest:</c> Each Grappling Hook hit on an enemy Hero adds <c val="#TooltipNumbers">2%</c> Grappling Hook damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Grappling Hook hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make the hook fly faster and wider (up to <c val="#TooltipNumbers">40%</c>), then make hooking an enemy Hero Shield you (up to <c val="#TooltipNumbers">20%</c> of your maximum Health, until it breaks). At <c val="#TooltipNumbers">100</c>, arriving on a Hero sets off a free Revolving Sweep. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/QhiraBarbedHook=Barbed Hook
+Affix/Tooltip/QhiraBarbedHook=Grappling Hook deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/QhiraEnsnaringSwingBoon=Ensnaring Swing
+Affix/Tooltip/QhiraEnsnaringSwingBoon=Gain the talent <c val="#TooltipNumbers">Ensnaring Swing</c>.
+Affix/Name/QhiraTheHuntedBoon=The Hunted
+Affix/Tooltip/QhiraTheHuntedBoon=Gain the talent <c val="#TooltipNumbers">The Hunted</c>: Basic Attacks on the same Hero deal more and more damage.
+Affix/Name/QhiraAnchorPoint=Anchor Point
+Affix/Tooltip/QhiraAnchorPoint=Hooking an enemy Hero Slows them by <c val="#TooltipNumbers">75%</c> for <c val="#TooltipNumbers">1.5</c> seconds.
+Affix/Name/QhiraChainGrapple=Chain Grapple
+Affix/Tooltip/QhiraChainGrapple=Arriving on an enemy Hero with Grappling Hook Stuns them for <c val="#TooltipNumbers">0.75</c> seconds and makes you Unstoppable for <c val="#TooltipNumbers">2</c> seconds.
+Button/Name/QhiraGoldenHookshotTokenCounter=Hookshot
+Button/Tooltip/QhiraGoldenHookshotTokenCounter=<c val="#TooltipQuest">Bonus Grappling Hook damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:QhiraGoldenHookshotTokenCounter$*2" precision="1"/>%</c></c>
+Button/Name/QhiraGoldenSnareTokenCounter=Snare
+Button/Tooltip/QhiraGoldenSnareTokenCounter=<c val="#TooltipQuest">Snare stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:QhiraGoldenSnareTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Grappling Hook recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the hook fly <c val="#TooltipNumbers">1%</c> faster and <c val="#TooltipNumbers">1%</c> wider. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make hooking an enemy Hero Shield you for <c val="#TooltipNumbers">1%</c> of your maximum Health (it lasts until it breaks). At <c val="#TooltipNumbers">100</c> stacks, arriving on a Hero sets off a free Revolving Sweep. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/QhiraBountyHunter=Bounty Hunter
+Affix/Tooltip/QhiraBountyHunter=Every <c val="#TooltipNumbers">60</c> seconds, the enemy Hero with the most Health becomes your Bounty: marked and revealed. You deal <c val="#TooltipNumbers">4x</c> damage to the Bounty and <c val="#TooltipNumbers">90%</c> less to other enemy Heroes (<c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses). A Bounty takedown heals you to full and picks a new Bounty at once. Gain <c val="#TooltipNumbers">Final Strike</c> at level <c val="#TooltipNumbers">1</c> (you can't take <c val="#TooltipNumbers">Unrelenting Strikes</c>). <c val="#TooltipNumbers">+80%</c> Mount Speed.<n/><n/><c val="#TooltipQuest">Quest:</c> Each hit on the Bounty adds <c val="#TooltipNumbers">0.2%</c> damage to the Bounty, multiplying the <c val="#TooltipNumbers">4x</c>.<n/><n/><c val="#TooltipQuest">Quest:</c> Bounty takedowns Slow the Bounty (up to <c val="#TooltipNumbers">40%</c>), then make it lose Health every second (up to <c val="#TooltipNumbers">1%</c> of its maximum Health), then heal you for your damage to it (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, you mount instantly, damage doesn't dismount you, and you have <c val="#TooltipNumbers">75</c> Armor while mounted. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the hit quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the takedown quest.
+Affix/Name/QhiraContract=Contract
+Affix/Tooltip/QhiraContract=You deal <c val="#TooltipNumbers">15%</c> more damage to the Bounty. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/QhiraFatalWoundsBoon=Fatal Wounds
+Affix/Tooltip/QhiraFatalWoundsBoon=Gain the talent <c val="#TooltipNumbers">Fatal Wounds</c>.
+Affix/Name/QhiraNoSanctuaryBoon=No Sanctuary
+Affix/Tooltip/QhiraNoSanctuaryBoon=Gain the talent <c val="#TooltipNumbers">No Sanctuary</c>: nearby low-Health enemy Heroes are revealed, and you move faster and deal more damage to them.
+Affix/Name/QhiraHuntersMark=Hunter's Mark
+Affix/Tooltip/QhiraHuntersMark=The Bounty deals <c val="#TooltipNumbers">30%</c> less damage.
+Affix/Name/QhiraDoubleContract=Double Contract
+Affix/Tooltip/QhiraDoubleContract=The two enemy Heroes with the most Health are both Bounties.
+Button/Name/QhiraGoldenBloodMoneyTokenCounter=Blood Money
+Button/Tooltip/QhiraGoldenBloodMoneyTokenCounter=<c val="#TooltipQuest">Bonus damage to the Bounty: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:QhiraGoldenBloodMoneyTokenCounter$*0.2" precision="1"/>%</c></c>
+Button/Name/QhiraGoldenTrophyTokenCounter=Trophies
+Button/Tooltip/QhiraGoldenTrophyTokenCounter=<c val="#TooltipQuest">Trophies stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:QhiraGoldenTrophyTokenCounter$" precision="0"/></c></c><n/>Bounty takedowns. Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each Slow the Bounty by <c val="#TooltipNumbers">1%</c>. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> make the Bounty lose up to <c val="#TooltipNumbers">1%</c> of its maximum Health per second. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each heal you for <c val="#TooltipNumbers">1%</c> of your damage to the Bounty. At <c val="#TooltipNumbers">100</c> stacks, you mount instantly, damage doesn't dismount you, and you have <c val="#TooltipNumbers">75</c> Armor while mounted. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/QhiraGoldenBounty=Bounty
+Behavior/Tooltip/QhiraGoldenBounty=Qhira's Bounty: she deals 4x damage to this Hero.
+Behavior/Name/QhiraGoldenBountyWeaken=Hunter's Mark
+Behavior/Tooltip/QhiraGoldenBountyWeaken=Dealing 30% less damage.
+Behavior/Name/QhiraGoldenHookShield=Grapple Guard
+Behavior/Tooltip/QhiraGoldenHookShield=Shielded until it breaks.
+Behavior/Name/QhiraGoldenSweepHold=Whirling Huntress
+Behavior/Tooltip/QhiraGoldenSweepHold=Stunned while Qhira swings around you.
+Behavior/Name/QhiraGoldenAnchorSlow=Anchor Point
+Behavior/Tooltip/QhiraGoldenAnchorSlow=Slowed.
+Behavior/Name/QhiraGoldenChainStun=Chain Grapple
+Behavior/Tooltip/QhiraGoldenChainStun=Stunned.
+Behavior/Name/QhiraGoldenChainUnstoppable=Chain Grapple
+Behavior/Tooltip/QhiraGoldenChainUnstoppable=Unstoppable.
+Behavior/Name/QhiraGoldenSteadyMount=Steady Mount
+Behavior/Tooltip/QhiraGoldenSteadyMount=75 Armor while mounted.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=
