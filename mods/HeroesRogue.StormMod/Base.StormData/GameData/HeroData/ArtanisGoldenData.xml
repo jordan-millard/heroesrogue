@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Artanis. Starters: Blade Dancer (Blade Dash: 2 charges, 8 second recharge, half Mana, Solarite Reaper and Templar's Zeal), Phase Master (Phase Prism: 2 charges, 9 second recharge, half Mana, Psionic Synergy and Graviton Vortex) and Hierarch of Aiur (every Basic Attack is a Twin Blades strike; no Phase Prism; Shield Overload on every takedown and 50% stronger; Zealot Charge at level 1). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/ArtanisGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="ArtanisBladeDashMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ArtanisPrismMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="ArtanisHierarchMarker" parent="CarryBehaviorParent" />
+  <!-- Twin Prism (Phase Master Legendary): Phase Prism also deals 25% of an enemy Hero's maximum Health (Chance 0, the boon
+       turns it on) -->
+  <CEffectDamage id="ArtanisGoldenTwinPrismDamage" parent="StormSpellPercentDamage">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.25" />
+    <SourceButtonFace value="ArtanisPhasePrism" />
+  </CEffectDamage>
+
+  <!-- ===== Blade Dancer ===== -->
+  <!-- Blade Dash stores 2 charges (8 second recharge) and costs half Mana (no Mana with Templar's Zeal); gain Solarite Reaper and Templar's Zeal. Blades quest (25% of each map gains kept for good): 0.5% Blade Dash damage per enemy Hero hit (once per dash). Dance quest: takedowns within 6 seconds of a hit; stacks 1-40 make Blade Dash recharge 1% faster each, 41-80 make the dash 1% longer each (script), 81-100 make the return dash 1% wider each, at 100 the dash Stuns for 0.25 seconds out and 0.75 back (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="ArtanisGoldenBladesTokenCounter" parent="StormQuestToken">
+    <Face value="ArtanisGoldenBladesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ArtanisGoldenDanceTokenCounter" parent="StormQuestToken">
+    <Face value="ArtanisGoldenDanceTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ArtanisGoldenBladesTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ArtanisGoldenBladesTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ArtanisBladeDashFirstDamage">
+    <MultiplicativeModifierArray index="ArtanisDashPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisDashCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisDashHit" Accumulator="ArtanisGoldenBladesTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ArtanisDashLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ArtanisBladeDashSecondDamage">
+    <MultiplicativeModifierArray index="ArtanisDashPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisDashCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisDashHit" Accumulator="ArtanisGoldenBladesTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ArtanisDashLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ArtanisGoldenBladesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_artanis_powerstrikes.dds" />
+  </CButton>
+  <CButton id="ArtanisGoldenDanceTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_artanis_powerstrikes.dds" />
+  </CButton>
+
+  <!-- ===== Phase Master ===== -->
+  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (25% of each map gains kept for good): 1% stronger shields (ArtanisGoldenPrismShields, script) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism recharge 1% faster each, 41-80 make the prism fly 1% faster (script) and 1% wider each, 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="ArtanisGoldenPhaseTokenCounter" parent="StormQuestToken">
+    <Face value="ArtanisGoldenPhaseTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ArtanisGoldenWarpTokenCounter" parent="StormQuestToken">
+    <Face value="ArtanisGoldenWarpTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ArtanisGoldenPhaseTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ArtanisGoldenPhaseTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ArtanisPhasePrismDamage">
+    <MultiplicativeModifierArray index="ArtanisPrismPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisPrismCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisPrismLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ArtanisGoldenTwinPrismDamage">
+    <MultiplicativeModifierArray index="ArtanisPrismPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisPrismCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisPrismLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ArtanisGoldenPhaseTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_artanis_repositionmatrix.dds" />
+  </CButton>
+  <CButton id="ArtanisGoldenWarpTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_artanis_repositionmatrix.dds" />
+  </CButton>
+
+  <!-- ===== Hierarch of Aiur ===== -->
+  <!-- Every Basic Attack is a Twin Blades strike (two hits; Twin Blades itself still charges to the target); Phase Prism is disabled (its talents can't be taken); Shield Overload goes off on every enemy Hero takedown (script) and is 50% stronger; Zealot Charge at level 1. Zeal quest (25% of each map gains kept for good): 0.1% Basic Attack damage per Basic Attack hit on an enemy Hero, added in tens. Honor quest: takedowns within 6 seconds of a hit; stacks 1-40 0.5% Attack Speed each (script), 41-80 0.5% Life Steal each, at 100 every 5th attack is a Triple Strike (script), then 2.5% damage each. -->
+  <CBehaviorTokenCounter id="ArtanisGoldenZealTokenCounter" parent="StormQuestToken">
+    <Face value="ArtanisGoldenZealTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="ArtanisGoldenHonorTokenCounter" parent="StormQuestToken">
+    <Face value="ArtanisGoldenHonorTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="ArtanisGoldenZealTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="ArtanisGoldenZealTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="ArtanisWeaponDamage">
+    <MultiplicativeModifierArray index="ArtanisHierarchPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisHierarchCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisHierarchHit" Accumulator="ArtanisGoldenZealTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ArtanisHierarchLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ArtanisTwinBladesAmateurOpponentDamage">
+    <MultiplicativeModifierArray index="ArtanisHierarchPower" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisHierarchCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="ArtanisHierarchHit" Accumulator="ArtanisGoldenZealTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="ArtanisHierarchLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="ArtanisGoldenZealTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_artanis_doubleslash_on.dds" />
+  </CButton>
+  <CButton id="ArtanisGoldenHonorTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_artanis_doubleslash_on.dds" />
+  </CButton>
+  <!-- Blade Dancer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ArtanisDashPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Phase Master: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ArtanisPrismPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Hierarch of Aiur: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="ArtanisHierarchPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- the cooldown cuts of Templar's Zeal (Blade Dash) and Graviton Vortex (Phase Prism) do nothing on an ability with
+       charges: cut the recharges too -->
+  <CEffectModifyUnit id="ArtanisBladeDashTemplarsZealModifyCooldown">
+    <Cost Abil="ArtanisBladeDash,Execute" CooldownOperation="Add" CooldownTimeUse="-6" ChargeTimeUse="-6" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="ArtanisPhasePrismGravitonVortexModifyCooldownBladeDash">
+    <Cost Abil="ArtanisPhasePrism,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="ArtanisPhasePrismGravitonVortexModifyCooldownBasicAttacks">
+    <Cost Abil="ArtanisPhasePrism,Execute" CooldownOperation="Add" CooldownTimeUse="-2" ChargeTimeUse="-2" />
+  </CEffectModifyUnit>
+  <!-- shared: weakened (30% less damage dealt for 3 seconds), used by Disabling Blades -->
+  <CBehaviorBuff id="ArtanisGoldenWeaken">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_artanis_doubleslash_on.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- ===== Blade Dancer ===== -->
+  <!-- Dance at 100: the dash Stuns the enemies it hits, 0.25 seconds on the way out and 0.75 on the way back (the script
+       turns them on) -->
+  <CBehaviorBuff id="ArtanisGoldenDashStunOut" parent="StormStun">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="ArtanisGoldenDashStunBack" parent="StormStun">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ArtanisGoldenDashStunOutApply">
+    <Chance value="0" />
+    <Behavior value="ArtanisGoldenDashStunOut" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="ArtanisGoldenDashStunBackApply">
+    <Chance value="0" />
+    <Behavior value="ArtanisGoldenDashStunBack" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ArtanisBladeDashFirstImpactSet">
+    <EffectArray value="ArtanisGoldenDashStunOutApply" />
+  </CEffectSet>
+  <CEffectSet id="ArtanisBladeDashSecondImpactSet">
+    <EffectArray value="ArtanisGoldenDashStunBackApply" />
+  </CEffectSet>
+  <!-- Shield Dash (Epic): Blade Dash makes Shield Overload ready again; Zealot's Fury (Legendary): Unstoppable during Blade
+       Dash, from the cast until Artanis is back (at most 1.5 seconds) (Chance 0, the boons turn them on) -->
+  <CEffectModifyUnit id="ArtanisGoldenShieldDash">
+    <Chance value="0" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="ArtanisShieldOverloadDummy,Execute" CooldownOperation="Set" CooldownTimeUse="0" />
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="ArtanisGoldenZealotsFury" parent="StormUnstoppableParent">
+    <Duration value="1.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ArtanisGoldenZealotsFuryApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="ArtanisGoldenZealotsFury" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="ArtanisGoldenZealotsFuryRemove">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="ArtanisGoldenZealotsFury" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="ArtanisBladeDashFirstPersistentInitialSet">
+    <EffectArray value="ArtanisGoldenShieldDash" />
+    <EffectArray value="ArtanisGoldenZealotsFuryApply" />
+  </CEffectSet>
+  <CEffectSet id="ArtanisBladeDashSecondArrivalSet">
+    <EffectArray value="ArtanisGoldenZealotsFuryRemove" />
+  </CEffectSet>
+  <!-- ===== Phase Master ===== -->
+  <!-- Phase quest: 1% more shields per stack; Warp 81-100: 1% more per stack too (the script sets the total and re-adds it) -->
+  <CBehaviorBuff id="ArtanisGoldenPrismShields" parent="CarryBehaviorParent">
+    <Modification>
+      <HealDealtAdditiveMultiplier index="Shields" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Warp at 100: the swapped enemy Hero is Rooted for 0.25 seconds; Disorienting Swap (Epic): Slowed 80% for 2 seconds
+       (Chance 0, the script and the boon turn them on) -->
+  <CBehaviorBuff id="ArtanisGoldenPrismRoot" parent="StormRoot">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ArtanisGoldenPrismRootApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="ArtanisGoldenPrismRoot" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="ArtanisGoldenDisorientSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_artanis_repositionmatrix.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.8" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="ArtanisGoldenDisorientApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="ArtanisGoldenDisorientSlow" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ArtanisPhasePrismTargetArrivalSet">
+    <EffectArray value="ArtanisGoldenPrismRootApply" />
+    <EffectArray value="ArtanisGoldenDisorientApply" />
+  </CEffectSet>
+  <CEffectSet id="ArtanisPhasePrismTargetArrivalSetRooted">
+    <EffectArray value="ArtanisGoldenPrismRootApply" />
+    <EffectArray value="ArtanisGoldenDisorientApply" />
+  </CEffectSet>
+  <CEffectSet id="ArtanisPhasePrismDamageImpactSet">
+    <EffectArray value="ArtanisGoldenTwinPrismDamage" />
+  </CEffectSet>
+  <!-- ===== Hierarch of Aiur ===== -->
+  <!-- every Basic Attack is a Twin Blades strike (the Twin Blades double hit, without priming); Phase Prism is disabled;
+       Shield Overload is 50% stronger -->
+  <CBehaviorBuff id="ArtanisGoldenHierarch" parent="CarryBehaviorParent">
+    <Modification>
+      <AbilLinkDisableArray value="ArtanisPhasePrism" />
+      <HealDealtAdditiveMultiplier index="Shields" value="0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="ArtanisGoldenCasterIsHierarch">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Value value="0" />
+    <Behavior value="ArtanisHierarchMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="ArtanisGoldenHierarchStrikeSet">
+    <EffectArray value="ArtanisTwinBladesDamagePersistent" />
+  </CEffectSet>
+  <CEffectSwitch id="ArtanisWeaponImpactSwitch">
+    <CaseArray Validator="ArtanisGoldenCasterIsHierarch" Effect="ArtanisGoldenHierarchStrikeSet" />
+  </CEffectSwitch>
+  <!-- Honor stacks 1-40: 0.5% Attack Speed each (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="ArtanisGoldenHierarchSpeed" parent="CarryBehaviorParent">
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Hardened Shields (Common, up to 3): Shield Overload 10% stronger per stack -->
+  <CBehaviorBuff id="ArtanisGoldenHardenedShields" parent="CarryBehaviorParent">
+    <MaxStackCount value="3" />
+    <Modification>
+      <HealDealtAdditiveMultiplier index="Shields" value="0.1" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Disabling Blades (Epic): Basic Attacks weaken enemy Heroes; Plasma Burn (Legendary): every Basic Attack hit also deals
+       Plasma Burn's damage to the target (Chance 0, the boons turn them on) -->
+  <CEffectApplyBehavior id="ArtanisGoldenDisablingApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="ArtanisGoldenWeaken" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="ArtanisGoldenPlasmaStrikeSet">
+    <Chance value="0" />
+    <ValidatorArray value="NoJungleBenignTarget" />
+    <EffectArray value="ArtanisShieldOverloadPlasmaBurnTalentDamage" />
+  </CEffectSet>
+  <CEffectSet id="ArtanisWeaponPostImpactSet">
+    <EffectArray value="ArtanisGoldenDisablingApply" />
+    <EffectArray value="ArtanisGoldenPlasmaStrikeSet" />
+  </CEffectSet>
+  <CEffectSet id="ArtanisTwinBladesPostImpactSet">
+    <EffectArray value="ArtanisGoldenDisablingApply" />
+    <EffectArray value="ArtanisGoldenPlasmaStrikeSet" />
+  </CEffectSet>
+</Catalog>

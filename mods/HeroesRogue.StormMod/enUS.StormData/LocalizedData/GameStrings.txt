@@ -2858,6 +2858,66 @@ Behavior/Name/MalthaelGoldenGhostWalk=Ghost Walk
 Behavior/Tooltip/MalthaelGoldenGhostWalk=Unstoppable.
 Behavior/Name/MalthaelGoldenDoorProtect=Death's Door
 Behavior/Tooltip/MalthaelGoldenDoorProtect=Protected.
+Affix/Name/ArtanisBladeDancer=Blade Dancer
+Affix/Tooltip/ArtanisBladeDancer=Gain <c val="#TooltipNumbers">Solarite Reaper</c> and <c val="#TooltipNumbers">Templar's Zeal</c>. Blade Dash costs half Mana (none with Templar's Zeal) and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">8</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Blade Dash adds <c val="#TooltipNumbers">0.5%</c> Blade Dash damage (once per dash).<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Blade Dash hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make the dash longer (up to <c val="#TooltipNumbers">40%</c>), then make the return dash wider (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, the dash Stuns the enemies it hits for <c val="#TooltipNumbers">0.25</c> seconds on the way out and <c val="#TooltipNumbers">0.75</c> seconds on the way back. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/ArtanisPsiBlades=Psi Blades
+Affix/Tooltip/ArtanisPsiBlades=Blade Dash deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/ArtanisAmateurOpponentBoon=Amateur Opponent
+Affix/Tooltip/ArtanisAmateurOpponentBoon=Gain the talent <c val="#TooltipNumbers">Amateur Opponent</c>.
+Affix/Name/ArtanisFinalCutBoon=Final Cut
+Affix/Tooltip/ArtanisFinalCutBoon=Gain the talent <c val="#TooltipNumbers">Final Cut</c>.
+Affix/Name/ArtanisShieldDash=Shield Dash
+Affix/Tooltip/ArtanisShieldDash=Blade Dash makes <c val="#TooltipNumbers">Shield Overload</c> ready again.
+Affix/Name/ArtanisZealotsFury=Zealot's Fury
+Affix/Tooltip/ArtanisZealotsFury=You are Unstoppable during Blade Dash.
+Button/Name/ArtanisGoldenBladesTokenCounter=Blades
+Button/Tooltip/ArtanisGoldenBladesTokenCounter=<c val="#TooltipQuest">Bonus Blade Dash damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ArtanisGoldenBladesTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/ArtanisGoldenDanceTokenCounter=Dance
+Button/Tooltip/ArtanisGoldenDanceTokenCounter=<c val="#TooltipQuest">Dance stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ArtanisGoldenDanceTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Blade Dash recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the dash <c val="#TooltipNumbers">1%</c> longer. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make the return dash <c val="#TooltipNumbers">1%</c> wider. At <c val="#TooltipNumbers">100</c> stacks, the dash Stuns the enemies it hits for <c val="#TooltipNumbers">0.25</c> seconds on the way out and <c val="#TooltipNumbers">0.75</c> seconds on the way back. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/ArtanisPhaseMaster=Phase Master
+Affix/Tooltip/ArtanisPhaseMaster=Gain <c val="#TooltipNumbers">Psionic Synergy</c> and <c val="#TooltipNumbers">Graviton Vortex</c>. Phase Prism costs half Mana (none with Graviton Vortex) and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">9</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Phase Prism makes your shields <c val="#TooltipNumbers">1%</c> stronger.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Phase Prism hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make the prism fly faster and wider (up to <c val="#TooltipNumbers">40%</c>), then make your shields stronger (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, the prism Roots the enemy Hero it swaps for <c val="#TooltipNumbers">0.25</c> seconds. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/ArtanisChronoSurgeBoon=Chrono Surge
+Affix/Tooltip/ArtanisChronoSurgeBoon=Gain the talent <c val="#TooltipNumbers">Chrono Surge</c>.
+Affix/Name/ArtanisForceOfWillBoon=Force of Will
+Affix/Tooltip/ArtanisForceOfWillBoon=Gain the talent <c val="#TooltipNumbers">Force of Will</c>.
+Affix/Name/ArtanisDisorientingSwap=Disorienting Swap
+Affix/Tooltip/ArtanisDisorientingSwap=Enemy Heroes swapped by Phase Prism are Slowed by <c val="#TooltipNumbers">80%</c> for <c val="#TooltipNumbers">2</c> seconds.
+Affix/Name/ArtanisTwinPrism=Twin Prism
+Affix/Tooltip/ArtanisTwinPrism=Phase Prism also deals <c val="#TooltipNumbers">25%</c> of the enemy Hero's maximum Health.
+Button/Name/ArtanisGoldenPhaseTokenCounter=Phase
+Button/Tooltip/ArtanisGoldenPhaseTokenCounter=<c val="#TooltipQuest">Bonus shield strength: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ArtanisGoldenPhaseTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/ArtanisGoldenWarpTokenCounter=Warp
+Button/Tooltip/ArtanisGoldenWarpTokenCounter=<c val="#TooltipQuest">Warp stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ArtanisGoldenWarpTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Phase Prism recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the prism fly <c val="#TooltipNumbers">1%</c> faster and <c val="#TooltipNumbers">1%</c> wider. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make your shields <c val="#TooltipNumbers">1%</c> stronger. At <c val="#TooltipNumbers">100</c> stacks, the prism Roots the enemy Hero it swaps for <c val="#TooltipNumbers">0.25</c> seconds. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/ArtanisHierarchOfAiur=Hierarch of Aiur
+Affix/Tooltip/ArtanisHierarchOfAiur=Every Basic Attack is a Twin Blades strike that hits twice. You can't use Phase Prism. <c val="#TooltipNumbers">Shield Overload</c> goes off on every enemy Hero takedown and is <c val="#TooltipNumbers">50%</c> stronger. Gain <c val="#TooltipNumbers">Zealot Charge</c> at level <c val="#TooltipNumbers">1</c>.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Basic Attack hit on an enemy Hero adds <c val="#TooltipNumbers">0.1%</c> Basic Attack damage (added <c val="#TooltipNumbers">10</c> at a time).<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Basic Attack hit grant Attack Speed (up to <c val="#TooltipNumbers">20%</c>), then Life Steal (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, every <c val="#TooltipNumbers">5th</c> Basic Attack is a Triple Strike. Each stack past <c val="#TooltipNumbers">100</c> also adds <c val="#TooltipNumbers">2.5%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">25%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/ArtanisPsiEdge=Psi Edge
+Affix/Tooltip/ArtanisPsiEdge=Basic Attacks deal <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/ArtanisHardenedShields=Hardened Shields
+Affix/Tooltip/ArtanisHardenedShields=<c val="#TooltipNumbers">Shield Overload</c> is <c val="#TooltipNumbers">10%</c> stronger.
+Affix/Name/ArtanisReactiveParryBoon=Reactive Parry
+Affix/Tooltip/ArtanisReactiveParryBoon=Gain the talent <c val="#TooltipNumbers">Reactive Parry</c>.
+Affix/Name/ArtanisTitanKillerBoon=Titan Killer
+Affix/Tooltip/ArtanisTitanKillerBoon=Gain the talent <c val="#TooltipNumbers">Titan Killer</c>: Basic Attacks deal bonus damage based on the Hero's maximum Health.
+Affix/Name/ArtanisDisablingBlades=Disabling Blades
+Affix/Tooltip/ArtanisDisablingBlades=Basic Attacks on enemy Heroes make them deal <c val="#TooltipNumbers">30%</c> less damage for <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/ArtanisPlasmaBurnBoon=Plasma Burn
+Affix/Tooltip/ArtanisPlasmaBurnBoon=Gain the talent <c val="#TooltipNumbers">Plasma Burn</c>, and every Basic Attack hit also burns the target for its damage.
+Button/Name/ArtanisGoldenZealTokenCounter=Zeal
+Button/Tooltip/ArtanisGoldenZealTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ArtanisGoldenZealTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/ArtanisGoldenHonorTokenCounter=Honor
+Button/Tooltip/ArtanisGoldenHonorTokenCounter=<c val="#TooltipQuest">Honor stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:ArtanisGoldenHonorTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each grant <c val="#TooltipNumbers">0.5%</c> Attack Speed. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each grant <c val="#TooltipNumbers">0.5%</c> Life Steal on Basic Attacks. At <c val="#TooltipNumbers">100</c> stacks, every <c val="#TooltipNumbers">5th</c> Basic Attack is a Triple Strike. Each stack past <c val="#TooltipNumbers">100</c> also adds <c val="#TooltipNumbers">2.5%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/ArtanisGoldenWeaken=Disabling Blades
+Behavior/Tooltip/ArtanisGoldenWeaken=Dealing 30% less damage.
+Behavior/Name/ArtanisGoldenDashStunOut=Blade Dash
+Behavior/Tooltip/ArtanisGoldenDashStunOut=Stunned.
+Behavior/Name/ArtanisGoldenDashStunBack=Blade Dash
+Behavior/Tooltip/ArtanisGoldenDashStunBack=Stunned.
+Behavior/Name/ArtanisGoldenZealotsFury=Zealot's Fury
+Behavior/Tooltip/ArtanisGoldenZealotsFury=Unstoppable.
+Behavior/Name/ArtanisGoldenPrismRoot=Phase Prism
+Behavior/Tooltip/ArtanisGoldenPrismRoot=Rooted.
+Behavior/Name/ArtanisGoldenDisorientSlow=Disorienting Swap
+Behavior/Tooltip/ArtanisGoldenDisorientSlow=Slowed.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>Retain <c val="#TooltipNumbers">50%</c> of Quest progress after winning the game.
 Affix/Tooltip/Append/TyrandeTheMark=

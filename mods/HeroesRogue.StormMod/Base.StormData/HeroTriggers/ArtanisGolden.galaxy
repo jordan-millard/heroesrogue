@@ -1,0 +1,414 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Artanis. Blade Dancer: Blade Dash hits on enemy Heroes add Blades (once per Hero per dash); takedowns add Dance:
+// recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (shields);
+// takedowns add Warp: recharge, then speed and width, then shields, then at 100 a Root. Hierarch of Aiur: Basic Attack
+// hits on Heroes add Zeal (in tens); takedowns add Honor: Attack Speed, then Life Steal, then at 100 a Triple Strike every
+// 5th attack, then 2.5% damage per stack. Hierarch takedowns also give Shield Overload.
+// ============================================================
+
+const fixed libAffx_ArtanisTakedownWindow = 3.0;
+const fixed libAffx_ArtanisPastCapDamagePerStack = 0.01;
+bool libAffx_ArtanisStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ArtanisDashTime; // per enemy player, last Blade Dancer hit
+int libAffx_ArtanisDashAdded; // Blade Dancer: takedown stacks already applied to the catalog this game
+int libAffx_ArtanisDashAdded2; // Blade Dancer: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ArtanisDashAdded3; // Blade Dancer: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_ArtanisDashPastApplied; // Blade Dancer: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ArtanisPrismTime; // per enemy player, last Phase Master hit
+int libAffx_ArtanisPrismAdded; // Phase Master: takedown stacks already applied to the catalog this game
+int libAffx_ArtanisPrismAdded2; // Phase Master: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ArtanisPrismAdded3; // Phase Master: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_ArtanisPrismPastApplied; // Phase Master: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ArtanisHierarchTime; // per enemy player, last Hierarch of Aiur hit
+int libAffx_ArtanisHierarchAdded; // Hierarch of Aiur: takedown stacks already applied to the catalog this game
+int libAffx_ArtanisHierarchAdded2; // Hierarch of Aiur: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_ArtanisHierarchPastApplied; // Hierarch of Aiur: takedown quest stacks past the cap applied as damage this game
+int libAffx_ArtanisDashLength; // Blade Dancer: Dance stacks applied as dash length
+bool libAffx_ArtanisDashStunOn; // Blade Dancer: the dash Stuns are on
+int libAffx_ArtanisPrismShields = -1; // Phase Master: stacks applied as shield strength
+int libAffx_ArtanisPrismSpeed; // Phase Master: Warp stacks applied as prism speed
+bool libAffx_ArtanisPrismRootOn; // Phase Master: the prism Root is on
+int libAffx_ArtanisHierarchSpeed = -1; // Hierarch: Honor stacks applied as Attack Speed
+int libAffx_ArtanisAttackCount; // Hierarch: attacks since the last Triple Strike
+
+unit libAffx_ArtanisHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_ArtanisIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_ArtanisStacks(string tokenId) {
+    unit hero = libAffx_ArtanisHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_ArtanisQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_ArtanisInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_ArtanisTakedownWindow;
+}
+// ArtanisGoldenDanceTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 dash length (libAffx_ArtanisSync), 81-100 return width, 100 Stuns (script), then damage
+void libAffx_ArtanisSyncDash () {
+    unit hero = libAffx_ArtanisHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "ArtanisBladeDashMarker")) {
+        return;
+    }
+    stacks = libAffx_ArtanisStacks("ArtanisGoldenDanceTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ArtanisDashAdded) {
+        libAffx_CatalogReferenceModify("Abil,ArtanisBladeDash,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisDashAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ArtanisDashAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the dash is 1% longer each (libAffx_ArtanisSync)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ArtanisDashAdded2) {
+        libAffx_ArtanisDashAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the return dash is 1% wider each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_ArtanisDashAdded3) {
+        libAffx_CatalogReferenceModify("Effect,ArtanisBladeDashSecondTargetSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisDashAdded3) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ArtanisDashAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ArtanisDashPastApplied) {
+        libAffx_ArtanisDashPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisDashPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisDashPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "ArtanisDashPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ArtanisDashPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ArtanisDashPastCapDamage", hero, 1);
+    }
+}
+// ArtanisGoldenWarpTokenCounter: stacks 1-40: 1% of the 9 second recharge each; 41-80 speed (libAffx_ArtanisSync) and width, 81-100 shields (script), 100 the Root (script), then damage
+void libAffx_ArtanisSyncPrism () {
+    unit hero = libAffx_ArtanisHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "ArtanisPrismMarker")) {
+        return;
+    }
+    stacks = libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ArtanisPrismAdded) {
+        libAffx_CatalogReferenceModify("Abil,ArtanisPhasePrism,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisPrismAdded) * -0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ArtanisPrismAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% wider each (the speed is script)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ArtanisPrismAdded2) {
+        libAffx_CatalogReferenceModify("Effect,ArtanisPhasePrismMissileScan,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisPrismAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ArtanisPrismAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% stronger shields each (libAffx_ArtanisSync)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_ArtanisPrismAdded3) {
+        libAffx_ArtanisPrismAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ArtanisPrismPastApplied) {
+        libAffx_ArtanisPrismPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisPrismPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisPrismPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "ArtanisPrismPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ArtanisPrismPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ArtanisPrismPastCapDamage", hero, 1);
+    }
+}
+// ArtanisGoldenHonorTokenCounter: stacks 1-40: 0.5% Attack Speed each (libAffx_ArtanisSync); 41-80 Life Steal, 100 Triple Strike every 5th attack (script), then 2.5% damage
+void libAffx_ArtanisSyncHierarch () {
+    unit hero = libAffx_ArtanisHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "ArtanisHierarchMarker")) {
+        return;
+    }
+    stacks = libAffx_ArtanisStacks("ArtanisGoldenHonorTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_ArtanisHierarchAdded) {
+        libAffx_ArtanisHierarchAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.5% Life Steal each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_ArtanisHierarchAdded2) {
+        libAffx_CatalogReferenceModify("Effect,ArtanisWeaponDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisHierarchAdded2) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,ArtanisTwinBladesAmateurOpponentDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisHierarchAdded2) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_ArtanisHierarchAdded2 = wanted;
+    }
+    // stacks past 100: 0.025 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_ArtanisHierarchPastApplied) {
+        libAffx_ArtanisHierarchPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisHierarchPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisHierarchPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        UnitBehaviorRemove(hero, "ArtanisHierarchPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "ArtanisHierarchPastCapDamage")) {
+        UnitBehaviorAdd(hero, "ArtanisHierarchPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_ArtanisSync_Func (bool testConds, bool runActions) {
+    libAffx_ArtanisSyncDash();
+    libAffx_ArtanisSyncPrism();
+    libAffx_ArtanisSyncHierarch();
+    return true;
+}
+// Blade Dancer: a Blade Dash counts once per enemy Hero for the Blades quest, though both strikes can hit
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ArtanisDashCounted;
+bool libAffx_ArtanisDashOnce (unit victim) {
+    int owner = UnitGetOwner(victim);
+    fixed now = GameGetMissionTime();
+    if (owner < 0 || owner > libCore_gv_bALMaxPlayers) {
+        return false;
+    }
+    if (libAffx_ArtanisDashCounted[owner] > 0.0 && now - libAffx_ArtanisDashCounted[owner] < 1.5) {
+        return false;
+    }
+    libAffx_ArtanisDashCounted[owner] = now;
+    return true;
+}
+// moves the Y of a persistent's offset (a "x,y" or "x,y,z" value) by delta; negative Y is forward
+void libAffx_ArtanisMoveOffset (string effect, string field, fixed delta) {
+    string offset = StringReplaceWord(CatalogFieldValueGet(c_gameCatalogEffect, effect, field, libAffx_player), ",", " ", c_stringReplaceAll, c_stringCase);
+    fixed y = StringToFixed(StringWord(offset, 2)) + delta;
+    string value = StringWord(offset, 1) + "," + FixedToString(y, 4);
+    if (StringWord(offset, 3) != "") {
+        value = value + "," + StringWord(offset, 3);
+    }
+    CatalogFieldValueSet(c_gameCatalogEffect, effect, field, libAffx_player, value);
+}
+// every second and on takedowns: Blade Dancer's dash length (Dance 41-80) and Stuns (Dance 100); Phase Master's shields
+// (Phase, and Warp 81-100), prism speed (Warp 41-80) and Root (Warp 100); Hierarch's Attack Speed (Honor 1-40)
+void libAffx_ArtanisSync () {
+    unit hero = libAffx_ArtanisHero();
+    int n;
+    fixed amount;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ArtanisBladeDashMarker")) {
+        n = MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenDanceTokenCounter") - 40, 40));
+        if (n != libAffx_ArtanisDashLength) {
+            // 1% of the 7 dash length per stack
+            libAffx_ArtanisMoveOffset("ArtanisBladeDashFirstPersistent", "PeriodicOffsetArray[0]", -0.07 * IntToFixed(n - libAffx_ArtanisDashLength));
+            libAffx_ArtanisDashLength = n;
+        }
+        if (!libAffx_ArtanisDashStunOn && libAffx_ArtanisStacks("ArtanisGoldenDanceTokenCounter") >= 100) {
+            libAffx_ArtanisDashStunOn = true;
+            CatalogFieldValueSet(c_gameCatalogEffect, "ArtanisGoldenDashStunOutApply", "Chance", libAffx_player, "1");
+            CatalogFieldValueSet(c_gameCatalogEffect, "ArtanisGoldenDashStunBackApply", "Chance", libAffx_player, "1");
+        }
+    }
+    if (UnitHasBehavior2(hero, "ArtanisPrismMarker")) {
+        n = libAffx_ArtanisStacks("ArtanisGoldenPhaseTokenCounter") + MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 80, 20));
+        if (n != libAffx_ArtanisPrismShields || !UnitHasBehavior2(hero, "ArtanisGoldenPrismShields")) {
+            libAffx_ArtanisPrismShields = n;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisGoldenPrismShields", "Modification.HealDealtAdditiveMultiplier[Shields]", libAffx_player, 0.01 * IntToFixed(n));
+            UnitBehaviorRemove(hero, "ArtanisGoldenPrismShields", c_unitBehaviorCountAll);
+            UnitBehaviorAdd(hero, "ArtanisGoldenPrismShields", hero, 1);
+        }
+        n = MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 40, 40));
+        if (n != libAffx_ArtanisPrismSpeed) {
+            libAffx_ArtanisPrismSpeed = n;
+            amount = 12.6953 * (1.0 + 0.01 * IntToFixed(n));
+            CatalogFieldValueSet(c_gameCatalogMover, "ArtanisPhasePrismMissile", "MotionPhases[0].Speed", libAffx_player, FixedToString(amount, 4));
+            CatalogFieldValueSet(c_gameCatalogMover, "ArtanisPhasePrismMissile", "MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(amount, 4));
+        }
+        if (!libAffx_ArtanisPrismRootOn && libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") >= 100) {
+            libAffx_ArtanisPrismRootOn = true;
+            CatalogFieldValueSet(c_gameCatalogEffect, "ArtanisGoldenPrismRootApply", "Chance", libAffx_player, "1");
+        }
+    }
+    if (UnitHasBehavior2(hero, "ArtanisHierarchMarker")) {
+        n = MinI(libAffx_ArtanisStacks("ArtanisGoldenHonorTokenCounter"), 40);
+        if (n != libAffx_ArtanisHierarchSpeed || (n > 0 && !UnitHasBehavior2(hero, "ArtanisGoldenHierarchSpeed"))) {
+            libAffx_ArtanisHierarchSpeed = n;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisGoldenHierarchSpeed", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.005 * IntToFixed(n));
+            UnitBehaviorRemove(hero, "ArtanisGoldenHierarchSpeed", c_unitBehaviorCountAll);
+            if (n > 0) {
+                UnitBehaviorAdd(hero, "ArtanisGoldenHierarchSpeed", hero, 1);
+            }
+        }
+    }
+}
+bool libAffx_ArtanisTick_Func (bool testConds, bool runActions) {
+    libAffx_ArtanisSync();
+    return true;
+}
+// Hierarch of Aiur, Honor at 100: every 5th Basic Attack is a Triple Strike (a third hit after the second)
+bool libAffx_ArtanisTriple_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ArtanisHero();
+    unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
+    if (hero == null || target == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero || !UnitHasBehavior2(hero, "ArtanisHierarchMarker") || libAffx_ArtanisStacks("ArtanisGoldenHonorTokenCounter") < 100) {
+        return false;
+    }
+    libAffx_ArtanisAttackCount += 1;
+    if (libAffx_ArtanisAttackCount < 5) {
+        return true;
+    }
+    libAffx_ArtanisAttackCount = 0;
+    Wait(0.5, c_timeGame);
+    if (UnitIsAlive(hero) && UnitIsAlive(target)) {
+        UnitCreateEffectUnit(hero, "ArtanisTwinBladesTripleStrikeDamageSetThird", target);
+    }
+    return true;
+}
+// Blade Dancer hit on an enemy Hero: takedown window, ArtanisGoldenBladesTokenCounter, the heal, and on-hit boons
+bool libAffx_ArtanisDashHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ArtanisHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ArtanisIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ArtanisBladeDashMarker")) {
+        return false;
+    }
+    libAffx_ArtanisDashTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_ArtanisDashOnce(victim)) {
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenBladesTokenCounter", hero);
+    }
+    return true;
+}
+// Phase Master hit on an enemy Hero: takedown window, ArtanisGoldenPhaseTokenCounter, the heal, and on-hit boons
+bool libAffx_ArtanisPrismHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ArtanisHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ArtanisIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ArtanisPrismMarker")) {
+        return false;
+    }
+    libAffx_ArtanisPrismTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "ArtanisGoldenPhaseTokenCounter", hero);
+    return true;
+}
+// Hierarch of Aiur: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_ArtanisHierarchHits;
+// Hierarch of Aiur hit on an enemy Hero: takedown window, ArtanisGoldenZealTokenCounter, the heal, and on-hit boons
+bool libAffx_ArtanisHierarchHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_ArtanisHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_ArtanisIsEnemyHero(victim) || !UnitHasBehavior2(hero, "ArtanisHierarchMarker")) {
+        return false;
+    }
+    libAffx_ArtanisHierarchTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libAffx_ArtanisHierarchHits += 1;
+    if (libAffx_ArtanisHierarchHits >= 10) {
+        libAffx_ArtanisHierarchHits = 0;
+        libGame_gf_ModifyTokenCount(10, "ArtanisGoldenZealTokenCounter", hero);
+    }
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_ArtanisTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ArtanisTakedownCrossStart () {
+    unit hero = libAffx_ArtanisHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ArtanisTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenDanceTokenCounter"));
+    libAffx_ArtanisTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenWarpTokenCounter"));
+    libAffx_ArtanisTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenHonorTokenCounter"));
+}
+void libAffx_ArtanisTakedownCross () {
+    unit hero = libAffx_ArtanisHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenDanceTokenCounter")) == libAffx_ArtanisTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenWarpTokenCounter")) == libAffx_ArtanisTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenHonorTokenCounter")) == libAffx_ArtanisTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ArtanisBladeDashMarker") && FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenDanceTokenCounter")) == libAffx_ArtanisTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenDanceTokenCounter", hero);
+        libAffx_ArtanisSyncDash();
+        libAffx_ArtanisSync();
+    }
+    if (UnitHasBehavior2(hero, "ArtanisPrismMarker") && FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenWarpTokenCounter")) == libAffx_ArtanisTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenWarpTokenCounter", hero);
+        libAffx_ArtanisSyncPrism();
+        libAffx_ArtanisSync();
+    }
+    if (UnitHasBehavior2(hero, "ArtanisHierarchMarker") && FixedToInt(UnitGetTokenCount(hero, "ArtanisGoldenHonorTokenCounter")) == libAffx_ArtanisTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenHonorTokenCounter", hero);
+        libAffx_ArtanisSyncHierarch();
+        libAffx_ArtanisSync();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_ArtanisTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_ArtanisHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_ArtanisTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "ArtanisHierarchMarker") && UnitIsAlive(hero)) {
+        UnitBehaviorAdd(hero, "ArtanisShieldOverload", hero, 1);
+    }
+    if (UnitHasBehavior2(hero, "ArtanisBladeDashMarker") && libAffx_ArtanisDashTime[killedPlayer] > 0.0 && now - libAffx_ArtanisDashTime[killedPlayer] <= 6.0) {
+        libAffx_ArtanisDashTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenDanceTokenCounter", hero);
+        libAffx_ArtanisSyncDash();
+        libAffx_ArtanisQuestDing();
+        libAffx_ArtanisSync();
+    }
+    if (UnitHasBehavior2(hero, "ArtanisPrismMarker") && libAffx_ArtanisPrismTime[killedPlayer] > 0.0 && now - libAffx_ArtanisPrismTime[killedPlayer] <= 6.0) {
+        libAffx_ArtanisPrismTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenWarpTokenCounter", hero);
+        libAffx_ArtanisSyncPrism();
+        libAffx_ArtanisQuestDing();
+        libAffx_ArtanisSync();
+    }
+    if (UnitHasBehavior2(hero, "ArtanisHierarchMarker") && libAffx_ArtanisHierarchTime[killedPlayer] > 0.0 && now - libAffx_ArtanisHierarchTime[killedPlayer] <= 6.0) {
+        libAffx_ArtanisHierarchTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "ArtanisGoldenHonorTokenCounter", hero);
+        libAffx_ArtanisSyncHierarch();
+        libAffx_ArtanisQuestDing();
+        libAffx_ArtanisSync();
+    }
+    libAffx_ArtanisTakedownCross();
+    return true;
+}
+bool libAffx_ArtanisStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_ArtanisStarted) {
+        return true;
+    }
+    libAffx_ArtanisStarted = true;
+    trig = TriggerCreate("libAffx_ArtanisDashHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ArtanisBladeDashFirstDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ArtanisBladeDashSecondDamage");
+    trig = TriggerCreate("libAffx_ArtanisPrismHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ArtanisPhasePrismDamage");
+    trig = TriggerCreate("libAffx_ArtanisHierarchHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ArtanisWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ArtanisTwinBladesAmateurOpponentDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ArtanisTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ArtanisTriple_Func"), libAffx_player, "ArtanisTwinBladesDamageSetFirst");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ArtanisSync_Func"), 1.0, c_timeGame);
+    return true;
+}

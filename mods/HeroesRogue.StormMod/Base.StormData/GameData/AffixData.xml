@@ -28511,6 +28511,457 @@
             </String>
         </Instances>
 
+        <Instances Id="ArtanisBladeDancer">
+            <String String="Assets/Textures/storm_ui_icon_artanis_powerstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ArtanisBladeDashSolariteReaper">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ArtanisBladeDashTemplarsZeal">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ArtanisBladeDashMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ArtanisGoldenBladesTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ArtanisGoldenDanceTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ArtanisGoldenDanceTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ArtanisGoldenBladesTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisBladeDash,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisBladeDash,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisBladeDash,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisBladeDash,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisBladeDash,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,ArtanisBladeDash,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisBladeDashFirstDamage,MultiplicativeModifierArray[ArtanisDashPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisBladeDashSecondDamage,MultiplicativeModifierArray[ArtanisDashPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_ArtanisStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ArtanisTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisPsiBlades">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_artanis_powerstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisBladeDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ArtanisBladeDashFirstDamage,MultiplicativeModifierArray[ArtanisDashCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ArtanisBladeDashSecondDamage,MultiplicativeModifierArray[ArtanisDashCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisAmateurOpponentBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_powerstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisBladeDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisTwinBladesAmateurOpponent">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisFinalCutBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_powerstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisBladeDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisFinalCut">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisShieldDash">
+            <String String="Assets/Textures/storm_ui_icon_artanis_powerstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisBladeDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ArtanisGoldenShieldDash,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisZealotsFury">
+            <String String="Assets/Textures/storm_ui_icon_artanis_powerstrikes.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisBladeDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ArtanisGoldenZealotsFuryApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisPhaseMaster">
+            <String String="Assets/Textures/storm_ui_icon_artanis_repositionmatrix.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ArtanisPhasePrismPsionicSynergy">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ArtanisPhasePrismGravitonVortex">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 ArtanisPrismMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ArtanisGoldenPhaseTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ArtanisGoldenWarpTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="ArtanisGoldenWarpTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ArtanisGoldenPhaseTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisPhasePrism,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisPhasePrism,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisPhasePrism,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisPhasePrism,Cost.Charge.TimeUse 9">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,ArtanisPhasePrism,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Add Abil,ArtanisPhasePrism,Cost.Vital[Energy] -25">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisPhasePrismDamage,MultiplicativeModifierArray[ArtanisPrismPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisGoldenTwinPrismDamage,MultiplicativeModifierArray[ArtanisPrismPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_ArtanisStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ArtanisTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisChronoSurgeBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_repositionmatrix.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisPhaseMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisPhasePrismChronoSurge">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisForceOfWillBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_repositionmatrix.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisPhaseMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisShieldOverloadForceofWill">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisDisorientingSwap">
+            <String String="Assets/Textures/storm_ui_icon_artanis_repositionmatrix.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisPhaseMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ArtanisGoldenDisorientApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisTwinPrism">
+            <String String="Assets/Textures/storm_ui_icon_artanis_repositionmatrix.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisPhaseMaster">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ArtanisGoldenTwinPrismDamage,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisHierarchOfAiur">
+            <String String="Assets/Textures/storm_ui_icon_artanis_doubleslash_on.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="ArtanisTwinBladesZealotCharge">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="ArtanisPhasePrismPsionicSynergy">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="ArtanisPhasePrismChronoSurge">
+                <Field Id="TalentsDisable" Index="1" />
+            </String>
+            <String String="ArtanisPhasePrismGravitonVortex">
+                <Field Id="TalentsDisable" Index="2" />
+            </String>
+            <String String="1 0 ArtanisHierarchMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 ArtanisGoldenZealTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 ArtanisGoldenHonorTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 ArtanisGoldenHierarch">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="ArtanisGoldenHonorTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="ArtanisGoldenZealTokenCounter 0.25 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisWeaponDamage,MultiplicativeModifierArray[ArtanisHierarchPower].Modifier 0">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisTwinBladesAmateurOpponentDamage,MultiplicativeModifierArray[ArtanisHierarchPower].Modifier 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="AffixAdded libAffx_ArtanisStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_ArtanisTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisPsiEdge">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_artanis_doubleslash_on.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisHierarchOfAiur">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,ArtanisWeaponDamage,MultiplicativeModifierArray[ArtanisHierarchCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,ArtanisTwinBladesAmateurOpponentDamage,MultiplicativeModifierArray[ArtanisHierarchCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisHardenedShields">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_artanis_shieldoverload.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisHierarchOfAiur">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 ArtanisGoldenHardenedShields">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisReactiveParryBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_doubleslash_on.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisHierarchOfAiur">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisTwinBladesReactiveParry">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisTitanKillerBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_doubleslash_on.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisHierarchOfAiur">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisTwinBladesTitanKiller">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisDisablingBlades">
+            <String String="Assets/Textures/storm_ui_icon_artanis_doubleslash_on.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisHierarchOfAiur">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,ArtanisGoldenDisablingApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="ArtanisPlasmaBurnBoon">
+            <String String="Assets/Textures/storm_ui_icon_artanis_doubleslash_on.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Artanis">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="ArtanisHierarchOfAiur">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="ArtanisPlasmaBurn">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 1 Set Effect,ArtanisGoldenPlasmaStrikeSet,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />
