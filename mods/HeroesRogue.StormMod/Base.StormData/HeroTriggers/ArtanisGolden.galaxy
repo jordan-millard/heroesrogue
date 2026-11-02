@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Artanis. Blade Dancer: Blade Dash hits on enemy Heroes add Blades (once per Hero per dash); takedowns add Dance:
-// recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (shields);
+// recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (shields, Heroic damage);
 // takedowns add Warp: recharge, then speed and width, then shields, then at 100 a Root. Hierarch of Aiur: Basic Attack
 // hits on Heroes add Zeal (in tens); takedowns add Honor: Attack Speed, then Life Steal, then at 100 a Triple Strike every
 // 5th attack, then 2.5% damage per stack. Hierarch takedowns also give Shield Overload.
@@ -221,10 +221,11 @@ void libAffx_ArtanisSync () {
         }
     }
     if (UnitHasBehavior2(hero, "ArtanisPrismMarker")) {
-        n = libAffx_ArtanisStacks("ArtanisGoldenPhaseTokenCounter") + MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 80, 20));
+        // shields: 0.75% per Phase stack plus 1% per Warp stack 81-100, counted in quarter percents
+        n = 3 * libAffx_ArtanisStacks("ArtanisGoldenPhaseTokenCounter") + 4 * MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 80, 20));
         if (n != libAffx_ArtanisPrismShields || !UnitHasBehavior2(hero, "ArtanisGoldenPrismShields")) {
             libAffx_ArtanisPrismShields = n;
-            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisGoldenPrismShields", "Modification.HealDealtAdditiveMultiplier[Shields]", libAffx_player, 0.01 * IntToFixed(n));
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisGoldenPrismShields", "Modification.HealDealtAdditiveMultiplier[Shields]", libAffx_player, IntToFixed(n) / 400.0);
             UnitBehaviorRemove(hero, "ArtanisGoldenPrismShields", c_unitBehaviorCountAll);
             UnitBehaviorAdd(hero, "ArtanisGoldenPrismShields", hero, 1);
         }

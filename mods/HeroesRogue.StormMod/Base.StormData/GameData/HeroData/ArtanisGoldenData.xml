@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Phase Master ===== -->
-  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 1% stronger shields (ArtanisGoldenPrismShields, script) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism recharge 1% faster each, 41-80 make the prism fly 1% faster (script) and 1% wider each, 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
+  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 0.75% stronger shields (ArtanisGoldenPrismShields, script) and 0.5% Heroic damage (Purifier Beam, Suppression Pulse) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism recharge 1% faster each, 41-80 make the prism fly 1% faster (script) and 1% wider each, 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenPhaseTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenPhaseTokenCounter" />
     <Max value="100000" />
@@ -68,7 +68,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="ArtanisGoldenPhaseTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.005" />
   </CAccumulatorToken>
   <CEffectDamage id="ArtanisPhasePrismDamage">
     <MultiplicativeModifierArray index="ArtanisPrismPower" Modifier="0" />
@@ -79,6 +79,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="ArtanisPrismPower" Modifier="0" />
     <MultiplicativeModifierArray index="ArtanisPrismCommon" Modifier="0" />
     <MultiplicativeModifierArray index="ArtanisPrismLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="ArtanisSpearofAdunPurifierBeamDamage">
+    <MultiplicativeModifierArray index="ArtanisPrismHit" Accumulator="ArtanisGoldenPhaseTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="ArtanisSpearofAdunSuppressionPulseDamage">
+    <MultiplicativeModifierArray index="ArtanisPrismHit" Accumulator="ArtanisGoldenPhaseTokenCounterAccumulator" />
   </CEffectDamage>
   <CButton id="ArtanisGoldenPhaseTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_artanis_repositionmatrix.dds" />
@@ -220,7 +226,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="ArtanisGoldenZealotsFuryRemove" />
   </CEffectSet>
   <!-- ===== Phase Master ===== -->
-  <!-- Phase quest: 1% more shields per stack; Warp 81-100: 1% more per stack too (the script sets the total and re-adds it) -->
+  <!-- Phase quest: 0.75% more shields per stack (and 0.5% Heroic damage, its accumulator); Warp 81-100: 1% more shields per stack (the script sets the total and re-adds it) -->
   <CBehaviorBuff id="ArtanisGoldenPrismShields" parent="CarryBehaviorParent">
     <Modification>
       <HealDealtAdditiveMultiplier index="Shields" value="0" />
