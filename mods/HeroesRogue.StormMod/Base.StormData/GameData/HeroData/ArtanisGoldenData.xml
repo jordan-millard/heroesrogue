@@ -18,7 +18,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Blade Dancer ===== -->
-  <!-- Blade Dash stores 2 charges (8 second recharge) and costs half Mana (no Mana with Templar's Zeal); gain Solarite Reaper and Templar's Zeal. Blades quest (10% of each map gains kept for good): 0.5% Blade Dash damage per enemy Hero hit (once per dash). Dance quest: takedowns within 6 seconds of a hit; stacks 1-40 make Blade Dash recharge 1% faster each, 41-80 make the dash 1% longer each (script), 81-100 make the return dash 1% wider each, at 100 the dash Stuns for 0.25 seconds out and 0.75 back (script), then 2% damage each. -->
+  <!-- Blade Dash stores 2 charges (8 second recharge) and costs half Mana (no Mana with Templar's Zeal); gain Solarite Reaper and Templar's Zeal. Blades quest (10% of each map gains kept for good): 0.5% Blade Dash damage per enemy Hero hit (once per dash). Dance quest: takedowns within 6 seconds of a hit; stacks 1-40 make Blade Dash recharge 1% faster each, 41-80 make the dash 1% faster each (script), 81-100 make the return dash 1% wider each, at 100 the dash Stuns for 0.25 seconds out and 0.75 back (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenBladesTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenBladesTokenCounter" />
     <Max value="100000" />

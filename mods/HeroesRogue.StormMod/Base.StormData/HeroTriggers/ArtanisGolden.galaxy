@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Artanis. Blade Dancer: Blade Dash hits on enemy Heroes add Blades (once per Hero per dash); takedowns add Dance:
-// recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (Shield Overload, Heroic damage);
+// recharge, then dash speed, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (Shield Overload, Heroic damage);
 // takedowns add Warp: width, then range, then Shield Overload, then at 100 a Shield Overload reset. Hierarch of Aiur: Basic Attack
 // hits on Heroes add Zeal (in tens); takedowns add Honor: Attack Speed, then Life Steal, then at 100 a Triple Strike every
 // 5th attack, then 2.5% damage per stack. Hierarch takedowns also give Shield Overload.
@@ -25,7 +25,7 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_ArtanisHierarchTime; // per enemy pl
 int libAffx_ArtanisHierarchAdded; // Hierarch of Aiur: takedown stacks already applied to the catalog this game
 int libAffx_ArtanisHierarchAdded2; // Hierarch of Aiur: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_ArtanisHierarchPastApplied; // Hierarch of Aiur: takedown quest stacks past the cap applied as damage this game
-int libAffx_ArtanisDashLength; // Blade Dancer: Dance stacks applied as dash length
+int libAffx_ArtanisDashSpeed; // Blade Dancer: Dance stacks applied as dash speed
 bool libAffx_ArtanisDashStunOn; // Blade Dancer: the dash Stuns are on
 int libAffx_ArtanisPrismRange; // Phase Master: Warp stacks applied as prism range
 bool libAffx_ArtanisPrismResetOn; // Phase Master: prism hits reset Shield Overload
@@ -55,7 +55,7 @@ void libAffx_ArtanisQuestDing() {
 bool libAffx_ArtanisInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_ArtanisTakedownWindow;
 }
-// ArtanisGoldenDanceTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 dash length (libAffx_ArtanisSync), 81-100 return width, 100 Stuns (script), then damage
+// ArtanisGoldenDanceTokenCounter: stacks 1-40: 1% of the 8 second recharge each; 41-80 dash speed (libAffx_ArtanisSync), 81-100 return width, 100 Stuns (script), then damage
 void libAffx_ArtanisSyncDash () {
     unit hero = libAffx_ArtanisHero();
     int stacks;
@@ -71,7 +71,7 @@ void libAffx_ArtanisSyncDash () {
         libAffx_CatalogReferenceModify("Abil,ArtanisBladeDash,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisDashAdded) * -0.08, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ArtanisDashAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): the dash is 1% longer each (libAffx_ArtanisSync)
+    // stage 2 (stacks 41 to 80): the dash is 1% faster each (libAffx_ArtanisSync)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_ArtanisDashAdded2) {
         libAffx_ArtanisDashAdded2 = wanted;
@@ -187,6 +187,13 @@ bool libAffx_ArtanisDashOnce (unit victim) {
     return true;
 }
 // moves the Y of a persistent's offset (a "x,y" or "x,y,z" value) by delta; negative Y is forward
+// sets a Blade Dash mover to its base motion times the speed factor (acceleration by its square, so the dash keeps its length)
+void libAffx_ArtanisDashMover (string mover, fixed accel, fixed speed, fixed minSpeed, fixed maxSpeed, fixed factor) {
+    CatalogFieldValueSet(c_gameCatalogMover, mover, "MotionPhases[0].Acceleration", libAffx_player, FixedToString(accel * factor * factor, 4));
+    CatalogFieldValueSet(c_gameCatalogMover, mover, "MotionPhases[0].Speed", libAffx_player, FixedToString(speed * factor, 4));
+    CatalogFieldValueSet(c_gameCatalogMover, mover, "MotionPhases[0].MinSpeed", libAffx_player, FixedToString(minSpeed * factor, 4));
+    CatalogFieldValueSet(c_gameCatalogMover, mover, "MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(maxSpeed * factor, 4));
+}
 void libAffx_ArtanisMoveOffset (string effect, string field, fixed delta) {
     string offset = StringReplaceWord(CatalogFieldValueGet(c_gameCatalogEffect, effect, field, libAffx_player), ",", " ", c_stringReplaceAll, c_stringCase);
     fixed y = StringToFixed(StringWord(offset, 2)) + delta;
@@ -196,7 +203,7 @@ void libAffx_ArtanisMoveOffset (string effect, string field, fixed delta) {
     }
     CatalogFieldValueSet(c_gameCatalogEffect, effect, field, libAffx_player, value);
 }
-// every second and on takedowns: Blade Dancer's dash length (Dance 41-80) and Stuns (Dance 100); Phase Master's prism range
+// every second and on takedowns: Blade Dancer's dash speed (Dance 41-80) and Stuns (Dance 100); Phase Master's prism range
 // (Warp 41-80) and Shield Overload reset (Warp 100); Hierarch's Attack Speed (Honor 1-40)
 void libAffx_ArtanisSync () {
     unit hero = libAffx_ArtanisHero();
@@ -207,10 +214,14 @@ void libAffx_ArtanisSync () {
     }
     if (UnitHasBehavior2(hero, "ArtanisBladeDashMarker")) {
         n = MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenDanceTokenCounter") - 40, 40));
-        if (n != libAffx_ArtanisDashLength) {
-            // 1% of the 7 dash length per stack
-            libAffx_ArtanisMoveOffset("ArtanisBladeDashFirstPersistent", "PeriodicOffsetArray[0]", -0.07 * IntToFixed(n - libAffx_ArtanisDashLength));
-            libAffx_ArtanisDashLength = n;
+        if (n != libAffx_ArtanisDashSpeed) {
+            // 1% faster per stack, out and back, with and without Lethal Alacrity (base motion from the game data)
+            libAffx_ArtanisDashSpeed = n;
+            amount = 1.0 + IntToFixed(n) / 100.0;
+            libAffx_ArtanisDashMover("ArtanisBladeDashFirstMissile", -120.0, 45.0, 5.0, 45.0, amount);
+            libAffx_ArtanisDashMover("ArtanisBladeDashLethalAlacrityFirstMissile", -100.0, 45.0, 7.0, 55.0, amount);
+            libAffx_ArtanisDashMover("ArtanisBladeDashSecondMissile", 50.0, 0.25, 0.25, 50.0, amount);
+            libAffx_ArtanisDashMover("ArtanisBladeDashLethalAlacritySecondMissile", 65.0, 0.25, 3.0, 65.0, amount);
         }
         if (!libAffx_ArtanisDashStunOn && libAffx_ArtanisStacks("ArtanisGoldenDanceTokenCounter") >= 100) {
             libAffx_ArtanisDashStunOn = true;
