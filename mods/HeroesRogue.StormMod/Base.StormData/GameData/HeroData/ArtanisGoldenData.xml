@@ -18,7 +18,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Blade Dancer ===== -->
-  <!-- Blade Dash stores 2 charges (8 second recharge) and costs half Mana (no Mana with Templar's Zeal); gain Solarite Reaper and Templar's Zeal. Blades quest (25% of each map gains kept for good): 0.5% Blade Dash damage per enemy Hero hit (once per dash). Dance quest: takedowns within 6 seconds of a hit; stacks 1-40 make Blade Dash recharge 1% faster each, 41-80 make the dash 1% longer each (script), 81-100 make the return dash 1% wider each, at 100 the dash Stuns for 0.25 seconds out and 0.75 back (script), then 2% damage each. -->
+  <!-- Blade Dash stores 2 charges (8 second recharge) and costs half Mana (no Mana with Templar's Zeal); gain Solarite Reaper and Templar's Zeal. Blades quest (10% of each map gains kept for good): 0.5% Blade Dash damage per enemy Hero hit (once per dash). Dance quest: takedowns within 6 seconds of a hit; stacks 1-40 make Blade Dash recharge 1% faster each, 41-80 make the dash 1% longer each (script), 81-100 make the return dash 1% wider each, at 100 the dash Stuns for 0.25 seconds out and 0.75 back (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenBladesTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenBladesTokenCounter" />
     <Max value="100000" />
@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Phase Master ===== -->
-  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (25% of each map gains kept for good): 1% stronger shields (ArtanisGoldenPrismShields, script) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism recharge 1% faster each, 41-80 make the prism fly 1% faster (script) and 1% wider each, 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
+  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 1% stronger shields (ArtanisGoldenPrismShields, script) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism recharge 1% faster each, 41-80 make the prism fly 1% faster (script) and 1% wider each, 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenPhaseTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenPhaseTokenCounter" />
     <Max value="100000" />
@@ -88,7 +88,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Hierarch of Aiur ===== -->
-  <!-- Every Basic Attack is a Twin Blades strike (two hits; Twin Blades itself still charges to the target); Phase Prism is disabled (its talents can't be taken); Shield Overload goes off on every enemy Hero takedown (script) and is 50% stronger; Zealot Charge at level 1. Zeal quest (25% of each map gains kept for good): 0.1% Basic Attack damage per Basic Attack hit on an enemy Hero, added in tens. Honor quest: takedowns within 6 seconds of a hit; stacks 1-40 0.5% Attack Speed each (script), 41-80 0.5% Life Steal each, at 100 every 5th attack is a Triple Strike (script), then 2.5% damage each. -->
+  <!-- Every Basic Attack is a Twin Blades strike (two hits; Twin Blades itself still charges to the target); Phase Prism is disabled (its talents can't be taken); Shield Overload goes off on every enemy Hero takedown (script) and is 50% stronger; Zealot Charge at level 1. Zeal quest (10% of each map gains kept for good): 0.1% Basic Attack damage per Basic Attack hit on an enemy Hero, added in tens. Honor quest: takedowns within 6 seconds of a hit; stacks 1-40 0.5% Attack Speed each (script), 41-80 0.5% Life Steal each, at 100 every 5th attack is a Triple Strike (script), then 2.5% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenZealTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenZealTokenCounter" />
     <Max value="100000" />
