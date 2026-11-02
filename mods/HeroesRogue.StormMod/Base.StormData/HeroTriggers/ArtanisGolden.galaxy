@@ -2,8 +2,8 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Artanis. Blade Dancer: Blade Dash hits on enemy Heroes add Blades (once per Hero per dash); takedowns add Dance:
-// recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (shields, Heroic damage);
-// takedowns add Warp: width, then range, then shields, then at 100 a Shield Overload reset. Hierarch of Aiur: Basic Attack
+// recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (Shield Overload, Heroic damage);
+// takedowns add Warp: width, then range, then Shield Overload, then at 100 a Shield Overload reset. Hierarch of Aiur: Basic Attack
 // hits on Heroes add Zeal (in tens); takedowns add Honor: Attack Speed, then Life Steal, then at 100 a Triple Strike every
 // 5th attack, then 2.5% damage per stack. Hierarch takedowns also give Shield Overload.
 // ============================================================
@@ -27,7 +27,6 @@ int libAffx_ArtanisHierarchAdded2; // Hierarch of Aiur: takedown quest stage 2 s
 int libAffx_ArtanisHierarchPastApplied; // Hierarch of Aiur: takedown quest stacks past the cap applied as damage this game
 int libAffx_ArtanisDashLength; // Blade Dancer: Dance stacks applied as dash length
 bool libAffx_ArtanisDashStunOn; // Blade Dancer: the dash Stuns are on
-int libAffx_ArtanisPrismShields = -1; // Phase Master: stacks applied as shield strength
 int libAffx_ArtanisPrismRange; // Phase Master: Warp stacks applied as prism range
 bool libAffx_ArtanisPrismResetOn; // Phase Master: prism hits reset Shield Overload
 int libAffx_ArtanisHierarchSpeed = -1; // Hierarch: Honor stacks applied as Attack Speed
@@ -95,7 +94,7 @@ void libAffx_ArtanisSyncDash () {
         UnitBehaviorAdd(hero, "ArtanisDashPastCapDamage", hero, 1);
     }
 }
-// ArtanisGoldenWarpTokenCounter: stacks 1-40: 1% wider each; 41-80 range (libAffx_ArtanisSync), 81-100 shields (script), 100 the Shield Overload reset (script), then damage
+// ArtanisGoldenWarpTokenCounter: stacks 1-40: 1% wider each; 41-80 range (libAffx_ArtanisSync), 81-100 Shield Overload (script), 100 the Shield Overload reset (script), then damage
 void libAffx_ArtanisSyncPrism () {
     unit hero = libAffx_ArtanisHero();
     int stacks;
@@ -116,7 +115,7 @@ void libAffx_ArtanisSyncPrism () {
     if (wanted != libAffx_ArtanisPrismAdded2) {
         libAffx_ArtanisPrismAdded2 = wanted;
     }
-    // stage 3 (stacks 81 to 100): 1% stronger shields each (libAffx_ArtanisSync)
+    // stage 3 (stacks 81 to 100): 1% stronger Shield Overload each (libAffx_ArtanisOverload_Func)
     wanted = MaxI(0, MinI(stacks - 80, 20));
     if (wanted != libAffx_ArtanisPrismAdded3) {
         libAffx_ArtanisPrismAdded3 = wanted;
@@ -197,8 +196,8 @@ void libAffx_ArtanisMoveOffset (string effect, string field, fixed delta) {
     }
     CatalogFieldValueSet(c_gameCatalogEffect, effect, field, libAffx_player, value);
 }
-// every second and on takedowns: Blade Dancer's dash length (Dance 41-80) and Stuns (Dance 100); Phase Master's shields
-// (Phase, and Warp 81-100), prism range (Warp 41-80) and Shield Overload reset (Warp 100); Hierarch's Attack Speed (Honor 1-40)
+// every second and on takedowns: Blade Dancer's dash length (Dance 41-80) and Stuns (Dance 100); Phase Master's prism range
+// (Warp 41-80) and Shield Overload reset (Warp 100); Hierarch's Attack Speed (Honor 1-40)
 void libAffx_ArtanisSync () {
     unit hero = libAffx_ArtanisHero();
     int n;
@@ -220,14 +219,6 @@ void libAffx_ArtanisSync () {
         }
     }
     if (UnitHasBehavior2(hero, "ArtanisPrismMarker")) {
-        // shields: 0.75% per Phase stack plus 1% per Warp stack 81-100, counted in quarter percents
-        n = 3 * libAffx_ArtanisStacks("ArtanisGoldenPhaseTokenCounter") + 4 * MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 80, 20));
-        if (n != libAffx_ArtanisPrismShields || !UnitHasBehavior2(hero, "ArtanisGoldenPrismShields")) {
-            libAffx_ArtanisPrismShields = n;
-            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisGoldenPrismShields", "Modification.HealDealtAdditiveMultiplier[Shields]", libAffx_player, IntToFixed(n) / 400.0);
-            UnitBehaviorRemove(hero, "ArtanisGoldenPrismShields", c_unitBehaviorCountAll);
-            UnitBehaviorAdd(hero, "ArtanisGoldenPrismShields", hero, 1);
-        }
         n = MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 40, 40));
         if (n != libAffx_ArtanisPrismRange) {
             // 1% of the 7.5 prism range per stack (the prism flies to the launch point ahead of Artanis)
@@ -256,6 +247,30 @@ bool libAffx_ArtanisTick_Func (bool testConds, bool runActions) {
     return true;
 }
 // Hierarch of Aiur, Honor at 100: every 5th Basic Attack is a Triple Strike (a third hit after the second)
+// Shield Overload starts (or refreshes) on Artanis: add a second shield of its amount times the bonus (Phase 0.75% per
+// stack and Warp 81-100 1% per stack, counted in quarter percents; Hierarch 50% and Hardened Shields 10% per stack)
+bool libAffx_ArtanisOverload_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_ArtanisHero();
+    int quarters = 0;
+    fixed amount;
+    if (hero == null || EventUnit() != hero) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "ArtanisPrismMarker")) {
+        quarters += 3 * libAffx_ArtanisStacks("ArtanisGoldenPhaseTokenCounter") + 4 * MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 80, 20));
+    }
+    if (UnitHasBehavior2(hero, "ArtanisHierarchMarker")) {
+        quarters += 200 + 40 * UnitBehaviorCount(hero, "ArtanisGoldenHardenedShields");
+    }
+    amount = UnitBehaviorDamageModifyRemaining(hero, "ArtanisShieldOverload") * IntToFixed(quarters) / 400.0;
+    UnitBehaviorRemove(hero, "ArtanisGoldenOverloadBonus", c_unitBehaviorCountAll);
+    if (amount < 1.0) {
+        return true;
+    }
+    CatalogFieldValueSet(c_gameCatalogBehavior, "ArtanisGoldenOverloadBonus", "DamageResponse.ModifyLimit", libAffx_player, FixedToString(amount, 1));
+    UnitBehaviorAdd(hero, "ArtanisGoldenOverloadBonus", hero, 1);
+    return true;
+}
 bool libAffx_ArtanisTriple_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ArtanisHero();
     unit target = EventPlayerEffectUsedUnit(c_effectUnitTarget);
@@ -407,6 +422,9 @@ bool libAffx_ArtanisStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "ArtanisTwinBladesAmateurOpponentDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ArtanisTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_ArtanisTriple_Func"), libAffx_player, "ArtanisTwinBladesDamageSetFirst");
+    trig = TriggerCreate("libAffx_ArtanisOverload_Func");
+    TriggerAddEventUnitBehaviorChange(trig, null, "ArtanisShieldOverload", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChange(trig, null, "ArtanisShieldOverload", c_unitBehaviorChangeRefresh);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_ArtanisSync_Func"), 1.0, c_timeGame);
     return true;

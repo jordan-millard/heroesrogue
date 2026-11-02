@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Phase Master ===== -->
-  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 0.75% stronger shields (ArtanisGoldenPrismShields, script) and 0.5% Heroic damage (Purifier Beam, Suppression Pulse) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism 1% wider each, 41-80 give it 1% more range each (script), 81-100 make shields 1% stronger each (script), at 100 prism hits on Heroes make Shield Overload ready again (script), then 2% damage each. -->
+  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 0.75% stronger Shield Overload (libAffx_ArtanisOverload_Func) and 0.5% Heroic damage (Purifier Beam, Suppression Pulse) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism 1% wider each, 41-80 give it 1% more range each (script), 81-100 make shields 1% stronger each (script), at 100 prism hits on Heroes make Shield Overload ready again (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenPhaseTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenPhaseTokenCounter" />
     <Max value="100000" />
@@ -226,11 +226,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="ArtanisGoldenZealotsFuryRemove" />
   </CEffectSet>
   <!-- ===== Phase Master ===== -->
-  <!-- Phase quest: 0.75% more shields per stack (and 0.5% Heroic damage, its accumulator); Warp 81-100: 1% more shields per stack (the script sets the total and re-adds it) -->
-  <CBehaviorBuff id="ArtanisGoldenPrismShields" parent="CarryBehaviorParent">
-    <Modification>
-      <HealDealtAdditiveMultiplier index="Shields" value="0" />
-    </Modification>
+  <!-- Shield Overload bonus (Phase: 0.75% per stack, Warp 81-100: 1% per stack, Hierarch: 50%, Hardened Shields: 10% per
+       stack): Shield Overload's own shield is applied from a damage response, so it may not use Artanis's shield bonuses;
+       instead, when it starts the script adds this second shield, cast by Artanis, sized from Shield Overload's amount -->
+  <CBehaviorBuff id="ArtanisGoldenOverloadBonus" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_artanis_shieldoverload.dds" />
+    <Duration value="5" />
+    <DamageResponse ModifyLimit="0" />
   </CBehaviorBuff>
   <!-- Warp at 100: a prism hit on an enemy Hero makes Shield Overload ready again (from the damage set, which only runs on
        Heroes); Disorienting Swap (Epic): Slowed 80% for 2 seconds (Chance 0, the script and the boon turn them on) -->
@@ -263,11 +265,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
   <!-- ===== Hierarch of Aiur ===== -->
   <!-- every Basic Attack is a Twin Blades strike (the Twin Blades double hit, without priming); Phase Prism is disabled;
-       Shield Overload is 50% stronger -->
+       Shield Overload is 50% stronger (libAffx_ArtanisOverload_Func) -->
   <CBehaviorBuff id="ArtanisGoldenHierarch" parent="CarryBehaviorParent">
     <Modification>
       <AbilLinkDisableArray value="ArtanisPhasePrism" />
-      <HealDealtAdditiveMultiplier index="Shields" value="0.5" />
     </Modification>
   </CBehaviorBuff>
   <CValidatorUnitCompareBehaviorCount id="ArtanisGoldenCasterIsHierarch">
@@ -288,12 +289,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <AdditiveAttackSpeedFactor value="0" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Hardened Shields (Common, up to 3): Shield Overload 10% stronger per stack -->
+  <!-- Hardened Shields (Common, up to 3): Shield Overload 10% stronger per stack (counted by libAffx_ArtanisOverload_Func) -->
   <CBehaviorBuff id="ArtanisGoldenHardenedShields" parent="CarryBehaviorParent">
     <MaxStackCount value="3" />
-    <Modification>
-      <HealDealtAdditiveMultiplier index="Shields" value="0.1" />
-    </Modification>
   </CBehaviorBuff>
   <!-- Disabling Blades (Epic): Basic Attacks weaken enemy Heroes; Plasma Burn (Legendary): every Basic Attack hit also deals
        Plasma Burn's damage to the target (Chance 0, the boons turn them on) -->
