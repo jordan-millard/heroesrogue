@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Artanis. Blade Dancer: Blade Dash hits on enemy Heroes add Blades (once per Hero per dash); takedowns add Dance:
 // recharge, then dash length, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (shields, Heroic damage);
-// takedowns add Warp: recharge, then speed and width, then shields, then at 100 a Root. Hierarch of Aiur: Basic Attack
+// takedowns add Warp: width, then range, then shields, then at 100 a Root. Hierarch of Aiur: Basic Attack
 // hits on Heroes add Zeal (in tens); takedowns add Honor: Attack Speed, then Life Steal, then at 100 a Triple Strike every
 // 5th attack, then 2.5% damage per stack. Hierarch takedowns also give Shield Overload.
 // ============================================================
@@ -28,7 +28,7 @@ int libAffx_ArtanisHierarchPastApplied; // Hierarch of Aiur: takedown quest stac
 int libAffx_ArtanisDashLength; // Blade Dancer: Dance stacks applied as dash length
 bool libAffx_ArtanisDashStunOn; // Blade Dancer: the dash Stuns are on
 int libAffx_ArtanisPrismShields = -1; // Phase Master: stacks applied as shield strength
-int libAffx_ArtanisPrismSpeed; // Phase Master: Warp stacks applied as prism speed
+int libAffx_ArtanisPrismRange; // Phase Master: Warp stacks applied as prism range
 bool libAffx_ArtanisPrismRootOn; // Phase Master: the prism Root is on
 int libAffx_ArtanisHierarchSpeed = -1; // Hierarch: Honor stacks applied as Attack Speed
 int libAffx_ArtanisAttackCount; // Hierarch: attacks since the last Triple Strike
@@ -95,7 +95,7 @@ void libAffx_ArtanisSyncDash () {
         UnitBehaviorAdd(hero, "ArtanisDashPastCapDamage", hero, 1);
     }
 }
-// ArtanisGoldenWarpTokenCounter: stacks 1-40: 1% of the 9 second recharge each; 41-80 speed (libAffx_ArtanisSync) and width, 81-100 shields (script), 100 the Root (script), then damage
+// ArtanisGoldenWarpTokenCounter: stacks 1-40: 1% wider each; 41-80 range (libAffx_ArtanisSync), 81-100 shields (script), 100 the Root (script), then damage
 void libAffx_ArtanisSyncPrism () {
     unit hero = libAffx_ArtanisHero();
     int stacks;
@@ -108,13 +108,12 @@ void libAffx_ArtanisSyncPrism () {
     stacks = libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_ArtanisPrismAdded) {
-        libAffx_CatalogReferenceModify("Abil,ArtanisPhasePrism,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisPrismAdded) * -0.09, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,ArtanisPhasePrismMissileScan,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisPrismAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ArtanisPrismAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): 1% wider each (the speed is script)
+    // stage 2 (stacks 41 to 80): 1% more range each (libAffx_ArtanisSync)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_ArtanisPrismAdded2) {
-        libAffx_CatalogReferenceModify("Effect,ArtanisPhasePrismMissileScan,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisPrismAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ArtanisPrismAdded2 = wanted;
     }
     // stage 3 (stacks 81 to 100): 1% stronger shields each (libAffx_ArtanisSync)
@@ -199,7 +198,7 @@ void libAffx_ArtanisMoveOffset (string effect, string field, fixed delta) {
     CatalogFieldValueSet(c_gameCatalogEffect, effect, field, libAffx_player, value);
 }
 // every second and on takedowns: Blade Dancer's dash length (Dance 41-80) and Stuns (Dance 100); Phase Master's shields
-// (Phase, and Warp 81-100), prism speed (Warp 41-80) and Root (Warp 100); Hierarch's Attack Speed (Honor 1-40)
+// (Phase, and Warp 81-100), prism range (Warp 41-80) and Root (Warp 100); Hierarch's Attack Speed (Honor 1-40)
 void libAffx_ArtanisSync () {
     unit hero = libAffx_ArtanisHero();
     int n;
@@ -230,11 +229,10 @@ void libAffx_ArtanisSync () {
             UnitBehaviorAdd(hero, "ArtanisGoldenPrismShields", hero, 1);
         }
         n = MaxI(0, MinI(libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") - 40, 40));
-        if (n != libAffx_ArtanisPrismSpeed) {
-            libAffx_ArtanisPrismSpeed = n;
-            amount = 12.6953 * (1.0 + 0.01 * IntToFixed(n));
-            CatalogFieldValueSet(c_gameCatalogMover, "ArtanisPhasePrismMissile", "MotionPhases[0].Speed", libAffx_player, FixedToString(amount, 4));
-            CatalogFieldValueSet(c_gameCatalogMover, "ArtanisPhasePrismMissile", "MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(amount, 4));
+        if (n != libAffx_ArtanisPrismRange) {
+            // 1% of the 7.5 prism range per stack (the prism flies to the launch point ahead of Artanis)
+            libAffx_ArtanisMoveOffset("ArtanisPhasePrismInitialPersistent", "PeriodicOffsetArray[0]", -0.075 * IntToFixed(n - libAffx_ArtanisPrismRange));
+            libAffx_ArtanisPrismRange = n;
         }
         if (!libAffx_ArtanisPrismRootOn && libAffx_ArtanisStacks("ArtanisGoldenWarpTokenCounter") >= 100) {
             libAffx_ArtanisPrismRootOn = true;

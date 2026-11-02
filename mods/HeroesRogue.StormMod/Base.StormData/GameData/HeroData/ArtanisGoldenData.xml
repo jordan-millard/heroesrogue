@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Phase Master ===== -->
-  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 0.75% stronger shields (ArtanisGoldenPrismShields, script) and 0.5% Heroic damage (Purifier Beam, Suppression Pulse) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism recharge 1% faster each, 41-80 make the prism fly 1% faster (script) and 1% wider each, 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
+  <!-- Phase Prism stores 2 charges (9 second recharge) and costs half Mana (no Mana with Graviton Vortex); gain Psionic Synergy and Graviton Vortex. Phase quest (10% of each map gains kept for good): 0.75% stronger shields (ArtanisGoldenPrismShields, script) and 0.5% Heroic damage (Purifier Beam, Suppression Pulse) per enemy Hero hit by the prism. Warp quest: takedowns within 6 seconds of a prism hit; stacks 1-40 make Phase Prism 1% wider each, 41-80 give it 1% more range each (script), 81-100 make shields 1% stronger each (script), at 100 the prism Roots the swapped Hero for 0.25 seconds (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenPhaseTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenPhaseTokenCounter" />
     <Max value="100000" />
