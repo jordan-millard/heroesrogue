@@ -99,12 +99,12 @@ void libAffx_ValeeraSyncEviscerate () {
         libAffx_CatalogReferenceModify("Effect,ValeeraGoldenRefundSwitch,Chance", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraEviscerateAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ValeeraEviscerateAdded3 = wanted;
     }
-    // stacks past 0: 0.01 each to all damage
-    power = MaxI(0, stacks - 0);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ValeeraEvisceratePastApplied) {
         libAffx_ValeeraEvisceratePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.01);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.01);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraEvisceratePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ValeeraEvisceratePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ValeeraEvisceratePastCapDamage")) {
@@ -139,12 +139,12 @@ void libAffx_ValeeraSyncGarrote () {
         libAffx_CatalogReferenceModify("Behavior,ValeeraGarroteSilence,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ValeeraGarroteAdded3) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ValeeraGarroteAdded3 = wanted;
     }
-    // stacks past 0: 0.01 each to all damage
-    power = MaxI(0, stacks - 0);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_ValeeraGarrotePastApplied) {
         libAffx_ValeeraGarrotePastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.01);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.01);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ValeeraGarrotePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ValeeraGarrotePastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ValeeraGarrotePastCapDamage")) {

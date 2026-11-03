@@ -18,7 +18,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Eviscerator ===== -->
-  <!-- Eviscerate costs no Energy. Cut quest (15% of each map gains kept for good): 10% Eviscerate damage per 3 Combo Point Eviscerate on an enemy Hero. Edge quest: takedowns within 6 seconds of a hit; stacks 1-40 make Eviscerate Slow 1% each for 2 seconds, 41-80 add 1% range each, 81-100 add a 1% chance each to refund the spent Combo Points, at 100 Eviscerate also casts a free Vanish (script), and 1% damage for every stack. -->
+  <!-- Eviscerate costs no Energy. Cut quest (10% of each map gains kept for good): 10% Eviscerate damage per 3 Combo Point Eviscerate on an enemy Hero. Edge quest: takedowns within 6 seconds of a hit; stacks 1-40 make Eviscerate Slow 1% each for 2 seconds, 41-80 add 1% range each, 81-100 add a 1% chance each to refund the spent Combo Points, at 100 Eviscerate also casts a free Vanish (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ValeeraGoldenCutTokenCounter" parent="StormQuestToken">
     <Face value="ValeeraGoldenCutTokenCounter" />
     <Max value="100000" />
@@ -54,7 +54,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Garrote Specialist ===== -->
-  <!-- Garrote costs no Energy; Vanish stores 2 charges (8 second recharge); gain Rupture. Wire quest (15% of each map gains kept for good): 0.5% Garrote damage per Garrote on an enemy Hero. Hush quest: takedowns within 6 seconds of a Garrote; stacks 1-40 make Vanish recharge 1% faster each, 41-80 make the bleed last 1% longer each (more ticks, script), 81-100 make the Silence last 1% longer each, at 100 Garrote also casts a free Smoke Bomb at most once every 20 seconds (script), and 1% damage for every stack. -->
+  <!-- Garrote costs no Energy; Vanish stores 2 charges (8 second recharge); gain Rupture. Wire quest (10% of each map gains kept for good): 0.5% Garrote damage per Garrote on an enemy Hero. Hush quest: takedowns within 6 seconds of a Garrote; stacks 1-40 make Vanish recharge 1% faster each, 41-80 make the bleed last 1% longer each (more ticks, script), 81-100 make the Silence last 1% longer each, at 100 Garrote also casts a free Smoke Bomb at most once every 20 seconds (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ValeeraGoldenWireTokenCounter" parent="StormQuestToken">
     <Face value="ValeeraGoldenWireTokenCounter" />
     <Max value="100000" />
@@ -90,7 +90,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Scared Assassin ===== -->
-  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response); Eviscerate Stuns them for 0.25, 0.75 or 1.5 seconds by its 1, 2 or 3 Combo Points. While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share half of her general boons (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (15% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
+  <!-- Valeera deals no damage to enemy Heroes (an attacker damage response); Eviscerate Stuns them for 0.25, 0.75 or 1.5 seconds by its 1, 2 or 3 Combo Points. While she is stealthed, allied non-Heroes within 12 heal 3% of their maximum Health per second (6% at 100 Shelter), gain 30% Attack Speed and share half of her general boons (script; a ring shows the range). Her stealth openers expose enemy Heroes for 6 seconds: they take 100% more damage from non-Hero, non-structure attackers. Rally quest (10% of each map gains kept for good): every 10 enemy minions or mercenaries that die within her range add 1% to that bonus (script). Shelter quest (script, no participation): enemy Hero deaths within 6 seconds of allied minion or mercenary damage near her; stacks 1-40 give her supported allies 1% Attack Speed each, 41-80 1 Armor each, 81-100 make Cheap Shot Stun 2% longer each, at 100 the healing doubles, and 1% more bonus damage for every stack. -->
   <CBehaviorTokenCounter id="ValeeraGoldenRallyTokenCounter" parent="StormQuestToken">
     <Face value="ValeeraGoldenRallyTokenCounter" />
     <Max value="100000" />

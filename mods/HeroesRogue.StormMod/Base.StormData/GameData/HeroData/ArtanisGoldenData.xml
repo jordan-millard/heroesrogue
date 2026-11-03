@@ -94,7 +94,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Hierarch of Aiur ===== -->
-  <!-- Every Basic Attack is a Twin Blades strike (two hits; Twin Blades itself still charges to the target); Phase Prism is disabled (its talents can't be taken); Shield Overload goes off on every enemy Hero takedown (script) and is 50% stronger; Zealot Charge at level 1. Zeal quest (10% of each map gains kept for good): 0.1% Basic Attack damage per Basic Attack hit on an enemy Hero, added in tens. Honor quest: takedowns within 6 seconds of a hit; stacks 1-40 0.5% Attack Speed each (script), 41-80 0.5% Life Steal each, at 100 every 5th attack is a Triple Strike (script), then 2.5% damage each. -->
+  <!-- Every Basic Attack is a Twin Blades strike (two hits; Twin Blades itself still charges to the target); Phase Prism is disabled (its talents can't be taken); Shield Overload goes off on every enemy Hero takedown (script) and is 50% stronger; Zealot Charge at level 1. Zeal quest (10% of each map gains kept for good): 0.1% Basic Attack damage per Basic Attack hit on an enemy Hero, added in tens. Honor quest: takedowns within 6 seconds of a hit; stacks 1-40 0.5% Attack Speed each (script), 41-80 0.5% Life Steal each, at 100 every 5th attack is a Triple Strike (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="ArtanisGoldenZealTokenCounter" parent="StormQuestToken">
     <Face value="ArtanisGoldenZealTokenCounter" />
     <Max value="100000" />

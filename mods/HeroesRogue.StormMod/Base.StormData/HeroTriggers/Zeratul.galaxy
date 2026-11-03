@@ -3,9 +3,9 @@ include "AffixTriggers"
 // ============================================================
 // Golden Zeratul. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token
 // and heal; takedowns in the window add the takedown token.
-// Void Blade, Shadow Walk quest: 1% of Blink's 10 second cooldown per stack, up to 30%; then 1% Cleave damage each.
+// Void Blade, Shadow Walk quest: 1% of Blink's 10 second cooldown per stack, up to 30%; then 2% damage each past 100.
 // Void Rift (Legendary): those takedowns reset Cleave and Blink.
-// Singularity, Event Horizon quest: every 15 stacks 1 more Singularity Spike charge, up to 2; past 30 stacks 1% damage.
+// Singularity, Event Horizon quest: every 15 stacks 1 more Singularity Spike charge, up to 2; past 100 stacks 2% damage each.
 // Collapsing Star (Legendary): each Singularity Spike is cast again 0.4 seconds later.
 // Dark Templar, Nerazim quest: every 10 stacks 1 more Vorpal Blade charge, up to 2; past 20 stacks 1% Basic Attack
 // damage each.
@@ -216,6 +216,39 @@ bool libAffx_ZeratulBladeHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_ZeratulTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ZeratulTakedownCrossStart () {
+    unit hero = libAffx_ZeratulHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ZeratulTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ZeratulShadowWalkTokenCounter"));
+    libAffx_ZeratulTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ZeratulEventHorizonTokenCounter"));
+    libAffx_ZeratulTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ZeratulNerazimTokenCounter"));
+}
+void libAffx_ZeratulTakedownCross () {
+    unit hero = libAffx_ZeratulHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ZeratulShadowWalkTokenCounter")) == libAffx_ZeratulTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ZeratulEventHorizonTokenCounter")) == libAffx_ZeratulTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ZeratulNerazimTokenCounter")) == libAffx_ZeratulTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ZeratulCleaveMarker") && FixedToInt(UnitGetTokenCount(hero, "ZeratulShadowWalkTokenCounter")) == libAffx_ZeratulTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ZeratulShadowWalkTokenCounter", hero);
+        libAffx_ZeratulSyncCleave();
+    }
+    if (UnitHasBehavior2(hero, "ZeratulSpikeMarker") && FixedToInt(UnitGetTokenCount(hero, "ZeratulEventHorizonTokenCounter")) == libAffx_ZeratulTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ZeratulEventHorizonTokenCounter", hero);
+        libAffx_ZeratulSyncSpike();
+    }
+    if (UnitHasBehavior2(hero, "ZeratulBladeMarker") && FixedToInt(UnitGetTokenCount(hero, "ZeratulNerazimTokenCounter")) == libAffx_ZeratulTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ZeratulNerazimTokenCounter", hero);
+        libAffx_ZeratulSyncBlade();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_ZeratulTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -229,6 +262,7 @@ bool libAffx_ZeratulTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_ZeratulTakedownCrossStart();
     if (UnitHasBehavior2(hero, "ZeratulCleaveMarker") && libAffx_ZeratulInWindow(libAffx_ZeratulCleaveTime[killedPlayer], now)) {
         libAffx_ZeratulCleaveTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ZeratulShadowWalkTokenCounter", hero);
@@ -250,6 +284,7 @@ bool libAffx_ZeratulTakedown (bool testConds, bool runActions) {
         libAffx_ZeratulSyncBlade();
         libAffx_ZeratulQuestDing();
     }
+    libAffx_ZeratulTakedownCross();
     return true;
 }
 bool libAffx_ZeratulStart (bool testConds, bool runActions) {

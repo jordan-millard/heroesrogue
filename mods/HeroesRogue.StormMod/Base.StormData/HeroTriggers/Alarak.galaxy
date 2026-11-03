@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Alarak. Each starter: hits on enemy Heroes open a takedown window, add the hit quest token and heal;
 // takedowns in the window add the takedown token: stacks 1-40 and 41-80 each improve the ability in two ways, then
-// 3% damage per stack, Heroics too.
+// 2% damage per stack past 100.
 // Highlord, Dominion quest: stacks 1-40 add 1% Sadism each (Sadism tokens), 41-80 add 1% Attack Speed each.
 // Pinnacle of Sadism (Legendary, Highlord): 30% more Sadism.
 // ============================================================
@@ -49,7 +49,7 @@ void libAffx_AlarakQuestDing() {
 bool libAffx_AlarakInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_AlarakTakedownWindow;
 }
-// AlarakSubjugationTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 1.5 second Silence each; 81-120: 1% larger area each; then 3% damage each, Heroics and Basic Attacks too
+// AlarakSubjugationTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80: 1% of the 1.5 second Silence each; 81-100: 1% larger area each; then 2% damage each
 void libAffx_AlarakSyncDiscord () {
     unit hero = libAffx_AlarakHero();
     int stacks;
@@ -71,8 +71,8 @@ void libAffx_AlarakSyncDiscord () {
         libAffx_CatalogReferenceModify("Behavior,AlarakDiscordStrikeSilence,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakDiscordAdded2 = wanted;
     }
-    // stage 3 (stacks 81 to 120): 1% of the Discord Strike area (every polygon vertex) each
-    wanted = MaxI(0, MinI(stacks - 80, 40));
+    // stage 3 (stacks 81 to 100): 1% of the Discord Strike area (every polygon vertex) each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
     if (wanted != libAffx_AlarakDiscordAdded3) {
         libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[0].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Effect,AlarakDiscordStrikeSearch,AreaArray[0].VertexArray[0].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * -0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
@@ -90,8 +90,8 @@ void libAffx_AlarakSyncDiscord () {
         libAffx_CatalogReferenceModify("Actor,AlarakDiscordStrikePolygonGuide,Height", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_AlarakDiscordAdded3) * 0.0625, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_AlarakDiscordAdded3 = wanted;
     }
-    // stacks past 120: 0.02 each to all damage
-    power = MaxI(0, stacks - 120);
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
     if (power != libAffx_AlarakDiscordPastApplied) {
         libAffx_AlarakDiscordPastApplied = power;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AlarakDiscordPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
@@ -102,7 +102,7 @@ void libAffx_AlarakSyncDiscord () {
         UnitBehaviorAdd(hero, "AlarakDiscordPastCapDamage", hero, 1);
     }
 }
-// AlarakTempestTokenCounter: stacks 1-40: 1% of the 6 second cooldown each; 41-80: 1% of the 10 range each; then 3% damage each, Heroics too
+// AlarakTempestTokenCounter: stacks 1-40: 1% of the 6 second cooldown each; 41-80: 1% of the 10 range each; then 2% damage each past 100
 void libAffx_AlarakSyncSurge () {
     unit hero = libAffx_AlarakHero();
     int stacks;
@@ -138,7 +138,7 @@ void libAffx_AlarakSyncSurge () {
         UnitBehaviorAdd(hero, "AlarakSurgePastCapDamage", hero, 1);
     }
 }
-// AlarakDominionTokenCounter: stacks 1-40: 1% Sadism each (libAffx_AlarakSadismSync); 41-80: 1% Attack Speed each (libAffx_AlarakFrenzySync); then 3% damage each, Heroics too
+// AlarakDominionTokenCounter: stacks 1-40: 1% Sadism each (libAffx_AlarakSadismSync); 41-80: 1% Attack Speed each (libAffx_AlarakFrenzySync); then 2% damage each past 100
 void libAffx_AlarakSyncBlade () {
     unit hero = libAffx_AlarakHero();
     int stacks;
@@ -271,6 +271,41 @@ bool libAffx_AlarakBladeHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_AlarakTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_AlarakTakedownCrossStart () {
+    unit hero = libAffx_AlarakHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_AlarakTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "AlarakSubjugationTokenCounter"));
+    libAffx_AlarakTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "AlarakTempestTokenCounter"));
+    libAffx_AlarakTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "AlarakDominionTokenCounter"));
+}
+void libAffx_AlarakTakedownCross () {
+    unit hero = libAffx_AlarakHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "AlarakSubjugationTokenCounter")) == libAffx_AlarakTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "AlarakTempestTokenCounter")) == libAffx_AlarakTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "AlarakDominionTokenCounter")) == libAffx_AlarakTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "AlarakDiscordMarker") && FixedToInt(UnitGetTokenCount(hero, "AlarakSubjugationTokenCounter")) == libAffx_AlarakTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "AlarakSubjugationTokenCounter", hero);
+        libAffx_AlarakSyncDiscord();
+    }
+    if (UnitHasBehavior2(hero, "AlarakSurgeMarker") && FixedToInt(UnitGetTokenCount(hero, "AlarakTempestTokenCounter")) == libAffx_AlarakTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "AlarakTempestTokenCounter", hero);
+        libAffx_AlarakSyncSurge();
+    }
+    if (UnitHasBehavior2(hero, "AlarakHighlordMarker") && FixedToInt(UnitGetTokenCount(hero, "AlarakDominionTokenCounter")) == libAffx_AlarakTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "AlarakDominionTokenCounter", hero);
+        libAffx_AlarakSyncBlade();
+        libAffx_AlarakSadismSync();
+        libAffx_AlarakFrenzySync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_AlarakTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -284,6 +319,7 @@ bool libAffx_AlarakTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_AlarakTakedownCrossStart();
     if (UnitHasBehavior2(hero, "AlarakDiscordMarker") && libAffx_AlarakInWindow(libAffx_AlarakDiscordTime[killedPlayer], now)) {
         libAffx_AlarakDiscordTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "AlarakSubjugationTokenCounter", hero);
@@ -304,6 +340,7 @@ bool libAffx_AlarakTakedown (bool testConds, bool runActions) {
         libAffx_AlarakSadismSync();
         libAffx_AlarakFrenzySync();
     }
+    libAffx_AlarakTakedownCross();
     return true;
 }
 bool libAffx_AlarakStart (bool testConds, bool runActions) {

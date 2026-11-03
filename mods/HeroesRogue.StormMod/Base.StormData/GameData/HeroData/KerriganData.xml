@@ -19,7 +19,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="KerriganBroodExpansionMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Queen of Blades ===== -->
-  <!-- Ravage hits on enemy Heroes heal 10% maximum Health over 5 seconds. Bloodlust quest (50% kept): 1% Ravage damage per enemy Hero hit. Swarm Queen quest: takedowns within 3 seconds of a hit; 1% Ravage range and 1% more Ravage healing each, up to 50 stacks, then 1% damage each (script). -->
+  <!-- Ravage hits on enemy Heroes heal 10% maximum Health over 5 seconds. Bloodlust quest (10% of each map gains kept for good): 1% Ravage damage per enemy Hero hit. Swarm Queen quest: takedowns within 3 seconds of a hit; 1% Ravage range and 1% more Ravage healing each, up to 50 stacks, then 2% damage each past 100 (script). -->
   <CBehaviorTokenCounter id="KerriganBloodlustTokenCounter" parent="StormQuestToken">
     <Face value="KerriganBloodlustTokenCounter" />
     <Max value="100000" />
@@ -49,7 +49,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Impaler ===== -->
-  <!-- Impaling Blades: radius 2.5 (from 1.65), erupts after 0.5 seconds (from 1); hitting 2 or more enemy Heroes at once refunds it (script). Spikes quest (50% kept): 0.5% Impaling Blades damage per enemy Hero hit. Kinetic Storm quest: takedowns within 3 seconds of a hit; 1% off Impaling Blades and Primal Grasp cooldowns each up to 30%, then 1% damage each (script). -->
+  <!-- Impaling Blades: radius 2.5 (from 1.65), erupts after 0.5 seconds (from 1); hitting 2 or more enemy Heroes at once refunds it (script). Spikes quest (10% of each map gains kept for good): 0.5% Impaling Blades damage per enemy Hero hit. Kinetic Storm quest: takedowns within 3 seconds of a hit; 1% off Impaling Blades and Primal Grasp cooldowns each up to 30%, then 2% damage each past 100 (script). -->
   <CBehaviorTokenCounter id="KerriganSpikesTokenCounter" parent="StormQuestToken">
     <Face value="KerriganSpikesTokenCounter" />
     <Max value="100000" />
@@ -85,7 +85,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Brood Mother ===== -->
-  <!-- Summon Ultralisk from level 1. Ultralisk hits on enemy Heroes grant Shields for 40% of the damage (script). Brood quest (50% kept): 0.25% Ultralisk damage per enemy Hero hit. Hive Mind quest: takedowns within 3 seconds of an Ultralisk hit; 1% of the 20 second cooldown each up to 40%, then 1% damage each (script). -->
+  <!-- Summon Ultralisk from level 1. Ultralisk hits on enemy Heroes grant Shields for 40% of the damage (script). Brood quest (10% of each map gains kept for good): 0.25% Ultralisk damage per enemy Hero hit. Hive Mind quest: takedowns within 3 seconds of an Ultralisk hit; 1% of the 20 second cooldown each up to 40%, then 2% damage each past 100 (script). -->
   <CBehaviorTokenCounter id="KerriganBroodTokenCounter" parent="StormQuestToken">
     <Face value="KerriganBroodTokenCounter" />
     <Max value="100000" />

@@ -5,7 +5,7 @@ include "AffixTriggers"
 // recharge, then dash speed, then a wider return dash, then at 100 Stuns. Phase Master: prism hits add Phase (Shield Overload, Heroic damage);
 // takedowns add Warp: width, then range, then Shield Overload, then at 100 a Shield Overload reset. Hierarch of Aiur: Basic Attack
 // hits on Heroes add Zeal (in tens); takedowns add Honor: Attack Speed, then Life Steal, then at 100 a Triple Strike every
-// 5th attack, then 2.5% damage per stack. Hierarch takedowns also give Shield Overload.
+// 5th attack, then 2% damage per stack. Hierarch takedowns also give Shield Overload.
 // ============================================================
 
 const fixed libAffx_ArtanisTakedownWindow = 3.0;
@@ -132,7 +132,7 @@ void libAffx_ArtanisSyncPrism () {
         UnitBehaviorAdd(hero, "ArtanisPrismPastCapDamage", hero, 1);
     }
 }
-// ArtanisGoldenHonorTokenCounter: stacks 1-40: 0.5% Attack Speed each (libAffx_ArtanisSync); 41-80 Life Steal, 100 Triple Strike every 5th attack (script), then 2.5% damage
+// ArtanisGoldenHonorTokenCounter: stacks 1-40: 0.5% Attack Speed each (libAffx_ArtanisSync); 41-80 Life Steal, 100 Triple Strike every 5th attack (script), then 2% damage
 void libAffx_ArtanisSyncHierarch () {
     unit hero = libAffx_ArtanisHero();
     int stacks;
@@ -154,12 +154,12 @@ void libAffx_ArtanisSyncHierarch () {
         libAffx_CatalogReferenceModify("Effect,ArtanisTwinBladesAmateurOpponentDamage,LeechFraction[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ArtanisHierarchAdded2) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ArtanisHierarchAdded2 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_ArtanisHierarchPastApplied) {
         libAffx_ArtanisHierarchPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisHierarchPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisHierarchPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisHierarchPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ArtanisHierarchPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "ArtanisHierarchPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "ArtanisHierarchPastCapDamage")) {

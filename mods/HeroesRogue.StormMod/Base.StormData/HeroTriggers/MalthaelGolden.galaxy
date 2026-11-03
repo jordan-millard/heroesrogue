@@ -5,7 +5,7 @@ include "AffixTriggers"
 // healing, then at 100 a second Soul Rip 1 second later for 50%. Death Shroud: the shroud hitting enemy Heroes adds Mist
 // (Soul Rip healing and Basic Attack damage); takedowns add Dusk: Reaper's Mark damage, then speed and width, then a longer Reaper's Mark, then at 100 a 10%
 // maximum Health hit. Wraithstalker: Wraith Strikes on enemy Heroes add Haunt; takedowns add Stalk: recharge, then range,
-// then at 100 no Reaper's Mark needed, then 2.5% damage per stack.
+// then at 100 no Reaper's Mark needed, then 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_MalthaelTakedownWindow = 3.0;
@@ -136,7 +136,7 @@ void libAffx_MalthaelSyncShroud () {
         UnitBehaviorAdd(hero, "MalthaelShroudPastCapDamage", hero, 1);
     }
 }
-// MalthaelGoldenStalkTokenCounter: stacks 1-40: 1% of the 4 second recharge each; 41-80 range, 100 no Reaper's Mark needed (libAffx_MalthaelSync), then 2.5% damage
+// MalthaelGoldenStalkTokenCounter: stacks 1-40: 1% of the 4 second recharge each; 41-80 range, 100 no Reaper's Mark needed (libAffx_MalthaelSync), then 2% damage
 void libAffx_MalthaelSyncWraith () {
     unit hero = libAffx_MalthaelHero();
     int stacks;
@@ -158,12 +158,12 @@ void libAffx_MalthaelSyncWraith () {
         libAffx_CatalogReferenceModify("Abil,MalthaelWraithStrike,Range[0]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MalthaelWraithAdded2) * 0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MalthaelWraithAdded2 = wanted;
     }
-    // stacks past 100: 0.025 each to all damage
+    // stacks past 100: 0.02 each to all damage
     power = MaxI(0, stacks - 100);
     if (power != libAffx_MalthaelWraithPastApplied) {
         libAffx_MalthaelWraithPastApplied = power;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelWraithPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.025);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelWraithPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.025);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelWraithPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MalthaelWraithPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
         UnitBehaviorRemove(hero, "MalthaelWraithPastCapDamage", 1);
     }
     if (power > 0 && !UnitHasBehavior2(hero, "MalthaelWraithPastCapDamage")) {

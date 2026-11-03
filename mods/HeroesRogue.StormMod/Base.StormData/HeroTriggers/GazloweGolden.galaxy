@@ -3,9 +3,9 @@ include "AffixTriggers"
 // ============================================================
 // Golden Gazlowe. Turret Engineer: turret and turret Deth Lazor hits on enemy Heroes open a 6 second takedown window
 // (Gazlowe's own Deth Lazor too) and add the hit quest token; turret drops spend all Scrap. Takedowns in the window add
-// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 turret healing and a Shield, then 1% damage per stack.
+// Upgrades: Scrap regeneration, then turret Attack Speed, then at 100 turret healing and a Shield, then 2% damage each past 100.
 // Lazor Specialist: Deth Lazor hits on enemy Heroes add Calibration and open a 6 second window. Takedowns add
-// Amplification: Deth Lazor length, then a Shield per hit, then at 100 a turret per hit, then 1% damage per stack.
+// Amplification: Deth Lazor length, then a Shield per hit, then at 100 a turret per hit, then 2% damage each past 100.
 // ============================================================
 
 const fixed libAffx_GazloweTakedownWindow = 3.0;
@@ -366,6 +366,38 @@ bool libAffx_GazloweLazorHit_Func (bool testConds, bool runActions) {
     libAffx_GazloweLazorOnHit(hero, victim);
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[3] libAffx_GazloweTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_GazloweTakedownCrossStart () {
+    unit hero = libAffx_GazloweHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_GazloweTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "GazloweGoldenUpgradesTokenCounter"));
+    libAffx_GazloweTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "GazloweGoldenAmplificationTokenCounter"));
+}
+void libAffx_GazloweTakedownCross () {
+    unit hero = libAffx_GazloweHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "GazloweGoldenUpgradesTokenCounter")) == libAffx_GazloweTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "GazloweGoldenAmplificationTokenCounter")) == libAffx_GazloweTakedownBefore[2]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "GazloweEngineerMarker") && FixedToInt(UnitGetTokenCount(hero, "GazloweGoldenUpgradesTokenCounter")) == libAffx_GazloweTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "GazloweGoldenUpgradesTokenCounter", hero);
+        libAffx_GazloweSyncEngineer();
+        libAffx_GazloweEngineerSync();
+        libAffx_GazlowePlatingSync();
+    }
+    if (UnitHasBehavior2(hero, "GazloweLazorMarker") && FixedToInt(UnitGetTokenCount(hero, "GazloweGoldenAmplificationTokenCounter")) == libAffx_GazloweTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "GazloweGoldenAmplificationTokenCounter", hero);
+        libAffx_GazloweSyncLazor();
+        libAffx_GazloweLazorSync();
+        libAffx_GazlowePlatingSync();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -379,6 +411,7 @@ bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_GazloweTakedownCrossStart();
     if (UnitHasBehavior2(hero, "GazloweEngineerMarker") && libAffx_GazloweEngineerTime[killedPlayer] > 0.0 && now - libAffx_GazloweEngineerTime[killedPlayer] <= 6.0) {
         libAffx_GazloweEngineerTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "GazloweGoldenUpgradesTokenCounter", hero);
@@ -395,6 +428,7 @@ bool libAffx_GazloweTakedown (bool testConds, bool runActions) {
         libAffx_GazloweLazorSync();
         libAffx_GazlowePlatingSync();
     }
+    libAffx_GazloweTakedownCross();
     return true;
 }
 bool libAffx_GazloweStart (bool testConds, bool runActions) {

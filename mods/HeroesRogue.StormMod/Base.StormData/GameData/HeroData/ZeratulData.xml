@@ -19,7 +19,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="ZeratulTwilightStrikesMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Void Blade ===== -->
-  <!-- Void Edge quest (50% kept): 0.5% Cleave damage per enemy Hero hit. Shadow Walk quest: takedowns within 3 seconds of a hit; 1% of Blink's cooldown each up to 30%, then 1% Cleave damage each (script). -->
+  <!-- Void Edge quest (10% of each map gains kept for good): 0.5% Cleave damage per enemy Hero hit. Shadow Walk quest: takedowns within 3 seconds of a hit; 1% of Blink's cooldown each up to 30%, then 2% damage each past 100 (script). -->
   <CBehaviorTokenCounter id="ZeratulVoidEdgeTokenCounter" parent="StormQuestToken">
     <Face value="ZeratulVoidEdgeTokenCounter" />
     <Max value="100000" />
@@ -61,7 +61,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Singularity ===== -->
-  <!-- Gravity quest (50% kept): 0.5% Singularity Spike damage per enemy Hero hit. Event Horizon quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 30 stacks 1% damage each (script). -->
+  <!-- Gravity quest (10% of each map gains kept for good): 0.5% Singularity Spike damage per enemy Hero hit. Event Horizon quest: takedowns within 3 seconds of a hit; every 15 stacks 1 more charge (up to 2), past 100 stacks 2% damage each (script). -->
   <CBehaviorTokenCounter id="ZeratulGravityTokenCounter" parent="StormQuestToken">
     <Face value="ZeratulGravityTokenCounter" />
     <Max value="100000" />
@@ -97,7 +97,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Dark Templar ===== -->
-  <!-- Basic Attacks. Warp Strike quest (50% kept): 0.1% Basic Attack damage per Basic Attack on an enemy Hero. Nerazim quest: takedowns within 3 seconds of a Basic Attack hit; every 10 stacks 1 more Vorpal Blade charge (up to 2), past 20 stacks 1% damage each (script). -->
+  <!-- Basic Attacks. Warp Strike quest (10% of each map gains kept for good): 0.1% Basic Attack damage per Basic Attack on an enemy Hero. Nerazim quest: takedowns within 3 seconds of a Basic Attack hit; every 10 stacks 1 more Vorpal Blade charge (up to 2), past 100 stacks 2% damage each (script). -->
   <CBehaviorTokenCounter id="ZeratulWarpStrikeTokenCounter" parent="StormQuestToken">
     <Face value="ZeratulWarpStrikeTokenCounter" />
     <Max value="100000" />

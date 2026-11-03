@@ -4,12 +4,12 @@ include "AffixTriggers"
 // Golden Kerrigan. Each starter: hits on enemy Heroes open a 3 second takedown window, add the hit quest token
 // and heal; takedowns in the window add the takedown token.
 // Queen of Blades: Ravage hits on Heroes heal 10% maximum Health over 5 seconds. Swarm Queen quest: 1% Ravage
-// range and 1% more of that healing per stack, up to 50; past 50 stacks 1% damage each.
+// range and 1% more of that healing per stack, up to 50; past 100 stacks 2% damage each.
 // Endless Hunger (Legendary): those takedowns refill Ravage.
 // Impaler: wider, faster Impaling Blades; hitting 2+ Heroes at once refunds it.
 // Kinetic Storm quest: 1% off Impaling Blades' and Primal Grasp's cooldowns per stack, up to 30%; then 1%
 // Impaling Blades damage each. Twin Blades (Legendary): each Impaling Blades is cast again 0.5 seconds later.
-// Brood Mother: Ultralisk hits on Heroes grant Shields for 40% of the damage. Hive Mind quest: 1% of Summon Ultralisk's 20 second cooldown per stack, up to 40%; then 1% damage.
+// Brood Mother: Ultralisk hits on Heroes grant Shields for 40% of the damage. Hive Mind quest: 1% of Summon Ultralisk's 20 second cooldown per stack, up to 40%; then 2% damage each past 100.
 // ============================================================
 
 const fixed libAffx_KerriganTakedownWindow = 3.0;
@@ -249,6 +249,39 @@ bool libAffx_KerriganUltraHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_KerriganTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_KerriganTakedownCrossStart () {
+    unit hero = libAffx_KerriganHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_KerriganTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "KerriganSwarmQueenTokenCounter"));
+    libAffx_KerriganTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "KerriganKineticStormTokenCounter"));
+    libAffx_KerriganTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "KerriganHiveMindTokenCounter"));
+}
+void libAffx_KerriganTakedownCross () {
+    unit hero = libAffx_KerriganHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "KerriganSwarmQueenTokenCounter")) == libAffx_KerriganTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "KerriganKineticStormTokenCounter")) == libAffx_KerriganTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "KerriganHiveMindTokenCounter")) == libAffx_KerriganTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "KerriganRavageMarker") && FixedToInt(UnitGetTokenCount(hero, "KerriganSwarmQueenTokenCounter")) == libAffx_KerriganTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "KerriganSwarmQueenTokenCounter", hero);
+        libAffx_KerriganSyncRavage();
+    }
+    if (UnitHasBehavior2(hero, "KerriganBladesMarker") && FixedToInt(UnitGetTokenCount(hero, "KerriganKineticStormTokenCounter")) == libAffx_KerriganTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "KerriganKineticStormTokenCounter", hero);
+        libAffx_KerriganSyncBlades();
+    }
+    if (UnitHasBehavior2(hero, "KerriganUltraMarker") && FixedToInt(UnitGetTokenCount(hero, "KerriganHiveMindTokenCounter")) == libAffx_KerriganTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "KerriganHiveMindTokenCounter", hero);
+        libAffx_KerriganSyncUltra();
+    }
+}
 // HeroTakedown: the takedown quests and takedown boons
 bool libAffx_KerriganTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -262,6 +295,7 @@ bool libAffx_KerriganTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_KerriganTakedownCrossStart();
     if (UnitHasBehavior2(hero, "KerriganRavageMarker") && libAffx_KerriganInWindow(libAffx_KerriganRavageTime[killedPlayer], now)) {
         libAffx_KerriganRavageTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "KerriganSwarmQueenTokenCounter", hero);
@@ -283,6 +317,7 @@ bool libAffx_KerriganTakedown (bool testConds, bool runActions) {
         libAffx_KerriganSyncUltra();
         libAffx_KerriganQuestDing();
     }
+    libAffx_KerriganTakedownCross();
     return true;
 }
 bool libAffx_KerriganStart (bool testConds, bool runActions) {

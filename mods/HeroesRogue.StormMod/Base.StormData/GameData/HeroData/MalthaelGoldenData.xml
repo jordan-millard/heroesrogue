@@ -16,7 +16,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="MalthaelGoldenDoorDamage" parent="MalthaelWraithStrikeDamage" />
 
   <!-- ===== Soul Ripper ===== -->
-  <!-- Soul Rip stores 2 charges (4 second recharge; Soul Collector's 0.5 second cut moves onto it, script); gain Soul Siphon and Cold Hand. Harvest quest (25% of each map gains kept for good): 0.5% Soul Rip damage per enemy Hero hit. Reaping quest: takedowns within 6 seconds of a hit; stacks 1-40 make Soul Rip recharge 1% faster each, 41-80 make it 1% larger each, 81-100 make it heal 1% more each, at 100 it goes off again 1 second later for 50% (script), then 2% damage each. -->
+  <!-- Soul Rip stores 2 charges (4 second recharge; Soul Collector's 0.5 second cut moves onto it, script); gain Soul Siphon and Cold Hand. Harvest quest (10% of each map gains kept for good): 0.5% Soul Rip damage per enemy Hero hit. Reaping quest: takedowns within 6 seconds of a hit; stacks 1-40 make Soul Rip recharge 1% faster each, 41-80 make it 1% larger each, 81-100 make it heal 1% more each, at 100 it goes off again 1 second later for 50% (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MalthaelGoldenHarvestTokenCounter" parent="StormQuestToken">
     <Face value="MalthaelGoldenHarvestTokenCounter" />
     <Max value="100000" />
@@ -52,7 +52,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Death Shroud ===== -->
-  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; enemy Heroes with Reaper's Mark receive 75% less healing (MalthaelGoldenMarkWound); gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (25% of each map gains kept for good): 1% more healing (MalthaelGoldenShroudMend, script) and 1% Basic Attack damage per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit or a Reaper's Mark tick (so a Hero dying with the mark on counts); stacks 1-40 make Reaper's Mark deal 0.05% more maximum Health per second each (2% to 4%), 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
+  <!-- Death Shroud stores 2 charges (8 second recharge) and costs half Mana; enemy Heroes with Reaper's Mark receive 75% less healing (MalthaelGoldenMarkWound); gain Black Harvest and Throwing Shade (their quests keep half). Mist quest (10% of each map gains kept for good): 1% more healing (MalthaelGoldenShroudMend, script) and 1% Basic Attack damage per enemy Hero hit by the shroud. Dusk quest: takedowns within 6 seconds of a shroud hit or a Reaper's Mark tick (so a Hero dying with the mark on counts); stacks 1-40 make Reaper's Mark deal 0.05% more maximum Health per second each (2% to 4%), 41-80 make the shroud travel 1% faster (script) and 1% wider each, 81-100 make the shroud's Reaper's Mark last 1% longer each (script), at 100 the shroud's hit also deals 10% of an enemy Hero's maximum Health (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MalthaelGoldenMistTokenCounter" parent="StormQuestToken">
     <Face value="MalthaelGoldenMistTokenCounter" />
     <Max value="100000" />
@@ -89,7 +89,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Wraithstalker ===== -->
-  <!-- Wraith Strike stores 4 charges (4 second recharge) and resets the attack timer; 25% more Health; Last Rites at level 1 (Tormented Souls cannot be taken; its quest keeps half). Haunt quest (25% of each map gains kept for good): 0.5% Wraith Strike damage per Wraith Strike on an enemy Hero. Stalk quest: takedowns within 6 seconds of a hit; stacks 1-40 make Wraith Strike recharge 1% faster each, 41-80 make it reach 1% farther each, at 100 it no longer needs a target with Reaper's Mark (script), then 2.5% damage each. -->
+  <!-- Wraith Strike stores 4 charges (4 second recharge) and resets the attack timer; 25% more Health; Last Rites at level 1 (Tormented Souls cannot be taken; its quest keeps half). Haunt quest (10% of each map gains kept for good): 0.5% Wraith Strike damage per Wraith Strike on an enemy Hero. Stalk quest: takedowns within 6 seconds of a hit; stacks 1-40 make Wraith Strike recharge 1% faster each, 41-80 make it reach 1% farther each, at 100 it no longer needs a target with Reaper's Mark (script), then 2.5% damage each. -->
   <CBehaviorTokenCounter id="MalthaelGoldenHauntTokenCounter" parent="StormQuestToken">
     <Face value="MalthaelGoldenHauntTokenCounter" />
     <Max value="100000" />

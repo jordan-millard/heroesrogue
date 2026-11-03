@@ -10,7 +10,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="GazloweScrapGlobesMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Turret Engineer ===== -->
-  <!-- Turrets cost 6 Scrap and their drop spends all Scrap; they never lose Health over time and heal 1% per second, each Scrap past 6 adds 5% Attack Speed, range and Health, 12 or more reveal enemies in attack range, each past 22 adds 0.2% maximum Health damage to Heroes (script). Targeting quest (50% kept): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets heal 2% per second, their hits on Heroes Shield Gazlowe and turrets take 25% less damage from Heroes (script), then 1% damage each (script). -->
+  <!-- Turrets cost 6 Scrap and their drop spends all Scrap; they never lose Health over time and heal 1% per second, each Scrap past 6 adds 5% Attack Speed, range and Health, 12 or more reveal enemies in attack range, each past 22 adds 0.2% maximum Health damage to Heroes (script). Targeting quest (10% of each map gains kept for good): 0.1% turret damage per turret hit on an enemy Hero. Upgrades quest: takedowns within 6 seconds of a turret or Deth Lazor hit; stacks 1-40 make Scrap regenerate 1% faster each, 41-80 add 1% turret Attack Speed each (script), at 100 turrets heal 2% per second, their hits on Heroes Shield Gazlowe and turrets take 25% less damage from Heroes (script), then 2% damage each past 100 (script). -->
   <CBehaviorTokenCounter id="GazloweGoldenTargetingTokenCounter" parent="StormQuestToken">
     <Face value="GazloweGoldenTargetingTokenCounter" />
     <Max value="100000" />
@@ -55,7 +55,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Lazor Specialist ===== -->
-  <!-- Deth Lazor fires 0.2 seconds after the cast instead of 0.65; gain Goblin Fusion, Overload and Master Blaster. Calibration quest (50% kept): 1% Deth Lazor damage per hit on an enemy Hero. Amplification quest: takedowns within 6 seconds of a Deth Lazor hit; stacks 1-40 make Deth Lazor 0.5% longer each, 41-80 a Shield per hit (script), at 100 a turret per hit and turrets take 25% less damage from Heroes (50% with both starters) (script), then 1% damage each (script). -->
+  <!-- Deth Lazor fires 0.2 seconds after the cast instead of 0.65; gain Goblin Fusion, Overload and Master Blaster. Calibration quest (10% of each map gains kept for good): 1% Deth Lazor damage per hit on an enemy Hero. Amplification quest: takedowns within 6 seconds of a Deth Lazor hit; stacks 1-40 make Deth Lazor 0.5% longer each, 41-80 a Shield per hit (script), at 100 a turret per hit and turrets take 25% less damage from Heroes (50% with both starters) (script), then 2% damage each past 100 (script). -->
   <CBehaviorTokenCounter id="GazloweGoldenCalibrationTokenCounter" parent="StormQuestToken">
     <Face value="GazloweGoldenCalibrationTokenCounter" />
     <Max value="100000" />
