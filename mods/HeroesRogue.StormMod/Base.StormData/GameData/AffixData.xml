@@ -29295,6 +29295,127 @@
                 <Field Id="Behavior" />
             </String>
         </Instances>
+        <Instances Id="DeathwingWingsOfRuin">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DeathwingBurnBeneathMyShadow">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DeathwingStoodInTheFire">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 DeathwingGoldenSkyMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DeathwingGoldenDominionTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DeathwingGoldenRuinTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DeathwingGoldenRuinTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DeathwingGoldenDominionTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="DeathwingCataclysmQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingDragonflight,Cost.Cooldown.TimeUse 5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingDragonflightSetCooldown,Chance 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingDragonflightCreateHealer,RechargeVitalFraction 0.05">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingDragonflightLandDamage,MultiplicativeModifierArray[DeathwingSkyPower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_DeathwingStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DeathwingTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingElementiumPlatingBoon">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingWingsOfRuin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DeathwingElementiumPlating">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingArrivalOfAGodBoon">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingWingsOfRuin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DeathwingArrivalOfAGod">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingShrapnelPlates">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingWingsOfRuin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DeathwingGoldenShrapnelApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingIndestructible">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingWingsOfRuin">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DeathwingGoldenIndestructibleApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
 
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">

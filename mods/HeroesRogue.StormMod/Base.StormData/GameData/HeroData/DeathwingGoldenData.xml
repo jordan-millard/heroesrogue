@@ -3,10 +3,11 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Deathwing. Starters: Incinerator (Incinerate and Lava Burst: 2 charges, 6 and 8 second recharge, 15 Energy, 0.5 seconds sooner, Dragon Soul) and Molten Flame (10 less Energy per second, 0.75 seconds sooner, Conflagration). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator, Cataclysm too) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DeathwingGolden.galaxy. -->
+  <!-- Golden Deathwing. Starters: Incinerator (Incinerate and Lava Burst: 2 charges, 6 and 8 second recharge, 15 Energy, 0.5 seconds sooner, Dragon Soul), Molten Flame (10 less Energy per second, 0.75 seconds sooner, Conflagration) and Wings of Ruin (Dragonflight on a 5 second cooldown that damage no longer delays, double regeneration in flight, Burn Beneath My Shadow and Stood in the Fire, takedowns reset Cataclysm, landings cut it). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator, Cataclysm too) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DeathwingGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="DeathwingGoldenIncinMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DeathwingGoldenFlameMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DeathwingGoldenSkyMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DeathwingGoldenEnergyMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DeathwingGoldenTripleMarker" parent="CarryBehaviorParent" />
   <!-- Incinerator 81-100: Incinerate burns what it hits for 1% of its damage per stack over 3 seconds (the script sets the
@@ -80,7 +81,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Molten Flame ===== -->
-  <!-- Molten Flame drains 10 less Energy per second and starts 0.75 seconds sooner; gain Conflagration. Blaze quest (10% of each map gains kept for good): 0.1% Molten Flame and Cataclysm damage per Molten Flame hit on an enemy Hero, counted at most twice a second per Hero and added in tens. Shadowflame quest: takedowns within 6 seconds of a hit; stacks 1-40 make Cataclysm recharge 1% faster each, 41-80 make Molten Flame Slow 1% each (script turns it on), 81-100 make it 1% wider each, at 100 Molten Flame breathes 3 streams (script), then 2% damage each. -->
+  <!-- Molten Flame drains 10 less Energy per second and starts 0.75 seconds sooner; gain Conflagration. Blaze quest (10% of each map gains kept for good): 0.2% Molten Flame and Cataclysm damage per Molten Flame hit on an enemy Hero, counted at most twice a second per Hero and added in tens. Shadowflame quest: takedowns within 6 seconds of a hit; stacks 1-40 make Cataclysm recharge 1% faster each, 41-80 make Molten Flame Slow 1% each (script turns it on), 81-100 make it 1% wider each, at 100 Molten Flame breathes 3 streams (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DeathwingGoldenBlazeTokenCounter" parent="StormQuestToken">
     <Face value="DeathwingGoldenBlazeTokenCounter" />
     <Max value="100000" />
@@ -94,7 +95,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="DeathwingGoldenBlazeTokenCounter" />
-    <Scale value="0.001" />
+    <Scale value="0.002" />
   </CAccumulatorToken>
   <CEffectDamage id="DeathwingMoltenFlameDamage">
     <MultiplicativeModifierArray index="DeathwingFlamePower" Modifier="0" />
@@ -116,6 +117,35 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="DeathwingGoldenShadowflameTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_deathwing_molten_flame.dds" />
   </CButton>
+
+  <!-- ===== Wings of Ruin ===== -->
+  <!-- Dragonflight has a 5 second cooldown and dealing or taking damage no longer pushes it back (DeathwingDragonflightSetCooldown off); double Health regeneration in flight; gain Burn Beneath My Shadow and Stood in the Fire; Cataclysm's quest keeps 50%; enemy Hero takedowns reset Cataclysm and each enemy Hero landed on takes 15 seconds off it (script). Dominion quest (10% of each map gains kept for good): 1% to all damage per enemy Hero landed on (script). Ruin quest: takedowns within 6 seconds of a landing or Cataclysm hit; stacks 1-40 make each landing on a Hero add 0.5% of maximum Health per stack to a Shield that never expires (up to 30%), 41-80 1% Movement Speed and 81-100 1% Spell Power per stack per Hero for 5 seconds, at 100 Protected for 4 seconds when casting Cataclysm (all script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DeathwingGoldenDominionTokenCounter" parent="StormQuestToken">
+    <Face value="DeathwingGoldenDominionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DeathwingGoldenRuinTokenCounter" parent="StormQuestToken">
+    <Face value="DeathwingGoldenRuinTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DeathwingGoldenDominionTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DeathwingGoldenDominionTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DeathwingDragonflightLandDamage">
+    <MultiplicativeModifierArray index="DeathwingSkyPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingSkyCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingSkyLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="DeathwingGoldenDominionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_deathwing_mount.dds" />
+  </CButton>
+  <CButton id="DeathwingGoldenRuinTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_deathwing_mount.dds" />
+  </CButton>
   <!-- Incinerator: takedown quest stacks past the cap add damage to all of the hero's damage -->
   <CBehaviorBuff id="DeathwingIncinPastCapDamage" parent="CarryBehaviorParent">
     <Modification>
@@ -125,6 +155,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
   <!-- Molten Flame: takedown quest stacks past the cap add damage to all of the hero's damage -->
   <CBehaviorBuff id="DeathwingFlamePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Wings of Ruin: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DeathwingSkyPastCapDamage" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
@@ -228,6 +265,83 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="DeathwingLavaBurstExplosionImpactSet">
     <EffectArray value="DeathwingGoldenMeltWeaponsApply" />
     <EffectArray value="DeathwingGoldenMinionKill" />
+  </CEffectSet>
+  <!-- ===== Wings of Ruin ===== -->
+  <!-- Dominion: 1% to all damage per stack (the script sets it and re-adds it) -->
+  <CBehaviorBuff id="DeathwingGoldenDominion" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- each enemy Hero landed on takes 15 seconds off Cataclysm (script) -->
+  <CEffectModifyUnit id="DeathwingGoldenLandingCataclysmCut">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="DeathwingCataclysm,Execute" CooldownOperation="Add" CooldownTimeUse="-15" />
+  </CEffectModifyUnit>
+  <!-- Ruin 1-40: each enemy Hero landed on adds 0.5% of maximum Health per stack to a Shield that never expires (up to 30%
+       in total); 41-80 Movement Speed and 81-100 Spell Power for 5 seconds, 1% per stack per Hero landed on; at 100,
+       Protected for 4 seconds when casting Cataclysm (the script sets the amounts and adds them) -->
+  <CBehaviorBuff id="DeathwingGoldenRuinShield" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_mount.dds" />
+    <Duration value="0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DeathwingGoldenRuinSpeed">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_mount.dds" />
+    <Duration value="5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DeathwingGoldenRuinPower">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_mount.dds" />
+    <Duration value="5" />
+    <Modification>
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DeathwingGoldenCataclysmProtect" parent="StormProtect">
+    <Duration value="4" />
+  </CBehaviorBuff>
+  <!-- Shrapnel Plates (Epic): Cataclysm's impact and scorched ground make enemy Heroes deal 30% less damage for 3 seconds -->
+  <CBehaviorBuff id="DeathwingGoldenShrapnel">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_cataclysm.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DeathwingGoldenShrapnelApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="DeathwingGoldenShrapnel" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DeathwingCataclysmImpactSet">
+    <EffectArray value="DeathwingGoldenShrapnelApply" />
+  </CEffectSet>
+  <CEffectSet id="DeathwingCataclysmPersistentImpactSet">
+    <EffectArray value="DeathwingGoldenShrapnelApply" />
+  </CEffectSet>
+  <!-- Indestructible (Legendary): landing on an enemy Hero Stuns them for 3 seconds -->
+  <CBehaviorBuff id="DeathwingGoldenIndestructibleStun" parent="StormStun">
+    <Duration value="3" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DeathwingGoldenIndestructibleApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="DeathwingGoldenIndestructibleStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DeathwingDragonflightLandImpactSet">
+    <EffectArray value="DeathwingGoldenIndestructibleApply" />
   </CEffectSet>
   <!-- ===== Molten Flame ===== -->
   <!-- Shadowflame 41-80: Molten Flame Slows by 1% per stack (the quest sets the amount; the script turns it on) -->

@@ -5,6 +5,8 @@ include "AffixTriggers"
 // areas, then a heal per hit (script), then a burn and hotter magma (script), then at 100 Cataclysm cuts per hit (script).
 // Molten Flame: hits on enemy Heroes add Blaze (twice a second per Hero, in tens); takedowns add Shadowflame: Cataclysm
 // recharge, then a Slow (script turns it on), then width, then at 100 three streams (script turns them on).
+// Wings of Ruin: landing on enemy Heroes adds Dominion (1% damage each, script) and cuts Cataclysm; takedowns add Ruin:
+// a lasting Shield per landing, then Movement Speed, then Spell Power, then at 100 Protected while casting Cataclysm.
 // ============================================================
 
 const fixed libAffx_DeathwingTakedownWindow = 3.0;
@@ -20,8 +22,18 @@ int libAffx_DeathwingFlameAdded; // Molten Flame: takedown stacks already applie
 int libAffx_DeathwingFlameAdded2; // Molten Flame: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_DeathwingFlameAdded3; // Molten Flame: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_DeathwingFlamePastApplied; // Molten Flame: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingSkyTime; // per enemy player, last Wings of Ruin hit
+int libAffx_DeathwingSkyAdded; // Wings of Ruin: takedown stacks already applied to the catalog this game
+int libAffx_DeathwingSkyAdded2; // Wings of Ruin: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DeathwingSkyAdded3; // Wings of Ruin: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DeathwingSkyPastApplied; // Wings of Ruin: takedown quest stacks past the cap applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingFlameCountTime; // Molten Flame: per enemy player, last counted hit
 bool libAffx_DeathwingFlameCounted; // Molten Flame: the hit being handled counted for Blaze
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingLandCountTime; // Wings of Ruin: per enemy player, last counted landing
+bool libAffx_DeathwingLandCounted; // Wings of Ruin: the landing hit being handled counted
+fixed libAffx_DeathwingLandTime; // Wings of Ruin: last counted landing hit
+int libAffx_DeathwingLandHeroes; // Wings of Ruin: enemy Heroes hit by that landing
+int libAffx_DeathwingDominionApplied = -1; // Wings of Ruin: Dominion stacks applied as damage
 
 unit libAffx_DeathwingHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -129,9 +141,47 @@ void libAffx_DeathwingSyncFlame () {
         UnitBehaviorAdd(hero, "DeathwingFlamePastCapDamage", hero, 1);
     }
 }
+// DeathwingGoldenRuinTokenCounter: stacks 1-40: a lasting Shield per landing on a Hero; 41-80 Movement Speed, 81-100 Spell Power, 100 Protected during Cataclysm (all libAffx_DeathwingSkyOnHit and libAffx_DeathwingCataclysmCast_Func), then damage
+void libAffx_DeathwingSyncSky () {
+    unit hero = libAffx_DeathwingHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
+        return;
+    }
+    stacks = libAffx_DeathwingStacks("DeathwingGoldenRuinTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DeathwingSkyAdded) {
+        libAffx_DeathwingSkyAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 1% Movement Speed per Hero landed on (libAffx_DeathwingSkyOnHit)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DeathwingSkyAdded2) {
+        libAffx_DeathwingSkyAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% Spell Power per Hero landed on (libAffx_DeathwingSkyOnHit)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DeathwingSkyAdded3) {
+        libAffx_DeathwingSkyAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DeathwingSkyPastApplied) {
+        libAffx_DeathwingSkyPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingSkyPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingSkyPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DeathwingSkyPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DeathwingSkyPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DeathwingSkyPastCapDamage", hero, 1);
+    }
+}
 bool libAffx_DeathwingSync_Func (bool testConds, bool runActions) {
     libAffx_DeathwingSyncIncin();
     libAffx_DeathwingSyncFlame();
+    libAffx_DeathwingSyncSky();
     return true;
 }
 // Molten Flame ticks 8 times a second: a hit on an enemy Hero counts for Blaze (and Burning Hunger) at most twice a
@@ -178,8 +228,87 @@ void libAffx_DeathwingGoldenSync () {
         }
     }
 }
+// Landing hits each enemy Hero once (the landing search can run twice): a Hero counts for Dominion and Ruin at most once
+// a second
+bool libAffx_DeathwingLandOnce (unit victim) {
+    int owner = UnitGetOwner(victim);
+    fixed now = GameGetMissionTime();
+    libAffx_DeathwingLandCounted = false;
+    if (libAffx_DeathwingLandCountTime[owner] > 0.0 && now - libAffx_DeathwingLandCountTime[owner] < 1.0) {
+        return false;
+    }
+    libAffx_DeathwingLandCountTime[owner] = now;
+    libAffx_DeathwingLandCounted = true;
+    return true;
+}
+// Wings of Ruin: Dominion's damage bonus (1% per stack)
+void libAffx_DeathwingDominionSync () {
+    unit hero = libAffx_DeathwingHero();
+    int n;
+    if (hero == null || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
+        return;
+    }
+    n = libAffx_DeathwingStacks("DeathwingGoldenDominionTokenCounter");
+    if (n != libAffx_DeathwingDominionApplied) {
+        libAffx_DeathwingDominionApplied = n;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenDominion", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(n) * 0.01);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenDominion", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(n) * 0.01);
+        UnitBehaviorRemove(hero, "DeathwingGoldenDominion", 1);
+    }
+    if (n > 0 && !UnitHasBehavior2(hero, "DeathwingGoldenDominion")) {
+        UnitBehaviorAdd(hero, "DeathwingGoldenDominion", hero, 1);
+    }
+}
+// Wings of Ruin, landing on an enemy Hero (counted): 15 seconds off Cataclysm, and Ruin's Shield, Movement Speed and Spell
+// Power (the last two count every Hero of the same landing)
+void libAffx_DeathwingSkyOnHit (unit hero) {
+    int n = libAffx_DeathwingStacks("DeathwingGoldenRuinTokenCounter");
+    int s2 = MaxI(0, MinI(n - 40, 40));
+    int s3 = MaxI(0, MinI(n - 80, 20));
+    fixed now = GameGetMissionTime();
+    fixed life;
+    fixed current = 0.0;
+    if (!libAffx_DeathwingLandCounted || !UnitIsAlive(hero)) {
+        return;
+    }
+    UnitCreateEffectUnit(hero, "DeathwingGoldenLandingCataclysmCut", hero);
+    if (now - libAffx_DeathwingLandTime > 0.5) {
+        libAffx_DeathwingLandHeroes = 0;
+    }
+    libAffx_DeathwingLandTime = now;
+    libAffx_DeathwingLandHeroes += 1;
+    if (n > 0) {
+        life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+        if (UnitHasBehavior2(hero, "DeathwingGoldenRuinShield")) {
+            current = UnitBehaviorDamageModifyRemaining(hero, "DeathwingGoldenRuinShield");
+        }
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenRuinShield", "DamageResponse.ModifyLimit", libAffx_player, MinF(current + 0.005 * IntToFixed(MinI(n, 40)) * life, 0.3 * life));
+        UnitBehaviorRemove(hero, "DeathwingGoldenRuinShield", 1);
+        UnitBehaviorAdd(hero, "DeathwingGoldenRuinShield", hero, 1);
+    }
+    if (s2 > 0) {
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenRuinSpeed", "Modification.UnifiedMoveSpeedFactor", libAffx_player, IntToFixed(s2 * libAffx_DeathwingLandHeroes) * 0.01);
+        UnitBehaviorRemove(hero, "DeathwingGoldenRuinSpeed", 1);
+        UnitBehaviorAdd(hero, "DeathwingGoldenRuinSpeed", hero, 1);
+    }
+    if (s3 > 0) {
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenRuinPower", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(s3 * libAffx_DeathwingLandHeroes) * 0.01);
+        UnitBehaviorRemove(hero, "DeathwingGoldenRuinPower", 1);
+        UnitBehaviorAdd(hero, "DeathwingGoldenRuinPower", hero, 1);
+    }
+}
+// Ruin at 100: Protected for 4 seconds when casting Cataclysm
+bool libAffx_DeathwingCataclysmCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker") || libAffx_DeathwingStacks("DeathwingGoldenRuinTokenCounter") < 100) {
+        return false;
+    }
+    UnitBehaviorAdd(hero, "DeathwingGoldenCataclysmProtect", hero, 1);
+    return true;
+}
 bool libAffx_DeathwingTick_Func (bool testConds, bool runActions) {
     libAffx_DeathwingGoldenSync();
+    libAffx_DeathwingDominionSync();
     return true;
 }
 // an Incinerate or Lava Burst blast hit on an enemy Hero: Inferno's heal (41+) and Cataclysm cut (100)
@@ -229,9 +358,33 @@ bool libAffx_DeathwingFlameHit_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Wings of Ruin hit on an enemy Hero: takedown window, DeathwingGoldenDominionTokenCounter, the heal, and on-hit boons
+bool libAffx_DeathwingSkyHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DeathwingIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
+        return false;
+    }
+    libAffx_DeathwingSkyTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_DeathwingLandOnce(victim)) {
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenDominionTokenCounter", hero);
+    }
+    libAffx_DeathwingSkyOnHit(hero);
+    return true;
+}
+// Wings of Ruin: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_DeathwingSkyWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DeathwingIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
+        return false;
+    }
+    libAffx_DeathwingSkyTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
 // Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
 // own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
-int[3] libAffx_DeathwingTakedownBefore; // each starter's takedown stacks before this takedown
+int[4] libAffx_DeathwingTakedownBefore; // each starter's takedown stacks before this takedown
 void libAffx_DeathwingTakedownCrossStart () {
     unit hero = libAffx_DeathwingHero();
     if (hero == null) {
@@ -239,13 +392,14 @@ void libAffx_DeathwingTakedownCrossStart () {
     }
     libAffx_DeathwingTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter"));
     libAffx_DeathwingTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenShadowflameTokenCounter"));
+    libAffx_DeathwingTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenRuinTokenCounter"));
 }
 void libAffx_DeathwingTakedownCross () {
     unit hero = libAffx_DeathwingHero();
     if (hero == null) {
         return;
     }
-    if (FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter")) == libAffx_DeathwingTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenShadowflameTokenCounter")) == libAffx_DeathwingTakedownBefore[2]) {
+    if (FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter")) == libAffx_DeathwingTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenShadowflameTokenCounter")) == libAffx_DeathwingTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenRuinTokenCounter")) == libAffx_DeathwingTakedownBefore[3]) {
         return;
     }
     if (UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker") && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter")) == libAffx_DeathwingTakedownBefore[1]) {
@@ -257,6 +411,11 @@ void libAffx_DeathwingTakedownCross () {
         libGame_gf_ModifyTokenCount(1, "DeathwingGoldenShadowflameTokenCounter", hero);
         libAffx_DeathwingSyncFlame();
         libAffx_DeathwingGoldenSync();
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker") && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenRuinTokenCounter")) == libAffx_DeathwingTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenRuinTokenCounter", hero);
+        libAffx_DeathwingSyncSky();
+        libAffx_DeathwingDominionSync();
     }
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -273,6 +432,9 @@ bool libAffx_DeathwingTakedown (bool testConds, bool runActions) {
         return true;
     }
     libAffx_DeathwingTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
+        UnitCreateEffectUnit(hero, "DeathwingBurnBeneathMyShadowResetCataclysmCooldown", hero);
+    }
     if (UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker") && libAffx_DeathwingIncinTime[killedPlayer] > 0.0 && now - libAffx_DeathwingIncinTime[killedPlayer] <= 6.0) {
         libAffx_DeathwingIncinTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "DeathwingGoldenInfernoTokenCounter", hero);
@@ -286,6 +448,13 @@ bool libAffx_DeathwingTakedown (bool testConds, bool runActions) {
         libAffx_DeathwingSyncFlame();
         libAffx_DeathwingQuestDing();
         libAffx_DeathwingGoldenSync();
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker") && libAffx_DeathwingSkyTime[killedPlayer] > 0.0 && now - libAffx_DeathwingSkyTime[killedPlayer] <= 6.0) {
+        libAffx_DeathwingSkyTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenRuinTokenCounter", hero);
+        libAffx_DeathwingSyncSky();
+        libAffx_DeathwingQuestDing();
+        libAffx_DeathwingDominionSync();
     }
     libAffx_DeathwingTakedownCross();
     return true;
@@ -301,7 +470,13 @@ bool libAffx_DeathwingStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingLavaBurstExplosionDamage");
     trig = TriggerCreate("libAffx_DeathwingFlameHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingMoltenFlameDamage");
+    trig = TriggerCreate("libAffx_DeathwingSkyHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingDragonflightLandDamage");
+    trig = TriggerCreate("libAffx_DeathwingSkyWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingCataclysmDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingCataclysmDoTDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DeathwingCataclysmCast_Func"), libAffx_player, "DeathwingCataclysmPrepSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingSync_Func"), 1.0, c_timeGame);
     return true;
