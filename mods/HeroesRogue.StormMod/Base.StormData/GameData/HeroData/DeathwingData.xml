@@ -8,21 +8,4 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
 
-  <!-- Deathwing can take Medivh Portals (Convenient Portals): the portal's right-click check drops the base
-       SmartCommandInteractionExclusionCombine (Caster is not Deathwing) for a check that always passes there; his other
-       interactions keep the exclusion -->
-  <CValidatorCombine id="MedivhPortalSmartCommandCombine">
-    <CombineArray index="3" value="TargetIsNotEnemy" />
-  </CValidatorCombine>
-  <!-- Deathwing's hero mod also adds CasterIsNotDeathwing to the whole right-click switch (its third validator, after the
-       base TargetHasSmartCommandUnitInteractable and TargetIsNotEnemyOrIsLNYMonkey): let it pass for Medivh Portals -->
-  <CValidatorCombine id="DeathwingGoldenSmartCommandCheck">
-    <Type value="Or" />
-    <CombineArray value="CasterIsNotDeathwing" />
-    <CombineArray value="MedivhTargetIsMedivhPortal" />
-  </CValidatorCombine>
-  <CEffectSwitch id="SmartCommandUnitInteractionSwitch">
-    <ValidatorArray index="2" value="DeathwingGoldenSmartCommandCheck" />
-  </CEffectSwitch>
-
 </Catalog>

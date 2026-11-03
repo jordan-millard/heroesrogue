@@ -3104,6 +3104,9 @@
             <String String="AffixAdded libAffx_ConvenientPortals">
                 <Field Id="Trigger" />
             </String>
+            <String String="Deathwing">
+                <Field Id="HeroesExcluded" />
+            </String>
         </Instances>
         <Instances Id="GlobeHuffer">
             <Int Int="3">
@@ -29414,6 +29417,35 @@
             </User>
             <String String="1 1 Set Effect,DeathwingGoldenIndestructibleApply,Chance 1">
                 <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingSwiftWings">
+            <Int Int="1">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingDragonflight,CastIntroTime 1.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingDragonflightLand,CastIntroTime 0.875">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingDestroyerForm,CastIntroTime 0.875">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingWorldbreakerForm,CastIntroTime 0.875">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Behavior,DeathwingDragonflightLandInvulnerability,Duration 0.875">
+                <Field Id="CatalogModification" Index="4" />
             </String>
         </Instances>
 
