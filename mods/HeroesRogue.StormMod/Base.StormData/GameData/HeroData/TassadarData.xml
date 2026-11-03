@@ -38,9 +38,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="TassadarStormOfAgesTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- up to 100 takedown stacks; past that, 2% damage each (script) -->
   <CAccumulatorToken id="TassadarStormOfAgesAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="0.5" />
     <ApplicationRule value="Add" />
     <TokenId value="TassadarStormOfAgesTokenCounter" />
     <Scale value="0.005" />
@@ -141,9 +142,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="TassadarLanceOfAiurTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- up to 100 takedown stacks; past that, 2% damage each (script) -->
   <CAccumulatorToken id="TassadarLanceOfAiurAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="1" />
     <ApplicationRule value="Add" />
     <TokenId value="TassadarLanceOfAiurTokenCounter" />
     <Scale value="0.01" />
@@ -208,4 +210,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="TassadarLanceOfAiurTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_tassadar_rework_q_ray.dds" />
   </CButton>
+  <!-- Storm of the Ages: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="TassadarGoldenStormPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Lance of Aiur: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="TassadarGoldenLancePastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 </Catalog>

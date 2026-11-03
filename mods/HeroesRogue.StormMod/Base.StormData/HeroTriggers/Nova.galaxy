@@ -2,6 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Nova.
+// Every takedown quest gives its bonus up to 100 stacks; each stack past 100 adds 2% to all damage (libAffx_NovaSyncPast).
 // Deadeye, Confirmed Kill quest: an enemy Hero takedown within 2 seconds of a Snipe hit adds 1% Snipe range. Killshot
 // (Legendary): that takedown also refunds Snipe's cooldown and Mana and resets Permanent Cloak. Steady Aim (35% kept
 // between games), Headshot and the 2-stack miss penalty are in NovaData.xml.
@@ -28,6 +29,9 @@ bool libAffx_novaStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_novaSnipeTime; // per enemy player, last Snipe hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_novaPinTime; // per enemy player, last Pinning Shot hit
 fixed libAffx_novaSnipeRangeAdded; // Snipe range added by Confirmed Kill this game
+int libAffx_novaDeadeyePastApplied; // Confirmed Kill stacks past 100 applied as damage this game
+int libAffx_novaCripplingPastApplied; // Hunter's Mark stacks past 100 applied as damage this game
+int libAffx_novaHoloPastApplied; // Phantom Strike stacks past 100 applied as damage this game
 
 unit libAffx_NovaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -86,7 +90,7 @@ void libAffx_NovaSyncSnipeRange () {
     if (CatalogFieldValueGetAsInt(c_gameCatalogEffect, "SnipeMissileScanPersistent", "PeriodCount", libAffx_player) != periods) {
         CatalogFieldValueSetInt(c_gameCatalogEffect, "SnipeMissileScanPersistent", "PeriodCount", libAffx_player, periods);
     }
-    wanted = libAffx_novaSnipeBaseRange * libAffx_novaRangePerStack * UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter");
+    wanted = libAffx_novaSnipeBaseRange * libAffx_novaRangePerStack * MinF(100.0, UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter"));
     delta = wanted - libAffx_novaSnipeRangeAdded;
     if (AbsF(delta) < 0.01) {
         return;
@@ -96,8 +100,56 @@ void libAffx_NovaSyncSnipeRange () {
     CatalogFieldValueSetFixed(c_gameCatalogActor, "NovaSnipeGuide", "Height", libAffx_player, CatalogFieldValueGetAsFixed(c_gameCatalogActor, "NovaSnipeGuide", "Height", libAffx_player) + delta);
     libAffx_novaSnipeRangeAdded = wanted;
 }
+// takedown quest stacks past 100: 2% each to all of Nova's damage, per taken starter
+void libAffx_NovaSyncPast () {
+    unit hero = libAffx_NovaHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "NovaDeadeyeMarker")) {
+        // Confirmed Kill
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "NovaConfirmedKillTokenCounter")) - 100);
+        if (power != libAffx_novaDeadeyePastApplied) {
+            libAffx_novaDeadeyePastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "NovaGoldenDeadeyePastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "NovaGoldenDeadeyePastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "NovaGoldenDeadeyePastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "NovaGoldenDeadeyePastCap")) {
+            UnitBehaviorAdd(hero, "NovaGoldenDeadeyePastCap", hero, 1);
+        }
+    }
+    if (UnitHasBehavior2(hero, "NovaCripplingFireMarker")) {
+        // Hunter's Mark
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "NovaHuntersMarkTokenCounter")) - 100);
+        if (power != libAffx_novaCripplingPastApplied) {
+            libAffx_novaCripplingPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "NovaGoldenCripplingPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "NovaGoldenCripplingPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "NovaGoldenCripplingPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "NovaGoldenCripplingPastCap")) {
+            UnitBehaviorAdd(hero, "NovaGoldenCripplingPastCap", hero, 1);
+        }
+    }
+    if (UnitHasBehavior2(hero, "NovaHoloCorpsMarker")) {
+        // Phantom Strike
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "NovaPhantomStrikeTokenCounter")) - 100);
+        if (power != libAffx_novaHoloPastApplied) {
+            libAffx_novaHoloPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "NovaGoldenHoloPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "NovaGoldenHoloPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "NovaGoldenHoloPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "NovaGoldenHoloPastCap")) {
+            UnitBehaviorAdd(hero, "NovaGoldenHoloPastCap", hero, 1);
+        }
+    }
+}
 bool libAffx_NovaSync_Func (bool testConds, bool runActions) {
     libAffx_NovaSyncSnipeRange();
+    libAffx_NovaSyncPast();
     return true;
 }
 
@@ -338,6 +390,7 @@ bool libAffx_NovaTakedown (bool testConds, bool runActions) {
         }
     }
     libAffx_NovaTakedownCross();
+    libAffx_NovaSyncPast();
     return true;
 }
 

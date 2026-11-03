@@ -7,6 +7,7 @@ include "AffixTriggers"
 // Templar's Lance, Lance of Aiur quest: an enemy Hero takedown within 2 seconds of a Shock Ray hit adds 1% Shock Ray
 // damage. Arc Lightning (Epic): a Shock Ray hit on an enemy Hero deals 50% of its damage to the 2 nearest other enemies.
 // Twin Lances (Legendary): every enemy hit by Shock Ray is hit again 0.5 seconds later for 50% of the damage.
+// Both takedown quests give their bonus up to 100 stacks; each stack past 100 adds 2% to all damage.
 // Stacks carry over between games through QuestRetain.
 // ============================================================
 
@@ -21,6 +22,8 @@ const fixed libAffx_tassadarTwinLanceFraction = 0.5;
 
 bool libAffx_tassadarStarted;
 int libAffx_tassadarStormPeriodsAdded; // Psionic Storm periods added by Storm of the Ages this game
+int libAffx_tassadarStormPastApplied; // Storm of the Ages stacks past 100 applied as damage this game
+int libAffx_tassadarLancePastApplied; // Lance of Aiur stacks past 100 applied as damage this game
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_tassadarStormTime; // per enemy player, last Psionic Storm hit
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_tassadarLanceTime; // per enemy player, last Shock Ray hit
 
@@ -50,7 +53,7 @@ void libAffx_TassadarSyncStormDuration () {
     if (hero == null || !UnitHasBehavior2(hero, "TassadarEyeOfTheStormMarker")) {
         return;
     }
-    wanted = FixedToInt(UnitGetTokenCount(hero, "TassadarStormOfAgesTokenCounter")) / libAffx_tassadarStormStacksPerPeriod;
+    wanted = MinI(100, FixedToInt(UnitGetTokenCount(hero, "TassadarStormOfAgesTokenCounter"))) / libAffx_tassadarStormStacksPerPeriod;
     if (wanted == libAffx_tassadarStormPeriodsAdded) {
         return;
     }
@@ -58,8 +61,43 @@ void libAffx_TassadarSyncStormDuration () {
     CatalogFieldValueSet(c_gameCatalogEffect, "TassadarPsionicStormCreatePersistent", "PeriodCount", libAffx_player, IntToString(periods + wanted - libAffx_tassadarStormPeriodsAdded));
     libAffx_tassadarStormPeriodsAdded = wanted;
 }
+// takedown quest stacks past 100: 2% each to all damage, per taken starter
+void libAffx_TassadarSyncPast () {
+    unit hero = libAffx_TassadarHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "TassadarEyeOfTheStormMarker")) {
+        // Storm of the Ages
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "TassadarStormOfAgesTokenCounter")) - 100);
+        if (power != libAffx_tassadarStormPastApplied) {
+            libAffx_tassadarStormPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TassadarGoldenStormPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TassadarGoldenStormPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "TassadarGoldenStormPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "TassadarGoldenStormPastCap")) {
+            UnitBehaviorAdd(hero, "TassadarGoldenStormPastCap", hero, 1);
+        }
+    }
+    if (UnitHasBehavior2(hero, "TassadarTemplarsLanceMarker")) {
+        // Lance of Aiur
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "TassadarLanceOfAiurTokenCounter")) - 100);
+        if (power != libAffx_tassadarLancePastApplied) {
+            libAffx_tassadarLancePastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TassadarGoldenLancePastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "TassadarGoldenLancePastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "TassadarGoldenLancePastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "TassadarGoldenLancePastCap")) {
+            UnitBehaviorAdd(hero, "TassadarGoldenLancePastCap", hero, 1);
+        }
+    }
+}
 bool libAffx_TassadarSync_Func (bool testConds, bool runActions) {
     libAffx_TassadarSyncStormDuration();
+    libAffx_TassadarSyncPast();
     return true;
 }
 
@@ -165,6 +203,7 @@ bool libAffx_TassadarTakedown (bool testConds, bool runActions) {
         libAffx_TassadarQuestDing();
     }
     libAffx_TassadarTakedownCross();
+    libAffx_TassadarSyncPast();
     return true;
 }
 

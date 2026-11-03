@@ -3,8 +3,8 @@ include "AffixTriggers"
 // ============================================================
 // Golden Genji
 // Shuriken Storm, Thousand Cuts quest: an enemy Hero takedown within 3 seconds of a Shuriken or Deflect hit adds 1% Shuriken
-// damage (GenjiData.xml), every 15 stacks 1 more Shuriken per throw, up to 3, and each stack 0.02 seconds of Deflect, up
-// to 1.25 more seconds. Thousand Blades (Legendary): each Shuriken throw is thrown again 0.3 seconds later.
+// damage (GenjiData.xml, up to 100 stacks), every 15 stacks 1 more Shuriken per throw, up to 3, and each stack 0.02 seconds
+// of Deflect, up to 1.25 more seconds; each stack past 100 adds 2% to all damage. Thousand Blades (Legendary): each Shuriken throw is thrown again 0.3 seconds later.
 // Blade of the Shimada, Shimada Legacy quest: an enemy Hero takedown within 3 seconds of a Swift Strike hit lowers Swift
 // Strike's cooldown by 1% of its 8 seconds, up to 25%; each stack past that adds 1% Swift Strike damage instead. Iaido
 // (Epic): Swift Strike also deals 8% of enemy Heroes' maximum Health. Shadow Execution (Legendary): a Swift Strike
@@ -36,6 +36,7 @@ int libAffx_genjiExtraShuriken; // extra Shuriken per throw turned on by Thousan
 fixed libAffx_genjiDeflectAdded; // Deflect seconds added by Thousand Cuts this game
 fixed libAffx_genjiSwiftCooldownAdded; // Swift Strike cooldown taken off by Shimada Legacy this game
 fixed libAffx_genjiDragonCooldownAdded; // Dragonblade cooldown taken off by Dragon Soul this game
+int libAffx_genjiShurikenPastApplied; // Thousand Cuts stacks past 100 applied as damage this game
 int libAffx_genjiSwiftPastApplied; // Shimada Legacy stacks past the cap applied as damage this game
 int libAffx_genjiDragonPastApplied; // Dragon Soul stacks past the cap applied as damage this game
 fixed libAffx_genjiLastEcho = -1.0; // Thousand Blades: when the last echo was thrown
@@ -65,13 +66,14 @@ void libAffx_GenjiQuestDing() {
     SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
 }
 
-// Thousand Cuts: 1 more Shuriken per throw per 15 stacks, up to 3, and a longer Deflect
+// Thousand Cuts: 1 more Shuriken per throw per 15 stacks, up to 3, a longer Deflect, then (past 100) all of Genji's damage
 void libAffx_GenjiSyncShuriken () {
     unit hero = libAffx_GenjiHero();
     int wanted;
     int i;
     fixed deflect;
     string delta;
+    int power;
     if (hero == null || !UnitHasBehavior2(hero, "GenjiShurikenStormMarker")) {
         return;
     }
@@ -97,6 +99,17 @@ void libAffx_GenjiSyncShuriken () {
         libAffx_CatalogReferenceModify("Behavior,GenjiDeflect,Duration", libAffx_player, delta, c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Behavior,GenjiDeflectProtected,Duration", libAffx_player, delta, c_upgradeOperationAdd);
         libAffx_genjiDeflectAdded = deflect;
+    }
+    // stacks past 100: 2% each to all damage
+    power = MaxI(0, libAffx_GenjiStacks("GenjiThousandCutsTokenCounter") - 100);
+    if (power != libAffx_genjiShurikenPastApplied) {
+        libAffx_genjiShurikenPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenShurikenPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "GenjiGoldenShurikenPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "GenjiGoldenShurikenPastCap", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "GenjiGoldenShurikenPastCap")) {
+        UnitBehaviorAdd(hero, "GenjiGoldenShurikenPastCap", hero, 1);
     }
 }
 // Shimada Legacy: Swift Strike's cooldown, then (past the cap) all of Genji's damage

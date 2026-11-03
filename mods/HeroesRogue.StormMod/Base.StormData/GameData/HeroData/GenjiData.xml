@@ -52,9 +52,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="GenjiThousandCutsTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- Thousand Cuts: 1% Shuriken damage per stack, up to 100 stacks (past that, GenjiGoldenShurikenPastCap) -->
   <CAccumulatorToken id="GenjiThousandCutsAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="1" />
     <ApplicationRule value="Add" />
     <TokenId value="GenjiThousandCutsTokenCounter" />
     <Scale value="0.01" />
@@ -492,6 +493,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- Shimada Legacy and Dragon Soul: takedown stacks past the cap add to all of Genji's damage (the script sets the amount
        and re-adds it) -->
   <CBehaviorBuff id="GenjiGoldenShimadaPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Thousand Cuts: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="GenjiGoldenShurikenPastCap" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />

@@ -134,9 +134,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="NovaHuntersMarkTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- Hunter's Mark: 1% per stack, up to 100 stacks (past that, NovaGoldenCripplingPastCap) -->
   <CAccumulatorToken id="NovaHuntersMarkAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="1" />
     <ApplicationRule value="Add" />
     <TokenId value="NovaHuntersMarkTokenCounter" />
     <Scale value="0.01" />
@@ -219,9 +220,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="NovaPhantomStrikeTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- Phantom Strike: 2% per stack, up to 100 stacks (past that, NovaGoldenHoloPastCap) -->
   <CAccumulatorToken id="NovaPhantomStrikeAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="2" />
     <ApplicationRule value="Add" />
     <TokenId value="NovaPhantomStrikeTokenCounter" />
     <Scale value="0.02" />
@@ -243,7 +245,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CAccumulatorToken>
   <CAccumulatorToken id="NovaPhantomStrikeDecoyAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="2" />
     <ApplicationRule value="Add" />
     <TokenId value="NovaPhantomStrikeDecoyToken" />
     <Scale value="0.02" />
@@ -336,6 +338,27 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="NovaIllusionistTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_nova_holodecoy.dds" />
   </CButton>
+  <!-- Confirmed Kill: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="NovaGoldenDeadeyePastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Hunter's Mark: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="NovaGoldenCripplingPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Phantom Strike: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="NovaGoldenHoloPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
   <CButton id="NovaPhantomStrikeTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_nova_holodecoy.dds" />
   </CButton>
