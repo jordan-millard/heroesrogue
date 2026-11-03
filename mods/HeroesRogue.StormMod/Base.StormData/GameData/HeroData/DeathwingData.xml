@@ -8,4 +8,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
 
+  <!-- Deathwing can take Medivh Portals (Convenient Portals): the portal's right-click check drops the base
+       SmartCommandInteractionExclusionCombine (Caster is not Deathwing) for a check that always passes there; his other
+       interactions keep the exclusion -->
+  <CValidatorCombine id="MedivhPortalSmartCommandCombine">
+    <CombineArray index="3" value="TargetIsNotEnemy" />
+  </CValidatorCombine>
+
 </Catalog>
