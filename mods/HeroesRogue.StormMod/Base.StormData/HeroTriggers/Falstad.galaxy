@@ -3,7 +3,8 @@ include "AffixTriggers"
 // ============================================================
 // Golden Falstad, Wildhammer's Wrath.
 // Shockwave: each enemy Hero hit by any part of Hammerang adds 3 flat BOOMerang explosion damage.
-// Gathering Thunder: an enemy Hero who dies within 2 seconds of a Hammerang hit adds 5% hammer damage.
+// Gathering Thunder: an enemy Hero who dies within 2 seconds of a Hammerang hit adds 5% hammer damage (up to 150%, or
+// 500% at 100 stacks with Unbound Storm); each stack past 100 adds 2% to all damage.
 // Stacks carry over between games through QuestRetain; the damage itself is in FalstadData.xml.
 // ============================================================
 
@@ -12,6 +13,7 @@ const int libAffx_falstadShockwaveDamagePerHit = 3;
 
 bool libAffx_falstadStarted;
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_falstadHammerHitTime; // per enemy player, last hit by any part of Hammerang
+int libAffx_falstadPastApplied; // Gathering Thunder stacks past 100 applied as damage this game
 
 unit libAffx_FalstadHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -49,6 +51,31 @@ bool libAffx_FalstadHammerHit_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// takedown quest stacks past 100: 2% each to all damage, per taken starter
+void libAffx_FalstadSyncPast () {
+    unit hero = libAffx_FalstadHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "FalstadWildhammerMarker")) {
+        // Gathering Thunder
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "FalstadGatheringThunderTokenCounter")) - 100);
+        if (power != libAffx_falstadPastApplied) {
+            libAffx_falstadPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FalstadGoldenGatheringThunderPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "FalstadGoldenGatheringThunderPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "FalstadGoldenGatheringThunderPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "FalstadGoldenGatheringThunderPastCap")) {
+            UnitBehaviorAdd(hero, "FalstadGoldenGatheringThunderPastCap", hero, 1);
+        }
+    }
+}
+bool libAffx_FalstadSync_Func (bool testConds, bool runActions) {
+    libAffx_FalstadSyncPast();
+    return true;
+}
 // HeroTakedown for Gathering Thunder
 bool libAffx_FalstadTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -67,6 +94,7 @@ bool libAffx_FalstadTakedown (bool testConds, bool runActions) {
     }
     libAffx_falstadHammerHitTime[killedPlayer] = 0.0;
     libGame_gf_ModifyTokenCount(1, "FalstadGatheringThunderTokenCounter", libAffx_FalstadHero());
+    libAffx_FalstadSyncPast();
     return true;
 }
 
@@ -81,5 +109,7 @@ bool libAffx_FalstadStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangDamage");
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "HammerangReturnDamage");
     TriggerAddEventUnitDamaged(hammerHit, null, c_unitDamageTypeAny, c_unitDamageEither, "FalstadHammerangBOOMerangDamage");
+    // also picks up Gathering Thunder stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_FalstadSync_Func"), 1.0, c_timeGame);
     return true;
 }

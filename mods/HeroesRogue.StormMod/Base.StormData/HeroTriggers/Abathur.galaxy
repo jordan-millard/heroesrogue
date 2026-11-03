@@ -44,6 +44,7 @@ fixed libAffx_abathurSinceLastNest; // advances only while the game isn't paused
 fixed libAffx_abathurAttackLockoutLeft; // counts down only while the game isn't paused
 int libAffx_abathurColossalPendingNests; // the next Locust becomes the Colossal Locust for this many nests
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_abathurSlapStunTime; // per enemy player, last Slapathur Stun
+int libAffx_abathurSlapPastApplied; // Slapathur quest stacks past 100 applied as damage this game
 
 unit libAffx_AbathurHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -103,7 +104,7 @@ void libAffx_AbathurExtendSlapDisable(unit victim, string behavior) {
     if (caster == null || UnitGetOwner(caster) != libAffx_player || caster != libAffx_AbathurHero()) {
         return;
     }
-    tokens = UnitGetTokenCount(caster, "AbathurMinefieldTakedownTokenCounter");
+    tokens = MinF(100.0, UnitGetTokenCount(caster, "AbathurMinefieldTakedownTokenCounter"));
     if (tokens <= 0.0) {
         return;
     }
@@ -176,10 +177,31 @@ bool libAffx_AbathurTakedown (bool testConds, bool runActions) {
     return true;
 }
 
-// Keeps the Slapathur quest rewards equal to its stack count (covers stacks loaded from the bank): one
-// AbathurSlapathurQuestLife stack (+20 maximum Health) per stack
+// takedown quest stacks past 100: 2% each to all damage, per taken starter
+void libAffx_AbathurSyncPast () {
+    unit hero = libAffx_AbathurHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "AbathurMinefieldMarker")) {
+        // Slapathur quest
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter")) - 100);
+        if (power != libAffx_abathurSlapPastApplied) {
+            libAffx_abathurSlapPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AbathurGoldenSlapathurPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AbathurGoldenSlapathurPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "AbathurGoldenSlapathurPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "AbathurGoldenSlapathurPastCap")) {
+            UnitBehaviorAdd(hero, "AbathurGoldenSlapathurPastCap", hero, 1);
+        }
+    }
+}
+// Keeps the Slapathur quest rewards equal to its stack count up to 100 (covers stacks loaded from the bank): one
+// AbathurSlapathurQuestLife stack (+20 maximum Health) per stack; past 100, 2% damage per stack
 void libAffx_AbathurSyncSlapRewards(unit hero) {
-    int tokens = FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter"));
+    int tokens = MinI(100, FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter")));
     int stacks = UnitBehaviorCount(hero, "AbathurSlapathurQuestLife");
     if (tokens > stacks) {
         UnitBehaviorAdd(hero, "AbathurSlapathurQuestLife", hero, tokens - stacks);
@@ -187,6 +209,7 @@ void libAffx_AbathurSyncSlapRewards(unit hero) {
     } else if (tokens < stacks) {
         UnitBehaviorRemove(hero, "AbathurSlapathurQuestLife", stacks - tokens);
     }
+    libAffx_AbathurSyncPast();
 }
 
 // New Locusts gain 2% Health and damage per Slapathur quest stack; a Colossal Locust also counts as one Locust per 3 nests removed
@@ -205,7 +228,7 @@ bool libAffx_AbathurLocustSpawned_Func (bool testConds, bool runActions) {
     if (type != "AbathurLocustNormal" && type != "AbathurLocustBombardStrain" && type != "AbathurLocustAssaultStrain") {
         return false;
     }
-    slapStacks = FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter"));
+    slapStacks = MinI(100, FixedToInt(UnitGetTokenCount(hero, "AbathurMinefieldTakedownTokenCounter")));
     lifeMax = UnitGetPropertyFixed(locust, c_unitPropLifeMax, c_unitPropCurrent) * (1.0 + IntToFixed(slapStacks) * libAffx_abathurSlapLocustLifePerStack);
     if (slapStacks > 0) {
         UnitBehaviorAdd(locust, "AbathurSlapathurLocustPower", locust, slapStacks);

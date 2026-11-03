@@ -30,6 +30,7 @@ const int libAffx_chenBrewShieldDataMaxStacks = 40; // ChenFortifyingBrewShield 
 bool libAffx_chenStarted;
 fixed libAffx_chenIronBellyProgress; // blocked damage toward the next Iron Belly stack
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_chenIgniteTime; // per enemy player, last Ignite tick
+int libAffx_chenEternalPastApplied; // Eternal Flame stacks past 100 applied as damage this game
 
 unit libAffx_ChenHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -65,6 +66,28 @@ bool libAffx_ChenIgniteTick_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// Eternal Flame: past 100 stacks, each adds 2% to all damage
+// takedown quest stacks past 100: 2% each to all damage, per taken starter
+void libAffx_ChenSyncPast () {
+    unit hero = libAffx_ChenHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ChenInfernoMarker")) {
+        // Eternal Flame
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "ChenEternalFlameTokenCounter")) - 100);
+        if (power != libAffx_chenEternalPastApplied) {
+            libAffx_chenEternalPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChenGoldenEternalFlamePastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "ChenGoldenEternalFlamePastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "ChenGoldenEternalFlamePastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "ChenGoldenEternalFlamePastCap")) {
+            UnitBehaviorAdd(hero, "ChenGoldenEternalFlamePastCap", hero, 1);
+        }
+    }
+}
 // HeroTakedown for Eternal Flame
 bool libAffx_ChenTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -83,6 +106,7 @@ bool libAffx_ChenTakedown (bool testConds, bool runActions) {
     }
     libAffx_chenIgniteTime[killedPlayer] = 0.0;
     libGame_gf_ModifyTokenCount(1, "ChenEternalFlameTokenCounter", libAffx_ChenHero());
+    libAffx_ChenSyncPast();
     libAffx_ChenQuestDing();
     return true;
 }
@@ -205,6 +229,8 @@ bool libAffx_ChenBrewShieldStack_Func (bool testConds, bool runActions) {
 // Keeps Iron Ox's CC reduction and Armor on Chen, and the Iron Belly Brew Shield bonuses up to date
 bool libAffx_ChenSync_Func (bool testConds, bool runActions) {
     unit hero = libAffx_ChenHero();
+    // also picks up Eternal Flame stacks loaded from the bank
+    libAffx_ChenSyncPast();
     if (hero == null || !UnitHasBehavior2(hero, "ChenIronOxMarker")) {
         return false;
     }

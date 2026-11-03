@@ -120,7 +120,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ApplicationRule value="Add" />
     <TokenId value="AnubarakTombKeeperTokenCounter" />
     <Scale value="0.03" />
-    <MaxAccumulation value="100000" />
+    <!-- up to 100 stacks; past that, 2% damage each (AnubarakGoldenTombKeeperPastCap) -->
+    <MaxAccumulation value="3" />
   </CAccumulatorToken>
   <CEffectDamage id="AnubarakImpaleDamage">
     <MultiplicativeModifierArray index="AnubarakTombKeeper" Accumulator="AnubarakTombKeeperAccumulator" />
@@ -257,4 +258,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_Anubarak_HardenCarapace_Var1.dds" />
   </CButton>
 
+  <!-- Tomb Keeper: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="AnubarakGoldenTombKeeperPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Unbreakable: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="AnubarakGoldenUnbreakablePastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 </Catalog>

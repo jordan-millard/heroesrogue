@@ -5,6 +5,8 @@ include "AffixTriggers"
 // hit by their abilities; Nade Spam gives one for every 10 Frag Launcher hits on Heroes. Stacks carry over between
 // games through QuestRetain. Damage per stack is in JunkratData.xml; trap radius and Heroic cooldowns are set here.
 // Rocket Rodeo also gets the other Heroic and Puckish Scamp when it picks one at level 10.
+// Trap King and Rocket Rodeo: each quest gives its bonus up to 100 stacks, then each stack past 100 adds 2% to all
+// damage; a takedown that counts for one of them counts for both when both are taken (once per takedown).
 // ============================================================
 
 const fixed libAffx_junkratKillWindow = 3.0;
@@ -26,6 +28,9 @@ int libAffx_junkratNadeHits; // Frag Launcher Hero hits toward the next stack
 int libAffx_junkratMeanTrapsApplied = -1;
 fixed libAffx_junkratCooldownApplied = -1.0;
 fixed libAffx_junkratFragAmountApplied = -1.0;
+int libAffx_junkratMeanTrapsPastApplied; // Mean Traps stacks past 100 applied as damage this game
+int libAffx_junkratShowstopperPastApplied; // Showstopper stacks past 100 applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_junkratCountedTime; // per enemy player, when their last takedown counted
 
 unit libAffx_JunkratHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -88,6 +93,22 @@ bool libAffx_JunkratNadeHit_Func (bool testConds, bool runActions) {
 bool libAffx_JunkratRecentlyHit(fixed hitTime) {
     return hitTime > 0.0 && GameGetMissionTime() - hitTime <= libAffx_junkratKillWindow;
 }
+// A takedown that counts for Trap King or Rocket Rodeo adds 1 to each taken one's quest, once per takedown (both triggers
+// can fire for the same death)
+void libAffx_JunkratCountTakedown (int killedPlayer) {
+    unit hero = libAffx_JunkratHero();
+    fixed now = GameGetMissionTime();
+    if (libAffx_junkratCountedTime[killedPlayer] > 0.0 && now - libAffx_junkratCountedTime[killedPlayer] < 0.5) {
+        return;
+    }
+    libAffx_junkratCountedTime[killedPlayer] = now;
+    if (libAffx_JunkratHas("JunkratTrapKingMarker")) {
+        libGame_gf_ModifyTokenCount(1, "JunkratMeanTrapsTokenCounter", hero);
+    }
+    if (libAffx_JunkratHas("JunkratRocketRodeoMarker")) {
+        libGame_gf_ModifyTokenCount(1, "JunkratShowstopperTokenCounter", hero);
+    }
+}
 // HeroTakedown for Trap King
 bool libAffx_JunkratTrapTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -100,7 +121,7 @@ bool libAffx_JunkratTrapTakedown (bool testConds, bool runActions) {
         return true;
     }
     libAffx_junkratTrapHitTime[killedPlayer] = 0.0;
-    libGame_gf_ModifyTokenCount(1, "JunkratMeanTrapsTokenCounter", libAffx_JunkratHero());
+    libAffx_JunkratCountTakedown(killedPlayer);
     return true;
 }
 // HeroTakedown for Rocket Rodeo
@@ -115,7 +136,7 @@ bool libAffx_JunkratRodeoTakedown (bool testConds, bool runActions) {
         return true;
     }
     libAffx_junkratHeroicHitTime[killedPlayer] = 0.0;
-    libGame_gf_ModifyTokenCount(1, "JunkratShowstopperTokenCounter", libAffx_JunkratHero());
+    libAffx_JunkratCountTakedown(killedPlayer);
     return true;
 }
 
@@ -140,6 +161,40 @@ void libAffx_JunkratSetCatalog(int catalog, string entry, string field, fixed va
     CatalogFieldValueSet(catalog, entry, field, libAffx_player, FixedToString(value, 4));
 }
 
+// takedown quest stacks past 100: 2% each to all damage, per taken starter
+void libAffx_JunkratSyncPast () {
+    unit hero = libAffx_JunkratHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "JunkratTrapKingMarker")) {
+        // Mean Traps
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "JunkratMeanTrapsTokenCounter")) - 100);
+        if (power != libAffx_junkratMeanTrapsPastApplied) {
+            libAffx_junkratMeanTrapsPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JunkratGoldenMeanTrapsPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JunkratGoldenMeanTrapsPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "JunkratGoldenMeanTrapsPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "JunkratGoldenMeanTrapsPastCap")) {
+            UnitBehaviorAdd(hero, "JunkratGoldenMeanTrapsPastCap", hero, 1);
+        }
+    }
+    if (UnitHasBehavior2(hero, "JunkratRocketRodeoMarker")) {
+        // Showstopper
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "JunkratShowstopperTokenCounter")) - 100);
+        if (power != libAffx_junkratShowstopperPastApplied) {
+            libAffx_junkratShowstopperPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JunkratGoldenShowstopperPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "JunkratGoldenShowstopperPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "JunkratGoldenShowstopperPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "JunkratGoldenShowstopperPastCap")) {
+            UnitBehaviorAdd(hero, "JunkratGoldenShowstopperPastCap", hero, 1);
+        }
+    }
+}
 // Trap radius from Mean Traps, Heroic cooldowns from Rocket Rodeo and Showstopper, and the extra explosions'
 // damage following Frag Launcher's
 bool libAffx_JunkratTick_Func (bool testConds, bool runActions) {
@@ -150,6 +205,7 @@ bool libAffx_JunkratTick_Func (bool testConds, bool runActions) {
     if (libAffx_JunkratHero() == null) {
         return true;
     }
+    libAffx_JunkratSyncPast();
     if (libAffx_JunkratHas("JunkratTrapKingMarker")) {
         stacks = MinI(libAffx_JunkratTokens("JunkratMeanTrapsTokenCounter"), libAffx_junkratMeanTrapsRadiusMax);
         if (stacks != libAffx_junkratMeanTrapsApplied) {

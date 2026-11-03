@@ -132,14 +132,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="ChenBreathOfFireBoggedDownSet">
     <EffectArray value="ChenInfernoRemoveWeakBurnMark" />
   </CEffectSet>
-  <!-- Eternal Flame quest: each token is 1% Ignite and Ring of Fire damage -->
+  <!-- Eternal Flame quest: each token is 1% Ignite and Ring of Fire damage, up to 100 -->
   <CBehaviorTokenCounter id="ChenEternalFlameTokenCounter" parent="StormQuestToken">
     <Face value="ChenEternalFlameTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- up to 100 takedown stacks; past that, 2% damage each (script) -->
   <CAccumulatorToken id="ChenEternalFlameAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="1" />
     <ApplicationRule value="Add" />
     <TokenId value="ChenEternalFlameTokenCounter" />
     <Scale value="0.01" />
@@ -287,4 +288,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="ChenHundredFistsTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_chen_flyingkick.dds" />
   </CButton>
+  <!-- Eternal Flame: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="ChenGoldenEternalFlamePastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 </Catalog>

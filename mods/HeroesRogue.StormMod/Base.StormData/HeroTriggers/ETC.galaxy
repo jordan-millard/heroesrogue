@@ -8,9 +8,10 @@ include "AffixTriggers"
 // Amplified, Roar of the Crowd quest: an enemy Hero takedown within 6 seconds of a Face Melt hit adds 1% Face Melt
 // radius, up to 75%; each stack past that adds 1% Face Melt damage instead.
 // Rock Legend, Fan Club quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds 2 Guitar Solo
-// healing per second (ETCData.xml). Sonic Boom (Epic): while Guitar Solo is active, Basic Attacks deal 50% of their
+// healing per second (ETCData.xml), up to 100 stacks. Sonic Boom (Epic): while Guitar Solo is active, Basic Attacks deal 50% of their
 // damage to other enemies within 2.5 range of the target.
-// Each starter gives its ability 2 charges (AffixData.xml).
+// Each starter gives its ability 2 charges (AffixData.xml). Every takedown quest: each stack past 100 adds 2% to all
+// damage, and a takedown that counts for one taken starter counts for every taken starter.
 // The Slide Guitar, Turn It Up and Shred quests are in ETCData.xml. Stacks carry over between games through QuestRetain.
 // ============================================================
 
@@ -163,10 +164,19 @@ void libAffx_ETCSyncRing () {
     UnitBehaviorAdd(hero, "ETCAmplifiedRadiusIndicator", hero, 1);
     libAffx_etcRingRadius = radius;
 }
+// Fan Club: the healing stops growing at 100 stacks (ETCFanClubAccumulator); each stack past 100 adds 2% to all damage
+void libAffx_ETCSyncFanClub () {
+    unit hero = libAffx_ETCHero();
+    if (hero == null || !UnitHasBehavior2(hero, "ETCRockLegendMarker")) {
+        return;
+    }
+    libAffx_ETCPastCapBuff(hero, "ETCGoldenFanClubPastCap", 0.02 * MaxF(0.0, UnitGetTokenCount(hero, "ETCFanClubTokenCounter") - 100.0));
+}
 bool libAffx_ETCSync_Func (bool testConds, bool runActions) {
     libAffx_ETCSyncStun();
     libAffx_ETCSyncRadius();
     libAffx_ETCSyncRing();
+    libAffx_ETCSyncFanClub();
     return true;
 }
 
@@ -215,6 +225,40 @@ bool libAffx_ETCInWindow (fixed hitTime, fixed now, fixed window) {
     return hitTime > 0.0 && now - hitTime <= window;
 }
 
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_ETCTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_ETCTakedownCrossStart () {
+    unit hero = libAffx_ETCHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_ETCTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "ETCStandingOvationTokenCounter"));
+    libAffx_ETCTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "ETCRoarOfTheCrowdTokenCounter"));
+    libAffx_ETCTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "ETCFanClubTokenCounter"));
+}
+void libAffx_ETCTakedownCross () {
+    unit hero = libAffx_ETCHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "ETCStandingOvationTokenCounter")) == libAffx_ETCTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "ETCRoarOfTheCrowdTokenCounter")) == libAffx_ETCTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "ETCFanClubTokenCounter")) == libAffx_ETCTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "ETCHeadlinerMarker") && FixedToInt(UnitGetTokenCount(hero, "ETCStandingOvationTokenCounter")) == libAffx_ETCTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "ETCStandingOvationTokenCounter", hero);
+        libAffx_ETCSyncStun();
+    }
+    if (UnitHasBehavior2(hero, "ETCAmplifiedMarker") && FixedToInt(UnitGetTokenCount(hero, "ETCRoarOfTheCrowdTokenCounter")) == libAffx_ETCTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "ETCRoarOfTheCrowdTokenCounter", hero);
+        libAffx_ETCSyncRadius();
+        libAffx_ETCSyncRing();
+    }
+    if (UnitHasBehavior2(hero, "ETCRockLegendMarker") && FixedToInt(UnitGetTokenCount(hero, "ETCFanClubTokenCounter")) == libAffx_ETCTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "ETCFanClubTokenCounter", hero);
+        libAffx_ETCSyncFanClub();
+    }
+}
 // HeroTakedown for Standing Ovation, Roar of the Crowd and Fan Club
 bool libAffx_ETCTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -228,6 +272,7 @@ bool libAffx_ETCTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_ETCTakedownCrossStart();
     if (UnitHasBehavior2(hero, "ETCHeadlinerMarker") && libAffx_ETCInWindow(libAffx_etcSlideTime[killedPlayer], now, libAffx_etcTakedownWindow)) {
         libAffx_etcSlideTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ETCStandingOvationTokenCounter", hero);
@@ -244,8 +289,10 @@ bool libAffx_ETCTakedown (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "ETCRockLegendMarker") && libAffx_ETCInWindow(libAffx_etcAttackTime[killedPlayer], now, libAffx_etcTakedownWindow)) {
         libAffx_etcAttackTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "ETCFanClubTokenCounter", hero);
+        libAffx_ETCSyncFanClub();
         libAffx_ETCQuestDing();
     }
+    libAffx_ETCTakedownCross();
     return true;
 }
 

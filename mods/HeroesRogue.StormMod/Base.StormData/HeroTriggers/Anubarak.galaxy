@@ -5,7 +5,8 @@ include "AffixTriggers"
 // between games); Crypt Lord's Tomb Keeper gives one when an enemy Hero dies within 3 seconds of being hit by Impale
 // or Burrow Charge; Traitor King's Unbreakable gives one for each takedown while Harden Carapace is up. Damage per
 // stack is in AnubarakData.xml; Beetle Health and lifetime, cooldowns, armor stacks and the Rare boons' explosions
-// are handled here.
+// are handled here. Tomb Keeper and Unbreakable give their bonus up to 100 stacks, then each stack past 100 adds 2% to
+// all damage; a takedown that counts for one of them counts for both when both are taken (once per takedown).
 // ============================================================
 
 const int libAffx_anubBeetleHitsPerStack = 25;
@@ -32,6 +33,9 @@ bool libAffx_anubCarapaceUp;
 fixed libAffx_anubCarapaceStart;
 fixed libAffx_anubCarapaceLimit;
 fixed libAffx_anubCarapaceAbsorbed;
+int libAffx_anubTombKeeperPastApplied; // Tomb Keeper stacks past 100 applied as damage this game
+int libAffx_anubUnbreakablePastApplied; // Unbreakable stacks past 100 applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_anubCountedTime; // per enemy player, when their last takedown counted
 
 unit libAffx_AnubHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -129,6 +133,24 @@ bool libAffx_AnubStunHit_Func (bool testConds, bool runActions) {
     libAffx_anubStunHitTime[victimPlayer] = GameGetMissionTime();
     return true;
 }
+// A takedown that counts for Crypt Lord or Traitor King adds 1 to each taken one's quest, once per takedown (both triggers
+// can fire for the same death)
+void libAffx_AnubCountTakedown (int killedPlayer) {
+    unit hero = libAffx_AnubHero();
+    fixed now = GameGetMissionTime();
+    if (killedPlayer >= 1 && killedPlayer <= libCore_gv_bALMaxPlayers) {
+        if (libAffx_anubCountedTime[killedPlayer] > 0.0 && now - libAffx_anubCountedTime[killedPlayer] < 0.5) {
+            return;
+        }
+        libAffx_anubCountedTime[killedPlayer] = now;
+    }
+    if (libAffx_AnubHas("AnubarakCryptLordMarker")) {
+        libGame_gf_ModifyTokenCount(1, "AnubarakTombKeeperTokenCounter", hero);
+    }
+    if (libAffx_AnubHas("AnubarakTraitorKingMarker")) {
+        libGame_gf_ModifyTokenCount(1, "AnubarakUnbreakableTokenCounter", hero);
+    }
+}
 // HeroTakedown for Crypt Lord
 bool libAffx_AnubCryptLordTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
@@ -146,7 +168,7 @@ bool libAffx_AnubCryptLordTakedown (bool testConds, bool runActions) {
         return true;
     }
     libAffx_anubStunHitTime[killedPlayer] = 0.0;
-    libGame_gf_ModifyTokenCount(1, "AnubarakTombKeeperTokenCounter", libAffx_AnubHero());
+    libAffx_AnubCountTakedown(killedPlayer);
     return true;
 }
 // Tomb Keeper's cooldown reduction; Aftershock follows Burrow Charge's damage and radius
@@ -178,6 +200,7 @@ void libAffx_AnubCryptLordTick() {
 // HeroTakedown for Traitor King
 bool libAffx_AnubTraitorKingTakedown (bool testConds, bool runActions) {
     unit hero = libAffx_AnubHero();
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
     if (testConds) {
         if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || !libAffx_AnubHas("AnubarakTraitorKingMarker")) {
             return false;
@@ -186,7 +209,7 @@ bool libAffx_AnubTraitorKingTakedown (bool testConds, bool runActions) {
     if (!UnitHasBehavior2(hero, "AnubarakHardenCarapace")) {
         return true;
     }
-    libGame_gf_ModifyTokenCount(1, "AnubarakUnbreakableTokenCounter", hero);
+    libAffx_AnubCountTakedown(killedPlayer);
     return true;
 }
 // Thorned Shell: enemies who Basic Attack Anub'arak while Harden Carapace is up take damage
@@ -233,17 +256,52 @@ void libAffx_AnubRetaliationTick(unit hero) {
 }
 void libAffx_AnubTraitorKingTick(unit hero) {
     int stacks = libAffx_AnubTokens("AnubarakUnbreakableTokenCounter");
-    libAffx_AnubSetStacks(hero, "AnubarakUnbreakableHealth", stacks);
+    libAffx_AnubSetStacks(hero, "AnubarakUnbreakableHealth", MinI(stacks, 100));
     libAffx_AnubSetStacks(hero, "AnubarakUnbreakableSpellArmor", MinI(stacks, libAffx_anubUnbreakableSpellArmorMax));
     libAffx_AnubRetaliationTick(hero);
 }
 
+// takedown quest stacks past 100: 2% each to all damage, per taken starter
+void libAffx_AnubSyncPast () {
+    unit hero = libAffx_AnubHero();
+    int power;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "AnubarakCryptLordMarker")) {
+        // Tomb Keeper
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "AnubarakTombKeeperTokenCounter")) - 100);
+        if (power != libAffx_anubTombKeeperPastApplied) {
+            libAffx_anubTombKeeperPastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AnubarakGoldenTombKeeperPastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AnubarakGoldenTombKeeperPastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "AnubarakGoldenTombKeeperPastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "AnubarakGoldenTombKeeperPastCap")) {
+            UnitBehaviorAdd(hero, "AnubarakGoldenTombKeeperPastCap", hero, 1);
+        }
+    }
+    if (UnitHasBehavior2(hero, "AnubarakTraitorKingMarker")) {
+        // Unbreakable
+        power = MaxI(0, FixedToInt(UnitGetTokenCount(hero, "AnubarakUnbreakableTokenCounter")) - 100);
+        if (power != libAffx_anubUnbreakablePastApplied) {
+            libAffx_anubUnbreakablePastApplied = power;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AnubarakGoldenUnbreakablePastCap", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AnubarakGoldenUnbreakablePastCap", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+            UnitBehaviorRemove(hero, "AnubarakGoldenUnbreakablePastCap", 1);
+        }
+        if (power > 0 && !UnitHasBehavior2(hero, "AnubarakGoldenUnbreakablePastCap")) {
+            UnitBehaviorAdd(hero, "AnubarakGoldenUnbreakablePastCap", hero, 1);
+        }
+    }
+}
 bool libAffx_AnubTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_AnubHero();
     if (hero == null || !UnitIsAlive(hero)) {
         libAffx_anubCarapaceUp = false;
         return true;
     }
+    libAffx_AnubSyncPast();
     if (UnitHasBehavior2(hero, "AnubarakScarabLordMarker")) {
         libAffx_AnubScarabLordTick(hero);
     }

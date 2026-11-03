@@ -8,12 +8,14 @@ include "AffixTriggers"
 // up to 75%; each stack past that adds 1% Pufferfish damage instead. Chain Reaction (Legendary): an enemy Hero hit by Pufferfish sets off a second explosion that deals 50%
 // of the hit to other enemies within 3 range.
 // Mrrgl Warrior, Living Legend quest: an enemy Hero takedown within 3 seconds of a Basic Attack on them adds Rejuvenating
-// Bubble healing (MurkyData.xml) and 0.5% maximum Health. Shell Shock (Legendary): Basic Attacks deal 75% of their damage
+// Bubble healing (MurkyData.xml) and 0.5% maximum Health, up to 100 stacks. Shell Shock (Legendary): Basic Attacks deal 75% of their damage
 // to other enemies within 3 range of the target. Dropping below 30% Health casts an emergency Safety Bubble
 // (MurkyEmergencyBubbleSet; the fatal-hit case is a damage response in MurkyData.xml). Bubble Burst (Epic) heals for 20%
 // of Basic Attack damage while its Attack Speed lasts.
 // Each starter gives its ability 2 charges (AffixData.xml), so the tree talents that lower those cooldowns are moved onto
 // the charge timer here.
+// Every takedown quest: each stack past 100 adds 2% to all damage, and a takedown that counts for one taken starter
+// counts for every taken starter.
 // The Ooze, Blowfish and Fin Fury quests are in MurkyData.xml. Stacks carry over between games through QuestRetain.
 // ============================================================
 
@@ -31,7 +33,7 @@ const fixed libAffx_murkyShellShockRadius = 3.0;
 const fixed libAffx_murkyShellShockFraction = 0.75;
 const fixed libAffx_murkyBubbleBurstLeech = 0.2;
 const fixed libAffx_murkyEmergencyLifePercent = 30.0;
-const int libAffx_murkyLivingLegendMaxStacks = 1000; // MurkyLivingLegendHealth MaxStackCount
+const int libAffx_murkyLivingLegendMaxStacks = 100; // Living Legend health stops at 100 stacks (MaxStackCount is higher)
 
 bool libAffx_murkyStarted;
 fixed libAffx_murkyRadiusAdded; // Slime radius added by Slime Mountain this game
@@ -181,7 +183,8 @@ void libAffx_MurkySyncRing () {
     UnitBehaviorAdd(hero, "MurkySlimeKingRadiusIndicator", hero, 1);
     libAffx_murkyRingRadius = radius;
 }
-// Living Legend: keeps one MurkyLivingLegendHealth stack (0.5% maximum Health) per quest stack
+// Living Legend: keeps one MurkyLivingLegendHealth stack (0.5% maximum Health) per quest stack up to 100; each stack
+// past 100 adds 2% to all damage
 void libAffx_MurkySyncLivingLegend () {
     unit hero = libAffx_MurkyHero();
     int wanted;
@@ -189,6 +192,7 @@ void libAffx_MurkySyncLivingLegend () {
     if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker")) {
         return;
     }
+    libAffx_MurkyPastCapBuff(hero, "MurkyGoldenLivingLegendPastCap", 0.02 * MaxF(0.0, UnitGetTokenCount(hero, "MurkyLivingLegendTokenCounter") - 100.0));
     wanted = FixedToInt(UnitGetTokenCount(hero, "MurkyLivingLegendTokenCounter"));
     if (wanted > libAffx_murkyLivingLegendMaxStacks) {
         wanted = libAffx_murkyLivingLegendMaxStacks;
@@ -269,6 +273,40 @@ bool libAffx_MurkyInWindow (fixed hitTime, fixed now, fixed window) {
 }
 
 // HeroTakedown for Slime Mountain, Catch of the Day and Living Legend
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_MurkyTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_MurkyTakedownCrossStart () {
+    unit hero = libAffx_MurkyHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_MurkyTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "MurkySlimeMountainTokenCounter"));
+    libAffx_MurkyTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "MurkyCatchOfTheDayTokenCounter"));
+    libAffx_MurkyTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "MurkyLivingLegendTokenCounter"));
+}
+void libAffx_MurkyTakedownCross () {
+    unit hero = libAffx_MurkyHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "MurkySlimeMountainTokenCounter")) == libAffx_MurkyTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "MurkyCatchOfTheDayTokenCounter")) == libAffx_MurkyTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "MurkyLivingLegendTokenCounter")) == libAffx_MurkyTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "MurkySlimeKingMarker") && FixedToInt(UnitGetTokenCount(hero, "MurkySlimeMountainTokenCounter")) == libAffx_MurkyTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "MurkySlimeMountainTokenCounter", hero);
+        libAffx_MurkySyncRadius();
+        libAffx_MurkySyncRing();
+    }
+    if (UnitHasBehavior2(hero, "MurkyBigTunaMarker") && FixedToInt(UnitGetTokenCount(hero, "MurkyCatchOfTheDayTokenCounter")) == libAffx_MurkyTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "MurkyCatchOfTheDayTokenCounter", hero);
+        libAffx_MurkySyncPufferRadius();
+    }
+    if (UnitHasBehavior2(hero, "MurkyMrrglWarriorMarker") && FixedToInt(UnitGetTokenCount(hero, "MurkyLivingLegendTokenCounter")) == libAffx_MurkyTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "MurkyLivingLegendTokenCounter", hero);
+        libAffx_MurkySyncLivingLegend();
+    }
+}
 bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
     int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
     unit hero = libAffx_MurkyHero();
@@ -281,6 +319,7 @@ bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
     if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
         return true;
     }
+    libAffx_MurkyTakedownCrossStart();
     if (UnitHasBehavior2(hero, "MurkySlimeKingMarker") && libAffx_MurkyInWindow(libAffx_murkySlimeTime[killedPlayer], now, libAffx_murkyTakedownWindow)) {
         libAffx_murkySlimeTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "MurkySlimeMountainTokenCounter", hero);
@@ -300,6 +339,7 @@ bool libAffx_MurkyTakedown (bool testConds, bool runActions) {
         libAffx_MurkySyncLivingLegend();
         libAffx_MurkyQuestDing();
     }
+    libAffx_MurkyTakedownCross();
     return true;
 }
 

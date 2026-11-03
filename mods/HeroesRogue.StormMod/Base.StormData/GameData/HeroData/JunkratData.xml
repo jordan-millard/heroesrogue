@@ -53,7 +53,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ApplicationRule value="Add" />
     <TokenId value="JunkratMeanTrapsTokenCounter" />
     <Scale value="0.03" />
-    <MaxAccumulation value="100000" />
+    <!-- up to 100 stacks; past that, 2% damage each (JunkratGoldenMeanTrapsPastCap) -->
+    <MaxAccumulation value="3" />
   </CAccumulatorToken>
 
   <!-- Bear Trap (Rare): longer root and Armor reduction -->
@@ -358,7 +359,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ApplicationRule value="Add" />
     <TokenId value="JunkratShowstopperTokenCounter" />
     <Scale value="0.04" />
-    <MaxAccumulation value="100000" />
+    <!-- up to 100 stacks; past that, 2% damage each (JunkratGoldenShowstopperPastCap) -->
+    <MaxAccumulation value="4" />
   </CAccumulatorToken>
   <CEffectDamage id="JunkratRIPTireDamage">
     <MultiplicativeModifierArray index="JunkratShowstopper" Accumulator="JunkratShowstopperAccumulator" />
@@ -397,4 +399,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Icon value="Assets\Textures\storm_ui_icon_junkrat_rocket_ride.dds" />
   </CButton>
 
+  <!-- Mean Traps: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="JunkratGoldenMeanTrapsPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Showstopper: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="JunkratGoldenShowstopperPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 </Catalog>

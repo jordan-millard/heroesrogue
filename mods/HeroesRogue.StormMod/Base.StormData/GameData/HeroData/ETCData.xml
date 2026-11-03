@@ -213,9 +213,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Face value="ETCFanClubTokenCounter" />
     <Max value="100000" />
   </CBehaviorTokenCounter>
+  <!-- up to 100 takedown stacks; past that, 2% damage each (script) -->
   <CAccumulatorToken id="ETCFanClubAccumulator" parent="BaseTokenAccumulator">
     <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
+    <MaxAccumulation value="200" />
     <ApplicationRule value="Add" />
     <TokenId value="ETCFanClubTokenCounter" />
     <Scale value="2" />
@@ -307,6 +308,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Modification>
   </CBehaviorBuff>
   <CBehaviorBuff id="ETCGoldenRoarPastCap" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Fan Club: takedown quest stacks past 100 add 2% each to all damage (the script sets the amount and re-adds it) -->
+  <CBehaviorBuff id="ETCGoldenFanClubPastCap" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
