@@ -3381,6 +3381,46 @@ void libAffx_ForgetAffixBehavior(int player, string behavior) {
         }
     }
 }
+// Changing a live unit's Maximum Health in the catalog (Sappers doubles the leaders') can leave it alive at 0 Health and
+// unable to take damage. A flip saves every live leader's Health percent first and puts it back after, then again half a
+// second later; a leader still without Health is killed so it can't get stuck.
+const int libAffx_flipLifeMax = 64;
+unit[libAffx_flipLifeMax + 1] libAffx_flipLifeUnit;
+fixed[libAffx_flipLifeMax + 1] libAffx_flipLifePercent;
+int libAffx_flipLifeCount;
+trigger libAffx_flipLifeTrigger;
+void libAffx_FlipSaveLife() {
+    unitgroup leaders = UnitGroup("WizardMinion", c_playerAny, RegionEntireMap(), UnitFilter(0, 0, 0, 0), 0);
+    int i = UnitGroupCount(leaders, c_unitCountAll);
+    unit unitVar;
+    libAffx_flipLifeCount = 0;
+    for (;; i -= 1) {
+        if (i <= 0 || libAffx_flipLifeCount >= libAffx_flipLifeMax) { break; }
+        unitVar = UnitGroupUnitFromEnd(leaders, i);
+        if (unitVar == null || !UnitIsAlive(unitVar)) { continue; }
+        libAffx_flipLifeCount += 1;
+        libAffx_flipLifeUnit[libAffx_flipLifeCount] = unitVar;
+        libAffx_flipLifePercent[libAffx_flipLifeCount] = MaxF(1.0, UnitGetPropertyFixed(unitVar, c_unitPropLifePercent, c_unitPropCurrent));
+    }
+}
+void libAffx_FlipRestoreLife(bool lastTry) {
+    int i;
+    unit unitVar;
+    for (i = 1; i <= libAffx_flipLifeCount; i += 1) {
+        unitVar = libAffx_flipLifeUnit[i];
+        if (unitVar == null || !UnitIsAlive(unitVar)) { continue; }
+        if (lastTry && UnitGetPropertyFixed(unitVar, c_unitPropLifeMax, c_unitPropCurrent) < 1.0) {
+            UnitKill(unitVar);
+            continue;
+        }
+        UnitSetPropertyFixed(unitVar, c_unitPropLifePercent, libAffx_flipLifePercent[i]);
+    }
+}
+bool libAffx_FlipRestoreLifeLater (bool testConds, bool runActions) {
+    Wait(0.5, c_timeGame);
+    libAffx_FlipRestoreLife(true);
+    return true;
+}
 // take the curse's behaviors off the team it hurt or helped, then give them to the other team
 void libAffx_FlipCurse(int affix) {
     int i;
@@ -3406,6 +3446,7 @@ void libAffx_FlipCurse(int affix) {
         }
     }
     // catalog changes for a computer team go back to the base value before they are made for the other team
+    libAffx_FlipSaveLife();
     for (i = 1; i <= libAffx_maxCatalogModifications; i += 1) {
         player = libAffx_affixes[affix].catalogModifications[i].player;
         behavior = libAffx_affixes[affix].catalogModifications[i].reference;
@@ -3426,6 +3467,11 @@ void libAffx_FlipCurse(int affix) {
         }
         libAffx_FlipCurseScript(libAffx_affixes[affix].name);
     }
+    libAffx_FlipRestoreLife(false);
+    if (libAffx_flipLifeTrigger == null) {
+        libAffx_flipLifeTrigger = TriggerCreate("libAffx_FlipRestoreLifeLater");
+    }
+    TriggerExecute(libAffx_flipLifeTrigger, true, false);
     libAffx_DisplayChatMessage(StringExternal("Message/ReverseHex") + TextWithColor(StringExternal("Affix/Name/" + libAffx_affixes[affix].name), libAffx_GetAffixColor(affix)) + StringToText("."));
 }
 void libAffx_ApplyBehaviors(int affix, int amount) {
