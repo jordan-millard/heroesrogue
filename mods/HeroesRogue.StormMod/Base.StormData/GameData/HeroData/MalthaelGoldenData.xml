@@ -89,7 +89,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Wraithstalker ===== -->
-  <!-- Wraith Strike stores 4 charges (4 second recharge) and resets the attack timer; 25% more Health; Last Rites at level 1 (Tormented Souls cannot be taken; its quest keeps half). Haunt quest (10% of each map gains kept for good): 0.5% Wraith Strike damage per Wraith Strike on an enemy Hero. Stalk quest: takedowns within 6 seconds of a hit; stacks 1-40 make Wraith Strike recharge 1% faster each, 41-80 make it reach 1% farther each, at 100 it no longer needs a target with Reaper's Mark (script), then 2.5% damage each. -->
+  <!-- Wraith Strike stores 4 charges (4 second recharge) and resets the attack timer; 25% more Health; Last Rites at level 1 (Tormented Souls cannot be taken; its quest keeps half). Haunt quest (10% of each map gains kept for good): 0.5% Wraith Strike damage per Wraith Strike on an enemy Hero. Stalk quest: takedowns within 6 seconds of a hit; stacks 1-40 make Wraith Strike recharge 1% faster each, 41-80 make it reach 1% farther each, at 100 it no longer needs a target with Reaper's Mark (script), then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="MalthaelGoldenHauntTokenCounter" parent="StormQuestToken">
     <Face value="MalthaelGoldenHauntTokenCounter" />
     <Max value="100000" />

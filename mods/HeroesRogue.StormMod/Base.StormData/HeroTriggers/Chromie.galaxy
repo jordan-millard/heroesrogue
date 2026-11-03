@@ -4,12 +4,12 @@ include "AffixTriggers"
 // Golden Chromie. Each starter: hits on enemy Heroes open a 3 second takedown window and add the hit quest
 // token; takedowns in the window add the takedown token.
 // Sand Sniper: Sands of Time stacks 1-40 recharge, 41-80 missile speed, 81-100 width, 100 a second Sand Blast
-// for half damage, then 2.5% all damage each.
+// for half damage, then 2% damage each past 100.
 // Bronze Breath: Dragonflight stacks 1-40 recharge, 41-80 a shorter delay, 81-100 area, 100 each blast
-// erupts again for half damage, then 2.5% all damage each.
+// erupts again for half damage, then 2% damage each past 100.
 // Chronomancer: Time Traps Slow 90% decaying to 15% over 6 seconds; a Time Stop resets Q and W and adds
 // Momentum (Sand Blast +1 range, Dragon's Breath +20% damage each), which resets 20 seconds after the last
-// takedown. Timeline stacks 1-40 a Shield, 41-80 lower Mana costs, 100 Momentum halves instead, then 2.5% damage.
+// takedown. Timeline stacks 1-40 a Shield, 41-80 lower Mana costs, 100 Momentum halves instead, then 2% damage past 100.
 // ============================================================
 
 const fixed libAffx_ChromieTakedownWindow = 3.0;
@@ -60,7 +60,7 @@ void libAffx_ChromieQuestDing() {
 bool libAffx_ChromieInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_ChromieTakedownWindow;
 }
-// ChromieGoldenSandsOfTimeTokenCounter: stacks 1-40: 1% of the 3 second recharge each; 41-80: 1% missile acceleration each; 81-100: 1% width each; then 2.5% all damage each
+// ChromieGoldenSandsOfTimeTokenCounter: stacks 1-40: 1% of the 3 second recharge each; 41-80: 1% missile acceleration each; 81-100: 1% width each; then 2% damage each past 100
 void libAffx_ChromieSyncSniper () {
     unit hero = libAffx_ChromieHero();
     int stacks;
@@ -100,7 +100,7 @@ void libAffx_ChromieSyncSniper () {
         UnitBehaviorAdd(hero, "ChromieSniperPastCapDamage", hero, 1);
     }
 }
-// ChromieGoldenDragonflightTokenCounter: stacks 1-40: 1% of the 14 second recharge each; 41-80: 1% of the delay each; 81-100: 1% area each; then 2.5% all damage each
+// ChromieGoldenDragonflightTokenCounter: stacks 1-40: 1% of the 14 second recharge each; 41-80: 1% of the delay each; 81-100: 1% area each; then 2% damage each past 100
 void libAffx_ChromieSyncBreath () {
     unit hero = libAffx_ChromieHero();
     int stacks;
@@ -144,7 +144,7 @@ void libAffx_ChromieSyncBreath () {
         UnitBehaviorAdd(hero, "ChromieBreathPastCapDamage", hero, 1);
     }
 }
-// ChromieGoldenTimelineTokenCounter: stacks 1-40: the Shield, 0.5% of maximum Health each (script); 41-80: 1% lower Mana costs each; 100: Momentum halves instead of resetting (script); then 2.5% all damage each
+// ChromieGoldenTimelineTokenCounter: stacks 1-40: the Shield, 0.5% of maximum Health each (script); 41-80: 1% lower Mana costs each; 100: Momentum halves instead of resetting (script); then 2% damage each past 100
 void libAffx_ChromieSyncChrono () {
     unit hero = libAffx_ChromieHero();
     int stacks;

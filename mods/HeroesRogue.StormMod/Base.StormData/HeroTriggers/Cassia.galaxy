@@ -4,9 +4,9 @@ include "AffixTriggers"
 // Golden Cassia (Amazon). Each starter: hits on enemy Heroes open a 3 second takedown window and add the hit
 // quest token; takedowns in the window add the takedown token.
 // Valkyrie's Javelin: Thunderbolt counts each enemy Hero once per throw; Javelin Mastery stacks 1-40 recharge,
-// 41-80 width, 81-100 a Slow, 100 an echo throw for half damage, then 2.5% all damage each.
+// 41-80 width, 81-100 a Slow, 100 an echo throw for half damage, then 2% damage each past 100.
 // Warden of Arreat: Fend Strikes counts each enemy Hero once per Fend; Fend Mastery stacks 1-40 recharge, 41-80
-// arc, 81-100 strike speed, 100 a final strike, then 2.5% all damage each. A full Fend heals 5% (data).
+// arc, 81-100 strike speed, 100 a final strike, then 2% damage each past 100. A full Fend heals 5% (data).
 // Lightning Strike (Skirm): Pinning Strikes counts Basic Attacks on Heroes for Fend damage; every 10 empower the next Fend to
 // Root (data). Penetrate stacks 1-40 Attack Speed, 41-80 shorter Slows and Stuns, 100 maximum
 // Health damage on Basic Attacks, then 1.5% all damage each.
@@ -64,7 +64,7 @@ void libAffx_CassiaQuestDing() {
 bool libAffx_CassiaInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_CassiaTakedownWindow;
 }
-// AmazonGoldenJavelinTokenCounter: stacks 1-40: 1% of the 5 second recharge each; 41-80: 1% width each; 81-100: 1% Slow each; then 2.5% all damage each
+// AmazonGoldenJavelinTokenCounter: stacks 1-40: 1% of the 5 second recharge each; 41-80: 1% width each; 81-100: 1% Slow each; then 2% damage each past 100
 void libAffx_CassiaSyncJavelin () {
     unit hero = libAffx_CassiaHero();
     int stacks;
@@ -105,7 +105,7 @@ void libAffx_CassiaSyncJavelin () {
         UnitBehaviorAdd(hero, "CassiaJavelinPastCapDamage", hero, 1);
     }
 }
-// AmazonGoldenFendMasteryTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% arc each; 81-100: 1% faster strikes each; then 2.5% all damage each
+// AmazonGoldenFendMasteryTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% arc each; 81-100: 1% faster strikes each; then 2% damage each past 100
 void libAffx_CassiaSyncFend () {
     unit hero = libAffx_CassiaHero();
     int stacks;

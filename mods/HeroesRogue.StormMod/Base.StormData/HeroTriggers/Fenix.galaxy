@@ -4,10 +4,10 @@ include "AffixTriggers"
 // Golden Fenix. Each starter: hits on enemy Heroes open a 3 second takedown window and add the hit quest
 // token; takedowns in the window add the takedown token.
 // Plasma Executor: Execution stacks 1-40 recharge, 41-80 a longer beam, 81-100 a faster sweep, 100 every hit
-// is cut again for half damage, then 2.5% all damage each.
+// is cut again for half damage, then 2% damage each past 100.
 // Warp Striker: Warp Doctrine stacks 1-40 recharge, 41-80 reach, 81-100 more empowered attacks, 100 Warp
-// blasts where Fenix leaves and arrives, then 2.5% all damage each.
-// Twin Arsenal: Arsenal Mastery stacks 1-40 Attack Speed, 41-80 attack range, then 2.5% all damage
+// blasts where Fenix leaves and arrives, then 2% damage each past 100.
+// Twin Arsenal: Arsenal Mastery stacks 1-40 Attack Speed, 41-80 attack range, then 2% all damage past 100
 // each.
 // ============================================================
 
@@ -55,7 +55,7 @@ void libAffx_FenixQuestDing() {
 bool libAffx_FenixInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_FenixTakedownWindow;
 }
-// FenixGoldenExecutionTokenCounter: stacks 1-40: 1% of the 12 second recharge each; 41-80: 1% beam length each; 81-100: 1% faster sweep each; then 2.5% all damage each
+// FenixGoldenExecutionTokenCounter: stacks 1-40: 1% of the 12 second recharge each; 41-80: 1% beam length each; 81-100: 1% faster sweep each; then 2% damage each past 100
 void libAffx_FenixSyncPlasma () {
     unit hero = libAffx_FenixHero();
     int stacks;
@@ -100,7 +100,7 @@ void libAffx_FenixSyncPlasma () {
         UnitBehaviorAdd(hero, "FenixPlasmaPastCapDamage", hero, 1);
     }
 }
-// FenixGoldenWarpDoctrineTokenCounter: stacks 1-40: 1% of the 17 second recharge each; 41-80: 1% reach each; 81-100: 1 more empowered attack per 5 (script); then 2.5% all damage each
+// FenixGoldenWarpDoctrineTokenCounter: stacks 1-40: 1% of the 17 second recharge each; 41-80: 1% reach each; 81-100: 1 more empowered attack per 5 (script); then 2% damage each past 100
 void libAffx_FenixSyncWarp () {
     unit hero = libAffx_FenixHero();
     int stacks;
@@ -142,7 +142,7 @@ void libAffx_FenixSyncWarp () {
         UnitBehaviorAdd(hero, "FenixWarpPastCapDamage", hero, 1);
     }
 }
-// FenixGoldenArsenalMasteryTokenCounter: stacks 1-40: 0.5% Attack Speed each (script); 41-80: 1% attack range each; then 2.5% all damage each
+// FenixGoldenArsenalMasteryTokenCounter: stacks 1-40: 0.5% Attack Speed each (script); 41-80: 1% attack range each; then 2% damage each past 100
 void libAffx_FenixSyncTwin () {
     unit hero = libAffx_FenixHero();
     int stacks;

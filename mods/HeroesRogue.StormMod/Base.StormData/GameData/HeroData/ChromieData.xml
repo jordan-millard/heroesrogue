@@ -30,7 +30,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Sand Sniper ===== -->
-  <!-- Sand Blast has 2 charges (3 second recharge), costs half Mana (10), deals 20% more damage and reaches 20% farther (15 to 18); Bronze Talons and Gnome Speed Ahead. Pinpoint quest (50% kept): 0.5% Sand Blast damage per enemy Hero hit. Sands of Time quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% missile acceleration each, 81-100 1% width each, 100 a second Sand Blast for 50% (script), then 2.5% all damage each. -->
+  <!-- Sand Blast has 2 charges (3 second recharge), costs half Mana (10), deals 20% more damage and reaches 20% farther (15 to 18); Bronze Talons and Gnome Speed Ahead. Pinpoint quest (50% kept): 0.5% Sand Blast damage per enemy Hero hit. Sands of Time quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% missile acceleration each, 81-100 1% width each, 100 a second Sand Blast for 50% (script), then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="ChromieGoldenPinpointTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenPinpointTokenCounter" />
     <Max value="100000" />
@@ -73,7 +73,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Bronze Breath ===== -->
-  <!-- Dragon's Breath has 2 charges (14 second recharge), costs half Mana (32.5), deals 20% more damage and its blasts are 20% larger (radius 2 to 2.4, visuals too); Deep Breathing and Mobius Loop. Bronze Fire quest (50% kept): 1.5% Dragon's Breath damage per enemy Hero hit. Dragonflight quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% of the 0.6875 second delay each, 81-100 1% area each, 100 each blast erupts again for 50% (script), then 2.5% all damage each. -->
+  <!-- Dragon's Breath has 2 charges (14 second recharge), costs half Mana (32.5), deals 20% more damage and its blasts are 20% larger (radius 2 to 2.4, visuals too); Deep Breathing and Mobius Loop. Bronze Fire quest (50% kept): 1.5% Dragon's Breath damage per enemy Hero hit. Dragonflight quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% of the 0.6875 second delay each, 81-100 1% area each, 100 each blast erupts again for 50% (script), then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="ChromieGoldenBronzeFireTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenBronzeFireTokenCounter" />
     <Max value="100000" />
@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Chronomancer ===== -->
-  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves and Slow them after the Time Stop; Time Troubles; Andorhal Anomaly). The Slow decays from 90% to 15% over 6 seconds (Chronic Conditions' Slow 90% for 1 second plus ChromieGoldenTrapSlow2-6). An enemy Hero Time Stopped by a trap (seen by the script) resets Sand Blast and Dragon's Breath. Momentum (the hit quest, nothing kept): +1 per Time Stop; Dragon's Breath +20% damage each (accumulator) and Sand Blast +1 range each (script); 20 seconds after the last takedown it resets (script). Timeline quest: takedowns within 6 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 a never-expiring Shield of 0.5% of maximum Health each (script, refilled on takedowns, respawns and map start), 41-80 1% lower Mana costs each, 100 Momentum is halved instead of reset, then 2.5% all damage each. -->
+  <!-- Time Trap costs no Mana and up to 10 can be active (the script keeps the tracker at 10); the three level 4 Time Trap talents (Chronic Conditions: traps go off on enemy Heroes by themselves and Slow them after the Time Stop; Time Troubles; Andorhal Anomaly). The Slow decays from 90% to 15% over 6 seconds (Chronic Conditions' Slow 90% for 1 second plus ChromieGoldenTrapSlow2-6). An enemy Hero Time Stopped by a trap (seen by the script) resets Sand Blast and Dragon's Breath. Momentum (the hit quest, nothing kept): +1 per Time Stop; Dragon's Breath +20% damage each (accumulator) and Sand Blast +1 range each (script); 20 seconds after the last takedown it resets (script). Timeline quest: takedowns within 6 seconds of a Time Stop or a Sand Blast or Dragon's Breath hit; stacks 1-40 a never-expiring Shield of 0.5% of maximum Health each (script, refilled on takedowns, respawns and map start), 41-80 1% lower Mana costs each, 100 Momentum is halved instead of reset, then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="ChromieGoldenResonanceTokenCounter" parent="StormQuestToken">
     <Face value="ChromieGoldenResonanceTokenCounter" />
     <Max value="100000" />

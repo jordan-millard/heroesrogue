@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Azmodan. Each ability starter: hits on enemy Heroes open a takedown window and add the hit quest token;
 // takedowns in the window add the takedown token: stacks 1-40, 41-80 and 81-100 each improve the starter, stack 100
-// unlocks the Globe echo or the beam fork, then 2.5% to all of Azmodan's damage per stack. General of the Burning
+// unlocks the Globe echo or the beam fork, then 2% to all of Azmodan's damage per stack past 100. General of the Burning
 // Hells: the Rampage hit quest (Demon Warrior attacks on Heroes) and the takedown quest (1% Demon Warrior damage and
 // Health per stack up to 80, then 2.5% all damage).
 // ============================================================
@@ -47,7 +47,7 @@ void libAffx_AzmodanQuestDing() {
 bool libAffx_AzmodanInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_AzmodanTakedownWindow;
 }
-// AzmodanGoldenDestructionTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% shorter cast and 0.5% larger blast each; 81-100: 1% range each; then 2.5% all damage each
+// AzmodanGoldenDestructionTokenCounter: stacks 1-40: 1% of the 10 second recharge each; 41-80: 1% shorter cast and 0.5% larger blast each; 81-100: 1% range each; then 2% damage each past 100
 void libAffx_AzmodanSyncGlobe () {
     unit hero = libAffx_AzmodanHero();
     int stacks;
@@ -92,7 +92,7 @@ void libAffx_AzmodanSyncGlobe () {
         UnitBehaviorAdd(hero, "AzmodanGlobePastCapDamage", hero, 1);
     }
 }
-// AzmodanGoldenSinTokenCounter: stacks 1-40: 0.03125 range and stretch each (1.25 at 40); 41-80: 1% Movement Speed while channeling each; then 2.5% all damage each
+// AzmodanGoldenSinTokenCounter: stacks 1-40: 0.03125 range and stretch each (1.25 at 40); 41-80: 1% Movement Speed while channeling each; then 2% damage each past 100
 void libAffx_AzmodanSyncSin () {
     unit hero = libAffx_AzmodanHero();
     int stacks;
@@ -127,7 +127,7 @@ void libAffx_AzmodanSyncSin () {
         UnitBehaviorAdd(hero, "AzmodanSinPastCapDamage", hero, 1);
     }
 }
-// AzmodanGoldenLegionTokenCounter: stacks 1-80: 1% Demon Warrior damage and Health each; then 2.5% all damage each
+// AzmodanGoldenLegionTokenCounter: stacks 1-80: 1% Demon Warrior damage and Health each; then 2% damage each past 100
 void libAffx_AzmodanSyncGen () {
     unit hero = libAffx_AzmodanHero();
     int stacks;

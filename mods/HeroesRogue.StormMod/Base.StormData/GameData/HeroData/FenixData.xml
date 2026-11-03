@@ -43,7 +43,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Plasma Executor ===== -->
-  <!-- Plasma Cutter has 2 charges (12 second recharge), deals 20% more damage and its beam is 20% longer (1.4 to 1.68); Divert Power: Weapons and Secondary Fire. Focused Plasma quest (50% kept): 1% Plasma Cutter damage per enemy Hero hit. Execution quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% beam length each, 81-100 1% faster sweep each, 100 every hit is cut again 0.5 seconds later for 50%, then 2.5% all damage each. -->
+  <!-- Plasma Cutter has 2 charges (12 second recharge), deals 20% more damage and its beam is 20% longer (1.4 to 1.68); Divert Power: Weapons and Secondary Fire. Focused Plasma quest (50% kept): 1% Plasma Cutter damage per enemy Hero hit. Execution quest: takedowns within 3 seconds of a hit; stacks 1-40 1% of the recharge each, 41-80 1% beam length each, 81-100 1% faster sweep each, 100 every hit is cut again 0.5 seconds later for 50%, then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="FenixGoldenFocusedPlasmaTokenCounter" parent="StormQuestToken">
     <Face value="FenixGoldenFocusedPlasmaTokenCounter" />
     <Max value="100000" />
@@ -91,7 +91,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Warp Striker ===== -->
-  <!-- Warp has 2 charges (17 second recharge) and reaches 20% farther (9 to 10.8); after a Warp the next 3 Basic Attacks deal 50% more damage (a second damage of half the attack); Warp Warfare and Mobile Offense. Warp Strikes quest (50% kept): 0.5% Basic Attack damage per empowered attack on an enemy Hero. Warp Doctrine quest: takedowns within 3 seconds of an empowered attack; stacks 1-40 1% of the recharge each, 41-80 1% reach each, 81-100 1 more empowered attack per 5 (script), 100 Phase Bomb blasts where Fenix leaves and arrives, then 2.5% all damage each. -->
+  <!-- Warp has 2 charges (17 second recharge) and reaches 20% farther (9 to 10.8); after a Warp the next 3 Basic Attacks deal 50% more damage (a second damage of half the attack); Warp Warfare and Mobile Offense. Warp Strikes quest (50% kept): 0.5% Basic Attack damage per empowered attack on an enemy Hero. Warp Doctrine quest: takedowns within 3 seconds of an empowered attack; stacks 1-40 1% of the recharge each, 41-80 1% reach each, 81-100 1 more empowered attack per 5 (script), 100 Phase Bomb blasts where Fenix leaves and arrives, then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="FenixGoldenWarpStrikesTokenCounter" parent="StormQuestToken">
     <Face value="FenixGoldenWarpStrikesTokenCounter" />
     <Max value="100000" />
@@ -140,7 +140,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Twin Arsenal ===== -->
-  <!-- No weapon swap: Fenix stays on the Repeater Cannon and every 3rd attack also launches a Phase Bomb (script); Shield Capacitor regenerates twice as fast; Purification Salvo at level 1 (Planet Cracker disabled). Bombardment quest (50% kept): 0.4% Basic Attack damage per Phase Bomb hit on an enemy Hero, dinged every 10. Arsenal Mastery quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each (up to 20%, script), 41-80 1% attack range each, then 2.5% all damage each. -->
+  <!-- No weapon swap: Fenix stays on the Repeater Cannon and every 3rd attack also launches a Phase Bomb (script); Shield Capacitor regenerates twice as fast; Purification Salvo at level 1 (Planet Cracker disabled). Bombardment quest (50% kept): 0.4% Basic Attack damage per Phase Bomb hit on an enemy Hero, dinged every 10. Arsenal Mastery quest: takedowns within 3 seconds of a Basic Attack hit; stacks 1-40 0.5% Attack Speed each (up to 20%, script), 41-80 1% attack range each, then 2% damage each past 100. -->
   <CBehaviorTokenCounter id="FenixGoldenBombardmentTokenCounter" parent="StormQuestToken">
     <Face value="FenixGoldenBombardmentTokenCounter" />
     <Max value="100000" />
