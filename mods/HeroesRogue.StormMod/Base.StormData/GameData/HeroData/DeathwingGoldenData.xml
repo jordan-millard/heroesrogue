@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Deathwing. Starters: Incinerator (Incinerate and Lava Burst: 2 charges, 6 and 8 second recharge, 15 Energy, 0.5 seconds sooner, Dragon Soul), Molten Flame (10 less Energy per second, 0.75 seconds sooner, Conflagration) and Wings of Ruin (Dragonflight on a 5 second cooldown that damage no longer delays, double regeneration in flight, Burn Beneath My Shadow and Stood in the Fire, takedowns reset Cataclysm, landings cut it). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator, Cataclysm too) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DeathwingGolden.galaxy. -->
+  <!-- Golden Deathwing. Starters: Incinerator (Incinerate and Lava Burst: 2 charges, 6 and 8 second recharge, 15 Energy, 0.5 seconds sooner, Dragon Soul), Molten Flame (10 less Energy per second, a 1 second cast instead of 1.5, Conflagration) and Wings of Ruin (Dragonflight on a 5 second cooldown that damage no longer delays, double regeneration in flight, Burn Beneath My Shadow and Stood in the Fire, takedowns reset Cataclysm, landings cut it). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator, Cataclysm too) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DeathwingGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="DeathwingGoldenIncinMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DeathwingGoldenFlameMarker" parent="CarryBehaviorParent" />
@@ -81,7 +81,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Molten Flame ===== -->
-  <!-- Molten Flame drains 10 less Energy per second and starts 0.75 seconds sooner; gain Conflagration. Blaze quest (10% of each map gains kept for good): 0.2% Molten Flame and Cataclysm damage per Molten Flame hit on an enemy Hero, counted at most twice a second per Hero and added in tens. Shadowflame quest: takedowns within 6 seconds of a hit; stacks 1-40 make Cataclysm recharge 1% faster each, 41-80 make Molten Flame Slow 1% each (script turns it on), 81-100 make it 1% wider each, at 100 Molten Flame breathes 3 streams (script), then 2% damage each. -->
+  <!-- Molten Flame drains 10 less Energy per second and starts 0.5 seconds sooner (1 second instead of 1.5); gain Conflagration. Blaze quest (10% of each map gains kept for good): 0.2% Molten Flame and Cataclysm damage per Molten Flame hit on an enemy Hero, counted at most twice a second per Hero and added in tens. Shadowflame quest: takedowns within 6 seconds of a hit; stacks 1-40 make Cataclysm recharge 1% faster each, 41-80 make Molten Flame Slow 1% each (script turns it on), 81-100 make it 1% wider each, at 100 Molten Flame breathes 3 streams (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DeathwingGoldenBlazeTokenCounter" parent="StormQuestToken">
     <Face value="DeathwingGoldenBlazeTokenCounter" />
     <Max value="100000" />
