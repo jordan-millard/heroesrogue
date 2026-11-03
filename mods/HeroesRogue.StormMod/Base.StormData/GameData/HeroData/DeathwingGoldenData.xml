@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Deathwing. Starters: Incinerator (Incinerate and Lava Burst: 2 charges, 6 and 8 second recharge, 15 Energy, 0.5 seconds sooner, Dragon Soul) and Molten Flame (10 less Energy per second, 0.75 seconds sooner, Conflagration). Each damage effect has its own multipliers: starter power, the Uncommon boon (a LibAffx multiplier), hit quest (accumulator, Cataclysm too) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DeathwingGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="DeathwingGoldenIncinMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DeathwingGoldenFlameMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DeathwingGoldenEnergyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DeathwingGoldenTripleMarker" parent="CarryBehaviorParent" />
+  <!-- Incinerator 81-100: Incinerate burns what it hits for 1% of its damage per stack over 3 seconds (the script sets the
+       amount from Incinerate's own, level-scaled, and turns it on) -->
+  <CEffectDamage id="DeathwingGoldenIncinerateBurnDamage" parent="StormSpell">
+    <Amount value="0" />
+    <MultiplicativeModifierArray index="HeroDamage" Validator="TargetIsHero" Modifier="1" />
+    <SourceButtonFace value="DeathwingIncinerate" />
+  </CEffectDamage>
+
+  <!-- ===== Incinerator ===== -->
+  <!-- Incinerate and Lava Burst store 2 charges (6 and 8 second recharge), cost 15 Energy and go off 0.5 seconds sooner (Lava Burst's blast too); gain Dragon Soul. Scorch quest (10% of each map gains kept for good): 0.5% Incinerate, Lava Burst and Cataclysm damage per enemy Hero hit by Incinerate or Lava Burst's blast. Inferno quest: takedowns within 6 seconds of a hit; stacks 1-40 make both 1% larger each, 41-80 make each hit on an enemy Hero heal 0.5% of maximum Health per stack over 3 seconds (script), 81-100 make Incinerate burn for 1% of its damage over 3 seconds (script) and the magma deal 1% more damage each, at 100 each hit on an enemy Hero takes 5 seconds off Cataclysm (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DeathwingGoldenScorchTokenCounter" parent="StormQuestToken">
+    <Face value="DeathwingGoldenScorchTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DeathwingGoldenInfernoTokenCounter" parent="StormQuestToken">
+    <Face value="DeathwingGoldenInfernoTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DeathwingGoldenScorchTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DeathwingGoldenScorchTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DeathwingIncinerateDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingLavaBurstExplosionDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingLavaBurstBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingGoldenIncinerateBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingIncinLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingIncinerateDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinHit" Accumulator="DeathwingGoldenScorchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingLavaBurstExplosionDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinHit" Accumulator="DeathwingGoldenScorchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingLavaBurstBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinHit" Accumulator="DeathwingGoldenScorchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingGoldenIncinerateBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinHit" Accumulator="DeathwingGoldenScorchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingCataclysmDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinHit" Accumulator="DeathwingGoldenScorchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingCataclysmDoTDamage">
+    <MultiplicativeModifierArray index="DeathwingIncinHit" Accumulator="DeathwingGoldenScorchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="DeathwingGoldenScorchTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_deathwing_incinerate.dds" />
+  </CButton>
+  <CButton id="DeathwingGoldenInfernoTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_deathwing_incinerate.dds" />
+  </CButton>
+
+  <!-- ===== Molten Flame ===== -->
+  <!-- Molten Flame drains 10 less Energy per second and starts 0.75 seconds sooner; gain Conflagration. Blaze quest (10% of each map gains kept for good): 0.1% Molten Flame and Cataclysm damage per Molten Flame hit on an enemy Hero, counted at most twice a second per Hero and added in tens. Shadowflame quest: takedowns within 6 seconds of a hit; stacks 1-40 make Cataclysm recharge 1% faster each, 41-80 make Molten Flame Slow 1% each (script turns it on), 81-100 make it 1% wider each, at 100 Molten Flame breathes 3 streams (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DeathwingGoldenBlazeTokenCounter" parent="StormQuestToken">
+    <Face value="DeathwingGoldenBlazeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DeathwingGoldenShadowflameTokenCounter" parent="StormQuestToken">
+    <Face value="DeathwingGoldenShadowflameTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DeathwingGoldenBlazeTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DeathwingGoldenBlazeTokenCounter" />
+    <Scale value="0.001" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DeathwingMoltenFlameDamage">
+    <MultiplicativeModifierArray index="DeathwingFlamePower" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingFlameCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DeathwingFlameLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingMoltenFlameDamage">
+    <MultiplicativeModifierArray index="DeathwingFlameHit" Accumulator="DeathwingGoldenBlazeTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingCataclysmDamage">
+    <MultiplicativeModifierArray index="DeathwingFlameHit" Accumulator="DeathwingGoldenBlazeTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingCataclysmDoTDamage">
+    <MultiplicativeModifierArray index="DeathwingFlameHit" Accumulator="DeathwingGoldenBlazeTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="DeathwingGoldenBlazeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_deathwing_molten_flame.dds" />
+  </CButton>
+  <CButton id="DeathwingGoldenShadowflameTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_deathwing_molten_flame.dds" />
+  </CButton>
+  <!-- Incinerator: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DeathwingIncinPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Molten Flame: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DeathwingFlamePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- Incinerate and Lava Burst store charges: the base cooldown cuts that touch them cut the recharge too -->
+  <CEffectModifyUnit id="DeathwingFireAndFuryCooldownReductionModifyUnit">
+    <Cost index="1" Abil="DeathwingIncinerate,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" ChargeTimeUse="-0.5" />
+    <Cost index="3" Abil="DeathwingLavaBurst,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="DeathwingDragonflightLandBasicAbilityCooldownsDeathDrop">
+    <Cost index="1" Abil="DeathwingIncinerate,Execute" CooldownOperation="Set" CooldownTimeUse="1" ChargeTimeUse="1" />
+    <Cost index="3" Abil="DeathwingLavaBurst,Execute" CooldownOperation="Set" CooldownTimeUse="1" ChargeTimeUse="1" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="DeathwingDestroyersRampageCDR">
+    <Cost index="1" Abil="DeathwingIncinerate,Execute" CooldownOperation="Add" CooldownTimeUse="-0.0625" ChargeTimeUse="-0.0625" />
+  </CEffectModifyUnit>
+  <!-- ===== Incinerator ===== -->
+  <!-- Inferno 41-80: every enemy Hero hit by Incinerate or Lava Burst's blast heals Deathwing for 0.5% of his maximum Health
+       per stack over 3 seconds (one stack of this per hit; the script sets the amount) -->
+  <CBehaviorBuff id="DeathwingGoldenMoltenRegen">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_heat_wave.dds" />
+    <Duration value="3" />
+    <Period value="1" />
+    <MaxStackCount value="10" />
+    <PeriodicEffect value="DeathwingGoldenMoltenRegenHeal" />
+  </CBehaviorBuff>
+  <CEffectModifyUnit id="DeathwingGoldenMoltenRegenHeal">
+    <VitalArray index="Life">
+      <ChangeFraction value="0" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <CBehaviorBuff id="DeathwingGoldenIncinerateBurn">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_incinerate.dds" />
+    <Duration value="3" />
+    <Period value="0.5" />
+    <PeriodicEffect value="DeathwingGoldenIncinerateBurnDamage" />
+    <PeriodicDisplayEffect value="DeathwingGoldenIncinerateBurnDamage" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DeathwingGoldenIncinerateBurnApply">
+    <Chance value="0" />
+    <Behavior value="DeathwingGoldenIncinerateBurn" />
+  </CEffectApplyBehavior>
+  <!-- Inferno 81-100: Lava Burst's magma deals 1% more damage per stack (the quest sets the modifier) -->
+  <CEffectDamage id="DeathwingLavaBurstBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenMagma" Modifier="0" />
+  </CEffectDamage>
+  <!-- Inferno at 100: each enemy Hero hit by Incinerate or Lava Burst's blast takes 5 seconds off Cataclysm (script) -->
+  <CEffectModifyUnit id="DeathwingGoldenCataclysmEcho">
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="DeathwingCataclysm,Execute" CooldownOperation="Add" CooldownTimeUse="-5" />
+  </CEffectModifyUnit>
+  <!-- Melt Weapons (Epic): Incinerate and Lava Burst's blast make enemy Heroes deal 30% less damage for 3 seconds -->
+  <CBehaviorBuff id="DeathwingGoldenMeltWeapons">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_lava_burst.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DeathwingGoldenMeltWeaponsApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="DeathwingGoldenMeltWeapons" />
+  </CEffectApplyBehavior>
+  <!-- Destroyer's Fire (Legendary): Incinerate and Lava Burst's blast kill lane minions outright, and all their damage
+       (blast, magma and burn too) deals 100% more to mercenaries (the boon sets the modifiers) -->
+  <CEffectDamage id="DeathwingGoldenMinionKill" parent="StormSpell">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsMinionAndNotMercLaner" />
+    <Flags index="Kill" value="1" />
+    <SourceButtonFace value="DeathwingIncinerate" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingIncinerateDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenMercs" Validator="TargetIsMercLanerorDefender" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingLavaBurstExplosionDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenMercs" Validator="TargetIsMercLanerorDefender" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingLavaBurstBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenMercs" Validator="TargetIsMercLanerorDefender" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingGoldenIncinerateBurnDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenMercs" Validator="TargetIsMercLanerorDefender" Modifier="0" />
+  </CEffectDamage>
+  <CEffectSet id="DeathwingIncinerateImpactSet">
+    <EffectArray value="DeathwingGoldenIncinerateBurnApply" />
+    <EffectArray value="DeathwingGoldenMeltWeaponsApply" />
+    <EffectArray value="DeathwingGoldenMinionKill" />
+  </CEffectSet>
+  <CEffectSet id="DeathwingLavaBurstExplosionImpactSet">
+    <EffectArray value="DeathwingGoldenMeltWeaponsApply" />
+    <EffectArray value="DeathwingGoldenMinionKill" />
+  </CEffectSet>
+  <!-- ===== Molten Flame ===== -->
+  <!-- Shadowflame 41-80: Molten Flame Slows by 1% per stack (the quest sets the amount; the script turns it on) -->
+  <CBehaviorBuff id="DeathwingGoldenFlameSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_deathwing_molten_flame.dds" />
+    <Duration value="0.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DeathwingGoldenFlameSlowApply">
+    <Chance value="0" />
+    <Behavior value="DeathwingGoldenFlameSlow" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DeathwingMoltenFlameImpactSet">
+    <EffectArray value="DeathwingGoldenFlameSlowApply" />
+  </CEffectSet>
+  <!-- Burning Hunger (Epic): a counted Molten Flame hit on an enemy Hero (at most twice a second per Hero) restores 1
+       Energy (script) -->
+  <CEffectModifyUnit id="DeathwingGoldenFlameEnergy">
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Energy">
+      <Change value="1" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <!-- Shadowflame at 100, or Wrath of the Aspect (Legendary): Molten Flame breathes 3 streams. The two side streams run
+       with the base one (same caster behavior check, same impact set) at 30 degrees; the script turns them on -->
+  <CEffectCreatePersistent id="DeathwingGoldenSideFlamesPersistent">
+    <Chance value="0" />
+    <TimeScaleSource Value="Caster" />
+    <Flags index="PersistUntilDestroyed" value="1" />
+    <PeriodicValidator value="DeathwingMoltenFlameCasterHasCasterBehavior" />
+    <PeriodicPeriodArray value="0.125" />
+    <OffsetVectorStartLocation Value="CasterPoint" />
+    <PeriodicEffectArray value="DeathwingGoldenSideFlamesSet" />
+    <InitialEffect value="DeathwingGoldenSideFlamesSet" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="DeathwingGoldenSideFlamesSet">
+    <EffectArray value="DeathwingGoldenSideFlameL1" />
+    <EffectArray value="DeathwingGoldenSideFlameL2" />
+    <EffectArray value="DeathwingGoldenSideFlameL3" />
+    <EffectArray value="DeathwingGoldenSideFlameR1" />
+    <EffectArray value="DeathwingGoldenSideFlameR2" />
+    <EffectArray value="DeathwingGoldenSideFlameR3" />
+  </CEffectSet>
+  <CEffectEnumArea id="DeathwingGoldenSideFlameL1">
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="DeathwingMoltenFlameImpactSet">
+      <Radius value="1.75" />
+    </AreaArray>
+    <AreaRelativeOffset X="2.5" Y="-4.33" />
+    <ImpactLocation Value="CasterPoint" />
+  </CEffectEnumArea>
+  <CEffectEnumArea id="DeathwingGoldenSideFlameL2">
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="DeathwingMoltenFlameImpactSet">
+      <Radius value="1.75" />
+    </AreaArray>
+    <AreaRelativeOffset X="4.25" Y="-7.361" />
+    <ImpactLocation Value="CasterPoint" />
+  </CEffectEnumArea>
+  <CEffectEnumArea id="DeathwingGoldenSideFlameL3">
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="DeathwingMoltenFlameImpactSet">
+      <Radius value="1.75" />
+    </AreaArray>
+    <AreaRelativeOffset X="6.0" Y="-10.392" />
+    <ImpactLocation Value="CasterPoint" />
+  </CEffectEnumArea>
+  <CEffectEnumArea id="DeathwingGoldenSideFlameR1">
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="DeathwingMoltenFlameImpactSet">
+      <Radius value="1.75" />
+    </AreaArray>
+    <AreaRelativeOffset X="-2.5" Y="-4.33" />
+    <ImpactLocation Value="CasterPoint" />
+  </CEffectEnumArea>
+  <CEffectEnumArea id="DeathwingGoldenSideFlameR2">
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="DeathwingMoltenFlameImpactSet">
+      <Radius value="1.75" />
+    </AreaArray>
+    <AreaRelativeOffset X="-4.25" Y="-7.361" />
+    <ImpactLocation Value="CasterPoint" />
+  </CEffectEnumArea>
+  <CEffectEnumArea id="DeathwingGoldenSideFlameR3">
+    <SearchFilters value="-;Self,Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Invulnerable" />
+    <AreaArray Effect="DeathwingMoltenFlameImpactSet">
+      <Radius value="1.75" />
+    </AreaArray>
+    <AreaRelativeOffset X="-6.0" Y="-10.392" />
+    <ImpactLocation Value="CasterPoint" />
+  </CEffectEnumArea>
+  <CEffectSet id="DeathwingMoltenFlameStartSet">
+    <EffectArray value="DeathwingGoldenSideFlamesPersistent" />
+  </CEffectSet>
+  <!-- the side streams' fire: copies of the base stream's model, turned 30 degrees each way -->
+  <CActorSiteOpRotationExplicit id="SOpDeathwingGoldenFlameLeft">
+    <Forward X="0.500000" Y="-0.866000" />
+    <IsLocal value="1" />
+  </CActorSiteOpRotationExplicit>
+  <CActorSiteOpRotationExplicit id="SOpDeathwingGoldenFlameRight">
+    <Forward X="-0.500000" Y="-0.866000" />
+    <IsLocal value="1" />
+  </CActorSiteOpRotationExplicit>
+  <CActorModel id="DeathwingGoldenMoltenFlameLeft" parent="StormModelNoAnimsUnit">
+    <Model value="DeathwingMoltenFlame" />
+    <Aliases value="_TimeStopAffectedActor" />
+    <On Terms="ActorCreation" Send="AnimBracketStart BSD Birth Stand Death 0 1.000000 AsTimeScale" />
+    <On Terms="Effect.DeathwingGoldenSideFlamesPersistent.Start; At Caster" Send="Create" />
+    <On Terms="Effect.DeathwingGoldenSideFlamesPersistent.Stop" Send="AnimBracketStop BSD" />
+    <On Terms="ActorOrphan" Send="Destroy" />
+    <On Terms="AnimBracketState.*.AfterClosing; AnimPlaying BSD" Send="Destroy" />
+    <On Terms="StatusOn.*.TimeStopPaused" Send="SetVisibility" />
+    <On Terms="Behavior.Dead.On" Send="Destroy Immediate" />
+    <On Terms="StatusOff.*.TimeStopPaused" Send="SetVisibility 1" />
+    <HostSiteOps Ops="SOpAttachWeapon SOpDeathwingGoldenFlameLeft" />
+    <ModelFlags index="AllowHitTest" value="0" />
+    <ModelFlags index="AutomateGlobalLoops" value="1" />
+    <Scale value="1.200000" />
+    <VisibilityShape Shape="DeathwingMoltenFlameShape" />
+    <Macros value="EffectVisibilityMacro" />
+  </CActorModel>
+  <CActorModel id="DeathwingGoldenMoltenFlameRight" parent="StormModelNoAnimsUnit">
+    <Model value="DeathwingMoltenFlame" />
+    <Aliases value="_TimeStopAffectedActor" />
+    <On Terms="ActorCreation" Send="AnimBracketStart BSD Birth Stand Death 0 1.000000 AsTimeScale" />
+    <On Terms="Effect.DeathwingGoldenSideFlamesPersistent.Start; At Caster" Send="Create" />
+    <On Terms="Effect.DeathwingGoldenSideFlamesPersistent.Stop" Send="AnimBracketStop BSD" />
+    <On Terms="ActorOrphan" Send="Destroy" />
+    <On Terms="AnimBracketState.*.AfterClosing; AnimPlaying BSD" Send="Destroy" />
+    <On Terms="StatusOn.*.TimeStopPaused" Send="SetVisibility" />
+    <On Terms="Behavior.Dead.On" Send="Destroy Immediate" />
+    <On Terms="StatusOff.*.TimeStopPaused" Send="SetVisibility 1" />
+    <HostSiteOps Ops="SOpAttachWeapon SOpDeathwingGoldenFlameRight" />
+    <ModelFlags index="AllowHitTest" value="0" />
+    <ModelFlags index="AutomateGlobalLoops" value="1" />
+    <Scale value="1.200000" />
+    <VisibilityShape Shape="DeathwingMoltenFlameShape" />
+    <Macros value="EffectVisibilityMacro" />
+  </CActorModel>
+</Catalog>

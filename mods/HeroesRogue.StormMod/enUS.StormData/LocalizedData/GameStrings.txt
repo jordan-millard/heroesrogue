@@ -2918,6 +2918,46 @@ Behavior/Name/ArtanisGoldenZealotsFury=Zealot's Fury
 Behavior/Tooltip/ArtanisGoldenZealotsFury=Unstoppable.
 Behavior/Name/ArtanisGoldenDisorientSlow=Disorienting Swap
 Behavior/Tooltip/ArtanisGoldenDisorientSlow=Slowed.
+Affix/Name/DeathwingIncinerator=Incinerator
+Affix/Tooltip/DeathwingIncinerator=Gain <c val="#TooltipNumbers">Dragon Soul</c>. Incinerate and Lava Burst cost <c val="#TooltipNumbers">15</c> Energy, store <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">6</c> and <c val="#TooltipNumbers">8</c> second recharge) and go off <c val="#TooltipNumbers">0.5</c> seconds sooner.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero hit by Incinerate or Lava Burst's blast adds <c val="#TooltipNumbers">0.5%</c> Incinerate, Lava Burst and Cataclysm damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of an Incinerate or Lava Burst hit make both larger (up to <c val="#TooltipNumbers">40%</c>), then make their hits on enemy Heroes heal you over <c val="#TooltipNumbers">3</c> seconds (up to <c val="#TooltipNumbers">20%</c> of your maximum Health per hit), then make Incinerate burn what it hits and Lava Burst's magma deal more damage (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, each enemy Hero hit takes <c val="#TooltipNumbers">5</c> seconds off Cataclysm's cooldown. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/DeathwingMoltenBreath=Molten Breath
+Affix/Tooltip/DeathwingMoltenBreath=Incinerate and Lava Burst deal <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/DeathwingHeatWaveBoon=Heat Wave
+Affix/Tooltip/DeathwingHeatWaveBoon=Gain the talent <c val="#TooltipNumbers">Heat Wave</c>.
+Affix/Name/DeathwingConflagrationBoon=Conflagration
+Affix/Tooltip/DeathwingConflagrationBoon=Gain the talent <c val="#TooltipNumbers">Conflagration</c>.
+Affix/Name/DeathwingMeltWeapons=Melt Weapons
+Affix/Tooltip/DeathwingMeltWeapons=Enemy Heroes hit by Incinerate or Lava Burst's blast deal <c val="#TooltipNumbers">30%</c> less damage for <c val="#TooltipNumbers">3</c> seconds.
+Affix/Name/DeathwingDestroyersFire=Destroyer's Fire
+Affix/Tooltip/DeathwingDestroyersFire=Incinerate and Lava Burst's blast kill lane Minions outright, and all Incinerate and Lava Burst damage deals <c val="#TooltipNumbers">100%</c> more damage to Mercenaries.
+Button/Name/DeathwingGoldenScorchTokenCounter=Scorch
+Button/Tooltip/DeathwingGoldenScorchTokenCounter=<c val="#TooltipQuest">Bonus Incinerate, Lava Burst and Cataclysm damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DeathwingGoldenScorchTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/DeathwingGoldenInfernoTokenCounter=Inferno
+Button/Tooltip/DeathwingGoldenInfernoTokenCounter=<c val="#TooltipQuest">Inferno stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DeathwingGoldenInfernoTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Incinerate and Lava Burst <c val="#TooltipNumbers">1%</c> larger. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make their hits on enemy Heroes heal you for <c val="#TooltipNumbers">0.5%</c> of your maximum Health over <c val="#TooltipNumbers">3</c> seconds. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Incinerate burn what it hits for <c val="#TooltipNumbers">1%</c> of its damage over <c val="#TooltipNumbers">3</c> seconds and Lava Burst's magma deal <c val="#TooltipNumbers">1%</c> more damage. At <c val="#TooltipNumbers">100</c> stacks, each enemy Hero hit by Incinerate or Lava Burst's blast takes <c val="#TooltipNumbers">5</c> seconds off Cataclysm's cooldown. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/DeathwingMoltenFlameStarter=Molten Flame
+Affix/Tooltip/DeathwingMoltenFlameStarter=Gain <c val="#TooltipNumbers">Conflagration</c>. Molten Flame drains <c val="#TooltipNumbers">10</c> less Energy per second and starts <c val="#TooltipNumbers">0.75</c> seconds sooner.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Molten Flame hit on an enemy Hero (at most twice a second per Hero) adds <c val="#TooltipNumbers">0.1%</c> Molten Flame and Cataclysm damage (added <c val="#TooltipNumbers">10</c> at a time).<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Molten Flame hit make Cataclysm recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make Molten Flame Slow (up to <c val="#TooltipNumbers">40%</c>), then make it wider (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, Molten Flame breathes <c val="#TooltipNumbers">3</c> streams of fire. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/DeathwingShadowflameBreath=Shadowflame
+Affix/Tooltip/DeathwingShadowflameBreath=Molten Flame deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/DeathwingDragonsIreBoon=Dragon's Ire
+Affix/Tooltip/DeathwingDragonsIreBoon=Gain the talent <c val="#TooltipNumbers">Dragon's Ire</c>.
+Affix/Name/DeathwingRuinationBoon=Ruination
+Affix/Tooltip/DeathwingRuinationBoon=Gain the talent <c val="#TooltipNumbers">Ruination</c>.
+Affix/Name/DeathwingBurningHunger=Burning Hunger
+Affix/Tooltip/DeathwingBurningHunger=Each Molten Flame hit on an enemy Hero (at most twice a second per Hero) restores <c val="#TooltipNumbers">1</c> Energy.
+Affix/Name/DeathwingWrathOfTheAspect=Wrath of the Aspect
+Affix/Tooltip/DeathwingWrathOfTheAspect=Molten Flame breathes <c val="#TooltipNumbers">3</c> streams of fire.
+Button/Name/DeathwingGoldenBlazeTokenCounter=Blaze
+Button/Tooltip/DeathwingGoldenBlazeTokenCounter=<c val="#TooltipQuest">Bonus Molten Flame and Cataclysm damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DeathwingGoldenBlazeTokenCounter$*0.1" precision="1"/>%</c></c>
+Button/Name/DeathwingGoldenShadowflameTokenCounter=Shadowflame
+Button/Tooltip/DeathwingGoldenShadowflameTokenCounter=<c val="#TooltipQuest">Shadowflame stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DeathwingGoldenShadowflameTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Cataclysm recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Molten Flame Slow by <c val="#TooltipNumbers">1%</c> more. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Molten Flame <c val="#TooltipNumbers">1%</c> wider. At <c val="#TooltipNumbers">100</c> stacks, Molten Flame breathes <c val="#TooltipNumbers">3</c> streams of fire. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/DeathwingGoldenMoltenRegen=Molten Blood
+Behavior/Tooltip/DeathwingGoldenMoltenRegen=Regenerating Health.
+Behavior/Name/DeathwingGoldenIncinerateBurn=Incinerate
+Behavior/Tooltip/DeathwingGoldenIncinerateBurn=Burning.
+Behavior/Name/DeathwingGoldenMeltWeapons=Melt Weapons
+Behavior/Tooltip/DeathwingGoldenMeltWeapons=Dealing 30% less damage.
+Behavior/Name/DeathwingGoldenFlameSlow=Molten Flame
+Behavior/Tooltip/DeathwingGoldenFlameSlow=Slowed.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks gained that map (on top of what you started with).
 Affix/Tooltip/Append/TyrandeTheMark=

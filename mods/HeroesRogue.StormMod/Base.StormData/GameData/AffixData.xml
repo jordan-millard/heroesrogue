@@ -28962,6 +28962,340 @@
             </String>
         </Instances>
 
+        <Instances Id="DeathwingIncinerator">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DeathwingDragonSoul">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 0 DeathwingGoldenIncinMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DeathwingGoldenScorchTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DeathwingGoldenInfernoTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DeathwingGoldenInfernoTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DeathwingGoldenScorchTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingIncinerate,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingIncinerate,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingIncinerate,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingIncinerate,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingIncinerate,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingLavaBurst,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingLavaBurst,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingLavaBurst,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingLavaBurst,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Abil,DeathwingLavaBurst,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Add Abil,DeathwingIncinerate,Cost.Vital[Energy] -15">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Add Abil,DeathwingLavaBurst,Cost.Vital[Energy] -10">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Add Abil,DeathwingIncinerate,CastIntroTime -0.5">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 1 Add Abil,DeathwingLavaBurst,CastIntroTime -0.5">
+                <Field Id="CatalogModification" Index="13" />
+            </String>
+            <String String="1 1 Add Effect,DeathwingLavaBurstInitialPersistent,PeriodicPeriodArray[0] -0.5">
+                <Field Id="CatalogModification" Index="14" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingIncinerateDamage,MultiplicativeModifierArray[DeathwingIncinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="15" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingLavaBurstExplosionDamage,MultiplicativeModifierArray[DeathwingIncinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="16" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingLavaBurstBurnDamage,MultiplicativeModifierArray[DeathwingIncinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="17" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingGoldenIncinerateBurnDamage,MultiplicativeModifierArray[DeathwingIncinPower].Modifier 0">
+                <Field Id="CatalogModification" Index="18" />
+            </String>
+            <String String="AffixAdded libAffx_DeathwingStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DeathwingTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingMoltenBreath">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingIncinerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DeathwingIncinerateDamage,MultiplicativeModifierArray[DeathwingIncinCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,DeathwingLavaBurstExplosionDamage,MultiplicativeModifierArray[DeathwingIncinCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,DeathwingLavaBurstBurnDamage,MultiplicativeModifierArray[DeathwingIncinCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,DeathwingGoldenIncinerateBurnDamage,MultiplicativeModifierArray[DeathwingIncinCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingHeatWaveBoon">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingIncinerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DeathwingHeatWave">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingConflagrationBoon">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingIncinerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DeathwingConflagration">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingMeltWeapons">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingIncinerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DeathwingGoldenMeltWeaponsApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingDestroyersFire">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingIncinerator">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DeathwingGoldenMinionKill,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingIncinerateDamage,MultiplicativeModifierArray[DeathwingGoldenMercs].Modifier 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingLavaBurstExplosionDamage,MultiplicativeModifierArray[DeathwingGoldenMercs].Modifier 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingLavaBurstBurnDamage,MultiplicativeModifierArray[DeathwingGoldenMercs].Modifier 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingGoldenIncinerateBurnDamage,MultiplicativeModifierArray[DeathwingGoldenMercs].Modifier 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingMoltenFlameStarter">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DeathwingConflagration">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="1 0 DeathwingGoldenFlameMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DeathwingGoldenBlazeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DeathwingGoldenShadowflameTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DeathwingGoldenShadowflameTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DeathwingGoldenBlazeTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Add Behavior,DeathwingMoltenFlameEnergyCost,Modification.VitalRegenArray[Energy] 10">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Abil,DeathwingMoltenFlame,CastIntroTime -0.75">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingMoltenFlameDamage,MultiplicativeModifierArray[DeathwingFlamePower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_DeathwingStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DeathwingTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingShadowflameBreath">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingMoltenFlameStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DeathwingMoltenFlameDamage,MultiplicativeModifierArray[DeathwingFlameCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingDragonsIreBoon">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingMoltenFlameStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DeathwingDragonsIre">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingRuinationBoon">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingMoltenFlameStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DeathwingRuination">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingBurningHunger">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingMoltenFlameStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DeathwingGoldenEnergyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingWrathOfTheAspect">
+            <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DeathwingMoltenFlameStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DeathwingGoldenTripleMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

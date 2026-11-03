@@ -1,0 +1,308 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Deathwing. Incinerator: Incinerate and Lava Burst blast hits on enemy Heroes add Scorch; takedowns add Inferno: larger
+// areas, then a heal per hit (script), then a burn and hotter magma (script), then at 100 Cataclysm cuts per hit (script).
+// Molten Flame: hits on enemy Heroes add Blaze (twice a second per Hero, in tens); takedowns add Shadowflame: Cataclysm
+// recharge, then a Slow (script turns it on), then width, then at 100 three streams (script turns them on).
+// ============================================================
+
+const fixed libAffx_DeathwingTakedownWindow = 3.0;
+const fixed libAffx_DeathwingPastCapDamagePerStack = 0.01;
+bool libAffx_DeathwingStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingIncinTime; // per enemy player, last Incinerator hit
+int libAffx_DeathwingIncinAdded; // Incinerator: takedown stacks already applied to the catalog this game
+int libAffx_DeathwingIncinAdded2; // Incinerator: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DeathwingIncinAdded3; // Incinerator: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DeathwingIncinPastApplied; // Incinerator: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingFlameTime; // per enemy player, last Molten Flame hit
+int libAffx_DeathwingFlameAdded; // Molten Flame: takedown stacks already applied to the catalog this game
+int libAffx_DeathwingFlameAdded2; // Molten Flame: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DeathwingFlameAdded3; // Molten Flame: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DeathwingFlamePastApplied; // Molten Flame: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingFlameCountTime; // Molten Flame: per enemy player, last counted hit
+bool libAffx_DeathwingFlameCounted; // Molten Flame: the hit being handled counted for Blaze
+
+unit libAffx_DeathwingHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_DeathwingIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_DeathwingStacks(string tokenId) {
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_DeathwingQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_DeathwingInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_DeathwingTakedownWindow;
+}
+// DeathwingGoldenInfernoTokenCounter: stacks 1-40: 1% larger each; 41-80 a heal per Hero hit (libAffx_DeathwingGoldenSync), 81-100 a burn (script) and hotter magma, 100 Cataclysm cuts (script), then damage
+void libAffx_DeathwingSyncIncin () {
+    unit hero = libAffx_DeathwingHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker")) {
+        return;
+    }
+    stacks = libAffx_DeathwingStacks("DeathwingGoldenInfernoTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DeathwingIncinAdded) {
+        libAffx_CatalogReferenceModify("Effect,DeathwingIncinerateSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingIncinAdded) * 0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,DeathwingIncinerateRangeSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingIncinAdded) * 0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,DeathwingLavaBurstExplosionSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingIncinAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,DeathwingLavaBurstBurnSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingIncinAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DeathwingIncinAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): each hit on an enemy Hero heals 0.5% more over 3 seconds (libAffx_DeathwingGoldenSync)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DeathwingIncinAdded2) {
+        libAffx_DeathwingIncinAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Incinerate burns for 1% of its damage (libAffx_DeathwingGoldenSync); the magma deals 1% more
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DeathwingIncinAdded3) {
+        libAffx_CatalogReferenceModify("Effect,DeathwingLavaBurstBurnDamage,MultiplicativeModifierArray[DeathwingGoldenMagma].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingIncinAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DeathwingIncinAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DeathwingIncinPastApplied) {
+        libAffx_DeathwingIncinPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingIncinPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingIncinPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DeathwingIncinPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DeathwingIncinPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DeathwingIncinPastCapDamage", hero, 1);
+    }
+}
+// DeathwingGoldenShadowflameTokenCounter: stacks 1-40: 1% of the 90 second Cataclysm cooldown each; 41-80 a Slow, 81-100 width, 100 three streams (script), then damage
+void libAffx_DeathwingSyncFlame () {
+    unit hero = libAffx_DeathwingHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DeathwingGoldenFlameMarker")) {
+        return;
+    }
+    stacks = libAffx_DeathwingStacks("DeathwingGoldenShadowflameTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DeathwingFlameAdded) {
+        libAffx_CatalogReferenceModify("Abil,DeathwingCataclysm,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingFlameAdded) * -0.9, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DeathwingFlameAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): Molten Flame Slows 1% more each (libAffx_DeathwingGoldenSync turns it on)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DeathwingFlameAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,DeathwingGoldenFlameSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingFlameAdded2) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DeathwingFlameAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Molten Flame is 1% wider each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DeathwingFlameAdded3) {
+        libAffx_CatalogReferenceModify("Effect,DeathwingMoltenFlameSearch,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingFlameAdded3) * 0.035, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Actor,DeathwingMoltenFlameRegion,Width", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DeathwingFlameAdded3) * 0.035, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DeathwingFlameAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DeathwingFlamePastApplied) {
+        libAffx_DeathwingFlamePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingFlamePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingFlamePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DeathwingFlamePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DeathwingFlamePastCapDamage")) {
+        UnitBehaviorAdd(hero, "DeathwingFlamePastCapDamage", hero, 1);
+    }
+}
+bool libAffx_DeathwingSync_Func (bool testConds, bool runActions) {
+    libAffx_DeathwingSyncIncin();
+    libAffx_DeathwingSyncFlame();
+    return true;
+}
+// Molten Flame ticks 8 times a second: a hit on an enemy Hero counts for Blaze (and Burning Hunger) at most twice a
+// second per Hero
+bool libAffx_DeathwingFlameOnce (unit victim) {
+    int owner = UnitGetOwner(victim);
+    fixed now = GameGetMissionTime();
+    libAffx_DeathwingFlameCounted = false;
+    if (libAffx_DeathwingFlameCountTime[owner] > 0.0 && now - libAffx_DeathwingFlameCountTime[owner] < 0.5) {
+        return false;
+    }
+    libAffx_DeathwingFlameCountTime[owner] = now;
+    libAffx_DeathwingFlameCounted = true;
+    return true;
+}
+// every second and on takedowns: the Inferno and Shadowflame stages the script handles
+void libAffx_DeathwingGoldenSync () {
+    unit hero = libAffx_DeathwingHero();
+    int n;
+    fixed amount;
+    if (hero == null) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker")) {
+        n = libAffx_DeathwingStacks("DeathwingGoldenInfernoTokenCounter");
+        // 41-80: 0.5% of maximum Health per stack over 3 seconds (3 ticks)
+        amount = IntToFixed(MaxI(0, MinI(n - 40, 40))) / 600.0;
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "DeathwingGoldenMoltenRegenHeal", "VitalArray[Life].ChangeFraction", libAffx_player, amount);
+        // 81-100: the burn deals 1% of Incinerate's damage per stack over 3 seconds (6 ticks)
+        n = MaxI(0, MinI(n - 80, 20));
+        if (n > 0) {
+            amount = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, "DeathwingIncinerateDamage", "Amount", libAffx_player) * IntToFixed(n) / 600.0;
+            CatalogFieldValueSetFixed(c_gameCatalogEffect, "DeathwingGoldenIncinerateBurnDamage", "Amount", libAffx_player, amount);
+            CatalogFieldValueSet(c_gameCatalogEffect, "DeathwingGoldenIncinerateBurnApply", "Chance", libAffx_player, "1");
+        }
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenFlameMarker")) {
+        n = libAffx_DeathwingStacks("DeathwingGoldenShadowflameTokenCounter");
+        if (n > 40) {
+            CatalogFieldValueSet(c_gameCatalogEffect, "DeathwingGoldenFlameSlowApply", "Chance", libAffx_player, "1");
+        }
+        if (n >= 100 || UnitHasBehavior2(hero, "DeathwingGoldenTripleMarker")) {
+            CatalogFieldValueSet(c_gameCatalogEffect, "DeathwingGoldenSideFlamesPersistent", "Chance", libAffx_player, "1");
+        }
+    }
+}
+bool libAffx_DeathwingTick_Func (bool testConds, bool runActions) {
+    libAffx_DeathwingGoldenSync();
+    return true;
+}
+// an Incinerate or Lava Burst blast hit on an enemy Hero: Inferno's heal (41+) and Cataclysm cut (100)
+void libAffx_DeathwingIncinOnHit (unit hero) {
+    int n = libAffx_DeathwingStacks("DeathwingGoldenInfernoTokenCounter");
+    if (!UnitIsAlive(hero)) {
+        return;
+    }
+    if (n > 40) {
+        UnitBehaviorAdd(hero, "DeathwingGoldenMoltenRegen", hero, 1);
+    }
+    if (n >= 100) {
+        UnitCreateEffectUnit(hero, "DeathwingGoldenCataclysmEcho", hero);
+    }
+}
+// Incinerator hit on an enemy Hero: takedown window, DeathwingGoldenScorchTokenCounter, the heal, and on-hit boons
+bool libAffx_DeathwingIncinHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DeathwingIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker")) {
+        return false;
+    }
+    libAffx_DeathwingIncinTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "DeathwingGoldenScorchTokenCounter", hero);
+    libAffx_DeathwingIncinOnHit(hero);
+    return true;
+}
+// Molten Flame: hits counted toward the next batch of 10 tokens (one quest ding per batch)
+int libAffx_DeathwingFlameHits;
+// Molten Flame hit on an enemy Hero: takedown window, DeathwingGoldenBlazeTokenCounter, the heal, and on-hit boons
+bool libAffx_DeathwingFlameHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DeathwingIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DeathwingGoldenFlameMarker")) {
+        return false;
+    }
+    libAffx_DeathwingFlameTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_DeathwingFlameOnce(victim)) {
+        libAffx_DeathwingFlameHits += 1;
+        if (libAffx_DeathwingFlameHits >= 10) {
+            libAffx_DeathwingFlameHits = 0;
+            libGame_gf_ModifyTokenCount(10, "DeathwingGoldenBlazeTokenCounter", hero);
+        }
+    }
+    if (libAffx_DeathwingFlameCounted && UnitHasBehavior2(hero, "DeathwingGoldenEnergyMarker") && UnitIsAlive(hero)) {
+        UnitCreateEffectUnit(hero, "DeathwingGoldenFlameEnergy", hero);
+    }
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[3] libAffx_DeathwingTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_DeathwingTakedownCrossStart () {
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_DeathwingTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter"));
+    libAffx_DeathwingTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenShadowflameTokenCounter"));
+}
+void libAffx_DeathwingTakedownCross () {
+    unit hero = libAffx_DeathwingHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter")) == libAffx_DeathwingTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenShadowflameTokenCounter")) == libAffx_DeathwingTakedownBefore[2]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker") && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenInfernoTokenCounter")) == libAffx_DeathwingTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenInfernoTokenCounter", hero);
+        libAffx_DeathwingSyncIncin();
+        libAffx_DeathwingGoldenSync();
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenFlameMarker") && FixedToInt(UnitGetTokenCount(hero, "DeathwingGoldenShadowflameTokenCounter")) == libAffx_DeathwingTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenShadowflameTokenCounter", hero);
+        libAffx_DeathwingSyncFlame();
+        libAffx_DeathwingGoldenSync();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_DeathwingTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_DeathwingHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_DeathwingTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker") && libAffx_DeathwingIncinTime[killedPlayer] > 0.0 && now - libAffx_DeathwingIncinTime[killedPlayer] <= 6.0) {
+        libAffx_DeathwingIncinTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenInfernoTokenCounter", hero);
+        libAffx_DeathwingSyncIncin();
+        libAffx_DeathwingQuestDing();
+        libAffx_DeathwingGoldenSync();
+    }
+    if (UnitHasBehavior2(hero, "DeathwingGoldenFlameMarker") && libAffx_DeathwingFlameTime[killedPlayer] > 0.0 && now - libAffx_DeathwingFlameTime[killedPlayer] <= 6.0) {
+        libAffx_DeathwingFlameTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DeathwingGoldenShadowflameTokenCounter", hero);
+        libAffx_DeathwingSyncFlame();
+        libAffx_DeathwingQuestDing();
+        libAffx_DeathwingGoldenSync();
+    }
+    libAffx_DeathwingTakedownCross();
+    return true;
+}
+bool libAffx_DeathwingStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_DeathwingStarted) {
+        return true;
+    }
+    libAffx_DeathwingStarted = true;
+    trig = TriggerCreate("libAffx_DeathwingIncinHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingIncinerateDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingLavaBurstExplosionDamage");
+    trig = TriggerCreate("libAffx_DeathwingFlameHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingMoltenFlameDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingTick_Func"), 1.0, c_timeGame);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingSync_Func"), 1.0, c_timeGame);
+    return true;
+}
