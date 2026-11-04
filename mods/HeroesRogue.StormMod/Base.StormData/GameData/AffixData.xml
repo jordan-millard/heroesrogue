@@ -29230,7 +29230,7 @@
                 <Field Id="CatalogModification" />
             </String>
         </Instances>
-        <Instances Id="DeathwingDragonsIreBoon">
+        <Instances Id="DeathwingGazeOntoDestructionBoon">
             <String String="Assets/Textures/storm_ui_icon_deathwing_molten_flame.dds">
                 <Field Id="Icon" />
             </String>
@@ -29243,7 +29243,7 @@
             <User Type="Affix" Instance="DeathwingMoltenFlameStarter">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="DeathwingDragonsIre">
+            <String String="DeathwingGazeOntoDestruction">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
@@ -29437,6 +29437,23 @@
             </String>
             <String String="1 1 Set Abil,DeathwingWorldbreakerForm,Cost.Cooldown.TimeUse 1">
                 <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DeathwingCrushingDescent">
+            <Int Int="1">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_deathwing_mount.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Deathwing">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 1 Set Effect,DeathwingGoldenLandMinionKill,Chance 1">
+                <Field Id="CatalogModification" />
             </String>
         </Instances>
 

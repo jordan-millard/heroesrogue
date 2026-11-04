@@ -340,8 +340,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="TargetIsHero" />
     <Behavior value="DeathwingGoldenIndestructibleStun" />
   </CEffectApplyBehavior>
+  <!-- Crushing Descent (Epic, any starter): landing kills lane minions outright -->
+  <CEffectDamage id="DeathwingGoldenLandMinionKill" parent="StormSpell">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsMinionAndNotMercLaner" />
+    <Flags index="Kill" value="1" />
+    <SourceButtonFace value="DeathwingDragonflightDeathRecap" />
+  </CEffectDamage>
   <CEffectSet id="DeathwingDragonflightLandImpactSet">
     <EffectArray value="DeathwingGoldenIndestructibleApply" />
+    <EffectArray value="DeathwingGoldenLandMinionKill" />
   </CEffectSet>
   <!-- ===== Molten Flame ===== -->
   <!-- Shadowflame 41-80: Molten Flame Slows by 1% per stack (the quest sets the amount; the script turns it on) -->
