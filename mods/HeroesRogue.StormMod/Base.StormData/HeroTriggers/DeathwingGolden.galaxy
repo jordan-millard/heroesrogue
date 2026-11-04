@@ -372,16 +372,6 @@ bool libAffx_DeathwingSkyHit_Func (bool testConds, bool runActions) {
     libAffx_DeathwingSkyOnHit(hero);
     return true;
 }
-// Wings of Ruin: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
-bool libAffx_DeathwingSkyWindow_Func (bool testConds, bool runActions) {
-    unit victim = EventUnit();
-    unit hero = libAffx_DeathwingHero();
-    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DeathwingIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
-        return false;
-    }
-    libAffx_DeathwingSkyTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    return true;
-}
 // Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
 // own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
 int[4] libAffx_DeathwingTakedownBefore; // each starter's takedown stacks before this takedown
@@ -434,6 +424,7 @@ bool libAffx_DeathwingTakedown (bool testConds, bool runActions) {
     libAffx_DeathwingTakedownCrossStart();
     if (UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
         UnitCreateEffectUnit(hero, "DeathwingBurnBeneathMyShadowResetCataclysmCooldown", hero);
+        libAffx_DeathwingSkyTime[killedPlayer] = now;
     }
     if (UnitHasBehavior2(hero, "DeathwingGoldenIncinMarker") && libAffx_DeathwingIncinTime[killedPlayer] > 0.0 && now - libAffx_DeathwingIncinTime[killedPlayer] <= 6.0) {
         libAffx_DeathwingIncinTime[killedPlayer] = 0.0;
@@ -472,9 +463,6 @@ bool libAffx_DeathwingStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingMoltenFlameDamage");
     trig = TriggerCreate("libAffx_DeathwingSkyHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingDragonflightLandDamage");
-    trig = TriggerCreate("libAffx_DeathwingSkyWindow_Func");
-    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingCataclysmDamage");
-    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingCataclysmDoTDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DeathwingCataclysmCast_Func"), libAffx_player, "DeathwingCataclysmPrepSet");
     // also picks up stacks loaded from the bank
