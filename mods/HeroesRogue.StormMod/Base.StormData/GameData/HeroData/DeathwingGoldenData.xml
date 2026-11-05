@@ -267,17 +267,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="DeathwingGoldenMinionKill" />
   </CEffectSet>
   <!-- ===== Wings of Ruin ===== -->
-  <!-- Dominion: 20% landing damage and 1% Cataclysm and Bellowing Roar damage per stack (token accumulators; the
-       1% one is the hit quest's own) -->
-  <CAccumulatorToken id="DeathwingGoldenDominionLandAccumulator" parent="BaseTokenAccumulator">
-    <MinAccumulation value="0" />
-    <MaxAccumulation value="100000" />
-    <ApplicationRule value="Add" />
-    <TokenId value="DeathwingGoldenDominionTokenCounter" />
-    <Scale value="0.2" />
-  </CAccumulatorToken>
-  <CEffectDamage id="DeathwingDragonflightLandDamage">
-    <MultiplicativeModifierArray index="DeathwingGoldenDominion" Accumulator="DeathwingGoldenDominionLandAccumulator" />
+  <!-- Dominion: 1% Cataclysm and Bellowing Roar damage per stack (the hit quest's accumulator). Its landing damage, 20% of
+       what each landing deals per stack, is dealt by the script with this effect: modifiers on the landing's own damage
+       never applied in game. Spell Power already counted in the landing's damage. -->
+  <CEffectDamage id="DeathwingGoldenDominionDamage" parent="StormSpell">
+    <Flags index="NoFractionDealtBonus" value="1" />
+    <Amount value="0" />
+    <SourceButtonFace value="DeathwingDragonflightDeathRecap" />
   </CEffectDamage>
   <CEffectDamage id="DeathwingCataclysmDamage">
     <MultiplicativeModifierArray index="DeathwingGoldenDominion" Accumulator="DeathwingGoldenDominionTokenCounterAccumulator" />

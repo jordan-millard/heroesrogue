@@ -287,6 +287,21 @@ bool libAffx_DeathwingCataclysmCast_Func (bool testConds, bool runActions) {
     UnitBehaviorAdd(hero, "DeathwingGoldenCataclysmProtect", hero, 1);
     return true;
 }
+// Wings of Ruin, Dominion: each landing hit deals 20% of its damage more per stack (any enemy it hits)
+bool libAffx_DeathwingDominionLand_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DeathwingHero();
+    unit victim = EventUnit();
+    int n;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
+        return false;
+    }
+    n = libAffx_DeathwingStacks("DeathwingGoldenDominionTokenCounter");
+    if (n <= 0 || !UnitIsAlive(victim)) {
+        return true;
+    }
+    UnitDamage(hero, "DeathwingGoldenDominionDamage", victim, EventUnitDamageAmount() * 0.2 * IntToFixed(n));
+    return true;
+}
 bool libAffx_DeathwingTick_Func (bool testConds, bool runActions) {
     libAffx_DeathwingGoldenSync();
     return true;
@@ -442,6 +457,7 @@ bool libAffx_DeathwingStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_DeathwingSkyHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingDragonflightLandDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DeathwingDominionLand_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DeathwingDragonflightLandDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DeathwingCataclysmCast_Func"), libAffx_player, "DeathwingCataclysmPrepSet");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DeathwingSync_Func"), 1.0, c_timeGame);
