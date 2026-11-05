@@ -29643,6 +29643,32 @@
                 <Field Id="CatalogModification" Index="5" />
             </String>
         </Instances>
+        <Instances Id="DehakaStalkersThicket">
+            <Int Int="1">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dehaka_brushstalker.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 DehakaGoldenBrushMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 String Effect,DehakaBrushstalkerPersistent,ValidatorArray[1] Walkable">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 String Effect,DehakaBrushstalkerEmergingCreatePersistent,ValidatorArray[1] Walkable">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DehakaBrushstalker,AbilityCategories[TargetShrub] 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
 
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">

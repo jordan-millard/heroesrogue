@@ -7,6 +7,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <!-- ============================================================ -->
   <CBehaviorBuff id="DehakaGoldenDragMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DehakaGoldenPrimalGraspMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenBrushMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Tongue of the Pack ===== -->
   <!-- Drag lasts 1.5 seconds longer (stun, channel and pull); gain Feeding Frenzy and Paralyzing Enzymes. Hunger quest (10% of each map gains kept for good): 5% Drag damage per enemy Hero hit. Pack quest: takedowns within 6 seconds of a Drag hit; stacks 1-40 make Drag recharge 1% faster each (script), 41-80 make each Drag hit on an enemy Hero give 1 Essence per stack (script), 81-100 make Drag last 1% longer each, at 100 each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script), then 2% damage each. -->
@@ -77,4 +78,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="DehakaDragTalentFinalSet">
     <EffectArray value="DehakaGoldenDigestionApply" />
   </CEffectSet>
+  <!-- Stalker's Thicket (Rare, any starter): allied Heroes in Dehaka's brush patches are Stealthed, refreshed by the script
+       every 0.125 seconds. Attacks and abilities that decloak, or taking damage, reveal them, as with other Stealth. -->
+  <CBehaviorBuff id="DehakaGoldenBrushCloak" parent="StormCloak">
+    <BuffFlags index="RefreshStack" value="1" />
+    <Duration value="0.25" />
+    <DisableValidatorArray value="NoCloakRevealerCombine" />
+    <DamageResponse Chance="1" Handled="ApplyGenericDecloakSource" Priority="97">
+      <ValidatorArray value="SourceNotUnrevealable" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <!-- one bush of a patch (the script places 7 and picks each one's variation) -->
+  <CActorModel id="DehakaGoldenBrushBush">
+    <Model value="Storm_Doodad_KingsCrest_GardenBush" />
+  </CActorModel>
 </Catalog>

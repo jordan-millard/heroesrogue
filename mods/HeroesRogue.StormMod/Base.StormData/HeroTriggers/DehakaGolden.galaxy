@@ -17,6 +17,10 @@ int libAffx_DehakaDragPastApplied; // Tongue of the Pack: takedown quest stacks 
 int libAffx_DehakaEssenceWritten; // Essence the script last wrote to the save token
 int libAffx_DehakaLongReachId; // the Long Reach boon's affix id
 fixed libAffx_DehakaDragTimeSet = -1.0; // Drag cooldown or charge time last set
+point[5] libAffx_DehakaBrushPoint; // Stalker Thicket patches (landing points)
+bool[5] libAffx_DehakaBrushOn;
+actor[5][7] libAffx_DehakaBrushBushes;
+int libAffx_DehakaBrushNext; // the patch slot the next landing uses
 
 unit libAffx_DehakaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -153,6 +157,87 @@ void libAffx_DehakaDragOnHit (unit hero) {
         UnitBehaviorAdd(hero, "DehakaGoldenDragInvulnerable", hero, 1);
     }
 }
+// Stalker's Thicket: each Brushstalker landing grows a patch of 7 bushes (radius 3) for the rest of the game; at most 5,
+// the oldest goes first
+bool libAffx_DehakaBrushPlant_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    point center = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    int slot = libAffx_DehakaBrushNext;
+    int i;
+    point spot;
+    actor bush;
+    if (hero == null || center == null || !UnitHasBehavior2(hero, "DehakaGoldenBrushMarker")) {
+        return false;
+    }
+    if (libAffx_DehakaBrushOn[slot]) {
+        i = 0;
+        while (i < 7) {
+            ActorSend(libAffx_DehakaBrushBushes[slot][i], "Destroy");
+            i += 1;
+        }
+    }
+    libAffx_DehakaBrushPoint[slot] = center;
+    libAffx_DehakaBrushOn[slot] = true;
+    i = 0;
+    while (i < 7) {
+        spot = center;
+        if (i > 0) {
+            spot = PointWithOffsetPolar(center, 1.8, 60.0 * IntToFixed(i) + 15.0 * IntToFixed(slot));
+        }
+        bush = libNtve_gf_CreateActorAtPoint("DehakaGoldenBrushBush", spot);
+        ActorSend(bush, "ModelSwap Storm_Doodad_KingsCrest_GardenBush " + IntToString(RandomInt(0, 11)));
+        libAffx_DehakaBrushBushes[slot][i] = bush;
+        i += 1;
+    }
+    libAffx_DehakaBrushNext = ModI(slot + 1, 5);
+    return true;
+}
+// every 0.125 seconds: allied Heroes in a patch are Stealthed unless an enemy Hero is in it too (like brush), and
+// Dehaka gets his brush move speed there
+bool libAffx_DehakaBrushTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    int team;
+    int s = 0;
+    int i;
+    int enemies;
+    int uteam;
+    unitgroup g;
+    unit u;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenBrushMarker")) {
+        return false;
+    }
+    team = libGame_gf_TeamNumberOfPlayer(libAffx_player);
+    while (s < 5) {
+        if (libAffx_DehakaBrushOn[s]) {
+            g = UnitGroup(null, c_playerAny, RegionCircle(libAffx_DehakaBrushPoint[s], 3.0), UnitFilter(0, 0, 0, 0), 0);
+            enemies = 0;
+            i = 1;
+            while (i <= UnitGroupCount(g, c_unitCountAll)) {
+                u = UnitGroupUnit(g, i);
+                uteam = libGame_gf_TeamNumberOfPlayer(UnitGetOwner(u));
+                if (UnitIsAlive(u) && UnitTypeTestAttribute(UnitGetType(u), c_unitAttributeHeroic) && uteam != team && (uteam == 1 || uteam == 2)) {
+                    enemies += 1;
+                }
+                i += 1;
+            }
+            i = 1;
+            while (i <= UnitGroupCount(g, c_unitCountAll)) {
+                u = UnitGroupUnit(g, i);
+                if (UnitIsAlive(u) && UnitTypeTestAttribute(UnitGetType(u), c_unitAttributeHeroic) && libGame_gf_TeamNumberOfPlayer(UnitGetOwner(u)) == team) {
+                    if (enemies == 0) {
+                        UnitBehaviorAdd(u, "DehakaGoldenBrushCloak", hero, 1);
+                    }
+                    if (u == hero) {
+                        UnitBehaviorAdd(hero, "DehakaBrushstalkerShrubMoveSpeedBuff", hero, 1);
+                    }
+                }
+                i += 1;
+            }
+        }
+        s += 1;
+    }
+    return true;
+}
 bool libAffx_DehakaTick_Func (bool testConds, bool runActions) {
     libAffx_DehakaEssenceSync();
     libAffx_DehakaDragTimes();
@@ -226,6 +311,8 @@ bool libAffx_DehakaStart (bool testConds, bool runActions) {
     trig = TriggerCreate("libAffx_DehakaDragHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDragDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DehakaBrushPlant_Func"), libAffx_player, "DehakaBrushstalkerTeleport");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaBrushTick_Func"), 0.125, c_timeGame);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaSync_Func"), 1.0, c_timeGame);
     return true;
