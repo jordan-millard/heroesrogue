@@ -5,7 +5,7 @@ include "AffixTriggers"
 // areas, then a heal per hit (script), then a burn and hotter magma (script), then at 100 Cataclysm cuts per hit (script).
 // Molten Flame: hits on enemy Heroes add Blaze (twice a second per Hero, in tens); takedowns add Shadowflame: Cataclysm
 // recharge, then a Slow (script turns it on), then width, then at 100 three streams (script turns them on).
-// Wings of Ruin: landing on enemy Heroes adds Dominion (1% damage each, script) and cuts Cataclysm; takedowns add Ruin:
+// Wings of Ruin: landing on enemy Heroes adds Dominion (50% landing and 1% Heroic damage each, script) and cuts Cataclysm; takedowns add Ruin:
 // a lasting Shield per landing, then Movement Speed, then Spell Power, then at 100 Protected while casting Cataclysm.
 // ============================================================
 
@@ -33,7 +33,7 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DeathwingLandCountTime; // Wings of 
 bool libAffx_DeathwingLandCounted; // Wings of Ruin: the landing hit being handled counted
 fixed libAffx_DeathwingLandTime; // Wings of Ruin: last counted landing hit
 int libAffx_DeathwingLandHeroes; // Wings of Ruin: enemy Heroes hit by that landing
-int libAffx_DeathwingDominionApplied = -1; // Wings of Ruin: Dominion stacks applied as damage
+int libAffx_DeathwingDominionApplied = 0; // Wings of Ruin: Dominion stacks applied as damage
 
 unit libAffx_DeathwingHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -241,23 +241,26 @@ bool libAffx_DeathwingLandOnce (unit victim) {
     libAffx_DeathwingLandCounted = true;
     return true;
 }
-// Wings of Ruin: Dominion's damage bonus (1% per stack)
+// Wings of Ruin: Dominion's damage bonus (50% landing damage and 1% Cataclysm and Bellowing Roar damage per stack; adds
+// the change since the last sync)
 void libAffx_DeathwingDominionSync () {
     unit hero = libAffx_DeathwingHero();
     int n;
+    string d;
     if (hero == null || !UnitHasBehavior2(hero, "DeathwingGoldenSkyMarker")) {
         return;
     }
     n = libAffx_DeathwingStacks("DeathwingGoldenDominionTokenCounter");
-    if (n != libAffx_DeathwingDominionApplied) {
-        libAffx_DeathwingDominionApplied = n;
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenDominion", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(n) * 0.01);
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DeathwingGoldenDominion", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(n) * 0.01);
-        UnitBehaviorRemove(hero, "DeathwingGoldenDominion", 1);
+    if (n == libAffx_DeathwingDominionApplied) {
+        return;
     }
-    if (n > 0 && !UnitHasBehavior2(hero, "DeathwingGoldenDominion")) {
-        UnitBehaviorAdd(hero, "DeathwingGoldenDominion", hero, 1);
-    }
+    d = FixedToString(IntToFixed(n - libAffx_DeathwingDominionApplied) * 0.5, c_fixedPrecisionAny);
+    libAffx_CatalogReferenceModify("Effect,DeathwingDragonflightLandDamage,MultiplicativeModifierArray[DeathwingGoldenDominion].Modifier", libAffx_player, d, c_upgradeOperationAdd);
+    d = FixedToString(IntToFixed(n - libAffx_DeathwingDominionApplied) * 0.01, c_fixedPrecisionAny);
+    libAffx_CatalogReferenceModify("Effect,DeathwingCataclysmDamage,MultiplicativeModifierArray[DeathwingGoldenDominion].Modifier", libAffx_player, d, c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,DeathwingCataclysmDoTDamage,MultiplicativeModifierArray[DeathwingGoldenDominion].Modifier", libAffx_player, d, c_upgradeOperationAdd);
+    libAffx_CatalogReferenceModify("Effect,DeathwingBellowingRoarDamage,MultiplicativeModifierArray[DeathwingGoldenDominion].Modifier", libAffx_player, d, c_upgradeOperationAdd);
+    libAffx_DeathwingDominionApplied = n;
 }
 // Wings of Ruin, landing on an enemy Hero (counted): 15 seconds off Cataclysm, and Ruin's Shield, Movement Speed and Spell
 // Power (the last two count every Hero of the same landing)

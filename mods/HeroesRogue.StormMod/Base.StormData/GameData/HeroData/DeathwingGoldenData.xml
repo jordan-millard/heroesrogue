@@ -119,7 +119,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Wings of Ruin ===== -->
-  <!-- Dragonflight has a 5 second cooldown and dealing or taking damage no longer pushes it back (DeathwingDragonflightSetCooldown off); double Health regeneration in flight; landings hit a 20% larger area (radius 6 instead of 5); gain Burn Beneath My Shadow and Stood in the Fire; Cataclysm's quest keeps 50%; enemy Hero takedowns reset Cataclysm and each enemy Hero landed on takes 15 seconds off it (script). Dominion quest (10% of each map gains kept for good): 1% to all damage per enemy Hero landed on (script). Ruin quest: every enemy Hero takedown; stacks 1-40 make each landing on a Hero add 0.5% of maximum Health per stack to a Shield that never expires (up to 30%), 41-80 1% Movement Speed and 81-100 1% Spell Power per stack per Hero for 5 seconds, at 100 Protected for 4 seconds when casting Cataclysm (all script), then 2% damage each. -->
+  <!-- Dragonflight has a 5 second cooldown and dealing or taking damage no longer pushes it back (DeathwingDragonflightSetCooldown off); double Health regeneration in flight; landings hit a 20% larger area (radius 6 instead of 5); gain Burn Beneath My Shadow and Stood in the Fire; Cataclysm's quest keeps 50%; enemy Hero takedowns reset Cataclysm and each enemy Hero landed on takes 15 seconds off it (script). Dominion quest (10% of each map gains kept for good): 50% landing damage and 1% Cataclysm and Bellowing Roar damage per enemy Hero landed on (script). Ruin quest: every enemy Hero takedown; stacks 1-40 make each landing on a Hero add 0.5% of maximum Health per stack to a Shield that never expires (up to 30%), 41-80 1% Movement Speed and 81-100 1% Spell Power per stack per Hero for 5 seconds, at 100 Protected for 4 seconds when casting Cataclysm (all script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DeathwingGoldenDominionTokenCounter" parent="StormQuestToken">
     <Face value="DeathwingGoldenDominionTokenCounter" />
     <Max value="100000" />
@@ -267,13 +267,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="DeathwingGoldenMinionKill" />
   </CEffectSet>
   <!-- ===== Wings of Ruin ===== -->
-  <!-- Dominion: 1% to all damage per stack (the script sets it and re-adds it) -->
-  <CBehaviorBuff id="DeathwingGoldenDominion" parent="CarryBehaviorParent">
-    <Modification>
-      <DamageDealtFraction index="Basic" value="0" />
-      <DamageDealtFraction index="Ability" value="0" />
-    </Modification>
-  </CBehaviorBuff>
+  <!-- Dominion: 50% landing damage and 1% Cataclysm and Bellowing Roar damage per stack (the script adds to these) -->
+  <CEffectDamage id="DeathwingDragonflightLandDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenDominion" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingCataclysmDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenDominion" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingCataclysmDoTDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenDominion" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DeathwingBellowingRoarDamage">
+    <MultiplicativeModifierArray index="DeathwingGoldenDominion" Modifier="0" />
+  </CEffectDamage>
   <!-- each enemy Hero landed on takes 15 seconds off Cataclysm (script) -->
   <CEffectModifyUnit id="DeathwingGoldenLandingCataclysmCut">
     <ImpactUnit Value="Caster" />
