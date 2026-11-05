@@ -28965,182 +28965,6 @@
             </String>
         </Instances>
 
-        <Instances Id="DehakaTongueOfThePack">
-            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="DehakaDragTalentFeedingFrenzy">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="DehakaDragTalentParalyzingEnzymes">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 DehakaGoldenDragMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 DehakaGoldenHungerTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 DehakaGoldenPackTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="DehakaGoldenPackTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="DehakaGoldenHungerTokenCounter 0.1 gains">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="DehakaGoldenEssenceToken 0.5">
-                <Field Id="QuestRetain" Index="2" />
-            </String>
-            <String String="1 1 Add Behavior,DehakaDragStun,Duration 1.5">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Add Behavior,DehakaDragChannelBehavior,Duration 1.5">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Add Effect,DehakaDragCreateForcePersistent,PeriodCount 36">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,DehakaDragDamage,MultiplicativeModifierArray[DehakaDragPower].Modifier 0">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="AffixAdded libAffx_DehakaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_DehakaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="DehakaBarbedTongue">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DehakaTongueOfThePack">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,DehakaDragDamage,MultiplicativeModifierArray[DehakaDragCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="DehakaLongReach">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DehakaTongueOfThePack">
-                <Field Id="AffixesRequired" />
-            </User>
-        </Instances>
-        <Instances Id="DehakaElongatedTongueBoon">
-            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DehakaTongueOfThePack">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DehakaDragTalentElongatedTongue">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DehakaTunnelingClawsBoon">
-            <String String="Assets/Textures/storm_ui_icon_dehaka_burrow.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DehakaTongueOfThePack">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DehakaTunnelingClaws">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DehakaDigestion">
-            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DehakaTongueOfThePack">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,DehakaGoldenDigestionApply,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="DehakaPrimalGrasp">
-            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="Dehaka">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DehakaTongueOfThePack">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 DehakaGoldenPrimalGraspMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.CountMax 2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.CountStart 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.TimeUse 8">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Abil,DehakaDrag,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Effect,DehakaHeroWeaponFeedingFrenzyTalentModifyCooldown,Cost[0].ChargeTimeUse -1.5">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-        </Instances>
 
         <Instances Id="DeathwingIncinerator">
             <String String="Assets/Textures/storm_ui_icon_deathwing_incinerate.dds">
@@ -29634,6 +29458,186 @@
             </String>
             <String String="1 1 Set Effect,DeathwingGoldenLandMinionKill,Chance 1">
                 <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+
+        <Instances Id="DehakaTongueOfThePack">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DehakaDragTalentFeedingFrenzy">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DehakaDragTalentParalyzingEnzymes">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 DehakaGoldenDragMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DehakaGoldenHungerTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DehakaGoldenPackTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DehakaGoldenPackTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DehakaGoldenHungerTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="DehakaGoldenEssenceToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Add Behavior,DehakaDragStun,Duration 1.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Add Behavior,DehakaDragChannelBehavior,Duration 1.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Add Effect,DehakaDragCreateForcePersistent,PeriodCount 36">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDrag,Cost.Vital[Energy] 25">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDragDamage,MultiplicativeModifierArray[DehakaDragPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="AffixAdded libAffx_DehakaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DehakaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaBarbedTongue">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaTongueOfThePack">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DehakaDragDamage,MultiplicativeModifierArray[DehakaDragCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaLongReach">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaTongueOfThePack">
+                <Field Id="AffixesRequired" />
+            </User>
+        </Instances>
+        <Instances Id="DehakaElongatedTongueBoon">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaTongueOfThePack">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DehakaDragTalentElongatedTongue">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaTunnelingClawsBoon">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_burrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaTongueOfThePack">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DehakaTunnelingClaws">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaDigestion">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaTongueOfThePack">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DehakaGoldenDigestionApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaPrimalGrasp">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaTongueOfThePack">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DehakaGoldenPrimalGraspMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDrag,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDrag,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,DehakaHeroWeaponFeedingFrenzyTalentModifyCooldown,Cost[0].ChargeTimeUse -1.5">
+                <Field Id="CatalogModification" Index="5" />
             </String>
         </Instances>
 
