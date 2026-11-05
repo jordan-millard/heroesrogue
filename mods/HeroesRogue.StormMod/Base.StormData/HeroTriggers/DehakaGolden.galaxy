@@ -197,13 +197,16 @@ bool libAffx_DehakaSync_Func (bool testConds, bool runActions) {
     libAffx_DehakaSyncPrimal();
     return true;
 }
-// Essence is Essence Collection's charges: add some, up to the most Dehaka can hold
+// Essence, as the base script counts it: its max (50, raised by Essence Devourer and Evolution) minus the charges
+// used on Essence Collection
+int libAffx_DehakaEssence (unit hero) {
+    return MaxI(0, libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player] - FixedToInt(UnitGetChargeUsed(hero, "Abil/DehakaEssenceCollection")));
+}
+// add some Essence, up to the most Dehaka can hold
 int libAffx_DehakaAddEssence (unit hero, int amount) {
-    abilcmd cmd = AbilityCommand("DehakaEssenceCollection", 0);
-    int room = FixedToInt(UnitAbilityChargeInfo(hero, cmd, c_unitAbilChargeCountMax) - UnitAbilityChargeInfo(hero, cmd, c_unitAbilChargeCountLeft));
-    int added = MinI(amount, room);
+    int added = MinI(amount, libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player] - libAffx_DehakaEssence(hero));
     if (added > 0) {
-        UnitAbilityAddChargeUsed(hero, "DehakaEssenceCollection", "Abil/DehakaEssenceCollection", -1.0 * IntToFixed(added));
+        UnitAddChargeUsed(hero, "Abil/DehakaEssenceCollection", -1.0 * IntToFixed(added));
         return added;
     }
     return 0;
@@ -225,7 +228,7 @@ void libAffx_DehakaEssenceSync () {
             libAffx_DehakaEssenceSeen += added;
         }
     }
-    essence = FixedToInt(UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft));
+    essence = libAffx_DehakaEssence(hero);
     if (essence != token) {
         libGame_gf_ModifyTokenCount(essence - token, "DehakaGoldenEssenceToken", hero);
     }
@@ -369,7 +372,7 @@ bool libAffx_DehakaHungerAttack_Func (bool testConds, bool runActions) {
     if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "DehakaGoldenDragMarker") || !UnitIsAlive(victim)) {
         return false;
     }
-    extra = 0.1 * IntToFixed(libAffx_DehakaStacks("DehakaGoldenHungerTokenCounter")) * UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft);
+    extra = 0.1 * IntToFixed(libAffx_DehakaStacks("DehakaGoldenHungerTokenCounter")) * IntToFixed(libAffx_DehakaEssence(hero));
     if (extra > 0.0) {
         UnitDamage(hero, "DehakaGoldenHungerDamage", victim, extra);
     }
@@ -605,7 +608,7 @@ bool libAffx_DehakaEssenceWatch_Func (bool testConds, bool runActions) {
     if (hero == null || !UnitIsAlive(hero)) {
         return false;
     }
-    essence = FixedToInt(UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft));
+    essence = libAffx_DehakaEssence(hero);
     gain = essence - libAffx_DehakaEssenceSeen;
     if (libAffx_DehakaEssenceSeen < 0) {
         gain = 0;
@@ -641,7 +644,7 @@ void libAffx_DehakaPrimalSync () {
     if (s1 != libAffx_DehakaEssenceMaxAdded) {
         libAffx_CatalogReferenceModify("Abil,DehakaEssenceCollection,Cost.Charge.CountMax", libAffx_player, IntToString(s1 - libAffx_DehakaEssenceMaxAdded), c_upgradeOperationAdd);
         libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player] += s1 - libAffx_DehakaEssenceMaxAdded;
-        UnitAbilityAddChargeUsed(hero, "DehakaEssenceCollection", "Abil/DehakaEssenceCollection", IntToFixed(s1 - libAffx_DehakaEssenceMaxAdded));
+        UnitAddChargeUsed(hero, "Abil/DehakaEssenceCollection", IntToFixed(s1 - libAffx_DehakaEssenceMaxAdded));
         libAffx_DehakaEssenceMaxAdded = s1;
     }
     s2 = MaxI(0, MinI(n - 40, 40));
