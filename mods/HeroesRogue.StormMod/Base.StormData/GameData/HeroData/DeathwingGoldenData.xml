@@ -268,7 +268,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
   <!-- ===== Wings of Ruin ===== -->
   <!-- Dominion: 1% Cataclysm and Bellowing Roar damage per stack (the hit quest's accumulator). Its landing damage, 20% of
-       what each landing deals per stack, is dealt by the script with this effect: modifiers on the landing's own damage
+       the landing's base damage per stack (added to its other bonuses), is dealt by the script with this effect: modifiers on the landing's own damage
        never applied in game. Spell Power already counted in the landing's damage. -->
   <CEffectDamage id="DeathwingGoldenDominionDamage" parent="StormSpell">
     <Flags index="NoFractionDealtBonus" value="1" />
