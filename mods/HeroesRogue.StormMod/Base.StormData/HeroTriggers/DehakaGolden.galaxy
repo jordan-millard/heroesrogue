@@ -2,7 +2,7 @@ include "AffixTriggers"
 
 // ============================================================
 // Golden Dehaka. Every game: Essence saved last game is given back, and the save token follows Essence (keeps 50%).
-// Tongue of the Pack: Drag hits on enemy Heroes add Hunger; takedowns add Pack: Drag recharge (script, with Long
+// Tongue of the Pack: Drag hits on enemy Heroes add Hunger (Basic Attack damage per Essence); takedowns add Pack: Drag recharge (script, with Long
 // Reach and Primal Grasp), then Essence per Hero dragged, then Drag duration, then at 100 Invulnerable on a Drag hit.
 // ============================================================
 
@@ -68,8 +68,8 @@ void libAffx_DehakaSyncDrag () {
     // stage 3 (stacks 81 to 100): Drag lasts 1% longer each
     wanted = MaxI(0, MinI(stacks - 80, 20));
     if (wanted != libAffx_DehakaDragAdded3) {
-        libAffx_CatalogReferenceModify("Behavior,DehakaDragStun,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaDragAdded3) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,DehakaDragChannelBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaDragAdded3) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,DehakaDragStun,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaDragAdded3) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,DehakaDragChannelBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaDragAdded3) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_DehakaDragAdded3 = wanted;
     }
     // stacks past 100: 0.02 each to all damage
@@ -246,6 +246,20 @@ void libAffx_DehakaBrushstalkerSync () {
     CatalogFieldValueSet(c_gameCatalogAbil, "DehakaGoldenBrushstalker", "Cost[0].Cooldown.TimeUse", libAffx_player, CatalogFieldValueGet(c_gameCatalogAbil, "DehakaBrushstalker", "Cost[0].Cooldown.TimeUse", libAffx_player));
     CatalogFieldValueSet(c_gameCatalogAbil, "DehakaGoldenBrushstalker", "CastIntroTime[0]", libAffx_player, CatalogFieldValueGet(c_gameCatalogAbil, "DehakaBrushstalker", "CastIntroTime[0]", libAffx_player));
 }
+// Hunger: each Basic Attack deals 0.1 more damage per Hunger stack per Essence held
+bool libAffx_DehakaHungerAttack_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    unit victim = EventUnit();
+    fixed extra;
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !UnitHasBehavior2(hero, "DehakaGoldenDragMarker") || !UnitIsAlive(victim)) {
+        return false;
+    }
+    extra = 0.1 * IntToFixed(libAffx_DehakaStacks("DehakaGoldenHungerTokenCounter")) * UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft);
+    if (extra > 0.0) {
+        UnitDamage(hero, "DehakaGoldenHungerDamage", victim, extra);
+    }
+    return true;
+}
 bool libAffx_DehakaTick_Func (bool testConds, bool runActions) {
     libAffx_DehakaBrushstalkerSync();
     libAffx_DehakaEssenceSync();
@@ -322,6 +336,7 @@ bool libAffx_DehakaStart (bool testConds, bool runActions) {
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DehakaBrushPlant_Func"), libAffx_player, "DehakaBrushstalkerTeleport");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaBrushTick_Func"), 0.125, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DehakaHungerAttack_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaHeroWeaponDamage");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaSync_Func"), 1.0, c_timeGame);
     return true;

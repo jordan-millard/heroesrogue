@@ -3,14 +3,14 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Dehaka. Starter: Tongue of the Pack (Drag lasts 1.5 seconds longer; Feeding Frenzy and Paralyzing Enzymes). Essence is kept between games at 50% (a token the script keeps equal to Essence). Each damage effect has its own multipliers: the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DehakaGolden.galaxy. -->
+  <!-- Golden Dehaka. Starter: Tongue of the Pack (Drag lasts 0.5 seconds longer; Feeding Frenzy and Paralyzing Enzymes). Essence is kept between games at 50% (a token the script keeps equal to Essence). Each damage effect has its own multipliers: the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DehakaGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="DehakaGoldenDragMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DehakaGoldenPrimalGraspMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DehakaGoldenBrushMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Tongue of the Pack ===== -->
-  <!-- Drag lasts 1.5 seconds longer (stun, channel and pull); gain Feeding Frenzy and Paralyzing Enzymes. Hunger quest (10% of each map gains kept for good): 5% Drag damage per enemy Hero hit. Pack quest: takedowns within 6 seconds of a Drag hit; stacks 1-40 make Drag recharge 1% faster each (script), 41-80 make each Drag hit on an enemy Hero give 1 Essence per stack (script), 81-100 make Drag last 1% longer each, at 100 each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script), then 2% damage each. -->
+  <!-- Drag lasts 0.5 seconds longer (stun, channel and pull); gain Feeding Frenzy and Paralyzing Enzymes. Hunger quest (10% of each map gains kept for good): each enemy Hero hit makes Basic Attacks deal 0.1 more damage per Essence held (script). Pack quest: takedowns within 6 seconds of a Drag hit; stacks 1-40 make Drag recharge 1% faster each (script), 41-80 make each Drag hit on an enemy Hero give 1 Essence per stack (script), 81-100 make Drag last 1% longer each, at 100 each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DehakaGoldenHungerTokenCounter" parent="StormQuestToken">
     <Face value="DehakaGoldenHungerTokenCounter" />
     <Max value="100000" />
@@ -24,12 +24,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="DehakaGoldenHungerTokenCounter" />
-    <Scale value="0.05" />
+    <Scale value="0" />
   </CAccumulatorToken>
   <CEffectDamage id="DehakaDragDamage">
     <MultiplicativeModifierArray index="DehakaDragPower" Modifier="0" />
     <MultiplicativeModifierArray index="DehakaDragCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="DehakaDragHit" Accumulator="DehakaGoldenHungerTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="DehakaDragLegacy" Modifier="0" />
   </CEffectDamage>
   <CButton id="DehakaGoldenHungerTokenCounter" parent="StormButtonParent">
@@ -51,6 +50,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorTokenCounter id="DehakaGoldenEssenceToken" parent="StormGenericToken">
     <Max value="1000" />
   </CBehaviorTokenCounter>
+  <!-- Hunger: the script adds this to each Basic Attack, 0.1 damage per Hunger stack per Essence held -->
+  <CEffectDamage id="DehakaGoldenHungerDamage" parent="StormWeapon">
+    <Amount value="0" />
+  </CEffectDamage>
   <!-- Pack 100: each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script) -->
   <CBehaviorBuff id="DehakaGoldenDragInvulnerable" parent="StormInvulnerable">
     <Duration value="0.75" />
