@@ -79,7 +79,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Primal Evolution ===== -->
-  <!-- Every 25 Essence collected over the run (20 with Rapid Adaptation) grants a random mutation kept for the run (script, tokens kept at 100%): 3% Health, 3% Attack Speed, 1% Life Steal, 3% Ability damage or 2% Movement Speed (also added to the Movement Speed boons, so it adds to them). Essence Collection heals 20% more. Gain Adaptation at level 1; Isolation can't be taken. No hit quest. Evolution quest: takedowns within 6 seconds of any hit; stacks 1-40 add 1 max Essence each, 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage taken each, at 100 fatal damage Burrows Dehaka instead (once every 60 seconds), then 2% damage each (all script but the last). -->
+  <!-- Every 25 Essence collected (20 with Rapid Adaptation) grants a random mutation (script; each win keeps 10% of that map's mutations, rounded up): 2% Health, 2% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed (also added to the Movement Speed boons, so it adds to them), 1% shorter Stuns, Silences and Slows (script, up to 75%), 1% Healing Received, or 1 max Essence (script). Essence Collection heals 20% more. Gain Adaptation at level 1; Isolation can't be taken. No hit quest. Evolution quest: takedowns within 6 seconds of any hit; stacks 1-40 add 1 max Essence each, 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage taken each, at 100 fatal damage Burrows Dehaka instead (once every 60 seconds), then 2% damage each (all script but the last). -->
   <CBehaviorTokenCounter id="DehakaGoldenEvolutionTokenCounter" parent="StormQuestToken">
     <Face value="DehakaGoldenEvolutionTokenCounter" />
     <Max value="100000" />
@@ -325,6 +325,15 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorTokenCounter id="DehakaGoldenMutationMoveSpeed" parent="StormGenericToken">
     <Max value="1000" />
   </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationResilience" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationHealing" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationEssence" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
   <CBehaviorTokenCounter id="DehakaGoldenMutationPending" parent="StormGenericToken">
     <Max value="1000" />
   </CBehaviorTokenCounter>
@@ -336,7 +345,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="DehakaGoldenMutationProgress" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_dehaka_adaptation.dds" />
   </CButton>
-  <!-- every mutation: the script sets each field from the counts and re-adds the buff -->
+  <!-- the stat mutations: the script sets each field from the counts and re-adds the buff (shorter crowd control and max
+       Essence are script) -->
   <CBehaviorBuff id="DehakaGoldenMutations" parent="CarryBehaviorParent">
     <Alignment value="Positive" />
     <InfoFlags index="Hidden" value="0" />
@@ -351,6 +361,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <VitalDamageLeechScoreArray Value="Healing" />
       <DamageDealtFraction index="Ability" value="0" />
       <UnifiedMoveSpeedFactor value="0" />
+      <HealTakenAdditiveMultiplier index="Life" value="0" />
     </Modification>
   </CBehaviorBuff>
   <!-- Evolution 81-100: Adaptation heals this much more at its end (the script tracks the damage taken) -->

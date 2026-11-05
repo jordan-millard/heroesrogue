@@ -42,13 +42,14 @@ int libAffx_DehakaEssenceSeen = -1; // Essence at the last check (Primal Evoluti
 int libAffx_DehakaEssenceMaxAdded; // max Essence added by Evolution stacks 1-40
 fixed libAffx_DehakaAdaptBonus; // Evolution 81-100: share of the damage taken during Adaptation healed on top
 fixed libAffx_DehakaAdaptExtra; // that extra heal so far
-int[6] libAffx_DehakaMutationsSet; // mutation counts the buff was last set for
+int[9] libAffx_DehakaMutationsSet; // mutation counts the buff was last set for
+fixed libAffx_DehakaResilience; // Resilience mutations: how much shorter crowd control is
 fixed[4] libAffx_DehakaMoveWritten; // Movement Speed boons: the value last written
 fixed[4] libAffx_DehakaMoveAdded; // and the mutations' part of it
 bool libAffx_DehakaApexMade; // Apex Form's window
 bool libAffx_DehakaApexVisible;
 int libAffx_DehakaApexDialog;
-int[6] libAffx_DehakaApexButtons;
+int[9] libAffx_DehakaApexButtons;
 
 unit libAffx_DehakaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -462,14 +463,23 @@ string libAffx_DehakaMutationToken (int kind) {
     if (kind == 4) {
         return "DehakaGoldenMutationAbility";
     }
-    return "DehakaGoldenMutationMoveSpeed";
+    if (kind == 5) {
+        return "DehakaGoldenMutationMoveSpeed";
+    }
+    if (kind == 6) {
+        return "DehakaGoldenMutationResilience";
+    }
+    if (kind == 7) {
+        return "DehakaGoldenMutationHealing";
+    }
+    return "DehakaGoldenMutationEssence";
 }
 text libAffx_DehakaMutationText (int kind) {
     if (kind == 1) {
-        return StringToText("+3% Health");
+        return StringToText("+2% Health");
     }
     if (kind == 2) {
-        return StringToText("+3% Attack Speed");
+        return StringToText("+2% Attack Speed");
     }
     if (kind == 3) {
         return StringToText("+1% Life Steal");
@@ -477,7 +487,16 @@ text libAffx_DehakaMutationText (int kind) {
     if (kind == 4) {
         return StringToText("+3% Ability Damage");
     }
-    return StringToText("+2% Movement Speed");
+    if (kind == 5) {
+        return StringToText("+2% Movement Speed");
+    }
+    if (kind == 6) {
+        return StringToText("1% shorter Stuns, Silences, Slows");
+    }
+    if (kind == 7) {
+        return StringToText("+1% Healing Received");
+    }
+    return StringToText("+1 Maximum Essence");
 }
 // Movement Speed bonuses don't add up (the highest wins), so the mutations' Movement Speed is also added to each
 // Movement Speed boon; whatever LibAffx last set on a boon is kept as its own value
@@ -510,7 +529,9 @@ void libAffx_DehakaMutationMoveBoons (fixed ours) {
         i += 1;
     }
 }
-// the mutation buff follows the counts: 3% Health, 3% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed each
+// the mutation buff follows the counts: 2% Health, 2% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed and
+// 1% Healing Received each; shorter crowd control (libAffx_DehakaResilience_Func) and max Essence (libAffx_DehakaPrimalSync)
+// read the counts too
 void libAffx_DehakaMutationsApply () {
     unit hero = libAffx_DehakaHero();
     int i = 1;
@@ -519,7 +540,7 @@ void libAffx_DehakaMutationsApply () {
     if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
         return;
     }
-    while (i <= 5) {
+    while (i <= 8) {
         if (libAffx_DehakaStacks(libAffx_DehakaMutationToken(i)) != libAffx_DehakaMutationsSet[i]) {
             changed = true;
             libAffx_DehakaMutationsSet[i] = libAffx_DehakaStacks(libAffx_DehakaMutationToken(i));
@@ -528,15 +549,18 @@ void libAffx_DehakaMutationsApply () {
         i += 1;
     }
     libAffx_DehakaMutationMoveBoons(0.02 * IntToFixed(libAffx_DehakaMutationsSet[5]));
+    libAffx_DehakaResilience = MinF(0.75, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[6]));
     if (changed) {
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalMaxFractionArray[Life]", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[1]));
-        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[2]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalMaxFractionArray[Life]", libAffx_player, 0.02 * IntToFixed(libAffx_DehakaMutationsSet[1]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.02 * IntToFixed(libAffx_DehakaMutationsSet[2]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalDamageLeechArray[Life].KindArray[Basic]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[3]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalDamageLeechArray[Life].KindArray[Ability]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[3]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[4]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.UnifiedMoveSpeedFactor", libAffx_player, 0.02 * IntToFixed(libAffx_DehakaMutationsSet[5]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.HealTakenAdditiveMultiplier[Life]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[7]));
         UnitBehaviorRemove(hero, "DehakaGoldenMutations", 1);
     }
+    total -= libAffx_DehakaMutationsSet[6] + libAffx_DehakaMutationsSet[8];
     if (total > 0 && !UnitHasBehavior2(hero, "DehakaGoldenMutations")) {
         UnitBehaviorAdd(hero, "DehakaGoldenMutations", hero, 1);
     }
@@ -556,13 +580,13 @@ void libAffx_DehakaApexShow () {
             return;
         }
         libAffx_DehakaApexMade = true;
-        libAffx_DehakaApexDialog = DialogCreate(600, 150, c_anchorTop, 0, 120, false);
-        libAffx_CreateDialogControlLabel(libAffx_DehakaApexDialog, StringToText("Apex Form: choose a mutation"), "Affix_Dialog", 560, 40, c_anchorTop, 0, 18, ColorWithAlpha(0, 0, 0, 0), false);
-        while (i <= 5) {
+        libAffx_DehakaApexDialog = DialogCreate(680, 200, c_anchorTop, 0, 120, false);
+        libAffx_CreateDialogControlLabel(libAffx_DehakaApexDialog, StringToText("Apex Form: choose a mutation"), "Affix_Dialog", 640, 40, c_anchorTop, 0, 18, ColorWithAlpha(0, 0, 0, 0), false);
+        while (i <= 8) {
             libAffx_DehakaApexButtons[i] = libAffx_CreateDialogControlButton(libAffx_DehakaApexDialog);
-            libAffx_SetDialogControlSize(libAffx_DehakaApexButtons[i], 110, 50);
+            libAffx_SetDialogControlSize(libAffx_DehakaApexButtons[i], 150, 50);
             libAffx_SetDialogControlText(libAffx_DehakaApexButtons[i], libAffx_DehakaMutationText(i));
-            libAffx_SetDialogControlPosition(libAffx_DehakaApexButtons[i], c_anchorTop, -232 + 116 * (i - 1), 70);
+            libAffx_SetDialogControlPosition(libAffx_DehakaApexButtons[i], c_anchorTop, -234 + 156 * ModI(i - 1, 4), 64 + 56 * ((i - 1) / 4));
             i += 1;
         }
     }
@@ -578,7 +602,7 @@ bool libAffx_DehakaApexClick_Func (bool testConds, bool runActions) {
     if (hero == null || !libAffx_DehakaApexMade || EventPlayer() != libAffx_player) {
         return false;
     }
-    while (i <= 5) {
+    while (i <= 8) {
         if (control == libAffx_DehakaApexButtons[i] && libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0) {
             libGame_gf_ModifyTokenCount(-1, "DehakaGoldenMutationPending", hero);
             libAffx_DehakaMutate(hero, i);
@@ -596,7 +620,7 @@ void libAffx_DehakaMutationGain (unit hero) {
         libAffx_DehakaApexShow();
         return;
     }
-    libAffx_DehakaMutate(hero, RandomInt(1, 5));
+    libAffx_DehakaMutate(hero, RandomInt(1, 8));
 }
 // every 0.25 seconds: Essence gained (not Essence given back from the last game) counts toward the next mutation, every
 // 25 (20 with Rapid Adaptation)
@@ -627,8 +651,8 @@ bool libAffx_DehakaEssenceWatch_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Evolution quest (every second and on a takedown): stacks 1-40 add 1 max Essence each (the base script's max too, and
-// without filling it), 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage
+// Evolution quest (every second and on a takedown): stacks 1-40 add 1 max Essence each, as does each Essence mutation (the
+// base script's max too, and without filling it), 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage
 // taken each, and at 100 fatal damage makes Dehaka Burrow instead (once every 60 seconds)
 void libAffx_DehakaPrimalSync () {
     unit hero = libAffx_DehakaHero();
@@ -640,7 +664,7 @@ void libAffx_DehakaPrimalSync () {
         return;
     }
     n = libAffx_DehakaStacks("DehakaGoldenEvolutionTokenCounter");
-    s1 = MinI(n, 40);
+    s1 = MinI(n, 40) + libAffx_DehakaStacks(libAffx_DehakaMutationToken(8));
     if (s1 != libAffx_DehakaEssenceMaxAdded) {
         libAffx_CatalogReferenceModify("Abil,DehakaEssenceCollection,Cost.Charge.CountMax", libAffx_player, IntToString(s1 - libAffx_DehakaEssenceMaxAdded), c_upgradeOperationAdd);
         libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player] += s1 - libAffx_DehakaEssenceMaxAdded;
@@ -661,6 +685,23 @@ void libAffx_DehakaPrimalSync () {
     }
     libAffx_DehakaMutationsApply();
     libAffx_DehakaApexShow();
+}
+// Resilience mutations: each makes Stuns, Silences and Slows on Dehaka 1% shorter (up to 75%), like Abolish Magic
+bool libAffx_DehakaResilience_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    string b = EventUnitBehavior();
+    fixed left;
+    if (hero == null || EventUnit() != hero || libAffx_DehakaResilience <= 0.0 || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return false;
+    }
+    if (UnitBehaviorHasCategoryFlag(b, c_behaviorCategoryUnreducible)) {
+        return true;
+    }
+    left = UnitBehaviorDuration(hero, b);
+    if (left > 0.0) {
+        UnitBehaviorSetDurationRemaining(hero, b, left * (1.0 - libAffx_DehakaResilience));
+    }
+    return true;
 }
 // Evolution 81-100: damage taken during Adaptation adds to an extra heal when Adaptation heals
 bool libAffx_DehakaAdaptDamage_Func (bool testConds, bool runActions) {
@@ -832,6 +873,10 @@ bool libAffx_DehakaStart (bool testConds, bool runActions) {
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_DehakaAdaptStart_Func"), null, "DehakaAdaptationDamageTrackerBehavior", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_DehakaAdaptHeal_Func"), null, "DehakaAdaptationHealTrackerBehavior", c_unitBehaviorChangeCreate);
     TriggerAddEventDialogControl(TriggerCreate("libAffx_DehakaApexClick_Func"), libAffx_player, c_invalidDialogControlId, c_triggerControlEventTypeClick);
+    trig = TriggerCreate("libAffx_DehakaResilience_Func");
+    TriggerAddEventUnitBehaviorChangeFromCategory(trig, UnitRefFromUnit(libAffx_DehakaHero()), c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(trig, UnitRefFromUnit(libAffx_DehakaHero()), c_behaviorCategoryDebuffSilence, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(trig, UnitRefFromUnit(libAffx_DehakaHero()), c_behaviorCategorySlow, c_unitBehaviorChangeCreate);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaSync_Func"), 1.0, c_timeGame);
     return true;
