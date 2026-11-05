@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Dehaka. Starter: Tongue of the Pack (Drag lasts 1.5 seconds longer; Feeding Frenzy and Paralyzing Enzymes). Essence is kept between games at 50% (a token the script keeps equal to Essence). Each damage effect has its own multipliers: the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DehakaGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="DehakaGoldenDragMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenPrimalGraspMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Tongue of the Pack ===== -->
+  <!-- Drag lasts 1.5 seconds longer (stun, channel and pull); gain Feeding Frenzy and Paralyzing Enzymes. Hunger quest (10% of each map gains kept for good): 5% Drag damage per enemy Hero hit. Pack quest: takedowns within 6 seconds of a Drag hit; stacks 1-40 make Drag recharge 1% faster each (script), 41-80 make each Drag hit on an enemy Hero give 1 Essence per stack (script), 81-100 make Drag last 1% longer each, at 100 each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DehakaGoldenHungerTokenCounter" parent="StormQuestToken">
+    <Face value="DehakaGoldenHungerTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenPackTokenCounter" parent="StormQuestToken">
+    <Face value="DehakaGoldenPackTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DehakaGoldenHungerTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DehakaGoldenHungerTokenCounter" />
+    <Scale value="0.05" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DehakaDragDamage">
+    <MultiplicativeModifierArray index="DehakaDragPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaDragCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaDragHit" Accumulator="DehakaGoldenHungerTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DehakaDragLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="DehakaGoldenHungerTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dehaka_drag.dds" />
+  </CButton>
+  <CButton id="DehakaGoldenPackTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dehaka_drag.dds" />
+  </CButton>
+  <!-- Tongue of the Pack: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DehakaDragPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- Essence kept between games (the script keeps it equal to Dehaka's Essence) -->
+  <CBehaviorTokenCounter id="DehakaGoldenEssenceToken" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <!-- Pack 100: each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script) -->
+  <CBehaviorBuff id="DehakaGoldenDragInvulnerable" parent="StormInvulnerable">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <!-- Digestion (Epic): dragged enemy Heroes deal 30% less damage for 3 seconds after the stun ends -->
+  <CBehaviorBuff id="DehakaGoldenDigestion">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\\Textures\\storm_ui_icon_dehaka_drag.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.3" />
+      <DamageDealtFraction index="Basic" value="-0.3" />
+      <DamageDealtFraction index="Ability" value="-0.3" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DehakaGoldenDigestionApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="DehakaGoldenDigestion" />
+  </CEffectApplyBehavior>
+  <!-- the Drag stun's final effect, on the dragged unit -->
+  <CEffectSet id="DehakaDragTalentFinalSet">
+    <EffectArray value="DehakaGoldenDigestionApply" />
+  </CEffectSet>
+</Catalog>

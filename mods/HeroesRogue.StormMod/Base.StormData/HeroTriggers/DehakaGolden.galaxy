@@ -1,0 +1,232 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Dehaka. Every game: Essence saved last game is given back, and the save token follows Essence (keeps 50%).
+// Tongue of the Pack: Drag hits on enemy Heroes add Hunger; takedowns add Pack: Drag recharge (script, with Long
+// Reach and Primal Grasp), then Essence per Hero dragged, then Drag duration, then at 100 Invulnerable on a Drag hit.
+// ============================================================
+
+const fixed libAffx_DehakaTakedownWindow = 3.0;
+const fixed libAffx_DehakaPastCapDamagePerStack = 0.01;
+bool libAffx_DehakaStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DehakaDragTime; // per enemy player, last Tongue of the Pack hit
+int libAffx_DehakaDragAdded; // Tongue of the Pack: takedown stacks already applied to the catalog this game
+int libAffx_DehakaDragAdded2; // Tongue of the Pack: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DehakaDragAdded3; // Tongue of the Pack: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DehakaDragPastApplied; // Tongue of the Pack: takedown quest stacks past the cap applied as damage this game
+int libAffx_DehakaEssenceWritten; // Essence the script last wrote to the save token
+int libAffx_DehakaLongReachId; // the Long Reach boon's affix id
+fixed libAffx_DehakaDragTimeSet = -1.0; // Drag cooldown or charge time last set
+
+unit libAffx_DehakaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_DehakaIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_DehakaStacks(string tokenId) {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_DehakaQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_DehakaInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_DehakaTakedownWindow;
+}
+// DehakaGoldenPackTokenCounter: stacks 1-40: Drag recharges 1% faster each (libAffx_DehakaDragTimes); 41-80 Essence per Hero dragged, 100 Invulnerable (libAffx_DehakaDragOnHit), 81-100 duration, then damage
+void libAffx_DehakaSyncDrag () {
+    unit hero = libAffx_DehakaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenDragMarker")) {
+        return;
+    }
+    stacks = libAffx_DehakaStacks("DehakaGoldenPackTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DehakaDragAdded) {
+        libAffx_DehakaDragAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): each Drag hit on an enemy Hero gives 1 Essence per stack (libAffx_DehakaDragOnHit)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DehakaDragAdded2) {
+        libAffx_DehakaDragAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Drag lasts 1% longer each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DehakaDragAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,DehakaDragStun,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaDragAdded3) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,DehakaDragChannelBehavior,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaDragAdded3) * 0.0375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DehakaDragAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DehakaDragPastApplied) {
+        libAffx_DehakaDragPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaDragPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaDragPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DehakaDragPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DehakaDragPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DehakaDragPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_DehakaSync_Func (bool testConds, bool runActions) {
+    libAffx_DehakaSyncDrag();
+    return true;
+}
+// Essence is Essence Collection's charges: add some, up to the most Dehaka can hold
+void libAffx_DehakaAddEssence (unit hero, int amount) {
+    abilcmd cmd = AbilityCommand("DehakaEssenceCollection", 0);
+    int room = FixedToInt(UnitAbilityChargeInfo(hero, cmd, c_unitAbilChargeCountMax) - UnitAbilityChargeInfo(hero, cmd, c_unitAbilChargeCountLeft));
+    int added = MinI(amount, room);
+    if (added > 0) {
+        UnitAbilityAddChargeUsed(hero, "DehakaEssenceCollection", "Abil/DehakaEssenceCollection", -1.0 * IntToFixed(added));
+    }
+}
+// every second: Essence saved last game arrives as token stacks above what the script last wrote, so it's given as
+// Essence; then the token is set to Dehaka's Essence again (a win keeps 50% of it)
+void libAffx_DehakaEssenceSync () {
+    unit hero = libAffx_DehakaHero();
+    int token;
+    int essence;
+    if (hero == null || !UnitIsAlive(hero)) {
+        return;
+    }
+    token = libAffx_DehakaStacks("DehakaGoldenEssenceToken");
+    if (token > libAffx_DehakaEssenceWritten) {
+        libAffx_DehakaAddEssence(hero, token - libAffx_DehakaEssenceWritten);
+    }
+    essence = FixedToInt(UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft));
+    if (essence != token) {
+        libGame_gf_ModifyTokenCount(essence - token, "DehakaGoldenEssenceToken", hero);
+    }
+    libAffx_DehakaEssenceWritten = essence;
+}
+// Drag's cooldown or charge time (script, so the quest, Long Reach and Primal Grasp combine in any order): 15 seconds, or
+// 2 charges at 8 seconds with Primal Grasp; Long Reach takes 0.5 seconds off each; Pack stacks 1-40 make it 1% faster each
+void libAffx_DehakaDragTimes () {
+    unit hero = libAffx_DehakaHero();
+    int n;
+    int reach;
+    fixed t;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenDragMarker")) {
+        return;
+    }
+    n = MinI(libAffx_DehakaStacks("DehakaGoldenPackTokenCounter"), 40);
+    if (libAffx_DehakaLongReachId == 0) {
+        libAffx_DehakaLongReachId = libAffx_GetAffixId("DehakaLongReach");
+    }
+    if (libAffx_DehakaLongReachId > 0) {
+        reach = libAffx_affixes[libAffx_DehakaLongReachId].count;
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenPrimalGraspMarker")) {
+        t = (8.0 - 0.5 * IntToFixed(reach)) * (1.0 - 0.01 * IntToFixed(n));
+        if (t != libAffx_DehakaDragTimeSet) {
+            libAffx_DehakaDragTimeSet = t;
+            CatalogFieldValueSetFixed(c_gameCatalogAbil, "DehakaDrag", "Cost[0].Charge.TimeUse", libAffx_player, t);
+        }
+        return;
+    }
+    t = (15.0 - 0.5 * IntToFixed(reach)) * (1.0 - 0.01 * IntToFixed(n));
+    if (t != libAffx_DehakaDragTimeSet) {
+        libAffx_DehakaDragTimeSet = t;
+        CatalogFieldValueSetFixed(c_gameCatalogAbil, "DehakaDrag", "Cost[0].Cooldown.TimeUse", libAffx_player, t);
+    }
+}
+// Drag hit on an enemy Hero: Pack stacks 41-80 give 1 Essence each, and at 100 Dehaka is Invulnerable for 0.75 seconds
+void libAffx_DehakaDragOnHit (unit hero) {
+    int n = libAffx_DehakaStacks("DehakaGoldenPackTokenCounter");
+    if (n > 40) {
+        libAffx_DehakaAddEssence(hero, MinI(n - 40, 40));
+    }
+    if (n >= 100) {
+        UnitBehaviorAdd(hero, "DehakaGoldenDragInvulnerable", hero, 1);
+    }
+}
+bool libAffx_DehakaTick_Func (bool testConds, bool runActions) {
+    libAffx_DehakaEssenceSync();
+    libAffx_DehakaDragTimes();
+    return true;
+}
+// Tongue of the Pack hit on an enemy Hero: takedown window, DehakaGoldenHungerTokenCounter, the heal, and on-hit boons
+bool libAffx_DehakaDragHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DehakaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DehakaGoldenDragMarker")) {
+        return false;
+    }
+    libAffx_DehakaDragTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "DehakaGoldenHungerTokenCounter", hero);
+    libAffx_DehakaDragOnHit(hero);
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[2] libAffx_DehakaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_DehakaTakedownCrossStart () {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_DehakaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter"));
+}
+void libAffx_DehakaTakedownCross () {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter")) == libAffx_DehakaTakedownBefore[1]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenDragMarker") && FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter")) == libAffx_DehakaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenPackTokenCounter", hero);
+        libAffx_DehakaSyncDrag();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_DehakaTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_DehakaHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_DehakaTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "DehakaGoldenDragMarker") && libAffx_DehakaDragTime[killedPlayer] > 0.0 && now - libAffx_DehakaDragTime[killedPlayer] <= 6.0) {
+        libAffx_DehakaDragTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenPackTokenCounter", hero);
+        libAffx_DehakaSyncDrag();
+        libAffx_DehakaQuestDing();
+        libAffx_DehakaDragTimes();
+    }
+    libAffx_DehakaTakedownCross();
+    return true;
+}
+bool libAffx_DehakaStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_DehakaStarted) {
+        return true;
+    }
+    libAffx_DehakaStarted = true;
+    trig = TriggerCreate("libAffx_DehakaDragHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDragDamage");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaTick_Func"), 1.0, c_timeGame);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaSync_Func"), 1.0, c_timeGame);
+    return true;
+}
