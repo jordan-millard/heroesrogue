@@ -42,14 +42,14 @@ int libAffx_DehakaEssenceSeen = -1; // Essence at the last check (Primal Evoluti
 int libAffx_DehakaEssenceMaxAdded; // max Essence added by Evolution stacks 1-40
 fixed libAffx_DehakaAdaptBonus; // Evolution 81-100: share of the damage taken during Adaptation healed on top
 fixed libAffx_DehakaAdaptExtra; // that extra heal so far
-int[9] libAffx_DehakaMutationsSet; // mutation counts the buff was last set for
+int[10] libAffx_DehakaMutationsSet; // mutation counts the buff was last set for
 fixed libAffx_DehakaResilience; // Resilience mutations: how much shorter crowd control is
 fixed[4] libAffx_DehakaMoveWritten; // Movement Speed boons: the value last written
 fixed[4] libAffx_DehakaMoveAdded; // and the mutations' part of it
 bool libAffx_DehakaApexMade; // Apex Form's window
 bool libAffx_DehakaApexVisible;
 int libAffx_DehakaApexDialog;
-int[9] libAffx_DehakaApexButtons;
+int[10] libAffx_DehakaApexButtons;
 
 unit libAffx_DehakaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -472,7 +472,10 @@ string libAffx_DehakaMutationToken (int kind) {
     if (kind == 7) {
         return "DehakaGoldenMutationHealing";
     }
-    return "DehakaGoldenMutationEssence";
+    if (kind == 8) {
+        return "DehakaGoldenMutationEssence";
+    }
+    return "DehakaGoldenMutationAttackDamage";
 }
 text libAffx_DehakaMutationText (int kind) {
     if (kind == 1) {
@@ -496,7 +499,10 @@ text libAffx_DehakaMutationText (int kind) {
     if (kind == 7) {
         return StringToText("+1% Healing Received");
     }
-    return StringToText("+1 Maximum Essence");
+    if (kind == 8) {
+        return StringToText("+1 Maximum Essence");
+    }
+    return StringToText("+5% Attack Damage");
 }
 // Movement Speed bonuses don't add up (the highest wins), so the mutations' Movement Speed is also added to each
 // Movement Speed boon; whatever LibAffx last set on a boon is kept as its own value
@@ -530,7 +536,7 @@ void libAffx_DehakaMutationMoveBoons (fixed ours) {
     }
 }
 // the mutation buff follows the counts: 2% Health, 2% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed and
-// 1% Healing Received each; shorter crowd control (libAffx_DehakaResilience_Func) and max Essence (libAffx_DehakaPrimalSync)
+// 1% Healing Received each, and 5% Attack Damage; shorter crowd control (libAffx_DehakaResilience_Func) and max Essence (libAffx_DehakaPrimalSync)
 // read the counts too
 void libAffx_DehakaMutationsApply () {
     unit hero = libAffx_DehakaHero();
@@ -540,7 +546,7 @@ void libAffx_DehakaMutationsApply () {
     if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
         return;
     }
-    while (i <= 8) {
+    while (i <= 9) {
         if (libAffx_DehakaStacks(libAffx_DehakaMutationToken(i)) != libAffx_DehakaMutationsSet[i]) {
             changed = true;
             libAffx_DehakaMutationsSet[i] = libAffx_DehakaStacks(libAffx_DehakaMutationToken(i));
@@ -558,6 +564,7 @@ void libAffx_DehakaMutationsApply () {
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[4]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.UnifiedMoveSpeedFactor", libAffx_player, 0.02 * IntToFixed(libAffx_DehakaMutationsSet[5]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.HealTakenAdditiveMultiplier[Life]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[7]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.05 * IntToFixed(libAffx_DehakaMutationsSet[9]));
         UnitBehaviorRemove(hero, "DehakaGoldenMutations", 1);
     }
     total -= libAffx_DehakaMutationsSet[6] + libAffx_DehakaMutationsSet[8];
@@ -580,13 +587,13 @@ void libAffx_DehakaApexShow () {
             return;
         }
         libAffx_DehakaApexMade = true;
-        libAffx_DehakaApexDialog = DialogCreate(680, 200, c_anchorTop, 0, 120, false);
-        libAffx_CreateDialogControlLabel(libAffx_DehakaApexDialog, StringToText("Apex Form: choose a mutation"), "Affix_Dialog", 640, 40, c_anchorTop, 0, 18, ColorWithAlpha(0, 0, 0, 0), false);
-        while (i <= 8) {
+        libAffx_DehakaApexDialog = DialogCreate(540, 250, c_anchorTop, 0, 120, false);
+        libAffx_CreateDialogControlLabel(libAffx_DehakaApexDialog, StringToText("Apex Form: choose a mutation"), "Affix_Dialog", 500, 40, c_anchorTop, 0, 18, ColorWithAlpha(0, 0, 0, 0), false);
+        while (i <= 9) {
             libAffx_DehakaApexButtons[i] = libAffx_CreateDialogControlButton(libAffx_DehakaApexDialog);
             libAffx_SetDialogControlSize(libAffx_DehakaApexButtons[i], 150, 50);
             libAffx_SetDialogControlText(libAffx_DehakaApexButtons[i], libAffx_DehakaMutationText(i));
-            libAffx_SetDialogControlPosition(libAffx_DehakaApexButtons[i], c_anchorTop, -234 + 156 * ModI(i - 1, 4), 64 + 56 * ((i - 1) / 4));
+            libAffx_SetDialogControlPosition(libAffx_DehakaApexButtons[i], c_anchorTop, -156 + 156 * ModI(i - 1, 3), 64 + 56 * ((i - 1) / 3));
             i += 1;
         }
     }
@@ -602,7 +609,7 @@ bool libAffx_DehakaApexClick_Func (bool testConds, bool runActions) {
     if (hero == null || !libAffx_DehakaApexMade || EventPlayer() != libAffx_player) {
         return false;
     }
-    while (i <= 8) {
+    while (i <= 9) {
         if (control == libAffx_DehakaApexButtons[i] && libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0) {
             libGame_gf_ModifyTokenCount(-1, "DehakaGoldenMutationPending", hero);
             libAffx_DehakaMutate(hero, i);
@@ -620,7 +627,7 @@ void libAffx_DehakaMutationGain (unit hero) {
         libAffx_DehakaApexShow();
         return;
     }
-    libAffx_DehakaMutate(hero, RandomInt(1, 8));
+    libAffx_DehakaMutate(hero, RandomInt(1, 9));
 }
 // every 0.25 seconds: Essence gained (not Essence given back from the last game) counts toward the next mutation, every
 // 25 (20 with Rapid Adaptation)
