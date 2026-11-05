@@ -88,6 +88,100 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <ValidatorArray value="SourceNotUnrevealable" />
     </DamageResponse>
   </CBehaviorBuff>
+  <!-- Brushstalker anywhere. The engine only lets an ability with the TargetShrub category target brush, and a mid-game
+       change to the category doesn't take, so with the boon a copy without it (same button, slot and shared cooldown)
+       replaces Brushstalker; the requirements show exactly one of them. Both use the base effects, whose brush check
+       becomes "in brush, or Dehaka has the boon". The script copies Brushstalker's cooldown and cast time (talents) to
+       the copy. -->
+  <CRequirementCountBehavior id="CountBehaviorDehakaGoldenBrushMarkerAtUnit">
+    <Flags index="TechTreeCheat" value="0" />
+    <Count Link="DehakaGoldenBrushMarker" State="CompleteOnlyAtUnit" />
+  </CRequirementCountBehavior>
+  <CRequirementGTE id="GTECountBehaviorDehakaGoldenBrushMarkerAtUnit1">
+    <OperandArray index="0" value="CountBehaviorDehakaGoldenBrushMarkerAtUnit" />
+    <OperandArray index="1" value="1" />
+  </CRequirementGTE>
+  <CRequirementEq id="EqCountBehaviorDehakaGoldenBrushMarkerAtUnit0">
+    <OperandArray index="0" value="CountBehaviorDehakaGoldenBrushMarkerAtUnit" />
+    <OperandArray index="1" value="0" />
+  </CRequirementEq>
+  <CRequirement id="DehakaGoldenHasBrushMarker">
+    <NodeArray index="Use" Link="GTECountBehaviorDehakaGoldenBrushMarkerAtUnit1" />
+    <NodeArray index="Show" Link="GTECountBehaviorDehakaGoldenBrushMarkerAtUnit1" />
+  </CRequirement>
+  <CRequirement id="DehakaGoldenNoBrushMarker">
+    <NodeArray index="Use" Link="EqCountBehaviorDehakaGoldenBrushMarkerAtUnit0" />
+    <NodeArray index="Show" Link="EqCountBehaviorDehakaGoldenBrushMarkerAtUnit0" />
+  </CRequirement>
+  <CAbilEffectTarget id="DehakaBrushstalker">
+    <CmdButtonArray index="Execute" Requirements="DehakaGoldenNoBrushMarker" />
+  </CAbilEffectTarget>
+  <CAbilEffectTarget id="DehakaGoldenBrushstalker" parent="DehakaBrushstalker">
+    <AbilityCategories index="TargetShrub" value="0" />
+    <Cost>
+      <Cooldown Link="Abil/DehakaBrushstalker" />
+    </Cost>
+    <CmdButtonArray index="Execute" DefaultButtonFace="DehakaBrushstalker" Requirements="DehakaGoldenHasBrushMarker" />
+  </CAbilEffectTarget>
+  <CUnit id="HeroDehaka">
+    <AbilArray Link="DehakaGoldenBrushstalker" />
+    <CardLayouts index="0">
+      <LayoutButtons index="30" Face="DehakaBrushstalker" Type="AbilCmd" AbilCmd="DehakaGoldenBrushstalker,Execute" Slot="Mount" />
+    </CardLayouts>
+  </CUnit>
+  <CValidatorUnitCompareBehaviorCount id="DehakaGoldenCasterHasBrushMarker">
+    <WhichUnit Value="Caster" />
+    <Behavior value="DehakaGoldenBrushMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="DehakaGoldenBrushstalkerTarget">
+    <Type value="Or" />
+    <CombineArray value="TargetInShrub" />
+    <CombineArray value="DehakaGoldenCasterHasBrushMarker" />
+  </CValidatorCombine>
+  <CEffectCreatePersistent id="DehakaBrushstalkerEmergingCreatePersistent">
+    <ValidatorArray index="1" value="DehakaGoldenBrushstalkerTarget" />
+  </CEffectCreatePersistent>
+  <CEffectCreatePersistent id="DehakaBrushstalkerPersistent">
+    <ValidatorArray index="1" value="DehakaGoldenBrushstalkerTarget" />
+  </CEffectCreatePersistent>
+  <!-- the copy is disabled and enabled wherever Brushstalker is -->
+  <CBehaviorBuff id="HeroGenericPregameAbilitySuppression">
+    <Modification>
+      <AbilLinkDisableArray value="DehakaGoldenBrushstalker" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DehakaBrushstalkerDisablerBehavior">
+    <Modification>
+      <AbilLinkEnableArray value="DehakaGoldenBrushstalker" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DehakaBrushstalkerDurationBehavior">
+    <Modification>
+      <AbilLinkDisableArray value="DehakaGoldenBrushstalker" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DehakaDragChannelBehavior">
+    <Modification>
+      <AbilLinkDisableArray value="DehakaGoldenBrushstalker" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- the copy's cast animation, sound and effect -->
+  <CActorUnit id="HeroDehaka">
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStart; !ValidatePlayer DehakaHasBrushstalkerApexPredator" Send="AnimPlay StandWorkStart Stand,Work,Start PlayForever,NonLooping -1.000000 -1.000000 1.000000 AsTimeScale" />
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStart; ValidatePlayer DehakaHasBrushstalkerApexPredator" Send="AnimPlay StandWorkStart Stand,Work,Start PlayForever,NonLooping -1.000000 -1.000000 1.250000 AsTimeScale" />
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStop" Send="TimerSet 0.187500 ClearStandWork" />
+  </CActorUnit>
+  <CActorSound id="DehakaBrushstalkerSound">
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStart" Send="Create" />
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStop" Send="Destroy" />
+  </CActorSound>
+  <CActorModel id="DehakaBrushstalkerFXStart">
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStart" Send="Create" />
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStop" Send="AnimBracketStop BSD" />
+    <On Terms="Abil.DehakaGoldenBrushstalker.SourceCastStop" Send="HostSiteOpsSet ::Host SOpTipability 1 1" />
+  </CActorModel>
   <!-- one bush of a patch (the script places 7 and picks each one's variation) -->
   <CActorModel id="DehakaGoldenBrushBush">
     <Model value="Storm_Doodad_KingsCrest_GardenBush" />

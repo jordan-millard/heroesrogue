@@ -238,7 +238,16 @@ bool libAffx_DehakaBrushTick_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Stalker's Thicket: the Brushstalker copy follows Brushstalker's cooldown and cast time (Apex Predator)
+void libAffx_DehakaBrushstalkerSync () {
+    if (libAffx_DehakaHero() == null || !UnitHasBehavior2(libAffx_DehakaHero(), "DehakaGoldenBrushMarker")) {
+        return;
+    }
+    CatalogFieldValueSet(c_gameCatalogAbil, "DehakaGoldenBrushstalker", "Cost[0].Cooldown.TimeUse", libAffx_player, CatalogFieldValueGet(c_gameCatalogAbil, "DehakaBrushstalker", "Cost[0].Cooldown.TimeUse", libAffx_player));
+    CatalogFieldValueSet(c_gameCatalogAbil, "DehakaGoldenBrushstalker", "CastIntroTime[0]", libAffx_player, CatalogFieldValueGet(c_gameCatalogAbil, "DehakaBrushstalker", "CastIntroTime[0]", libAffx_player));
+}
 bool libAffx_DehakaTick_Func (bool testConds, bool runActions) {
+    libAffx_DehakaBrushstalkerSync();
     libAffx_DehakaEssenceSync();
     libAffx_DehakaDragTimes();
     return true;
