@@ -221,10 +221,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     </Cost>
     <CmdButtonArray index="Execute" DefaultButtonFace="DehakaBrushstalker" Requirements="DehakaGoldenHasBrushMarker" />
   </CAbilEffectTarget>
+  <!-- StormHeroMountedCustom has 23 layout buttons (0-22) and Dehaka adds 8 (23-30, Drag last), so the copy goes at 31 -->
   <CUnit id="HeroDehaka">
     <AbilArray Link="DehakaGoldenBrushstalker" />
     <CardLayouts index="0">
-      <LayoutButtons index="30" Face="DehakaBrushstalker" Type="AbilCmd" AbilCmd="DehakaGoldenBrushstalker,Execute" Slot="Mount" />
+      <LayoutButtons index="31" Face="DehakaBrushstalker" Type="AbilCmd" AbilCmd="DehakaGoldenBrushstalker,Execute" Slot="Mount" />
     </CardLayouts>
   </CUnit>
   <CValidatorUnitCompareBehaviorCount id="DehakaGoldenCasterHasBrushMarker">
