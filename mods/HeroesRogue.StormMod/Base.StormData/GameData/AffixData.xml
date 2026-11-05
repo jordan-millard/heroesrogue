@@ -29643,6 +29643,362 @@
                 <Field Id="CatalogModification" Index="5" />
             </String>
         </Instances>
+        <Instances Id="DehakaSwarmHost">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_trample.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DehakaDarkSwarmTalentEnduringSwarm">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DehakaDarkSwarmTalentSymbiosis">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 DehakaGoldenSwarmMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DehakaGoldenSwarmTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DehakaGoldenBroodTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DehakaGoldenBroodTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DehakaGoldenSwarmTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="DehakaGoldenEssenceToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Charge.TimeUse 8">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDarkSwarmSymbiosisTalentModifyUnit,Cost[0].ChargeTimeUse -0.4">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDarkSwarmDamage,MultiplicativeModifierArray[DehakaSwarmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_DehakaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DehakaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaRavenousSwarm">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dehaka_trample.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaSwarmHost">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DehakaDarkSwarmDamage,MultiplicativeModifierArray[DehakaSwarmCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaLurkerStrainBoon">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_burrow.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaSwarmHost">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DehakaBurrowTalentLurkerStrain">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaPrimalSwarmBoon">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_trample.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaSwarmHost">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DehakaPrimalSwarm">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaSwarmFeeding">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_essencecollection.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaSwarmHost">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DehakaGoldenSwarmFeedingMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaEndlessSwarm">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_trample.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaSwarmHost">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DehakaGoldenEndlessSwarmMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaPrimalEvolution">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_adaptation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DehakaHeroicAbilityAdaptation">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DehakaHeroicAbilityIsolation">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 DehakaGoldenPrimalMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DehakaGoldenEvolutionTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="DehakaGoldenEvolutionTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DehakaGoldenEssenceToken 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="DehakaGoldenMutationHealth 1.0">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="DehakaGoldenMutationAttackSpeed 1.0">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="DehakaGoldenMutationLifeSteal 1.0">
+                <Field Id="QuestRetain" Index="4" />
+            </String>
+            <String String="DehakaGoldenMutationAbility 1.0">
+                <Field Id="QuestRetain" Index="5" />
+            </String>
+            <String String="DehakaGoldenMutationMoveSpeed 1.0">
+                <Field Id="QuestRetain" Index="6" />
+            </String>
+            <String String="DehakaGoldenMutationProgress 1.0">
+                <Field Id="QuestRetain" Index="7" />
+            </String>
+            <String String="DehakaGoldenMutationPending 1.0">
+                <Field Id="QuestRetain" Index="8" />
+            </String>
+            <String String="1 1 Multiply Effect,DehakaEssenceCollectionCreateHealer,RechargeVitalRate 1.2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,DehakaHeroWeaponDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDragDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDarkSwarmDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,DehakaIsolationDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,DehakaBurrowLurkerStrainTalentDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDragParalyzingEnzymesTalentDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,DehakaGoldenHungerDamage,MultiplicativeModifierArray[DehakaPrimalPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_DehakaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DehakaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaPrimalHunger">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dehaka_essencecollection.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaPrimalEvolution">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DehakaHeroWeaponDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,DehakaDragDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,DehakaDarkSwarmDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,DehakaIsolationDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,DehakaBurrowLurkerStrainTalentDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 2 Set Effect,DehakaDragParalyzingEnzymesTalentDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 2 Set Effect,DehakaGoldenHungerDamage,MultiplicativeModifierArray[DehakaPrimalCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaThickHide">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dehaka_adaptation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaPrimalEvolution">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 DehakaGoldenThickHide">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaHeroStalkerBoon">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_essencecollection.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaPrimalEvolution">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DehakaEssenceCollectionTalentHeroStalker">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaEssenceClawsBoon">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_essencecollection.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaPrimalEvolution">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DehakaEssenceClaws">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaRapidAdaptation">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_adaptation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaPrimalEvolution">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DehakaGoldenRapidAdaptationMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DehakaApexForm">
+            <String String="Assets/Textures/storm_ui_icon_dehaka_adaptation.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Dehaka">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DehakaPrimalEvolution">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DehakaGoldenApexFormMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
         <Instances Id="DehakaStalkersThicket">
             <Int Int="1">
                 <Field Id="Max" />

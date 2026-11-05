@@ -3,11 +3,21 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Dehaka. Starter: Tongue of the Pack (Drag lasts 0.5 seconds longer; Feeding Frenzy and Paralyzing Enzymes). Essence is kept between games at 50% (a token the script keeps equal to Essence). Each damage effect has its own multipliers: the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DehakaGolden.galaxy. -->
+  <!-- Golden Dehaka. Starters: Tongue of the Pack (Drag), Swarm Host (Dark Swarm), Primal Evolution (mutations from Essence). Essence is kept between games at 50% (a token the script keeps equal to Essence). Each damage effect has its own multipliers: the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DehakaGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="DehakaGoldenDragMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenSwarmMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenPrimalMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DehakaGoldenPrimalGraspMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="DehakaGoldenBrushMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenSwarmFeedingMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenEndlessSwarmMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenRapidAdaptationMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DehakaGoldenApexFormMarker" parent="CarryBehaviorParent" />
+  <!-- Tongue of the Pack's Hunger: the script adds this to each Basic Attack, 0.1 damage per Hunger stack per Essence held -->
+  <CEffectDamage id="DehakaGoldenHungerDamage" parent="StormWeapon">
+    <Amount value="0" />
+  </CEffectDamage>
 
   <!-- ===== Tongue of the Pack ===== -->
   <!-- Drag lasts 0.5 seconds longer (stun, channel and pull); gain Feeding Frenzy and Paralyzing Enzymes. Hunger quest (10% of each map gains kept for good): each enemy Hero hit makes Basic Attacks deal 0.1 more damage per Essence held (script). Pack quest: takedowns within 6 seconds of a Drag hit; stacks 1-40 make Drag recharge 1% faster each (script), 41-80 make each Drag hit on an enemy Hero give 1 Essence per stack (script), 81-100 make Drag last 1% longer each, at 100 each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script), then 2% damage each. -->
@@ -37,8 +47,97 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="DehakaGoldenPackTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_dehaka_drag.dds" />
   </CButton>
+
+  <!-- ===== Swarm Host ===== -->
+  <!-- Dark Swarm has 2 charges (8 second recharge); gain Enduring Swarm and Symbiosis (Symbiosis also takes time off a charge). Swarm quest (10% of each map's gains kept for good): 0.5% Dark Swarm damage per enemy Hero hit, once per Hero per swarm. Brood quest: takedowns within 6 seconds of a swarm hit; stacks 1-40 make the swarm tick 2% faster each with the same ticks (script), 41-80 make it 1% larger each, 81-100 make enemy Heroes in it deal 1% less damage each (script applies the debuff), at 100 they're Slowed 25% (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DehakaGoldenSwarmTokenCounter" parent="StormQuestToken">
+    <Face value="DehakaGoldenSwarmTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenBroodTokenCounter" parent="StormQuestToken">
+    <Face value="DehakaGoldenBroodTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DehakaGoldenSwarmTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DehakaGoldenSwarmTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DehakaDarkSwarmDamage">
+    <MultiplicativeModifierArray index="DehakaSwarmPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaSwarmCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaSwarmHit" Accumulator="DehakaGoldenSwarmTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DehakaSwarmLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="DehakaGoldenSwarmTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dehaka_trample.dds" />
+  </CButton>
+  <CButton id="DehakaGoldenBroodTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dehaka_trample.dds" />
+  </CButton>
+
+  <!-- ===== Primal Evolution ===== -->
+  <!-- Every 25 Essence collected over the run (20 with Rapid Adaptation) grants a random mutation kept for the run (script, tokens kept at 100%): 3% Health, 3% Attack Speed, 1% Life Steal, 3% Ability damage or 2% Movement Speed (also added to the Movement Speed boons, so it adds to them). Essence Collection heals 20% more. Gain Adaptation at level 1; Isolation can't be taken. No hit quest. Evolution quest: takedowns within 6 seconds of any hit; stacks 1-40 add 1 max Essence each, 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage taken each, at 100 fatal damage Burrows Dehaka instead (once every 60 seconds), then 2% damage each (all script but the last). -->
+  <CBehaviorTokenCounter id="DehakaGoldenEvolutionTokenCounter" parent="StormQuestToken">
+    <Face value="DehakaGoldenEvolutionTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CEffectDamage id="DehakaHeroWeaponDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DehakaDragDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DehakaDarkSwarmDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DehakaIsolationDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DehakaBurrowLurkerStrainTalentDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DehakaDragParalyzingEnzymesTalentDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DehakaGoldenHungerDamage">
+    <MultiplicativeModifierArray index="DehakaPrimalPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DehakaPrimalLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="DehakaGoldenEvolutionTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dehaka_adaptation.dds" />
+  </CButton>
   <!-- Tongue of the Pack: takedown quest stacks past the cap add damage to all of the hero's damage -->
   <CBehaviorBuff id="DehakaDragPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Swarm Host: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DehakaSwarmPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Primal Evolution: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DehakaPrimalPastCapDamage" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
@@ -50,10 +149,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorTokenCounter id="DehakaGoldenEssenceToken" parent="StormGenericToken">
     <Max value="1000" />
   </CBehaviorTokenCounter>
-  <!-- Hunger: the script adds this to each Basic Attack, 0.1 damage per Hunger stack per Essence held -->
-  <CEffectDamage id="DehakaGoldenHungerDamage" parent="StormWeapon">
-    <Amount value="0" />
-  </CEffectDamage>
   <!-- Pack 100: each Drag hit on an enemy Hero makes Dehaka Invulnerable for 0.75 seconds (script) -->
   <CBehaviorBuff id="DehakaGoldenDragInvulnerable" parent="StormInvulnerable">
     <Duration value="0.75" />
@@ -62,7 +157,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="DehakaGoldenDigestion">
     <Alignment value="Negative" />
     <InfoFlags index="Hidden" value="0" />
-    <InfoIcon value="Assets\\Textures\\storm_ui_icon_dehaka_drag.dds" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dehaka_drag.dds" />
     <BehaviorCategories index="DebuffAbilityPower" value="1" />
     <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
     <Duration value="3" />
@@ -189,4 +284,122 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CActorModel id="DehakaGoldenBrushBush">
     <Model value="Storm_Doodad_KingsCrest_GardenBush" />
   </CActorModel>
+  <!-- ===== Swarm Host ===== -->
+  <!-- Brood 81-100: enemy Heroes hit by Dark Swarm are Weakened (each stack 1%, through the takedown quest); at 100 they're
+       also Slowed 25%. The script applies both on each swarm hit; they last a little longer than a tick. -->
+  <CBehaviorBuff id="DehakaGoldenSwarmWeaken">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dehaka_trample.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="0.75" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="0" />
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DehakaGoldenSwarmSlow" parent="StormSlowParent">
+    <Duration value="0.75" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.25" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Primal Evolution ===== -->
+  <!-- mutation counts (kept for the run), Essence toward the next one, and Apex Form's mutations waiting to be picked -->
+  <CBehaviorTokenCounter id="DehakaGoldenMutationHealth" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationAttackSpeed" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationLifeSteal" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationAbility" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationMoveSpeed" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationPending" parent="StormGenericToken">
+    <Max value="1000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DehakaGoldenMutationProgress" parent="StormQuestToken">
+    <Face value="DehakaGoldenMutationProgress" />
+    <Max value="1000" />
+    <IncreaseEvents index="0" EventId="" />
+  </CBehaviorTokenCounter>
+  <CButton id="DehakaGoldenMutationProgress" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dehaka_adaptation.dds" />
+  </CButton>
+  <!-- every mutation: the script sets each field from the counts and re-adds the buff -->
+  <CBehaviorBuff id="DehakaGoldenMutations" parent="CarryBehaviorParent">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dehaka_adaptation.dds" />
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0" />
+      <AdditiveAttackSpeedFactor value="0" />
+      <VitalDamageLeechArray index="Life">
+        <KindArray index="Basic" value="0" />
+        <KindArray index="Ability" value="0" />
+      </VitalDamageLeechArray>
+      <VitalDamageLeechScoreArray Value="Healing" />
+      <DamageDealtFraction index="Ability" value="0" />
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Evolution 81-100: Adaptation heals this much more at its end (the script tracks the damage taken) -->
+  <CEffectCreateHealer id="DehakaGoldenAdaptationHeal" parent="StormSelfOnlyHealingSpell">
+    <RechargeVitalRate value="0" />
+  </CEffectCreateHealer>
+  <!-- Evolution 100: fatal damage is ignored and Dehaka Burrows instead, once every 60 seconds (the script adds the
+       controller at 100 stacks; the cooldown shows on the status bar) -->
+  <CBehaviorBuff id="DehakaGoldenFreeBurrowController" parent="CarryBehaviorParent">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dehaka_burrow.dds" />
+    <DamageResponse>
+      <Chance value="1" />
+      <Handled value="DehakaGoldenFreeBurrowSet" />
+      <Priority value="18" />
+      <Fatal value="1" />
+      <RecordBehaviorShieldDamage value="1" />
+      <ModifyFraction value="0" />
+      <ProvideCategories index="Shield" value="1" />
+      <PreventCategories index="Shield" value="1" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DehakaGoldenFreeBurrowCooldown" parent="CarryBehaviorParent">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dehaka_burrow.dds" />
+    <DisplayDuration index="Self" value="1" />
+    <DisplayDuration index="Ally" value="1" />
+    <Duration value="60" />
+    <Modification>
+      <BehaviorLinkDisableArray value="DehakaGoldenFreeBurrowController" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectSet id="DehakaGoldenFreeBurrowSet">
+    <EffectArray value="DehakaGoldenFreeBurrowApply" />
+    <EffectArray value="DehakaGoldenFreeBurrowCooldownApply" />
+  </CEffectSet>
+  <CEffectApplyBehavior id="DehakaGoldenFreeBurrowApply">
+    <WhichUnit Value="Source" />
+    <Behavior value="DehakaBurrowChannel" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="DehakaGoldenFreeBurrowCooldownApply">
+    <WhichUnit Value="Source" />
+    <Behavior value="DehakaGoldenFreeBurrowCooldown" />
+  </CEffectApplyBehavior>
+  <!-- Thick Hide (Common, up to 3): 2 Armor each -->
+  <CBehaviorBuff id="DehakaGoldenThickHide" parent="StormArmorPermanent">
+    <Alignment value="Positive" />
+    <MaxStackCount value="3" />
+    <ArmorModification AllArmorBonus="2" StackCount="3" />
+  </CBehaviorBuff>
 </Catalog>

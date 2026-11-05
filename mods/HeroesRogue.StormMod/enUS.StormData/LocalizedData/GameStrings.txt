@@ -3006,6 +3006,38 @@ Button/Name/DehakaGoldenHungerTokenCounter=Hunger
 Button/Tooltip/DehakaGoldenHungerTokenCounter=<c val="#TooltipQuest">Basic Attack damage per Essence: <c val="#TooltipNumbers">+<d ref="$BehaviorTokenCount:DehakaGoldenHungerTokenCounter$*0.1" precision="1"/></c></c>
 Button/Name/DehakaGoldenPackTokenCounter=Pack
 Button/Tooltip/DehakaGoldenPackTokenCounter=<c val="#TooltipQuest">Pack stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DehakaGoldenPackTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Drag recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make each Drag hit on an enemy Hero give <c val="#TooltipNumbers">1</c> Essence. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Drag last <c val="#TooltipNumbers">1%</c> longer. At <c val="#TooltipNumbers">100</c> stacks, each Drag hit on an enemy Hero makes you Invulnerable for <c val="#TooltipNumbers">0.75</c> seconds. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/DehakaSwarmHost=Swarm Host
+Affix/Tooltip/DehakaSwarmHost=Gain <c val="#TooltipNumbers">Enduring Swarm</c> and <c val="#TooltipNumbers">Symbiosis</c>. Dark Swarm stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">8</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero a Dark Swarm hits (once per swarm) adds <c val="#TooltipNumbers">0.5%</c> Dark Swarm damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a swarm hit make Dark Swarm deal its damage faster (up to <c val="#TooltipNumbers">80%</c>), then make the swarm larger (up to <c val="#TooltipNumbers">40%</c>), then make enemy Heroes in it deal less damage (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, enemy Heroes in the swarm are Slowed by <c val="#TooltipNumbers">25%</c>. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/DehakaRavenousSwarm=Ravenous Swarm
+Affix/Tooltip/DehakaRavenousSwarm=Dark Swarm deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/DehakaLurkerStrainBoon=Lurker Strain
+Affix/Tooltip/DehakaLurkerStrainBoon=Gain the talent <c val="#TooltipNumbers">Lurker Strain</c>.
+Affix/Name/DehakaPrimalSwarmBoon=Primal Swarm
+Affix/Tooltip/DehakaPrimalSwarmBoon=Gain the talent <c val="#TooltipNumbers">Primal Swarm</c>.
+Affix/Name/DehakaSwarmFeeding=Swarm Feeding
+Affix/Tooltip/DehakaSwarmFeeding=Each enemy Hero a Dark Swarm hits gives <c val="#TooltipNumbers">5</c> Essence (once per swarm).
+Affix/Name/DehakaEndlessSwarm=Endless Swarm
+Affix/Tooltip/DehakaEndlessSwarm=Each enemy Hero a Dark Swarm hits makes that swarm last <c val="#TooltipNumbers">0.5</c> seconds longer (once per Hero, up to <c val="#TooltipNumbers">2</c> seconds).
+Button/Name/DehakaGoldenSwarmTokenCounter=Swarm
+Button/Tooltip/DehakaGoldenSwarmTokenCounter=<c val="#TooltipQuest">Bonus Dark Swarm damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DehakaGoldenSwarmTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/DehakaGoldenBroodTokenCounter=Brood
+Button/Tooltip/DehakaGoldenBroodTokenCounter=<c val="#TooltipQuest">Brood stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DehakaGoldenBroodTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Dark Swarm deal its damage <c val="#TooltipNumbers">2%</c> faster (the same number of ticks). Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the swarm <c val="#TooltipNumbers">1%</c> larger. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make enemy Heroes in the swarm deal <c val="#TooltipNumbers">1%</c> less damage. At <c val="#TooltipNumbers">100</c> stacks, enemy Heroes in the swarm are also Slowed by <c val="#TooltipNumbers">25%</c>. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/DehakaPrimalEvolution=Primal Evolution
+Affix/Tooltip/DehakaPrimalEvolution=Every <c val="#TooltipNumbers">25</c> Essence you collect over the run grants a random permanent mutation: <c val="#TooltipNumbers">+3%</c> Health, <c val="#TooltipNumbers">+3%</c> Attack Speed, <c val="#TooltipNumbers">+1%</c> Life Steal, <c val="#TooltipNumbers">+3%</c> Ability damage or <c val="#TooltipNumbers">+2%</c> Movement Speed (added to your other Movement Speed bonuses). Essence Collection heals <c val="#TooltipNumbers">20%</c> more. Gain <c val="#TooltipNumbers">Adaptation</c> at level <c val="#TooltipNumbers">1</c> (you can't take <c val="#TooltipNumbers">Isolation</c>).<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of hitting them add maximum Essence (up to <c val="#TooltipNumbers">40</c>), then make Brushstalker recharge faster (up to <c val="#TooltipNumbers">120%</c>), then make Adaptation heal more (up to <c val="#TooltipNumbers">20%</c> of the damage taken). At <c val="#TooltipNumbers">100</c>, fatal damage makes you Burrow instead, once every <c val="#TooltipNumbers">60</c> seconds. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>Mutations, and the Essence toward the next one, are kept for the whole run. After a win, keep <c val="#TooltipNumbers">100%</c> of the quest.
+Affix/Name/DehakaPrimalHunger=Hunger
+Affix/Tooltip/DehakaPrimalHunger=You deal <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/DehakaThickHide=Thick Hide
+Affix/Tooltip/DehakaThickHide=Gain <c val="#TooltipNumbers">2</c> Armor.
+Affix/Name/DehakaHeroStalkerBoon=Hero Stalker
+Affix/Tooltip/DehakaHeroStalkerBoon=Gain the talent <c val="#TooltipNumbers">Hero Stalker</c>.
+Affix/Name/DehakaEssenceClawsBoon=Essence Claws
+Affix/Tooltip/DehakaEssenceClawsBoon=Gain the talent <c val="#TooltipNumbers">Essence Claws</c>.
+Affix/Name/DehakaRapidAdaptation=Rapid Adaptation
+Affix/Tooltip/DehakaRapidAdaptation=Mutations come every <c val="#TooltipNumbers">20</c> Essence instead of <c val="#TooltipNumbers">25</c>.
+Affix/Name/DehakaApexForm=Apex Form
+Affix/Tooltip/DehakaApexForm=You pick each mutation instead of getting a random one (a window shows the choices; the game keeps running).
+Button/Name/DehakaGoldenEvolutionTokenCounter=Evolution
+Button/Tooltip/DehakaGoldenEvolutionTokenCounter=<c val="#TooltipQuest">Evolution stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DehakaGoldenEvolutionTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each add <c val="#TooltipNumbers">1</c> maximum Essence. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Brushstalker recharge <c val="#TooltipNumbers">3%</c> faster. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Adaptation heal an extra <c val="#TooltipNumbers">1%</c> of the damage taken. At <c val="#TooltipNumbers">100</c> stacks, fatal damage makes you Burrow instead (once every <c val="#TooltipNumbers">60</c> seconds). Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
 Affix/Name/DehakaStalkersThicket=Stalker's Thicket
 Affix/Tooltip/DehakaStalkersThicket=Brushstalker can target anywhere. Where you land, a patch of brush grows for the rest of the game (up to <c val="#TooltipNumbers">5</c> patches; the oldest goes first). Allied Heroes in a patch are Stealthed while no enemy Hero is in it, and you move <c val="#TooltipNumbers">20%</c> faster there, as in brush.
 Behavior/Name/DehakaGoldenDigestion=Digestion
@@ -3014,6 +3046,16 @@ Behavior/Name/DehakaGoldenDragInvulnerable=Pack
 Behavior/Tooltip/DehakaGoldenDragInvulnerable=Invulnerable.
 Behavior/Name/DehakaGoldenBrushCloak=Stalker's Thicket
 Behavior/Tooltip/DehakaGoldenBrushCloak=Stealthed in the brush.
+Behavior/Name/DehakaGoldenSwarmWeaken=Swarmed
+Behavior/Tooltip/DehakaGoldenSwarmWeaken=Dealing less damage.
+Behavior/Name/DehakaGoldenMutations=Mutations
+Behavior/Tooltip/DehakaGoldenMutations=<c val="#TooltipNumbers">+<d ref="Behavior,DehakaGoldenMutations,Modification.VitalMaxFractionArray[Life]*100" precision="0"/>%</c> Health, <c val="#TooltipNumbers">+<d ref="Behavior,DehakaGoldenMutations,Modification.AdditiveAttackSpeedFactor*100" precision="0"/>%</c> Attack Speed, <c val="#TooltipNumbers">+<d ref="Behavior,DehakaGoldenMutations,Modification.VitalDamageLeechArray[Life].KindArray[Basic]*100" precision="0"/>%</c> Life Steal, <c val="#TooltipNumbers">+<d ref="Behavior,DehakaGoldenMutations,Modification.DamageDealtFraction[Ability]*100" precision="0"/>%</c> Ability damage, <c val="#TooltipNumbers">+<d ref="Behavior,DehakaGoldenMutations,Modification.UnifiedMoveSpeedFactor*100" precision="0"/>%</c> Movement Speed.
+Button/Name/DehakaGoldenMutationProgress=Primal Evolution
+Button/Tooltip/DehakaGoldenMutationProgress=<c val="#TooltipQuest">Essence toward the next mutation: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DehakaGoldenMutationProgress$" precision="0"/></c></c>
+Behavior/Name/DehakaGoldenFreeBurrowController=Primal Instinct
+Behavior/Tooltip/DehakaGoldenFreeBurrowController=Fatal damage makes you Burrow instead.
+Behavior/Name/DehakaGoldenFreeBurrowCooldown=Primal Instinct
+Behavior/Tooltip/DehakaGoldenFreeBurrowCooldown=Recharging.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks gained that map (on top of what you started with).
 Affix/Tooltip/Append/TyrandeTheMark=

@@ -4,6 +4,9 @@ include "AffixTriggers"
 // Golden Dehaka. Every game: Essence saved last game is given back, and the save token follows Essence (keeps 50%).
 // Tongue of the Pack: Drag hits on enemy Heroes add Hunger (Basic Attack damage per Essence); takedowns add Pack: Drag recharge (script, with Long
 // Reach and Primal Grasp), then Essence per Hero dragged, then Drag duration, then at 100 Invulnerable on a Drag hit.
+// Swarm Host: Dark Swarm hits count once per Hero per swarm; Brood sets the swarm's tick rate, Weaken and Slow.
+// Primal Evolution: Essence gained adds up to random (or picked) mutations kept for the run; Evolution adds max
+// Essence, Brushstalker recharge, Adaptation healing and a free Burrow on fatal damage.
 // ============================================================
 
 const fixed libAffx_DehakaTakedownWindow = 3.0;
@@ -14,6 +17,16 @@ int libAffx_DehakaDragAdded; // Tongue of the Pack: takedown stacks already appl
 int libAffx_DehakaDragAdded2; // Tongue of the Pack: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_DehakaDragAdded3; // Tongue of the Pack: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_DehakaDragPastApplied; // Tongue of the Pack: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DehakaSwarmTime; // per enemy player, last Swarm Host hit
+int libAffx_DehakaSwarmAdded; // Swarm Host: takedown stacks already applied to the catalog this game
+int libAffx_DehakaSwarmAdded2; // Swarm Host: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DehakaSwarmAdded3; // Swarm Host: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DehakaSwarmPastApplied; // Swarm Host: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DehakaPrimalTime; // per enemy player, last Primal Evolution hit
+int libAffx_DehakaPrimalAdded; // Primal Evolution: takedown stacks already applied to the catalog this game
+int libAffx_DehakaPrimalAdded2; // Primal Evolution: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DehakaPrimalAdded3; // Primal Evolution: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DehakaPrimalPastApplied; // Primal Evolution: takedown quest stacks past the cap applied as damage this game
 int libAffx_DehakaEssenceWritten; // Essence the script last wrote to the save token
 int libAffx_DehakaLongReachId; // the Long Reach boon's affix id
 fixed libAffx_DehakaDragTimeSet = -1.0; // Drag cooldown or charge time last set
@@ -21,6 +34,21 @@ point[5] libAffx_DehakaBrushPoint; // Stalker Thicket patches (landing points)
 bool[5] libAffx_DehakaBrushOn;
 actor[5][7] libAffx_DehakaBrushBushes;
 int libAffx_DehakaBrushNext; // the patch slot the next landing uses
+int libAffx_DehakaSwarmId; // Dark Swarm casts this game
+int[libCore_gv_bALMaxPlayers + 1] libAffx_DehakaSwarmCounted; // per enemy player, the last swarm that counted a hit
+bool libAffx_DehakaSwarmFirst; // the current swarm hit is this swarm's first on that Hero
+fixed libAffx_DehakaSwarmExtended; // Endless Swarm seconds added to the current swarm
+int libAffx_DehakaEssenceSeen = -1; // Essence at the last check (Primal Evolution)
+int libAffx_DehakaEssenceMaxAdded; // max Essence added by Evolution stacks 1-40
+fixed libAffx_DehakaAdaptBonus; // Evolution 81-100: share of the damage taken during Adaptation healed on top
+fixed libAffx_DehakaAdaptExtra; // that extra heal so far
+int[6] libAffx_DehakaMutationsSet; // mutation counts the buff was last set for
+fixed[4] libAffx_DehakaMoveWritten; // Movement Speed boons: the value last written
+fixed[4] libAffx_DehakaMoveAdded; // and the mutations' part of it
+bool libAffx_DehakaApexMade; // Apex Form's window
+bool libAffx_DehakaApexVisible;
+int libAffx_DehakaApexDialog;
+int[6] libAffx_DehakaApexButtons;
 
 unit libAffx_DehakaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -84,18 +112,101 @@ void libAffx_DehakaSyncDrag () {
         UnitBehaviorAdd(hero, "DehakaDragPastCapDamage", hero, 1);
     }
 }
+// DehakaGoldenBroodTokenCounter: stacks 1-40: the swarm ticks 2% faster each (libAffx_DehakaSwarmTimes); 41-80 radius, 81-100 Weaken amount, 100 Slow (libAffx_DehakaSwarmOnHit), then damage
+void libAffx_DehakaSyncSwarm () {
+    unit hero = libAffx_DehakaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenSwarmMarker")) {
+        return;
+    }
+    stacks = libAffx_DehakaStacks("DehakaGoldenBroodTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DehakaSwarmAdded) {
+        libAffx_DehakaSwarmAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the swarm is 1% larger each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DehakaSwarmAdded2) {
+        libAffx_CatalogReferenceModify("Effect,DehakaDarkSwarmSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaSwarmAdded2) * 0.035, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,DehakaDarkSwarmHeroStalkerSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaSwarmAdded2) * 0.035, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DehakaSwarmAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): enemy Heroes in the swarm deal 1% less damage each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DehakaSwarmAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,DehakaGoldenSwarmWeaken,Modification.DamageDealtFraction[Basic]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaSwarmAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,DehakaGoldenSwarmWeaken,Modification.DamageDealtFraction[Ability]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaSwarmAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,DehakaGoldenSwarmWeaken,Modification.DamageDealtFraction[Splash]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DehakaSwarmAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DehakaSwarmAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DehakaSwarmPastApplied) {
+        libAffx_DehakaSwarmPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaSwarmPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaSwarmPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DehakaSwarmPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DehakaSwarmPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DehakaSwarmPastCapDamage", hero, 1);
+    }
+}
+// DehakaGoldenEvolutionTokenCounter: stacks 1-40 max Essence, 41-80 Brushstalker recharge, 81-100 Adaptation heal, 100 free Burrow (libAffx_DehakaPrimalSync), then damage
+void libAffx_DehakaSyncPrimal () {
+    unit hero = libAffx_DehakaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return;
+    }
+    stacks = libAffx_DehakaStacks("DehakaGoldenEvolutionTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DehakaPrimalAdded) {
+        libAffx_DehakaPrimalAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): Brushstalker recharges 3% faster each (libAffx_DehakaPrimalSync)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DehakaPrimalAdded2) {
+        libAffx_DehakaPrimalAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Adaptation heals 1% more of the damage taken each (libAffx_DehakaPrimalSync)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DehakaPrimalAdded3) {
+        libAffx_DehakaPrimalAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DehakaPrimalPastApplied) {
+        libAffx_DehakaPrimalPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaPrimalPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaPrimalPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DehakaPrimalPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DehakaPrimalPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DehakaPrimalPastCapDamage", hero, 1);
+    }
+}
 bool libAffx_DehakaSync_Func (bool testConds, bool runActions) {
     libAffx_DehakaSyncDrag();
+    libAffx_DehakaSyncSwarm();
+    libAffx_DehakaSyncPrimal();
     return true;
 }
 // Essence is Essence Collection's charges: add some, up to the most Dehaka can hold
-void libAffx_DehakaAddEssence (unit hero, int amount) {
+int libAffx_DehakaAddEssence (unit hero, int amount) {
     abilcmd cmd = AbilityCommand("DehakaEssenceCollection", 0);
     int room = FixedToInt(UnitAbilityChargeInfo(hero, cmd, c_unitAbilChargeCountMax) - UnitAbilityChargeInfo(hero, cmd, c_unitAbilChargeCountLeft));
     int added = MinI(amount, room);
     if (added > 0) {
         UnitAbilityAddChargeUsed(hero, "DehakaEssenceCollection", "Abil/DehakaEssenceCollection", -1.0 * IntToFixed(added));
+        return added;
     }
+    return 0;
 }
 // every second: Essence saved last game arrives as token stacks above what the script last wrote, so it's given as
 // Essence; then the token is set to Dehaka's Essence again (a win keeps 50% of it)
@@ -103,12 +214,16 @@ void libAffx_DehakaEssenceSync () {
     unit hero = libAffx_DehakaHero();
     int token;
     int essence;
+    int added;
     if (hero == null || !UnitIsAlive(hero)) {
         return;
     }
     token = libAffx_DehakaStacks("DehakaGoldenEssenceToken");
     if (token > libAffx_DehakaEssenceWritten) {
-        libAffx_DehakaAddEssence(hero, token - libAffx_DehakaEssenceWritten);
+        added = libAffx_DehakaAddEssence(hero, token - libAffx_DehakaEssenceWritten);
+        if (libAffx_DehakaEssenceSeen >= 0) {
+            libAffx_DehakaEssenceSeen += added;
+        }
     }
     essence = FixedToInt(UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft));
     if (essence != token) {
@@ -260,7 +375,319 @@ bool libAffx_DehakaHungerAttack_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// ===== Swarm Host =====
+// each cast starts a new swarm: every enemy Hero counts once per swarm (Swarm, Swarm Feeding, Endless Swarm)
+bool libAffx_DehakaSwarmCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero) {
+        return false;
+    }
+    libAffx_DehakaSwarmId += 1;
+    libAffx_DehakaSwarmExtended = 0.0;
+    return true;
+}
+// the hit quest's gate: true the first time this swarm hits this enemy Hero
+bool libAffx_DehakaSwarmFirstHit (unit victim) {
+    int owner = UnitGetOwner(victim);
+    libAffx_DehakaSwarmFirst = false;
+    if (owner < 0 || owner > libCore_gv_bALMaxPlayers) {
+        return false;
+    }
+    if (libAffx_DehakaSwarmCounted[owner] == libAffx_DehakaSwarmId) {
+        return false;
+    }
+    libAffx_DehakaSwarmCounted[owner] = libAffx_DehakaSwarmId;
+    libAffx_DehakaSwarmFirst = true;
+    return true;
+}
+// Dark Swarm hit on an enemy Hero: Brood 81-100 Weakens it, 100 Slows it; once per swarm, Swarm Feeding gives 5 Essence
+// and Endless Swarm makes this swarm last 0.5 seconds longer (up to 2)
+void libAffx_DehakaSwarmOnHit (unit hero, unit victim) {
+    int n = libAffx_DehakaStacks("DehakaGoldenBroodTokenCounter");
+    if (n > 80) {
+        UnitBehaviorAdd(victim, "DehakaGoldenSwarmWeaken", hero, 1);
+    }
+    if (n >= 100) {
+        UnitBehaviorAdd(victim, "DehakaGoldenSwarmSlow", hero, 1);
+    }
+    if (!libAffx_DehakaSwarmFirst) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenSwarmFeedingMarker")) {
+        libAffx_DehakaAddEssence(hero, 5);
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenEndlessSwarmMarker") && libAffx_DehakaSwarmExtended < 2.0 && UnitHasBehavior2(hero, "DehakaDarkSwarm")) {
+        UnitBehaviorSetDurationRemaining(hero, "DehakaDarkSwarm", UnitBehaviorDuration(hero, "DehakaDarkSwarm") + 0.5);
+        libAffx_DehakaSwarmExtended += 0.5;
+    }
+}
+// Dark Swarm's timing (every second, for the next swarm): Brood stacks 1-40 make it tick 2% faster each, with the same
+// number of ticks (8 with Enduring Swarm); Endless Swarm leaves room for the ticks of its extra 2 seconds
+void libAffx_DehakaSwarmTimes () {
+    unit hero = libAffx_DehakaHero();
+    int n;
+    int ticks = 7;
+    int count;
+    fixed period;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenSwarmMarker")) {
+        return;
+    }
+    n = MinI(libAffx_DehakaStacks("DehakaGoldenBroodTokenCounter"), 40);
+    period = 0.5 / (1.0 + 0.02 * IntToFixed(n));
+    if (PlayerHasTalent(libAffx_player, "DehakaDarkSwarmTalentEnduringSwarm")) {
+        ticks = 8;
+    }
+    count = ticks;
+    if (UnitHasBehavior2(hero, "DehakaGoldenEndlessSwarmMarker")) {
+        count = ticks + FixedToInt(2.0 / period) + 1;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaDarkSwarm", "Period", libAffx_player, period);
+    CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaDarkSwarm", "Duration", libAffx_player, IntToFixed(ticks) * period + 0.01);
+    CatalogFieldValueSet(c_gameCatalogBehavior, "DehakaDarkSwarm", "PeriodCount", libAffx_player, IntToString(count));
+}
+// ===== Primal Evolution =====
+string libAffx_DehakaMutationToken (int kind) {
+    if (kind == 1) {
+        return "DehakaGoldenMutationHealth";
+    }
+    if (kind == 2) {
+        return "DehakaGoldenMutationAttackSpeed";
+    }
+    if (kind == 3) {
+        return "DehakaGoldenMutationLifeSteal";
+    }
+    if (kind == 4) {
+        return "DehakaGoldenMutationAbility";
+    }
+    return "DehakaGoldenMutationMoveSpeed";
+}
+text libAffx_DehakaMutationText (int kind) {
+    if (kind == 1) {
+        return StringToText("+3% Health");
+    }
+    if (kind == 2) {
+        return StringToText("+3% Attack Speed");
+    }
+    if (kind == 3) {
+        return StringToText("+1% Life Steal");
+    }
+    if (kind == 4) {
+        return StringToText("+3% Ability Damage");
+    }
+    return StringToText("+2% Movement Speed");
+}
+// Movement Speed bonuses don't add up (the highest wins), so the mutations' Movement Speed is also added to each
+// Movement Speed boon; whatever LibAffx last set on a boon is kept as its own value
+void libAffx_DehakaMutationMoveBoons (fixed ours) {
+    int i = 0;
+    string b;
+    fixed cur;
+    fixed own;
+    while (i < 4) {
+        b = "AffixFastFeetBehavior";
+        if (i == 1) {
+            b = "AffixChronoBoostBehavior";
+        }
+        if (i == 2) {
+            b = "AffixBloodlust";
+        }
+        if (i == 3) {
+            b = "AffixBloodlustSpell";
+        }
+        cur = CatalogFieldValueGetAsFixed(c_gameCatalogBehavior, b, "Modification.UnifiedMoveSpeedFactor", libAffx_player);
+        own = cur;
+        if (cur == libAffx_DehakaMoveWritten[i]) {
+            own = cur - libAffx_DehakaMoveAdded[i];
+        }
+        if (own + ours != cur) {
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, b, "Modification.UnifiedMoveSpeedFactor", libAffx_player, own + ours);
+        }
+        libAffx_DehakaMoveWritten[i] = own + ours;
+        libAffx_DehakaMoveAdded[i] = ours;
+        i += 1;
+    }
+}
+// the mutation buff follows the counts: 3% Health, 3% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed each
+void libAffx_DehakaMutationsApply () {
+    unit hero = libAffx_DehakaHero();
+    int i = 1;
+    bool changed = false;
+    int total = 0;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return;
+    }
+    while (i <= 5) {
+        if (libAffx_DehakaStacks(libAffx_DehakaMutationToken(i)) != libAffx_DehakaMutationsSet[i]) {
+            changed = true;
+            libAffx_DehakaMutationsSet[i] = libAffx_DehakaStacks(libAffx_DehakaMutationToken(i));
+        }
+        total += libAffx_DehakaMutationsSet[i];
+        i += 1;
+    }
+    libAffx_DehakaMutationMoveBoons(0.02 * IntToFixed(libAffx_DehakaMutationsSet[5]));
+    if (changed) {
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalMaxFractionArray[Life]", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[1]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.AdditiveAttackSpeedFactor", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[2]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalDamageLeechArray[Life].KindArray[Basic]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[3]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.VitalDamageLeechArray[Life].KindArray[Ability]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[3]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.03 * IntToFixed(libAffx_DehakaMutationsSet[4]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.UnifiedMoveSpeedFactor", libAffx_player, 0.02 * IntToFixed(libAffx_DehakaMutationsSet[5]));
+        UnitBehaviorRemove(hero, "DehakaGoldenMutations", 1);
+    }
+    if (total > 0 && !UnitHasBehavior2(hero, "DehakaGoldenMutations")) {
+        UnitBehaviorAdd(hero, "DehakaGoldenMutations", hero, 1);
+    }
+}
+void libAffx_DehakaMutate (unit hero, int kind) {
+    libGame_gf_ModifyTokenCount(1, libAffx_DehakaMutationToken(kind), hero);
+    libAffx_DehakaQuestDing();
+    UIDisplayMessage(PlayerGroupSingle(libAffx_player), c_messageAreaSubtitle, StringToText("Mutation: ") + libAffx_DehakaMutationText(kind));
+    libAffx_DehakaMutationsApply();
+}
+// Apex Form: a small window of 5 buttons while mutations wait to be picked (the game keeps running)
+void libAffx_DehakaApexShow () {
+    int i = 1;
+    bool show = libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0 && UnitHasBehavior2(libAffx_DehakaHero(), "DehakaGoldenApexFormMarker");
+    if (!libAffx_DehakaApexMade) {
+        if (!show) {
+            return;
+        }
+        libAffx_DehakaApexMade = true;
+        libAffx_DehakaApexDialog = DialogCreate(600, 150, c_anchorTop, 0, 120, false);
+        libAffx_CreateDialogControlLabel(libAffx_DehakaApexDialog, StringToText("Apex Form: choose a mutation"), "Affix_Dialog", 560, 40, c_anchorTop, 0, 18, ColorWithAlpha(0, 0, 0, 0), false);
+        while (i <= 5) {
+            libAffx_DehakaApexButtons[i] = libAffx_CreateDialogControlButton(libAffx_DehakaApexDialog);
+            libAffx_SetDialogControlSize(libAffx_DehakaApexButtons[i], 110, 50);
+            libAffx_SetDialogControlText(libAffx_DehakaApexButtons[i], libAffx_DehakaMutationText(i));
+            libAffx_SetDialogControlPosition(libAffx_DehakaApexButtons[i], c_anchorTop, -232 + 116 * (i - 1), 70);
+            i += 1;
+        }
+    }
+    if (show != libAffx_DehakaApexVisible) {
+        libAffx_DehakaApexVisible = show;
+        DialogSetVisible(libAffx_DehakaApexDialog, PlayerGroupSingle(libAffx_player), show);
+    }
+}
+bool libAffx_DehakaApexClick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    int control = EventDialogControl();
+    int i = 1;
+    if (hero == null || !libAffx_DehakaApexMade || EventPlayer() != libAffx_player) {
+        return false;
+    }
+    while (i <= 5) {
+        if (control == libAffx_DehakaApexButtons[i] && libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0) {
+            libGame_gf_ModifyTokenCount(-1, "DehakaGoldenMutationPending", hero);
+            libAffx_DehakaMutate(hero, i);
+            libAffx_DehakaApexShow();
+            return true;
+        }
+        i += 1;
+    }
+    return true;
+}
+void libAffx_DehakaMutationGain (unit hero) {
+    if (UnitHasBehavior2(hero, "DehakaGoldenApexFormMarker")) {
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenMutationPending", hero);
+        libAffx_DehakaQuestDing();
+        libAffx_DehakaApexShow();
+        return;
+    }
+    libAffx_DehakaMutate(hero, RandomInt(1, 5));
+}
+// every 0.25 seconds: Essence gained (not Essence given back from the last game) counts toward the next mutation, every
+// 25 (20 with Rapid Adaptation)
+bool libAffx_DehakaEssenceWatch_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    int essence;
+    int gain;
+    int need = 25;
+    if (hero == null || !UnitIsAlive(hero)) {
+        return false;
+    }
+    essence = FixedToInt(UnitAbilityChargeInfo(hero, AbilityCommand("DehakaEssenceCollection", 0), c_unitAbilChargeCountLeft));
+    gain = essence - libAffx_DehakaEssenceSeen;
+    if (libAffx_DehakaEssenceSeen < 0) {
+        gain = 0;
+    }
+    libAffx_DehakaEssenceSeen = essence;
+    if (gain <= 0 || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return true;
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenRapidAdaptationMarker")) {
+        need = 20;
+    }
+    libGame_gf_ModifyTokenCount(gain, "DehakaGoldenMutationProgress", hero);
+    while (libAffx_DehakaStacks("DehakaGoldenMutationProgress") >= need) {
+        libGame_gf_ModifyTokenCount(-need, "DehakaGoldenMutationProgress", hero);
+        libAffx_DehakaMutationGain(hero);
+    }
+    return true;
+}
+// Evolution quest (every second and on a takedown): stacks 1-40 add 1 max Essence each (the base script's max too, and
+// without filling it), 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage
+// taken each, and at 100 fatal damage makes Dehaka Burrow instead (once every 60 seconds)
+void libAffx_DehakaPrimalSync () {
+    unit hero = libAffx_DehakaHero();
+    int n;
+    int s1;
+    int s2;
+    fixed cd;
+    if (hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return;
+    }
+    n = libAffx_DehakaStacks("DehakaGoldenEvolutionTokenCounter");
+    s1 = MinI(n, 40);
+    if (s1 != libAffx_DehakaEssenceMaxAdded) {
+        libAffx_CatalogReferenceModify("Abil,DehakaEssenceCollection,Cost.Charge.CountMax", libAffx_player, IntToString(s1 - libAffx_DehakaEssenceMaxAdded), c_upgradeOperationAdd);
+        libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player] += s1 - libAffx_DehakaEssenceMaxAdded;
+        UnitAbilityAddChargeUsed(hero, "DehakaEssenceCollection", "Abil/DehakaEssenceCollection", IntToFixed(s1 - libAffx_DehakaEssenceMaxAdded));
+        libAffx_DehakaEssenceMaxAdded = s1;
+    }
+    s2 = MaxI(0, MinI(n - 40, 40));
+    if (s2 > 0) {
+        cd = 240.0;
+        if (PlayerHasTalent(libAffx_player, "DehakaBrushstalkerApexPredator")) {
+            cd = 120.0;
+        }
+        CatalogFieldValueSetFixed(c_gameCatalogAbil, "DehakaBrushstalker", "Cost[0].Cooldown.TimeUse", libAffx_player, cd / (1.0 + 0.03 * IntToFixed(s2)));
+    }
+    libAffx_DehakaAdaptBonus = 0.01 * IntToFixed(MaxI(0, MinI(n - 80, 20)));
+    if (n >= 100 && !UnitHasBehavior2(hero, "DehakaGoldenFreeBurrowController")) {
+        UnitBehaviorAdd(hero, "DehakaGoldenFreeBurrowController", hero, 1);
+    }
+    libAffx_DehakaMutationsApply();
+    libAffx_DehakaApexShow();
+}
+// Evolution 81-100: damage taken during Adaptation adds to an extra heal when Adaptation heals
+bool libAffx_DehakaAdaptDamage_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventUnit() != hero || libAffx_DehakaAdaptBonus <= 0.0 || !UnitHasBehavior2(hero, "DehakaAdaptationDamageTrackerBehavior")) {
+        return false;
+    }
+    libAffx_DehakaAdaptExtra += (EventUnitDamageAmount() + EventUnitDamageBehaviorShield()) * libAffx_DehakaAdaptBonus;
+    return true;
+}
+bool libAffx_DehakaAdaptStart_Func (bool testConds, bool runActions) {
+    if (EventUnit() != libAffx_DehakaHero()) {
+        return false;
+    }
+    libAffx_DehakaAdaptExtra = 0.0;
+    return true;
+}
+bool libAffx_DehakaAdaptHeal_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventUnit() != hero || libAffx_DehakaAdaptExtra <= 0.0) {
+        return false;
+    }
+    CatalogFieldValueSetFixed(c_gameCatalogEffect, "DehakaGoldenAdaptationHeal", "RechargeVitalRate", libAffx_player, libAffx_DehakaAdaptExtra);
+    UnitCreateEffectUnit(hero, "DehakaGoldenAdaptationHeal", hero);
+    libAffx_DehakaAdaptExtra = 0.0;
+    return true;
+}
 bool libAffx_DehakaTick_Func (bool testConds, bool runActions) {
+    libAffx_DehakaSwarmTimes();
+    libAffx_DehakaPrimalSync();
     libAffx_DehakaBrushstalkerSync();
     libAffx_DehakaEssenceSync();
     libAffx_DehakaDragTimes();
@@ -278,27 +705,62 @@ bool libAffx_DehakaDragHit_Func (bool testConds, bool runActions) {
     libAffx_DehakaDragOnHit(hero);
     return true;
 }
+// Swarm Host hit on an enemy Hero: takedown window, DehakaGoldenSwarmTokenCounter, the heal, and on-hit boons
+bool libAffx_DehakaSwarmHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DehakaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DehakaGoldenSwarmMarker")) {
+        return false;
+    }
+    libAffx_DehakaSwarmTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_DehakaSwarmFirstHit(victim)) {
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenSwarmTokenCounter", hero);
+    }
+    libAffx_DehakaSwarmOnHit(hero, victim);
+    return true;
+}
+// Primal Evolution hit on an enemy Hero: takedown window, None, the heal, and on-hit boons
+bool libAffx_DehakaPrimalHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DehakaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return false;
+    }
+    libAffx_DehakaPrimalTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
 // Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
 // own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
-int[2] libAffx_DehakaTakedownBefore; // each starter's takedown stacks before this takedown
+int[4] libAffx_DehakaTakedownBefore; // each starter's takedown stacks before this takedown
 void libAffx_DehakaTakedownCrossStart () {
     unit hero = libAffx_DehakaHero();
     if (hero == null) {
         return;
     }
     libAffx_DehakaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter"));
+    libAffx_DehakaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenBroodTokenCounter"));
+    libAffx_DehakaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenEvolutionTokenCounter"));
 }
 void libAffx_DehakaTakedownCross () {
     unit hero = libAffx_DehakaHero();
     if (hero == null) {
         return;
     }
-    if (FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter")) == libAffx_DehakaTakedownBefore[1]) {
+    if (FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter")) == libAffx_DehakaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenBroodTokenCounter")) == libAffx_DehakaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenEvolutionTokenCounter")) == libAffx_DehakaTakedownBefore[3]) {
         return;
     }
     if (UnitHasBehavior2(hero, "DehakaGoldenDragMarker") && FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenPackTokenCounter")) == libAffx_DehakaTakedownBefore[1]) {
         libGame_gf_ModifyTokenCount(1, "DehakaGoldenPackTokenCounter", hero);
         libAffx_DehakaSyncDrag();
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenSwarmMarker") && FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenBroodTokenCounter")) == libAffx_DehakaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenBroodTokenCounter", hero);
+        libAffx_DehakaSyncSwarm();
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker") && FixedToInt(UnitGetTokenCount(hero, "DehakaGoldenEvolutionTokenCounter")) == libAffx_DehakaTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenEvolutionTokenCounter", hero);
+        libAffx_DehakaSyncPrimal();
+        libAffx_DehakaPrimalSync();
     }
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -322,6 +784,20 @@ bool libAffx_DehakaTakedown (bool testConds, bool runActions) {
         libAffx_DehakaQuestDing();
         libAffx_DehakaDragTimes();
     }
+    if (UnitHasBehavior2(hero, "DehakaGoldenSwarmMarker") && libAffx_DehakaSwarmTime[killedPlayer] > 0.0 && now - libAffx_DehakaSwarmTime[killedPlayer] <= 6.0) {
+        libAffx_DehakaSwarmTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenBroodTokenCounter", hero);
+        libAffx_DehakaSyncSwarm();
+        libAffx_DehakaQuestDing();
+        libAffx_DehakaSwarmTimes();
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker") && libAffx_DehakaPrimalTime[killedPlayer] > 0.0 && now - libAffx_DehakaPrimalTime[killedPlayer] <= 6.0) {
+        libAffx_DehakaPrimalTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DehakaGoldenEvolutionTokenCounter", hero);
+        libAffx_DehakaSyncPrimal();
+        libAffx_DehakaQuestDing();
+        libAffx_DehakaPrimalSync();
+    }
     libAffx_DehakaTakedownCross();
     return true;
 }
@@ -333,10 +809,26 @@ bool libAffx_DehakaStart (bool testConds, bool runActions) {
     libAffx_DehakaStarted = true;
     trig = TriggerCreate("libAffx_DehakaDragHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDragDamage");
+    trig = TriggerCreate("libAffx_DehakaSwarmHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDarkSwarmDamage");
+    trig = TriggerCreate("libAffx_DehakaPrimalHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaHeroWeaponDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDragDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDarkSwarmDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaIsolationDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaBurrowLurkerStrainTalentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaDragParalyzingEnzymesTalentDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaGoldenHungerDamage");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaTick_Func"), 1.0, c_timeGame);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DehakaBrushPlant_Func"), libAffx_player, "DehakaBrushstalkerTeleport");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaBrushTick_Func"), 0.125, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DehakaHungerAttack_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaHeroWeaponDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DehakaSwarmCast_Func"), libAffx_player, "DehakaDarkSwarmApplyBehavior");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaEssenceWatch_Func"), 0.25, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DehakaAdaptDamage_Func"), UnitRefFromUnit(libAffx_DehakaHero()), c_unitDamageTypeAny, c_unitDamageEither, null);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_DehakaAdaptStart_Func"), null, "DehakaAdaptationDamageTrackerBehavior", c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_DehakaAdaptHeal_Func"), null, "DehakaAdaptationHealTrackerBehavior", c_unitBehaviorChangeCreate);
+    TriggerAddEventDialogControl(TriggerCreate("libAffx_DehakaApexClick_Func"), libAffx_player, c_invalidDialogControlId, c_triggerControlEventTypeClick);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaSync_Func"), 1.0, c_timeGame);
     return true;
