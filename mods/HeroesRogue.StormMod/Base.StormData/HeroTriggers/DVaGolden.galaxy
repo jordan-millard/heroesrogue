@@ -226,7 +226,10 @@ void libAffx_DVaPilotTalents () {
     libAffx_ShowTalent("DVaGoldenRicochet", true);
     libAffx_ShowTalent("DVaGoldenWorldRecord", true);
     libAffx_UpdateEmptyTalentTiers(libAffx_player);
-    SetTalentTreeHeroLevel(libAffx_player, UnitLevel(libAffx_DVaHero()));
+    if (!libAffx_gamePaused) {
+        SetTalentsEnabled(false);
+        SetTalentsEnabled(true);
+    }
     libGame_gf_TalentsUpdateChoicePanelForPlayer(libAffx_player);
     libAffx_DisplayChatMessage(StringToText("TEMP: Pilot Pro talents set again"));
 }
@@ -342,6 +345,9 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
         } else if (mech == null && libAffx_DVaDropMech != null) {
             UnitRemove(libAffx_DVaDropMech);
             libAffx_DVaDropMech = null;
+            if (UnitIsAlive(pilot) && !UnitHasBehavior2(pilot, "Mounted")) {
+                UnitBehaviorAdd(pilot, "Mounted", pilot, 1);
+            }
         }
         return true;
     }
