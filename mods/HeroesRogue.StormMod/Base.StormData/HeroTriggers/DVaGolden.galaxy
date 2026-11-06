@@ -196,6 +196,8 @@ unit libAffx_DVaMech () {
 void libAffx_DVaPilotTalents () {
     int n = CatalogFieldValueCount(c_gameCatalogHero, "DVa", "TalentTreeArray", c_playerAny);
     int k = 0;
+    bool found = false;
+    string entry;
     string line = "TEMP tree " + IntToString(n) + ":";
     while (k < n) {
         line = line + " " + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(k) + "].Talent", c_playerAny) + "/" + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(k) + "].Tier", c_playerAny);
@@ -211,6 +213,42 @@ void libAffx_DVaPilotTalents () {
         k += 1;
     }
     libAffx_DisplayChatMessage(StringToText(line));
+    k = 1;
+    while (k <= 5) {
+        entry = libGame_gv_talents_TalentChoices[libAffx_player][1].lv_talentData[k].lv_talentCatalogLink;
+        if (entry == "DVaGoldenQuickReload") {
+            found = true;
+        }
+        k += 1;
+    }
+    if (!found) {
+        libAffx_DisableTalent("DVaFullMetal", false);
+        libAffx_DisableTalent("DVaMechProMoves", false);
+        libAffx_DisableTalent("DVaLiquidCooling", false);
+        libAffx_DisableTalent("DVaBoostersRushdown", false);
+        libAffx_DisableTalent("DVaDefenseMatrixAggressionMatrix", false);
+        libAffx_DisableTalent("DVaSelfDestructNuclearOption", false);
+        libAffx_DisableTalent("DvaGetOnThePoint", false);
+        libAffx_DisableTalent("DVaBoostersHitTheNitrous", false);
+        libAffx_DisableTalent("DVaDefenseMatrixFusionGenerator", false);
+        libAffx_DisableTalent("DVaBunnyHop", false);
+        libAffx_DisableTalent("DVaMicroMissiles", false);
+        libAffx_DisableTalent("DVaTargetLocked", false);
+        libAffx_DisableTalent("DVaInForTheKill", false);
+        libAffx_DisableTalent("DVaDefenseMatrixDivertingPower", false);
+        libAffx_DisableTalent("DVaMechEmergencyShielding", false);
+        libAffx_DisableTalent("DVaBunnyHopStopAndPop", false);
+        libAffx_DisableTalent("DVaTimingAttack", false);
+        libAffx_DisableTalent("DVaHeadshot", false);
+        libAffx_DisableTalent("DVaMechAblativeArmor", false);
+        libAffx_UpdateEmptyTalentTiers(libAffx_player);
+        if (!libAffx_gamePaused) {
+            SetTalentsEnabled(false);
+            SetTalentsEnabled(true);
+        }
+        libAffx_DisplayChatMessage(StringToText("TEMP: pilot talents not in the tree; mech talents left pickable"));
+        return;
+    }
     libAffx_DisableTalent("DVaFullMetal", true);
     libAffx_DisableTalent("DVaMechProMoves", true);
     libAffx_DisableTalent("DVaLiquidCooling", true);

@@ -336,9 +336,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="DVaPilotBigShotDamage">
     <MultiplicativeModifierArray index="DVaGoldenHeadshot" Validator="DVaGoldenHasHeadshot" Modifier="0.75" />
   </CEffectDamage>
-  <CHero id="DVa">
-    <TalentTreeArray Talent="DVaGoldenHeadshot" Tier="4" Column="3" />
-  </CHero>
+  <!-- its tree entry (level 10, column 3) is in TalentFillerData.xml -->
   <!-- ===== Pilot Pro talents: shown only for Pilot Pro, in place of the mech talents it disables ===== -->
   <CTalent id="DVaGoldenQuickReload">
     <Face value="DVaGoldenQuickReload" />
@@ -467,19 +465,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Find value="1" />
     <Value value="DVaGoldenWorldRecord" />
   </CValidatorPlayerTalent>
-  <CHero id="DVa">
-    <TalentTreeArray Talent="DVaGoldenQuickReload" Tier="1" Column="4" />
-    <TalentTreeArray Talent="DVaGoldenExtraLife" Tier="1" Column="5" />
-    <TalentTreeArray Talent="DVaGoldenLagSpike" Tier="2" Column="4" />
-    <TalentTreeArray Talent="DVaGoldenKiting" Tier="2" Column="5" />
-    <TalentTreeArray Talent="DVaGoldenAmmoBox" Tier="3" Column="4" />
-    <TalentTreeArray Talent="DVaGoldenHealthPack" Tier="3" Column="5" />
-    <TalentTreeArray Talent="DVaGoldenMekaDrop" Tier="4" Column="4" />
-    <TalentTreeArray Talent="DVaGoldenClutchPlay" Tier="5" Column="4" />
-    <TalentTreeArray Talent="DVaGoldenStim" Tier="6" Column="4" />
-    <TalentTreeArray Talent="DVaGoldenRicochet" Tier="6" Column="5" />
-    <TalentTreeArray Talent="DVaGoldenWorldRecord" Tier="7" Column="5" />
-  </CHero>
+  <!-- their tree entries are in TalentFillerData.xml (regen_filler.py) -->
   <!-- Extra Life: fatal damage is ignored and D.Va is Invulnerable for 1 second, once every 60 seconds -->
   <CBehaviorBuff id="DVaGoldenExtraLife" parent="CarryBehaviorParent">
     <Alignment value="Positive" />
