@@ -128,11 +128,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotHit" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="DVaBigShotPewPewPewTalentDamage">
     <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotHit" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="DVaGoldenMiniNukeDamage">
     <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
@@ -144,12 +146,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="DVaGoldenPistolPower" Modifier="0" />
-  </CEffectDamage>
-  <CEffectDamage id="DVaPilotBigShotDamage">
-    <MultiplicativeModifierArray index="DVaPilotHit" Accumulator="DVaGoldenHighScoreTokenCounterAccumulator" />
-  </CEffectDamage>
-  <CEffectDamage id="DVaBigShotPewPewPewTalentDamage">
-    <MultiplicativeModifierArray index="DVaPilotHit" Accumulator="DVaGoldenHighScoreTokenCounterAccumulator" />
   </CEffectDamage>
   <CButton id="DVaGoldenHighScoreTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />

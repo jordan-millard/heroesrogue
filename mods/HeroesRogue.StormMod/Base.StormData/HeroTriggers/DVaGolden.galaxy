@@ -37,6 +37,7 @@ actor[16] libAffx_DVaFireActors; // Rider at 100: the fire patches shown
 fixed[16] libAffx_DVaFireTimes; // and when each was placed (0: none)
 int libAffx_DVaFireNext; // the next slot
 int libAffx_DVaPilotTalentTicks; // Pilot Pro: ticks until its talents are set again
+fixed libAffx_DVaScoreLast; // High Score: the Big Shot modifier last set
 string[6] libAffx_DVaTokens; // the quest tokens the mech copies
 
 unit libAffx_DVaHero() {
@@ -225,6 +226,8 @@ void libAffx_DVaPilotTalents () {
     libAffx_ShowTalent("DVaGoldenRicochet", true);
     libAffx_ShowTalent("DVaGoldenWorldRecord", true);
     libAffx_UpdateEmptyTalentTiers(libAffx_player);
+    SetTalentTreeHeroLevel(libAffx_player, UnitLevel(libAffx_DVaHero()));
+    libGame_gf_TalentsUpdateChoicePanelForPlayer(libAffx_player);
     libAffx_DisplayChatMessage(StringToText("TEMP: Pilot Pro talents set again"));
 }
 // the quest tokens live on the pilot (D.Va's hero unit); the mech's abilities read them from the mech, so it gets the same counts
@@ -302,6 +305,7 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
     unit pilot = libAffx_DVaHero();
     unit mech;
     fixed now = GameGetMissionTime();
+    fixed score;
     fixed cd;
     fixed used;
     point spot;
@@ -321,6 +325,13 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
         if (libAffx_DVaPilotTalentTicks == 8) {
             libAffx_DVaPilotTalents();
         }
+    }
+    // High Score: 1% Big Shot damage per stack, set per player
+    score = IntToFixed(libAffx_DVaStacks("DVaGoldenHighScoreTokenCounter")) * 0.01;
+    if (score != libAffx_DVaScoreLast) {
+        libAffx_DVaScoreLast = score;
+        CatalogFieldValueSet(c_gameCatalogEffect, "DVaPilotBigShotDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player, FixedToString(score, 2));
+        CatalogFieldValueSet(c_gameCatalogEffect, "DVaBigShotPewPewPewTalentDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player, FixedToString(score, 2));
     }
     mech = UnitTransport(pilot);
     // Pilot Pro: out of the mech (the base script's unload trigger swaps the UI to the pilot), then the mech goes away
@@ -398,6 +409,7 @@ bool libAffx_DVaDebugHit_Func (bool testConds, bool runActions) {
         }
         line = line + " score " + IntToString(libAffx_DVaStacks("DVaGoldenHighScoreTokenCounter"));
     }
+    line = line + " srcUnit " + UnitGetType(EventUnitDamageSourceUnit()) + " mod " + CatalogFieldValueGet(c_gameCatalogEffect, "DVaPilotBigShotDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player);
     line = line + " src " + IntToString(EventUnitDamageSourcePlayer()) + " me " + IntToString(libAffx_player) + " victim " + UnitGetType(victim) + " owner " + IntToString(UnitGetOwner(victim));
     if (libAffx_DVaIsEnemyHero(victim)) {
         line = line + " enemyHero yes";
