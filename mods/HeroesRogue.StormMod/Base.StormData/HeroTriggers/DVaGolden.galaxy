@@ -202,6 +202,8 @@ void libAffx_DVaPilotTalents () {
         k += 1;
     }
     libAffx_DisplayChatMessage(StringToText(line));
+    line = (libGame_gv_players[libAffx_player].lv_heroData.lv_heroCatalogLink);
+    libAffx_DisplayChatMessage(StringToText("TEMP hero link " + line + " has " + IntToString(CatalogFieldValueCount(c_gameCatalogHero, line, "TalentTreeArray", c_playerAny)) + " entries; DVa has " + IntToString(n) + "; last DVa entry " + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(n - 1) + "].Talent", c_playerAny)));
     line = "TEMP tier1 " + IntToString(libGame_gv_talents_TalentChoices[libAffx_player][1].lv_numberOfTalentsForThisTier) + ":";
     k = 1;
     while (k <= 5) {
