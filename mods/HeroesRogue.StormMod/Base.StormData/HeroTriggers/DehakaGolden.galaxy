@@ -800,7 +800,7 @@ void libAffx_DehakaMutationGain (unit hero) {
     }
     libAffx_DehakaMutate(hero, RandomInt(1, 9));
 }
-// Essence gained counts toward the next mutation, every 40 (32 with Rapid Adaptation), even at max Essence
+// Essence gained counts toward the next mutation, every 40 (32 with Rapid Adaptation, 10 more with Apex Form), even at max Essence
 void libAffx_DehakaMutationProgress (unit hero, int gain) {
     int need = 40;
     if (gain <= 0 || hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
@@ -808,6 +808,9 @@ void libAffx_DehakaMutationProgress (unit hero, int gain) {
     }
     if (UnitHasBehavior2(hero, "DehakaGoldenRapidAdaptationMarker")) {
         need = 32;
+    }
+    if (UnitHasBehavior2(hero, "DehakaGoldenApexFormMarker")) {
+        need += 10;
     }
     libGame_gf_ModifyTokenCount(gain, "DehakaGoldenMutationProgress", hero);
     while (libAffx_DehakaStacks("DehakaGoldenMutationProgress") >= need) {
