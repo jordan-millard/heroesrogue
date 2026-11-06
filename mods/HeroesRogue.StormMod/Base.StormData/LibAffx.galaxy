@@ -3955,6 +3955,8 @@ void libAffx_SaveBank() {
                         // the kept share of this game's gains rounds up (the small margin keeps a whole result, like 10% of 30, from
                         // rounding up again through fixed-point error)
                         BankValueSetFromFixed(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior, IntToFixed(RoundI(libAffx_affixes[i].questRetain[i2].startCount)) + MaxF(0.0, Ceiling(MaxF(0.0, UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) - libAffx_affixes[i].questRetain[i2].startCount) * libAffx_affixes[i].questRetain[i2].retainModifier - 0.01)));
+                    } else if (UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) > 0 && libAffx_affixes[i].questRetain[i2].retainUp) {
+                        BankValueSetFromFixed(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior, MaxF(0.0, Ceiling(UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) * libAffx_affixes[i].questRetain[i2].retainModifier - 0.01)));
                     } else if (UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) > 0) {
                         BankValueSetFromFixed(BankLastCreated(), libAffx_BankSection, libAffx_affixes[i].questRetain[i2].tokenBehavior, UnitGetTokenCount(heroUnit, libAffx_affixes[i].questRetain[i2].tokenBehavior) * libAffx_affixes[i].questRetain[i2].retainModifier);
                     }
@@ -6749,6 +6751,7 @@ void libAffx_InitAffixes () {
                     libAffx_affixes[i].questRetain[i2].retainModifier = StringToFixed(questRetainModifier);
                 }
                 libAffx_affixes[i].questRetain[i2].retainGains = (StringWord(questRetain, 3) == "gains");
+                libAffx_affixes[i].questRetain[i2].retainUp = (StringWord(questRetain, 3) == "up");
             }
         }
         heroSpecific = UserDataGetString("Affix", affixInstance, "HeroSpecific", 1);
