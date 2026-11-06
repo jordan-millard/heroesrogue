@@ -49,7 +49,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Swarm Host ===== -->
-  <!-- Dark Swarm has 2 charges (8 second recharge); gain Enduring Swarm and Symbiosis (Symbiosis also takes time off a charge). Swarm quest (10% of each map's gains kept for good): 0.5% Dark Swarm damage per enemy Hero hit, once per Hero per swarm. Brood quest: takedowns within 6 seconds of a swarm hit; stacks 1-40 make the swarm tick 2% faster each with the same ticks (script), 41-80 make it 1% larger each, 81-100 make enemy Heroes in it deal 1% less damage each (script applies the debuff), at 100 they're Slowed 25% (script), then 2% damage each. -->
+  <!-- Dark Swarm has 2 charges (8 second recharge) and costs 25 Mana (half); gain Enduring Swarm and Symbiosis (Symbiosis also takes time off a charge). Swarm quest (10% of each map's gains kept for good): 0.5% Dark Swarm damage per enemy Hero hit, once per Hero per swarm. Brood quest: takedowns within 6 seconds of a swarm hit; stacks 1-40 make the swarm tick 2% faster each with the same ticks (script), 41-80 make it 1% larger each, 81-100 make enemy Heroes in it deal 1% less damage each (script applies the debuff), at 100 they're Slowed 25% (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DehakaGoldenSwarmTokenCounter" parent="StormQuestToken">
     <Face value="DehakaGoldenSwarmTokenCounter" />
     <Max value="100000" />

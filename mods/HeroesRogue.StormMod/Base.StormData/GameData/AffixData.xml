@@ -29692,11 +29692,14 @@
             <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Cooldown.TimeUse 0.5">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,DehakaDarkSwarmSymbiosisTalentModifyUnit,Cost[0].ChargeTimeUse -0.4">
+            <String String="1 1 Set Abil,DehakaDarkSwarm,Cost.Vital[Energy] 25">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,DehakaDarkSwarmDamage,MultiplicativeModifierArray[DehakaSwarmPower].Modifier 0">
+            <String String="1 1 Set Effect,DehakaDarkSwarmSymbiosisTalentModifyUnit,Cost[0].ChargeTimeUse -0.4">
                 <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,DehakaDarkSwarmDamage,MultiplicativeModifierArray[DehakaSwarmPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
             </String>
             <String String="AffixAdded libAffx_DehakaStart">
                 <Field Id="Trigger" />
