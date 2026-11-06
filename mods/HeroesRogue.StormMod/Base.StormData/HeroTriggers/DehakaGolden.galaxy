@@ -691,24 +691,29 @@ void libAffx_DehakaApexBuild () {
     libAffx_SetDialogControlText(libAffx_DehakaApexDone, StringToText("Done"));
     libAffx_SetDialogControlPosition(libAffx_DehakaApexDone, c_anchorTop, 0, 905);
 }
-// shows the button while mutations wait (and the screen is closed), and fills in the screen
+// shows the button while mutations wait or Always is set (and the screen is closed), and fills in the screen
 void libAffx_DehakaApexUpdate () {
     int pending = libAffx_DehakaStacks("DehakaGoldenMutationPending");
     int always = libAffx_DehakaStacks("DehakaGoldenMutationAlways");
     bool apex = UnitHasBehavior2(libAffx_DehakaHero(), "DehakaGoldenApexFormMarker");
     int i = 1;
     if (!libAffx_DehakaApexMade) {
-        if (!apex || pending <= 0) {
+        if (!apex || (pending <= 0 && always <= 0)) {
             return;
         }
         libAffx_DehakaApexBuild();
     }
-    libAffx_SetDialogControlText(libAffx_DehakaApexBarButton, StringToText("Mutations to pick: " + IntToString(pending)));
-    DialogSetVisible(libAffx_DehakaApexBarDialog, PlayerGroupSingle(libAffx_player), apex && pending > 0 && !libAffx_DehakaApexOpen);
+    if (pending > 0) {
+        libAffx_SetDialogControlText(libAffx_DehakaApexBarButton, StringToText("Mutations to pick: " + IntToString(pending)));
+        libAffx_SetDialogControlText(libAffx_DehakaApexTitle, StringToText("Apex Form: " + IntToString(pending) + " to pick"));
+    } else {
+        libAffx_SetDialogControlText(libAffx_DehakaApexBarButton, StringToText("Always: ") + libAffx_DehakaMutationName(always));
+        libAffx_SetDialogControlText(libAffx_DehakaApexTitle, StringToText("Apex Form"));
+    }
+    DialogSetVisible(libAffx_DehakaApexBarDialog, PlayerGroupSingle(libAffx_player), apex && (pending > 0 || always > 0) && !libAffx_DehakaApexOpen);
     if (!libAffx_DehakaApexOpen) {
         return;
     }
-    libAffx_SetDialogControlText(libAffx_DehakaApexTitle, StringToText("Apex Form: " + IntToString(pending) + " to pick"));
     while (i <= 9) {
         if (always == i) {
             libAffx_SetDialogControlText(libAffx_DehakaApexOwned[i], StringToText("Owned: " + IntToString(libAffx_DehakaStacks(libAffx_DehakaMutationToken(i))) + "   (always picked)"));
