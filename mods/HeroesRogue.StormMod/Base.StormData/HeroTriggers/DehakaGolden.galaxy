@@ -38,7 +38,8 @@ int libAffx_DehakaSwarmId; // Dark Swarm casts this game
 int[libCore_gv_bALMaxPlayers + 1] libAffx_DehakaSwarmCounted; // per enemy player, the last swarm that counted a hit
 bool libAffx_DehakaSwarmFirst; // the current swarm hit is this swarm's first on that Hero
 fixed libAffx_DehakaSwarmExtended; // Endless Swarm seconds added to the current swarm
-int libAffx_DehakaEssenceSeen = -1; // Essence at the last check (Primal Evolution)
+int libAffx_DehakaEssenceOwed; // Essence the script gave since the last check, toward mutations
+bool libAffx_DehakaRestoring; // giving back the last game's Essence (not counted)
 int libAffx_DehakaEssenceMaxAdded; // max Essence added by Evolution stacks 1-40
 fixed libAffx_DehakaAdaptBonus; // Evolution 81-100: share of the damage taken during Adaptation healed on top
 fixed libAffx_DehakaAdaptExtra; // that extra heal so far
@@ -46,10 +47,17 @@ int[10] libAffx_DehakaMutationsSet; // mutation counts the buff was last set for
 fixed libAffx_DehakaResilience; // Resilience mutations: how much shorter crowd control is
 fixed[4] libAffx_DehakaMoveWritten; // Movement Speed boons: the value last written
 fixed[4] libAffx_DehakaMoveAdded; // and the mutations' part of it
-bool libAffx_DehakaApexMade; // Apex Form's window
-bool libAffx_DehakaApexVisible;
+bool libAffx_DehakaApexMade; // Apex Form's button and screen
+bool libAffx_DehakaApexOpen;
+int libAffx_DehakaApexBarDialog;
+int libAffx_DehakaApexBarButton;
 int libAffx_DehakaApexDialog;
-int[10] libAffx_DehakaApexButtons;
+int libAffx_DehakaApexTitle;
+int libAffx_DehakaApexDone;
+int[10] libAffx_DehakaApexPick;
+int[10] libAffx_DehakaApexPickAll;
+int[10] libAffx_DehakaApexAlways;
+int[10] libAffx_DehakaApexOwned;
 
 unit libAffx_DehakaHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -206,6 +214,9 @@ int libAffx_DehakaEssence (unit hero) {
 // add some Essence, up to the most Dehaka can hold
 int libAffx_DehakaAddEssence (unit hero, int amount) {
     int added = MinI(amount, libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player] - libAffx_DehakaEssence(hero));
+    if (!libAffx_DehakaRestoring) {
+        libAffx_DehakaEssenceOwed += amount;
+    }
     if (added > 0) {
         UnitAddChargeUsed(hero, "Abil/DehakaEssenceCollection", -1.0 * IntToFixed(added));
         return added;
@@ -224,10 +235,9 @@ void libAffx_DehakaEssenceSync () {
     }
     token = libAffx_DehakaStacks("DehakaGoldenEssenceToken");
     if (token > libAffx_DehakaEssenceWritten) {
+        libAffx_DehakaRestoring = true;
         added = libAffx_DehakaAddEssence(hero, token - libAffx_DehakaEssenceWritten);
-        if (libAffx_DehakaEssenceSeen >= 0) {
-            libAffx_DehakaEssenceSeen += added;
-        }
+        libAffx_DehakaRestoring = false;
     }
     essence = libAffx_DehakaEssence(hero);
     if (essence != token) {
@@ -578,42 +588,187 @@ void libAffx_DehakaMutate (unit hero, int kind) {
     UIDisplayMessage(PlayerGroupSingle(libAffx_player), c_messageAreaSubtitle, StringToText("Mutation: ") + libAffx_DehakaMutationText(kind));
     libAffx_DehakaMutationsApply();
 }
-// Apex Form: a small window of 5 buttons while mutations wait to be picked (the game keeps running)
-void libAffx_DehakaApexShow () {
+// Apex Form. A button near the top shows the mutations waiting to be picked; it opens a selection screen (the game pauses
+// while it's open) with a card per mutation: Pick spends one, Pick all spends them all, Always picks that mutation by
+// itself from then on (kept between games). Built once, when first needed.
+string libAffx_DehakaMutationIcon (int kind) {
+    if (kind == 1) {
+        return "Assets/Textures/affix_icon_ally_health.dds";
+    }
+    if (kind == 2) {
+        return "Assets/Textures/storm_ui_icon_rehgar_bloodlust.dds";
+    }
+    if (kind == 3) {
+        return "Assets/Textures/storm_ui_icon_talent_autoattack_heal.dds";
+    }
+    if (kind == 4) {
+        return "Assets/Textures/affix_icon_ally_damage_spell.dds";
+    }
+    if (kind == 5) {
+        return "Assets/Textures/storm_ui_icon_talent_deaths_advance.dds";
+    }
+    if (kind == 6) {
+        return "Assets/Textures/storm_ui_icon_sonya_ferocioushealing.dds";
+    }
+    if (kind == 7) {
+        return "Assets/Textures/storm_ui_icon_talent_amplifiedhealing.dds";
+    }
+    if (kind == 8) {
+        return "Assets/Textures/storm_ui_icon_dehaka_essencecollection.dds";
+    }
+    return "Assets/Textures/storm_ui_icon_talent_autoattack_searing.dds";
+}
+text libAffx_DehakaMutationName (int kind) {
+    if (kind == 1) {
+        return StringToText("Vitality");
+    }
+    if (kind == 2) {
+        return StringToText("Frenzy");
+    }
+    if (kind == 3) {
+        return StringToText("Bloodthirst");
+    }
+    if (kind == 4) {
+        return StringToText("Primal Power");
+    }
+    if (kind == 5) {
+        return StringToText("Swiftness");
+    }
+    if (kind == 6) {
+        return StringToText("Resilience");
+    }
+    if (kind == 7) {
+        return StringToText("Regrowth");
+    }
+    if (kind == 8) {
+        return StringToText("Capacity");
+    }
+    return StringToText("Claws");
+}
+void libAffx_DehakaApexBuild () {
+    int d;
     int i = 1;
-    bool show = libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0 && UnitHasBehavior2(libAffx_DehakaHero(), "DehakaGoldenApexFormMarker");
+    int x;
+    int y;
+    libAffx_DehakaApexMade = true;
+    libAffx_DehakaApexBarDialog = DialogCreate(380, 90, c_anchorTop, 0, 95, false);
+    DialogSetImageVisible(libAffx_DehakaApexBarDialog, false);
+    libAffx_DehakaApexBarButton = libAffx_CreateDialogControlButton(libAffx_DehakaApexBarDialog);
+    libAffx_SetDialogControlSize(libAffx_DehakaApexBarButton, 360, 70);
+    libAffx_SetDialogControlPosition(libAffx_DehakaApexBarButton, c_anchorCenter, 0, 0);
+    libAffx_SetDialogControlColor(libAffx_DehakaApexBarButton, Color(100, 50, 0));
+    d = DialogCreate(500, 500, c_anchorCenter, 0, 0, true);
+    libAffx_DehakaApexDialog = d;
+    DialogSetFullscreen(d, true);
+    DialogSetImageVisible(d, false);
+    libAffx_DehakaApexTitle = libAffx_CreateDialogControlLabel(d, StringToText("Apex Form"), "Storm_Map_Large_Bold_Centered", 1000, 60, c_anchorTop, 0, 55, ColorWithAlpha(0, 0, 0, 0), false);
+    while (i <= 9) {
+        x = -340 + 340 * ModI(i - 1, 3);
+        y = 140 + 260 * ((i - 1) / 3);
+        libAffx_CreateDialogControlImage(d, libAffx_textureAffixBackground, 320, 245, c_anchorTop, x, y, null);
+        libAffx_CreateDialogControlImage(d, libAffx_DehakaMutationIcon(i), 76, 76, c_anchorTop, x, y + 14, null);
+        libAffx_CreateDialogControlImage(d, "Assets/Textures/icon_overlay_large_legendary.dds", 98, 98, c_anchorTop, x, y + 3, null);
+        libAffx_CreateDialogControlLabel(d, libAffx_DehakaMutationName(i), "Storm_Tutorial_Small_Centered", 300, 32, c_anchorTop, x, y + 96, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_SetDialogControlColor(DialogControlLastCreated(), Color(100, 50, 0));
+        libAffx_CreateDialogControlLabel(d, libAffx_DehakaMutationText(i), "TalentDescription", 290, 30, c_anchorTop, x, y + 128, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_DehakaApexOwned[i] = libAffx_CreateDialogControlLabel(d, null, "TalentDescription", 290, 28, c_anchorTop, x, y + 156, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_DehakaApexPick[i] = libAffx_CreateDialogControlButton(d);
+        libAffx_SetDialogControlSize(libAffx_DehakaApexPick[i], 98, 46);
+        libAffx_SetDialogControlText(libAffx_DehakaApexPick[i], StringToText("Pick"));
+        libAffx_SetDialogControlPosition(libAffx_DehakaApexPick[i], c_anchorTop, x - 100, y + 188);
+        libAffx_DehakaApexPickAll[i] = libAffx_CreateDialogControlButton(d);
+        libAffx_SetDialogControlSize(libAffx_DehakaApexPickAll[i], 98, 46);
+        libAffx_SetDialogControlText(libAffx_DehakaApexPickAll[i], StringToText("Pick all"));
+        libAffx_SetDialogControlPosition(libAffx_DehakaApexPickAll[i], c_anchorTop, x, y + 188);
+        libAffx_DehakaApexAlways[i] = libAffx_CreateDialogControlButton(d);
+        libAffx_SetDialogControlSize(libAffx_DehakaApexAlways[i], 98, 46);
+        libAffx_SetDialogControlPosition(libAffx_DehakaApexAlways[i], c_anchorTop, x + 100, y + 188);
+        i += 1;
+    }
+    libAffx_DehakaApexDone = libAffx_CreateDialogControlButton(d);
+    libAffx_SetDialogControlSize(libAffx_DehakaApexDone, 220, 60);
+    libAffx_SetDialogControlText(libAffx_DehakaApexDone, StringToText("Done"));
+    libAffx_SetDialogControlPosition(libAffx_DehakaApexDone, c_anchorTop, 0, 930);
+}
+// shows the button while mutations wait (and the screen is closed), and fills in the screen
+void libAffx_DehakaApexUpdate () {
+    int pending = libAffx_DehakaStacks("DehakaGoldenMutationPending");
+    int always = libAffx_DehakaStacks("DehakaGoldenMutationAlways");
+    bool apex = UnitHasBehavior2(libAffx_DehakaHero(), "DehakaGoldenApexFormMarker");
+    int i = 1;
     if (!libAffx_DehakaApexMade) {
-        if (!show) {
+        if (!apex || pending <= 0) {
             return;
         }
-        libAffx_DehakaApexMade = true;
-        libAffx_DehakaApexDialog = DialogCreate(540, 250, c_anchorTop, 0, 120, false);
-        libAffx_CreateDialogControlLabel(libAffx_DehakaApexDialog, StringToText("Apex Form: choose a mutation"), "Affix_Dialog", 500, 40, c_anchorTop, 0, 18, ColorWithAlpha(0, 0, 0, 0), false);
-        while (i <= 9) {
-            libAffx_DehakaApexButtons[i] = libAffx_CreateDialogControlButton(libAffx_DehakaApexDialog);
-            libAffx_SetDialogControlSize(libAffx_DehakaApexButtons[i], 150, 50);
-            libAffx_SetDialogControlText(libAffx_DehakaApexButtons[i], libAffx_DehakaMutationText(i));
-            libAffx_SetDialogControlPosition(libAffx_DehakaApexButtons[i], c_anchorTop, -156 + 156 * ModI(i - 1, 3), 64 + 56 * ((i - 1) / 3));
-            i += 1;
+        libAffx_DehakaApexBuild();
+    }
+    libAffx_SetDialogControlText(libAffx_DehakaApexBarButton, StringToText("Mutations to pick: " + IntToString(pending)));
+    DialogSetVisible(libAffx_DehakaApexBarDialog, PlayerGroupSingle(libAffx_player), apex && pending > 0 && !libAffx_DehakaApexOpen);
+    if (!libAffx_DehakaApexOpen) {
+        return;
+    }
+    libAffx_SetDialogControlText(libAffx_DehakaApexTitle, StringToText("Apex Form: " + IntToString(pending) + " to pick"));
+    while (i <= 9) {
+        libAffx_SetDialogControlText(libAffx_DehakaApexOwned[i], StringToText("Owned: " + IntToString(libAffx_DehakaStacks(libAffx_DehakaMutationToken(i)))));
+        libAffx_SetDialogControlEnabled(libAffx_DehakaApexPick[i], pending > 0);
+        libAffx_SetDialogControlEnabled(libAffx_DehakaApexPickAll[i], pending > 0);
+        if (always == i) {
+            libAffx_SetDialogControlText(libAffx_DehakaApexAlways[i], StringToText("Always: on"));
+            libAffx_SetDialogControlColor(libAffx_DehakaApexAlways[i], Color(100, 50, 0));
+        } else {
+            libAffx_SetDialogControlText(libAffx_DehakaApexAlways[i], StringToText("Always"));
+            libAffx_SetDialogControlColor(libAffx_DehakaApexAlways[i], Color(100, 100, 100));
         }
+        i += 1;
     }
-    if (show != libAffx_DehakaApexVisible) {
-        libAffx_DehakaApexVisible = show;
-        DialogSetVisible(libAffx_DehakaApexDialog, PlayerGroupSingle(libAffx_player), show);
+}
+void libAffx_DehakaApexOpenScreen (bool open) {
+    if (open == libAffx_DehakaApexOpen) {
+        return;
     }
+    libAffx_DehakaApexOpen = open;
+    DialogSetVisible(libAffx_DehakaApexDialog, PlayerGroupSingle(libAffx_player), open);
+    libAffx_ShowBackdrop(open);
+    libAffx_Pause(open);
+    libAffx_DehakaApexUpdate();
 }
 bool libAffx_DehakaApexClick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_DehakaHero();
     int control = EventDialogControl();
     int i = 1;
+    int was;
     if (hero == null || !libAffx_DehakaApexMade || EventPlayer() != libAffx_player) {
         return false;
     }
+    if (control == libAffx_DehakaApexBarButton) {
+        libAffx_DehakaApexOpenScreen(true);
+        return true;
+    }
+    if (control == libAffx_DehakaApexDone) {
+        libAffx_DehakaApexOpenScreen(false);
+        return true;
+    }
     while (i <= 9) {
-        if (control == libAffx_DehakaApexButtons[i] && libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0) {
+        if (control == libAffx_DehakaApexAlways[i]) {
+            was = libAffx_DehakaStacks("DehakaGoldenMutationAlways");
+            libGame_gf_ModifyTokenCount(-was, "DehakaGoldenMutationAlways", hero);
+            if (was != i) {
+                libGame_gf_ModifyTokenCount(i, "DehakaGoldenMutationAlways", hero);
+            }
+            libAffx_DehakaApexUpdate();
+            return true;
+        }
+        if ((control == libAffx_DehakaApexPick[i] || control == libAffx_DehakaApexPickAll[i]) && libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0) {
             libGame_gf_ModifyTokenCount(-1, "DehakaGoldenMutationPending", hero);
             libAffx_DehakaMutate(hero, i);
-            libAffx_DehakaApexShow();
+            while (control == libAffx_DehakaApexPickAll[i] && libAffx_DehakaStacks("DehakaGoldenMutationPending") > 0) {
+                libGame_gf_ModifyTokenCount(-1, "DehakaGoldenMutationPending", hero);
+                libAffx_DehakaMutate(hero, i);
+            }
+            if (libAffx_DehakaStacks("DehakaGoldenMutationPending") <= 0) {
+                libAffx_DehakaApexOpenScreen(false);
+            }
+            libAffx_DehakaApexUpdate();
             return true;
         }
         i += 1;
@@ -621,32 +776,24 @@ bool libAffx_DehakaApexClick_Func (bool testConds, bool runActions) {
     return true;
 }
 void libAffx_DehakaMutationGain (unit hero) {
+    int always = libAffx_DehakaStacks("DehakaGoldenMutationAlways");
+    if (UnitHasBehavior2(hero, "DehakaGoldenApexFormMarker") && always >= 1 && always <= 9) {
+        libAffx_DehakaMutate(hero, always);
+        return;
+    }
     if (UnitHasBehavior2(hero, "DehakaGoldenApexFormMarker")) {
         libGame_gf_ModifyTokenCount(1, "DehakaGoldenMutationPending", hero);
         libAffx_DehakaQuestDing();
-        libAffx_DehakaApexShow();
+        libAffx_DehakaApexUpdate();
         return;
     }
     libAffx_DehakaMutate(hero, RandomInt(1, 9));
 }
-// every 0.25 seconds: Essence gained (not Essence given back from the last game) counts toward the next mutation, every
-// 25 (20 with Rapid Adaptation)
-bool libAffx_DehakaEssenceWatch_Func (bool testConds, bool runActions) {
-    unit hero = libAffx_DehakaHero();
-    int essence;
-    int gain;
+// Essence gained counts toward the next mutation, every 25 (20 with Rapid Adaptation), even at max Essence
+void libAffx_DehakaMutationProgress (unit hero, int gain) {
     int need = 25;
-    if (hero == null || !UnitIsAlive(hero)) {
-        return false;
-    }
-    essence = libAffx_DehakaEssence(hero);
-    gain = essence - libAffx_DehakaEssenceSeen;
-    if (libAffx_DehakaEssenceSeen < 0) {
-        gain = 0;
-    }
-    libAffx_DehakaEssenceSeen = essence;
-    if (gain <= 0 || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
-        return true;
+    if (gain <= 0 || hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
+        return;
     }
     if (UnitHasBehavior2(hero, "DehakaGoldenRapidAdaptationMarker")) {
         need = 20;
@@ -656,6 +803,15 @@ bool libAffx_DehakaEssenceWatch_Func (bool testConds, bool runActions) {
         libGame_gf_ModifyTokenCount(-need, "DehakaGoldenMutationProgress", hero);
         libAffx_DehakaMutationGain(hero);
     }
+}
+// each Essence-granting effect (kills, Essence Claws, Hero Stalker, Essence Devourer) counts its amount for this player,
+// whether or not Essence is full
+bool libAffx_DehakaEssenceGain_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_DehakaHero();
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitCaster) != hero) {
+        return false;
+    }
+    libAffx_DehakaMutationProgress(hero, -CatalogFieldValueGetAsInt(c_gameCatalogEffect, EventPlayerEffectUsed(), "Cost[0].ChargeCountUse", libAffx_player));
     return true;
 }
 // Evolution quest (every second and on a takedown): stacks 1-40 add 1 max Essence each, as does each Essence mutation (the
@@ -691,7 +847,9 @@ void libAffx_DehakaPrimalSync () {
         UnitBehaviorAdd(hero, "DehakaGoldenFreeBurrowController", hero, 1);
     }
     libAffx_DehakaMutationsApply();
-    libAffx_DehakaApexShow();
+    libAffx_DehakaMutationProgress(hero, libAffx_DehakaEssenceOwed);
+    libAffx_DehakaEssenceOwed = 0;
+    libAffx_DehakaApexUpdate();
 }
 // Resilience mutations: each makes Stuns, Silences and Slows on Dehaka 1% shorter (up to 75%), like Abolish Magic
 bool libAffx_DehakaResilience_Func (bool testConds, bool runActions) {
@@ -875,7 +1033,12 @@ bool libAffx_DehakaStart (bool testConds, bool runActions) {
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaBrushTick_Func"), 0.125, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DehakaHungerAttack_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DehakaHeroWeaponDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DehakaSwarmCast_Func"), libAffx_player, "DehakaDarkSwarmApplyBehavior");
-    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DehakaEssenceWatch_Func"), 0.25, c_timeGame);
+    trig = TriggerCreate("libAffx_DehakaEssenceGain_Func");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DehakaEssenceCollectionPCKillAddChargeCountModifyUnit");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DehakaEssenceCollectionNPCKillAddChargeCountModifyUnit");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DehakaEssenceCollectionEssenceDevourerTalentModifyChargeCount");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DehakaEssenceCollectionHeroStalkerAddChargeCountModifyUnit");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DehakaEssenceCollectionEssenceClawsTalentModifyChargeCount");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DehakaAdaptDamage_Func"), UnitRefFromUnit(libAffx_DehakaHero()), c_unitDamageTypeAny, c_unitDamageEither, null);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_DehakaAdaptStart_Func"), null, "DehakaAdaptationDamageTrackerBehavior", c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_DehakaAdaptHeal_Func"), null, "DehakaAdaptationHealTrackerBehavior", c_unitBehaviorChangeCreate);
