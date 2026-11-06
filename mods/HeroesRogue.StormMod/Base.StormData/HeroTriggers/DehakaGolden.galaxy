@@ -800,14 +800,14 @@ void libAffx_DehakaMutationGain (unit hero) {
     }
     libAffx_DehakaMutate(hero, RandomInt(1, 9));
 }
-// Essence gained counts toward the next mutation, every 40 (32 with Rapid Adaptation, 10 more with Apex Form), even at max Essence
+// Essence gained counts toward the next mutation, every 100 (80 with Rapid Adaptation, 10 more with Apex Form), even at max Essence
 void libAffx_DehakaMutationProgress (unit hero, int gain) {
-    int need = 40;
+    int need = 100;
     if (gain <= 0 || hero == null || !UnitHasBehavior2(hero, "DehakaGoldenPrimalMarker")) {
         return;
     }
     if (UnitHasBehavior2(hero, "DehakaGoldenRapidAdaptationMarker")) {
-        need = 32;
+        need = 80;
     }
     if (UnitHasBehavior2(hero, "DehakaGoldenApexFormMarker")) {
         need += 10;
