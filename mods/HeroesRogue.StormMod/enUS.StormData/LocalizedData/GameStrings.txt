@@ -3093,7 +3093,7 @@ Button/Tooltip/DVaGoldenYieldTokenCounter=<c val="#TooltipQuest">Bonus Self-Dest
 Button/Name/DVaGoldenMeltdownTokenCounter=Meltdown
 Button/Tooltip/DVaGoldenMeltdownTokenCounter=<c val="#TooltipQuest">Meltdown stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DVaGoldenMeltdownTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Self-Destruct charge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make the mech blow up <c val="#TooltipNumbers">1%</c> sooner. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make the blast <c val="#TooltipNumbers">1%</c> larger. At <c val="#TooltipNumbers">100</c> stacks, the blast Stuns every enemy it hits for <c val="#TooltipNumbers">2</c> seconds. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
 Affix/Name/DVaPilotPro=Pilot Pro
-Affix/Tooltip/DVaPilotPro=You stay a pilot all game: you have <c val="#TooltipNumbers">3</c> times the Health, Big Shot stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">6</c> second recharge) and fires <c val="#TooltipNumbers">0.3</c> seconds faster, and Light Gun deals <c val="#TooltipNumbers">50%</c> more damage; its hits on enemy Heroes take <c val="#TooltipNumbers">0.25</c> seconds off Big Shot's recharge. You can't Call Mech or take the mech Heroics, and <c val="#TooltipNumbers">Headshot!</c> moves from level <c val="#TooltipNumbers">20</c> to level <c val="#TooltipNumbers">10</c> (Big Shot deals <c val="#TooltipNumbers">75%</c> more damage and recharges <c val="#TooltipNumbers">2</c> seconds faster).<n/><n/><c val="#TooltipQuest">Quest:</c> Each Big Shot hit on an enemy Hero adds <c val="#TooltipNumbers">1%</c> Big Shot damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Big Shot or Light Gun hit make Big Shot recharge faster (up to <c val="#TooltipNumbers">40%</c>), then add Light Gun range (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, a Big Shot hit on an enemy Hero summons a mech that explodes at their location for Self-Destruct's damage, once every <c val="#TooltipNumbers">60</c> seconds. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Tooltip/DVaPilotPro=You stay a pilot all game: you have <c val="#TooltipNumbers">3</c> times the Health, Big Shot stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">6</c> second recharge) and fires <c val="#TooltipNumbers">0.3</c> seconds faster, and Light Gun deals <c val="#TooltipNumbers">50%</c> more damage. You can't Call Mech; the mech talents are replaced by pilot talents, and <c val="#TooltipNumbers">Headshot!</c> moves from level <c val="#TooltipNumbers">20</c> to level <c val="#TooltipNumbers">10</c> (Big Shot deals <c val="#TooltipNumbers">75%</c> more damage and recharges <c val="#TooltipNumbers">2</c> seconds faster).<n/><n/><c val="#TooltipQuest">Quest:</c> Each Big Shot hit on an enemy Hero adds <c val="#TooltipNumbers">1%</c> Big Shot damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Big Shot or Light Gun hit make Big Shot recharge faster (up to <c val="#TooltipNumbers">40%</c>), then add Light Gun range (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, a Big Shot hit on an enemy Hero summons a mech that explodes at their location for Self-Destruct's damage, once every <c val="#TooltipNumbers">60</c> seconds. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
 Affix/Name/DVaLightGun=Light Gun
 Affix/Tooltip/DVaLightGun=Light Gun and Big Shot deal <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
 Affix/Name/DVaPewPewPewBoon=Pew! Pew! Pew!
@@ -3108,6 +3108,51 @@ Button/Name/DVaGoldenHighScoreTokenCounter=High Score
 Button/Tooltip/DVaGoldenHighScoreTokenCounter=<c val="#TooltipQuest">Bonus Big Shot damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DVaGoldenHighScoreTokenCounter$*1" precision="1"/>%</c></c>
 Button/Name/DVaGoldenStreakTokenCounter=Streak
 Button/Tooltip/DVaGoldenStreakTokenCounter=<c val="#TooltipQuest">Streak stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:DVaGoldenStreakTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Big Shot recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">0.5%</c> Light Gun range. At <c val="#TooltipNumbers">100</c> stacks, a Big Shot hit on an enemy Hero summons a mech that explodes at their location for Self-Destruct's damage (once every <c val="#TooltipNumbers">60</c> seconds). Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Button/Name/DVaGoldenQuickReload=Quick Reload
+Button/SimpleDisplayText/DVaGoldenQuickReload=Light Gun hits recharge Big Shot
+Button/Tooltip/DVaGoldenQuickReload=Light Gun hits on enemy Heroes take <c val="#TooltipNumbers">0.25</c> seconds off Big Shot's recharge.
+Button/Name/DVaGoldenExtraLife=Extra Life
+Button/SimpleDisplayText/DVaGoldenExtraLife=Survive fatal damage once a minute
+Button/Tooltip/DVaGoldenExtraLife=Once every <c val="#TooltipNumbers">60</c> seconds, damage that would kill you is ignored and you are Invulnerable for <c val="#TooltipNumbers">1</c> second.
+Button/Name/DVaGoldenLagSpike=Lag Spike
+Button/SimpleDisplayText/DVaGoldenLagSpike=Big Shot's Slow is stronger
+Button/Tooltip/DVaGoldenLagSpike=Big Shot Slows enemy Heroes by <c val="#TooltipNumbers">50%</c> for <c val="#TooltipNumbers">2.5</c> seconds instead of <c val="#TooltipNumbers">25%</c> for <c val="#TooltipNumbers">1.5</c>.
+Button/Name/DVaGoldenKiting=Kiting
+Button/SimpleDisplayText/DVaGoldenKiting=Firing Big Shot gives Movement Speed
+Button/Tooltip/DVaGoldenKiting=Firing Big Shot gives <c val="#TooltipNumbers">20%</c> Movement Speed for <c val="#TooltipNumbers">2</c> seconds.
+Button/Name/DVaGoldenAmmoBox=Ammo Box
+Button/SimpleDisplayText/DVaGoldenAmmoBox=Big Shot stores a third charge
+Button/Tooltip/DVaGoldenAmmoBox=Big Shot stores <c val="#TooltipNumbers">1</c> more charge.
+Button/Name/DVaGoldenHealthPack=Health Pack
+Button/SimpleDisplayText/DVaGoldenHealthPack=Big Shot hits on Heroes heal you
+Button/Tooltip/DVaGoldenHealthPack=Big Shot hits on enemy Heroes heal you for <c val="#TooltipNumbers">4%</c> of your maximum Health.
+Button/Name/DVaGoldenMekaDrop=MEKA Drop
+Button/SimpleDisplayText/DVaGoldenMekaDrop=Drop a mech that explodes
+Button/Tooltip/DVaGoldenMekaDrop=Activate to drop a mech at a spot within <c val="#TooltipNumbers">10</c> that explodes <c val="#TooltipNumbers">1</c> second later for Self-Destruct's damage in a <c val="#TooltipNumbers">4</c> radius. <c val="#TooltipNumbers">60</c> second cooldown.
+Button/Name/DVaGoldenClutchPlay=Clutch Play
+Button/SimpleDisplayText/DVaGoldenClutchPlay=Take less damage at low Health
+Button/Tooltip/DVaGoldenClutchPlay=Below <c val="#TooltipNumbers">30%</c> Health, gain <c val="#TooltipNumbers">30</c> Armor.
+Button/Name/DVaGoldenStim=Stim
+Button/SimpleDisplayText/DVaGoldenStim=Big Shot hits give Attack Speed
+Button/Tooltip/DVaGoldenStim=Big Shot hits on enemy Heroes give <c val="#TooltipNumbers">25%</c> Attack Speed for <c val="#TooltipNumbers">3</c> seconds.
+Button/Name/DVaGoldenRicochet=Ricochet
+Button/SimpleDisplayText/DVaGoldenRicochet=Light Gun hits bounce
+Button/Tooltip/DVaGoldenRicochet=Light Gun attacks also hit another enemy within <c val="#TooltipNumbers">2.5</c> of the target for <c val="#TooltipNumbers">50%</c> damage.
+Button/Name/DVaGoldenWorldRecord=World Record
+Button/SimpleDisplayText/DVaGoldenWorldRecord=Takedowns recharge Big Shot
+Button/Tooltip/DVaGoldenWorldRecord=Enemy Hero takedowns fully recharge Big Shot.
+Behavior/Name/DVaGoldenExtraLife=Extra Life
+Behavior/Tooltip/DVaGoldenExtraLife=Fatal damage is ignored once.
+Behavior/Name/DVaGoldenExtraLifeCooldown=Extra Life
+Behavior/Tooltip/DVaGoldenExtraLifeCooldown=Recharging.
+Behavior/Name/DVaGoldenLagSpikeSlow=Lag Spike
+Behavior/Tooltip/DVaGoldenLagSpikeSlow=Slowed.
+Behavior/Name/DVaGoldenKitingSpeed=Kiting
+Behavior/Tooltip/DVaGoldenKitingSpeed=Moving faster.
+Behavior/Name/DVaGoldenStimBuff=Stim
+Behavior/Tooltip/DVaGoldenStimBuff=Attacking faster.
+Behavior/Name/DVaGoldenClutchPlay=Clutch Play
+Behavior/Tooltip/DVaGoldenClutchPlay=Armored at low Health.
 Button/Name/DVaGoldenHeadshot=Headshot!
 Button/SimpleDisplayText/DVaGoldenHeadshot=Big Shot deals more damage and recharges faster
 Button/Tooltip/DVaGoldenHeadshot=Big Shot deals <c val="#TooltipNumbers">75%</c> more damage and its charges recharge <c val="#TooltipNumbers">2</c> seconds faster.

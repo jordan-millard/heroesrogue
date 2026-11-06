@@ -30421,17 +30421,98 @@
             <String String="DVa">
                 <Field Id="HeroSpecific" />
             </String>
-            <String String="DVaBunnyHop">
+            <String String="DVaFullMetal">
                 <Field Id="TalentsDisable" />
             </String>
-            <String String="DVaMicroMissiles">
+            <String String="DVaMechProMoves">
                 <Field Id="TalentsDisable" Index="1" />
             </String>
-            <String String="DVaHeadshot">
+            <String String="DVaLiquidCooling">
                 <Field Id="TalentsDisable" Index="2" />
+            </String>
+            <String String="DVaBoostersRushdown">
+                <Field Id="TalentsDisable" Index="3" />
+            </String>
+            <String String="DVaDefenseMatrixAggressionMatrix">
+                <Field Id="TalentsDisable" Index="4" />
+            </String>
+            <String String="DVaSelfDestructNuclearOption">
+                <Field Id="TalentsDisable" Index="5" />
+            </String>
+            <String String="DvaGetOnThePoint">
+                <Field Id="TalentsDisable" Index="6" />
+            </String>
+            <String String="DVaBoostersHitTheNitrous">
+                <Field Id="TalentsDisable" Index="7" />
+            </String>
+            <String String="DVaDefenseMatrixFusionGenerator">
+                <Field Id="TalentsDisable" Index="8" />
+            </String>
+            <String String="DVaBunnyHop">
+                <Field Id="TalentsDisable" Index="9" />
+            </String>
+            <String String="DVaMicroMissiles">
+                <Field Id="TalentsDisable" Index="10" />
+            </String>
+            <String String="DVaTargetLocked">
+                <Field Id="TalentsDisable" Index="11" />
+            </String>
+            <String String="DVaInForTheKill">
+                <Field Id="TalentsDisable" Index="12" />
+            </String>
+            <String String="DVaDefenseMatrixDivertingPower">
+                <Field Id="TalentsDisable" Index="13" />
+            </String>
+            <String String="DVaMechEmergencyShielding">
+                <Field Id="TalentsDisable" Index="14" />
+            </String>
+            <String String="DVaBunnyHopStopAndPop">
+                <Field Id="TalentsDisable" Index="15" />
+            </String>
+            <String String="DVaTimingAttack">
+                <Field Id="TalentsDisable" Index="16" />
+            </String>
+            <String String="DVaHeadshot">
+                <Field Id="TalentsDisable" Index="17" />
+            </String>
+            <String String="DVaMechAblativeArmor">
+                <Field Id="TalentsDisable" Index="18" />
             </String>
             <String String="DVaGoldenHeadshot">
                 <Field Id="TalentsShow" />
+            </String>
+            <String String="DVaGoldenQuickReload">
+                <Field Id="TalentsShow" Index="1" />
+            </String>
+            <String String="DVaGoldenExtraLife">
+                <Field Id="TalentsShow" Index="2" />
+            </String>
+            <String String="DVaGoldenLagSpike">
+                <Field Id="TalentsShow" Index="3" />
+            </String>
+            <String String="DVaGoldenKiting">
+                <Field Id="TalentsShow" Index="4" />
+            </String>
+            <String String="DVaGoldenAmmoBox">
+                <Field Id="TalentsShow" Index="5" />
+            </String>
+            <String String="DVaGoldenHealthPack">
+                <Field Id="TalentsShow" Index="6" />
+            </String>
+            <String String="DVaGoldenMekaDrop">
+                <Field Id="TalentsShow" Index="7" />
+            </String>
+            <String String="DVaGoldenClutchPlay">
+                <Field Id="TalentsShow" Index="8" />
+            </String>
+            <String String="DVaGoldenStim">
+                <Field Id="TalentsShow" Index="9" />
+            </String>
+            <String String="DVaGoldenRicochet">
+                <Field Id="TalentsShow" Index="10" />
+            </String>
+            <String String="DVaGoldenWorldRecord">
+                <Field Id="TalentsShow" Index="11" />
             </String>
             <String String="1 0 DVaGoldenPilotMarker">
                 <Field Id="Behavior" />
@@ -30444,6 +30525,9 @@
             </String>
             <String String="1 0 DVaGoldenPilotKit">
                 <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="1 0 DVaGoldenMekaDropButton">
+                <Field Id="Behavior" Index="4" />
             </String>
             <String String="DVaGoldenStreakTokenCounter 1.0">
                 <Field Id="QuestRetain" />
@@ -30475,7 +30559,7 @@
             <String String="1 1 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaGoldenPistolPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,DVaGoldenPistolBigShotRecharge,Chance 1">
+            <String String="1 1 Set Effect,DVaGoldenRicochetDamage,MultiplicativeModifierArray[DVaGoldenPistolPower].Modifier 0.5">
                 <Field Id="CatalogModification" Index="8" />
             </String>
             <String String="1 1 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
@@ -30489,6 +30573,9 @@
             </String>
             <String String="1 1 Set Effect,DVaGoldenMiniNukeDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
                 <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="1 1 Set Effect,DVaGoldenRicochetDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
+                <Field Id="CatalogModification" Index="13" />
             </String>
             <String String="AffixAdded libAffx_DVaStart">
                 <Field Id="Trigger" />
@@ -30524,6 +30611,9 @@
             </String>
             <String String="1 2 Set Effect,DVaGoldenMiniNukeDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
                 <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 2 Set Effect,DVaGoldenRicochetDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="4" />
             </String>
         </Instances>
         <Instances Id="DVaPewPewPewBoon">

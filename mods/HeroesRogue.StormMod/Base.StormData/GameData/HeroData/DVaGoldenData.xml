@@ -18,6 +18,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
   <!-- Pilot Pro, Streak at 100: the exploding mech a Big Shot hit summons (Self-Destruct's full damage, smaller blast) -->
   <CEffectDamage id="DVaGoldenMiniNukeDamage" parent="DVaMechSelfDestructDetonationSearchDamageNear" />
+  <!-- Pilot Pro, Ricochet (talent): a Light Gun attack's bounce, for 50% -->
+  <CEffectDamage id="DVaGoldenRicochetDamage" parent="DVaPilotWeaponDamage">
+    <MultiplicativeModifierArray index="DVaGoldenRicochetHalf" Modifier="-0.5" />
+  </CEffectDamage>
 
   <!-- ===== Boost Rider ===== -->
   <!-- Boosters stores 2 charges (7 second recharge; the 10 second cooldown set when boosting ends is cut to 0.5); gain Rush-down and Hit the Nitrous. Turbo quest (10% of each map's gains kept for good): 0.5% Boosters damage per enemy Hero hit. Rider quest: takedowns within 6 seconds of a Boosters hit; stacks 1-40 make Boosters recharge 1% faster each, 41-80 make boosting 1% faster each, 81-100 make the knockback 1% stronger each, at 100 boosting leaves a fire trail (30% of Boosters damage per second, script), then 2% damage each. -->
@@ -98,7 +102,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Pilot Pro ===== -->
-  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage, its hits on enemy Heroes taking 0.25 seconds off Big Shot's recharge. High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
+  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage; the mech talents are disabled and Pilot Pro's own talents shown in their place (level 1 Quick Reload, Extra Life; 4 Lag Spike, Kiting; 7 Ammo Box, Health Pack; 10 MEKA Drop; 13 Clutch Play; 16 Stim, Ricochet; 20 World Record). High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DVaGoldenHighScoreTokenCounter" parent="StormQuestToken">
     <Face value="DVaGoldenHighScoreTokenCounter" />
     <Max value="100000" />
@@ -134,6 +138,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
     <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaGoldenRicochetDamage">
+    <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaGoldenPistolPower" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="DVaPilotBigShotDamage">
     <MultiplicativeModifierArray index="DVaPilotHit" Accumulator="DVaGoldenHighScoreTokenCounterAccumulator" />
@@ -292,11 +302,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <AbilLinkDisableArray value="DVaPilotCallMechMEKAfall" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Light Gun hits on enemy Heroes take 0.25 seconds off Big Shot's recharge (Chance 0, the starter turns it on) -->
+  <!-- Quick Reload (Pilot Pro talent): Light Gun hits on enemy Heroes take 0.25 seconds off Big Shot's recharge -->
   <CEffectModifyUnit id="DVaGoldenPistolBigShotRecharge">
-    <Chance value="0" />
     <ImpactUnit Value="Caster" />
     <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="DVaGoldenQuickReloadHas" />
     <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
     <Cost Abil="DVaPilotBigShot,Execute" CooldownOperation="Add" CooldownTimeUse="-0.25" ChargeTimeUse="-0.25" />
   </CEffectModifyUnit>
@@ -333,6 +343,303 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CHero id="DVa">
     <TalentTreeArray Talent="DVaGoldenHeadshot" Tier="4" Column="3" />
   </CHero>
+  <!-- ===== Pilot Pro talents: shown only for Pilot Pro, in place of the mech talents it disables ===== -->
+  <CTalent id="DVaGoldenQuickReload">
+    <Face value="DVaGoldenQuickReload" />
+  </CTalent>
+  <CButton id="DVaGoldenQuickReload" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_concussivecharge.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenQuickReloadHas">
+    <Find value="1" />
+    <Value value="DVaGoldenQuickReload" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenExtraLife">
+    <Face value="DVaGoldenExtraLife" />
+    <RankArray>
+      <BehaviorArray value="DVaGoldenExtraLife" />
+    </RankArray>
+  </CTalent>
+  <CButton id="DVaGoldenExtraLife" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_pilotmode.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenExtraLifeHas">
+    <Find value="1" />
+    <Value value="DVaGoldenExtraLife" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenLagSpike">
+    <Face value="DVaGoldenLagSpike" />
+  </CTalent>
+  <CButton id="DVaGoldenLagSpike" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenLagSpikeHas">
+    <Find value="1" />
+    <Value value="DVaGoldenLagSpike" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenKiting">
+    <Face value="DVaGoldenKiting" />
+  </CTalent>
+  <CButton id="DVaGoldenKiting" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_jetpackattack.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenKitingHas">
+    <Find value="1" />
+    <Value value="DVaGoldenKiting" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenAmmoBox">
+    <Face value="DVaGoldenAmmoBox" />
+    <AbilityModificationArray>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Abil" />
+        <Entry value="DVaPilotBigShot" />
+        <Field value="Cost[0].Charge.CountMax" />
+        <Value value="1.000000" />
+      </Modifications>
+    </AbilityModificationArray>
+  </CTalent>
+  <CButton id="DVaGoldenAmmoBox" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenAmmoBoxHas">
+    <Find value="1" />
+    <Value value="DVaGoldenAmmoBox" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenHealthPack">
+    <Face value="DVaGoldenHealthPack" />
+  </CTalent>
+  <CButton id="DVaGoldenHealthPack" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_pilotmode.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenHealthPackHas">
+    <Find value="1" />
+    <Value value="DVaGoldenHealthPack" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenMekaDrop">
+    <Face value="DVaGoldenMekaDrop" />
+    <Abil value="DVaGoldenMekaDrop" />
+    <Active value="1" />
+  </CTalent>
+  <CButton id="DVaGoldenMekaDrop" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_callmech.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenMekaDropHas">
+    <Find value="1" />
+    <Value value="DVaGoldenMekaDrop" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenClutchPlay">
+    <Face value="DVaGoldenClutchPlay" />
+    <RankArray>
+      <BehaviorArray value="DVaGoldenClutchPlay" />
+    </RankArray>
+  </CTalent>
+  <CButton id="DVaGoldenClutchPlay" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_pilotmode.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenClutchPlayHas">
+    <Find value="1" />
+    <Value value="DVaGoldenClutchPlay" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenStim">
+    <Face value="DVaGoldenStim" />
+  </CTalent>
+  <CButton id="DVaGoldenStim" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenStimHas">
+    <Find value="1" />
+    <Value value="DVaGoldenStim" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenRicochet">
+    <Face value="DVaGoldenRicochet" />
+  </CTalent>
+  <CButton id="DVaGoldenRicochet" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_concussivecharge.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenRicochetHas">
+    <Find value="1" />
+    <Value value="DVaGoldenRicochet" />
+  </CValidatorPlayerTalent>
+  <CTalent id="DVaGoldenWorldRecord">
+    <Face value="DVaGoldenWorldRecord" />
+  </CTalent>
+  <CButton id="DVaGoldenWorldRecord" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenWorldRecordHas">
+    <Find value="1" />
+    <Value value="DVaGoldenWorldRecord" />
+  </CValidatorPlayerTalent>
+  <CHero id="DVa">
+    <TalentTreeArray Talent="DVaGoldenQuickReload" Tier="1" Column="4" />
+    <TalentTreeArray Talent="DVaGoldenExtraLife" Tier="1" Column="5" />
+    <TalentTreeArray Talent="DVaGoldenLagSpike" Tier="2" Column="4" />
+    <TalentTreeArray Talent="DVaGoldenKiting" Tier="2" Column="5" />
+    <TalentTreeArray Talent="DVaGoldenAmmoBox" Tier="3" Column="4" />
+    <TalentTreeArray Talent="DVaGoldenHealthPack" Tier="3" Column="5" />
+    <TalentTreeArray Talent="DVaGoldenMekaDrop" Tier="4" Column="4" />
+    <TalentTreeArray Talent="DVaGoldenClutchPlay" Tier="5" Column="4" />
+    <TalentTreeArray Talent="DVaGoldenStim" Tier="6" Column="4" />
+    <TalentTreeArray Talent="DVaGoldenRicochet" Tier="6" Column="5" />
+    <TalentTreeArray Talent="DVaGoldenWorldRecord" Tier="7" Column="5" />
+  </CHero>
+  <!-- Extra Life: fatal damage is ignored and D.Va is Invulnerable for 1 second, once every 60 seconds -->
+  <CBehaviorBuff id="DVaGoldenExtraLife" parent="CarryBehaviorParent">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_pilotmode.dds" />
+    <DamageResponse>
+      <Chance value="1" />
+      <Handled value="DVaGoldenExtraLifeSet" />
+      <Priority value="18" />
+      <Fatal value="1" />
+      <RecordBehaviorShieldDamage value="1" />
+      <ModifyFraction value="0" />
+      <ProvideCategories index="Shield" value="1" />
+      <PreventCategories index="Shield" value="1" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DVaGoldenExtraLifeCooldown" parent="CarryBehaviorParent">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_pilotmode.dds" />
+    <DisplayDuration index="Self" value="1" />
+    <DisplayDuration index="Ally" value="1" />
+    <Duration value="60" />
+    <Modification>
+      <BehaviorLinkDisableArray value="DVaGoldenExtraLife" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="DVaGoldenExtraLifeInvulnerable" parent="StormInvulnerable">
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenExtraLifeInvulnerableApply">
+    <WhichUnit Value="Source" />
+    <Behavior value="DVaGoldenExtraLifeInvulnerable" />
+  </CEffectApplyBehavior>
+  <CEffectApplyBehavior id="DVaGoldenExtraLifeCooldownApply">
+    <WhichUnit Value="Source" />
+    <Behavior value="DVaGoldenExtraLifeCooldown" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DVaGoldenExtraLifeSet">
+    <EffectArray value="DVaGoldenExtraLifeInvulnerableApply" />
+    <EffectArray value="DVaGoldenExtraLifeCooldownApply" />
+  </CEffectSet>
+  <!-- Lag Spike: a stronger Slow on Big Shot hits (the base one is 25% for 1.5 seconds) -->
+  <CBehaviorBuff id="DVaGoldenLagSpikeSlow" parent="StormSlowParent">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+    <Duration value="2.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenLagSpikeApply">
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="DVaGoldenLagSpikeHas" />
+    <Behavior value="DVaGoldenLagSpikeSlow" />
+  </CEffectApplyBehavior>
+  <!-- Kiting: Movement Speed when Big Shot fires -->
+  <CBehaviorBuff id="DVaGoldenKitingSpeed">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_jetpackattack.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0.2" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenKitingApply">
+    <ValidatorArray value="DVaGoldenKitingHas" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="DVaGoldenKitingSpeed" />
+  </CEffectApplyBehavior>
+  <!-- Health Pack: Big Shot hits on Heroes heal 4% of D.Va's maximum Health -->
+  <CEffectModifyUnit id="DVaGoldenHealthPackHeal">
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="DVaGoldenHealthPackHas" />
+    <ImpactUnit Value="Caster" />
+    <VitalArray index="Life">
+      <ChangeFraction value="0.04" />
+    </VitalArray>
+  </CEffectModifyUnit>
+  <!-- Stim: Attack Speed on Big Shot hits on Heroes -->
+  <CBehaviorBuff id="DVaGoldenStimBuff">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+    <Duration value="3" />
+    <Modification>
+      <AdditiveAttackSpeedFactor value="0.25" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenStimApply">
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="DVaGoldenStimHas" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="DVaGoldenStimBuff" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DVaBigShotImpactSet">
+    <EffectArray value="DVaGoldenLagSpikeApply" />
+    <EffectArray value="DVaGoldenHealthPackHeal" />
+    <EffectArray value="DVaGoldenStimApply" />
+  </CEffectSet>
+  <CEffectSet id="DVaBigShotInitialSet">
+    <EffectArray value="DVaGoldenKitingApply" />
+  </CEffectSet>
+  <!-- Ricochet: each Light Gun attack also hits one other enemy near the target for 50% -->
+  <CEffectEnumArea id="DVaGoldenRicochetSearch">
+    <ValidatorArray value="DVaGoldenRicochetHas" />
+    <ExcludeArray Value="Target" />
+    <SearchFilters value="-;Self,Player,Ally,Neutral,Structure,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="DVaGoldenRicochetDamage">
+      <Radius value="2.5" />
+      <MaxCount value="1" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectSet id="DVaPilotWeaponPostImpactSet">
+    <EffectArray value="DVaGoldenRicochetSearch" />
+  </CEffectSet>
+  <!-- Clutch Play: 30 Armor below 30% Health -->
+  <CValidatorUnitCompareVital id="DVaGoldenSourceLifeLT30">
+    <WhichUnit Value="Source" />
+    <Vital value="Life" />
+    <Type value="Fraction" />
+    <Compare value="LT" />
+    <Value value="0.3" />
+  </CValidatorUnitCompareVital>
+  <CBehaviorBuff id="DVaGoldenClutchPlay" parent="StormArmorPermanent">
+    <Alignment value="Positive" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_pilotmode.dds" />
+    <DisableValidatorArray value="DVaGoldenSourceLifeLT30" />
+    <ArmorModification AllArmorBonus="30" StackCount="1" />
+  </CBehaviorBuff>
+  <!-- MEKA Drop: an Active (key 1) that drops an exploding mech, like Streak's reward -->
+  <CAbilEffectTarget id="DVaGoldenMekaDrop">
+    <PrepEffect value="DismountDecloakCasterSet" />
+    <Effect value="DVaGoldenMekaDropPersistent" />
+    <Flags index="RequireTargetVision" value="0" />
+    <Cost>
+      <Cooldown TimeUse="60" />
+    </Cost>
+    <Range value="10" />
+    <Arc value="360" />
+    <CursorEffect value="DVaGoldenMiniNukeSearch" />
+    <CmdButtonArray index="Execute" DefaultButtonFace="DVaGoldenMekaDrop">
+      <Flags index="AllowSelfCast" value="0" />
+    </CmdButtonArray>
+  </CAbilEffectTarget>
+  <CEffectCreatePersistent id="DVaGoldenMekaDropPersistent">
+    <InitialDelay value="1" />
+    <InitialEffect value="DVaGoldenMiniNukeSearch" />
+  </CEffectCreatePersistent>
+  <CUnit id="HeroDVaPilot">
+    <AbilArray Link="DVaGoldenMekaDrop" />
+  </CUnit>
+  <CBehaviorAbility id="DVaGoldenMekaDropButton">
+    <Buttons Face="DVaGoldenMekaDrop" Type="AbilCmd" AbilCmd="DVaGoldenMekaDrop,Execute" ShowValidator="DVaGoldenMekaDropHas" UseValidator="DVaGoldenMekaDropHas" />
+  </CBehaviorAbility>
   <!-- Streak at 100: half a second after a Big Shot hit, a mech explodes at the Hero's location (once every 60 seconds) -->
   <CBehaviorBuff id="DVaGoldenMiniNukeCooldown">
     <Alignment value="Negative" />

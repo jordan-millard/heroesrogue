@@ -339,6 +339,31 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// TEMPORARY: chat readout of the High Score quest's checks on each Big Shot hit
+bool libAffx_DVaDebugHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DVaHero();
+    string line = "BigShot hit: hero ";
+    if (hero == null) {
+        line = line + "null";
+    } else {
+        line = line + UnitGetType(hero);
+        if (UnitHasBehavior2(hero, "DVaGoldenPilotMarker")) {
+            line = line + " marker yes";
+        } else {
+            line = line + " marker NO";
+        }
+        line = line + " score " + IntToString(libAffx_DVaStacks("DVaGoldenHighScoreTokenCounter"));
+    }
+    line = line + " src " + IntToString(EventUnitDamageSourcePlayer()) + " me " + IntToString(libAffx_player) + " victim " + UnitGetType(victim) + " owner " + IntToString(UnitGetOwner(victim));
+    if (libAffx_DVaIsEnemyHero(victim)) {
+        line = line + " enemyHero yes";
+    } else {
+        line = line + " enemyHero NO";
+    }
+    libAffx_DisplayChatMessage(StringToText(line));
+    return true;
+}
 // Boost Rider hit on an enemy Hero: takedown window, DVaGoldenTurboTokenCounter, the heal, and on-hit boons
 bool libAffx_DVaBoostHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -468,6 +493,9 @@ bool libAffx_DVaTakedown (bool testConds, bool runActions) {
         libAffx_DVaQuestDing();
     }
     libAffx_DVaTakedownCross();
+    if (PlayerHasTalent(libAffx_player, "DVaGoldenWorldRecord")) {
+        UnitAddChargeUsed(hero, "Abil/DVaPilotBigShot", -1.0 * UnitGetChargeUsed(hero, "Abil/DVaPilotBigShot"));
+    }
     return true;
 }
 bool libAffx_DVaStart (bool testConds, bool runActions) {
@@ -501,6 +529,7 @@ bool libAffx_DVaStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DVaMechDefenseMatrixFusionGeneratorAddChargetoCaster");
     TriggerAddDamageEvent(TriggerCreate("libAffx_DVaChargeTaken_Func"), null, "HeroDVaMech", c_unitDamageTypeAny, c_unitDamageEither, null);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DVaDetonated_Func"), libAffx_player, "DVaMechSelfDestructDetonationSet");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DVaDebugHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DVaPilotBigShotDamage");
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DVaSync_Func"), 1.0, c_timeGame);
     return true;
