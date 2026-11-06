@@ -365,12 +365,12 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
             libAffx_DVaPilotTalents();
         }
     }
-    // High Score: 1% Big Shot damage per stack, set per player
-    score = IntToFixed(libAffx_DVaStacks("DVaGoldenHighScoreTokenCounter")) * 0.01;
+    // High Score: 0.5% Big Shot damage per stack, set per player
+    score = IntToFixed(libAffx_DVaStacks("DVaGoldenHighScoreTokenCounter")) * 0.005;
     if (score != libAffx_DVaScoreLast) {
         libAffx_DVaScoreLast = score;
-        CatalogFieldValueSet(c_gameCatalogEffect, "DVaPilotBigShotDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player, FixedToString(score, 2));
-        CatalogFieldValueSet(c_gameCatalogEffect, "DVaBigShotPewPewPewTalentDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player, FixedToString(score, 2));
+        CatalogFieldValueSet(c_gameCatalogEffect, "DVaPilotBigShotDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player, FixedToString(score, 3));
+        CatalogFieldValueSet(c_gameCatalogEffect, "DVaBigShotPewPewPewTalentDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player, FixedToString(score, 3));
     }
     mech = UnitTransport(pilot);
     // Pilot Pro: out of the mech (the base script's unload trigger swaps the UI to the pilot), then the mech goes away

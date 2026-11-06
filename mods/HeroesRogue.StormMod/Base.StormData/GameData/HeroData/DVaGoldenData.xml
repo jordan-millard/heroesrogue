@@ -102,7 +102,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Pilot Pro ===== -->
-  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge), Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage; the mech talents are disabled and Pilot Pro's own talents shown in their place (level 1 Quick Reload, Extra Life; 4 Lag Spike, Kiting; 7 Ammo Box, Health Pack; 10 MEKA Drop; 13 Clutch Play; 16 Stim, Ricochet; 20 World Record). High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot cast faster (0.5 seconds to 0.2 at 40), 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero drops a mech at its location that explodes 4 seconds later (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
+  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge), Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage; the mech talents are disabled and Pilot Pro's own talents shown in their place (level 1 Quick Reload, Extra Life; 4 Lag Spike, Kiting; 7 Ammo Box, Health Pack; 10 MEKA Drop; 13 Clutch Play; 16 Stim, Ricochet; 20 World Record). High Score quest (10% of each map's gains kept for good): 0.5% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot cast faster (0.5 seconds to 0.2 at 40), 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero drops a mech at its location that explodes 4 seconds later (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DVaGoldenHighScoreTokenCounter" parent="StormQuestToken">
     <Face value="DVaGoldenHighScoreTokenCounter" />
     <Max value="100000" />
@@ -116,7 +116,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="DVaGoldenHighScoreTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.005" />
   </CAccumulatorToken>
   <CEffectDamage id="DVaPilotWeaponDamage">
     <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />

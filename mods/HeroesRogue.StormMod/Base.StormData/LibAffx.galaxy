@@ -6988,6 +6988,10 @@ void libAffx_InitAffixes () {
             affixRequired = UserDataGetUserInstance("Affix", affixInstance, "AffixesRequired", i2);
             if (affixExcluded != "" && affixExcluded != "[Default]" && affixExcluded != null) {
                 libAffx_AffixAddExclusion(i, libAffx_GetAffixId(affixExcluded));
+                // exclusions go both ways: the other affix (registered earlier) can't be picked while holding this one either
+                if (libAffx_GetAffixId(affixExcluded) > 0) {
+                    libAffx_AffixAddExclusion(libAffx_GetAffixId(affixExcluded), i);
+                }
             }
             if (affixRequired != "" && affixRequired != "[Default]" && affixRequired != null) {
                 libAffx_AffixAddRequirement(i, libAffx_GetAffixId(affixRequired));
