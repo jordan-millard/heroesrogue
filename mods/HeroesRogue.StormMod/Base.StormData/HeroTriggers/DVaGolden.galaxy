@@ -492,8 +492,8 @@ bool libAffx_DVaPilotHit_Func (bool testConds, bool runActions) {
         UnitBehaviorAdd(hero, "DVaGoldenMiniNukeCooldown", hero, 1);
         UnitCreateEffectPoint(hero, "DVaGoldenMiniNukePersistent", UnitGetPosition(victim));
     }
-    // Speedrun: the first Hero each shot hits is Stunned
-    if (UnitHasBehavior2(hero, "DVaGoldenSpeedrunMarker") && GameGetMissionTime() - libAffx_DVaSpeedrunTime > 0.25) {
+    // Speedrun: the first Hero a shot hits is Stunned, once every 8 seconds
+    if (UnitHasBehavior2(hero, "DVaGoldenSpeedrunMarker") && (libAffx_DVaSpeedrunTime == 0.0 || GameGetMissionTime() - libAffx_DVaSpeedrunTime >= 8.0)) {
         libAffx_DVaSpeedrunTime = GameGetMissionTime();
         UnitCreateEffectUnit(hero, "DVaGoldenSpeedrunApply", victim);
     }

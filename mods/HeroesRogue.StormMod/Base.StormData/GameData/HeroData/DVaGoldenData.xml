@@ -662,7 +662,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <On Terms="ActorCreation" Send="Create DVaPilotSelfDestructLaunchSound" />
     <On Terms="Effect.DVaGoldenMiniNukePersistent.Stop" Send="Destroy Immediate" />
     <Model value="HeroDVaMech" />
-    <HostSiteOps Ops="SOpShadow" HoldPosition="1" HoldRotation="1" />
+    <HostSiteOps Ops="SOpTargetPointStationary SOpShadow" HoldRotation="1" />
   </CActorModel>
   <CActorModel id="DVaMechSelfDestructExplosion">
     <On Terms="Effect.DVaGoldenMiniNukeSearch.Start" Send="Create" />
@@ -702,7 +702,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="DVaBigShotInitialSet">
     <EffectArray value="DVaGoldenDodgePersistent" />
   </CEffectSet>
-  <!-- Speedrun (Legendary): the first Hero each Big Shot hits is Stunned for 0.5 seconds (script) -->
+  <!-- Speedrun (Legendary): the first Hero a Big Shot hits is Stunned for 0.5 seconds, once every 8 seconds (script) -->
   <CBehaviorBuff id="DVaGoldenSpeedrunStun" parent="StormStun">
     <Duration value="0.5" />
   </CBehaviorBuff>
