@@ -651,10 +651,10 @@ void libAffx_DehakaApexBuild () {
     int x;
     int y;
     libAffx_DehakaApexMade = true;
-    libAffx_DehakaApexBarDialog = DialogCreate(380, 90, c_anchorTop, 0, 95, false);
+    libAffx_DehakaApexBarDialog = DialogCreate(400, 110, c_anchorTop, 0, 90, false);
     DialogSetImageVisible(libAffx_DehakaApexBarDialog, false);
     libAffx_DehakaApexBarButton = libAffx_CreateDialogControlButton(libAffx_DehakaApexBarDialog);
-    libAffx_SetDialogControlSize(libAffx_DehakaApexBarButton, 360, 70);
+    libAffx_SetDialogControlSize(libAffx_DehakaApexBarButton, 380, 95);
     libAffx_SetDialogControlPosition(libAffx_DehakaApexBarButton, c_anchorCenter, 0, 0);
     libAffx_SetDialogControlColor(libAffx_DehakaApexBarButton, Color(100, 50, 0));
     d = DialogCreate(500, 500, c_anchorCenter, 0, 0, true);
@@ -663,32 +663,33 @@ void libAffx_DehakaApexBuild () {
     DialogSetImageVisible(d, false);
     libAffx_DehakaApexTitle = libAffx_CreateDialogControlLabel(d, StringToText("Apex Form"), "Storm_Map_Large_Bold_Centered", 1000, 60, c_anchorTop, 0, 55, ColorWithAlpha(0, 0, 0, 0), false);
     while (i <= 9) {
-        x = -340 + 340 * ModI(i - 1, 3);
-        y = 140 + 260 * ((i - 1) / 3);
-        libAffx_CreateDialogControlImage(d, libAffx_textureAffixBackground, 320, 245, c_anchorTop, x, y, null);
-        libAffx_CreateDialogControlImage(d, libAffx_DehakaMutationIcon(i), 76, 76, c_anchorTop, x, y + 14, null);
-        libAffx_CreateDialogControlImage(d, "Assets/Textures/icon_overlay_large_legendary.dds", 98, 98, c_anchorTop, x, y + 3, null);
-        libAffx_CreateDialogControlLabel(d, libAffx_DehakaMutationName(i), "Storm_Tutorial_Small_Centered", 300, 32, c_anchorTop, x, y + 96, ColorWithAlpha(0, 0, 0, 0), false);
+        x = -500 + 500 * ModI(i - 1, 3);
+        y = 125 + 258 * ((i - 1) / 3);
+        libAffx_CreateDialogControlImage(d, libAffx_textureAffixBackground, 480, 240, c_anchorTop, x, y, null);
+        libAffx_CreateDialogControlImage(d, libAffx_DehakaMutationIcon(i), 76, 76, c_anchorTop, x - 170, y + 22, null);
+        libAffx_CreateDialogControlImage(d, "Assets/Textures/icon_overlay_large_legendary.dds", 98, 98, c_anchorTop, x - 170, y + 11, null);
+        libAffx_CreateDialogControlLabel(d, libAffx_DehakaMutationName(i), "Storm_Tutorial_Small_Centered", 340, 34, c_anchorTop, x + 55, y + 12, ColorWithAlpha(0, 0, 0, 0), false);
         libAffx_SetDialogControlColor(DialogControlLastCreated(), Color(100, 50, 0));
-        libAffx_CreateDialogControlLabel(d, libAffx_DehakaMutationText(i), "TalentDescription", 290, 30, c_anchorTop, x, y + 128, ColorWithAlpha(0, 0, 0, 0), false);
-        libAffx_DehakaApexOwned[i] = libAffx_CreateDialogControlLabel(d, null, "TalentDescription", 290, 28, c_anchorTop, x, y + 156, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_CreateDialogControlLabel(d, libAffx_DehakaMutationText(i), "TalentDescription", 340, 30, c_anchorTop, x + 55, y + 52, ColorWithAlpha(0, 0, 0, 0), false);
+        libAffx_DehakaApexOwned[i] = libAffx_CreateDialogControlLabel(d, null, "TalentDescription", 340, 30, c_anchorTop, x + 55, y + 82, ColorWithAlpha(0, 0, 0, 0), false);
         libAffx_DehakaApexPick[i] = libAffx_CreateDialogControlButton(d);
-        libAffx_SetDialogControlSize(libAffx_DehakaApexPick[i], 98, 46);
+        libAffx_SetDialogControlSize(libAffx_DehakaApexPick[i], 152, 95);
         libAffx_SetDialogControlText(libAffx_DehakaApexPick[i], StringToText("Pick"));
-        libAffx_SetDialogControlPosition(libAffx_DehakaApexPick[i], c_anchorTop, x - 100, y + 188);
+        libAffx_SetDialogControlPosition(libAffx_DehakaApexPick[i], c_anchorTop, x - 156, y + 128);
         libAffx_DehakaApexPickAll[i] = libAffx_CreateDialogControlButton(d);
-        libAffx_SetDialogControlSize(libAffx_DehakaApexPickAll[i], 98, 46);
+        libAffx_SetDialogControlSize(libAffx_DehakaApexPickAll[i], 152, 95);
         libAffx_SetDialogControlText(libAffx_DehakaApexPickAll[i], StringToText("Pick all"));
-        libAffx_SetDialogControlPosition(libAffx_DehakaApexPickAll[i], c_anchorTop, x, y + 188);
+        libAffx_SetDialogControlPosition(libAffx_DehakaApexPickAll[i], c_anchorTop, x, y + 128);
         libAffx_DehakaApexAlways[i] = libAffx_CreateDialogControlButton(d);
-        libAffx_SetDialogControlSize(libAffx_DehakaApexAlways[i], 98, 46);
-        libAffx_SetDialogControlPosition(libAffx_DehakaApexAlways[i], c_anchorTop, x + 100, y + 188);
+        libAffx_SetDialogControlSize(libAffx_DehakaApexAlways[i], 152, 95);
+        libAffx_SetDialogControlText(libAffx_DehakaApexAlways[i], StringToText("Always"));
+        libAffx_SetDialogControlPosition(libAffx_DehakaApexAlways[i], c_anchorTop, x + 156, y + 128);
         i += 1;
     }
     libAffx_DehakaApexDone = libAffx_CreateDialogControlButton(d);
-    libAffx_SetDialogControlSize(libAffx_DehakaApexDone, 220, 60);
+    libAffx_SetDialogControlSize(libAffx_DehakaApexDone, 250, 95);
     libAffx_SetDialogControlText(libAffx_DehakaApexDone, StringToText("Done"));
-    libAffx_SetDialogControlPosition(libAffx_DehakaApexDone, c_anchorTop, 0, 930);
+    libAffx_SetDialogControlPosition(libAffx_DehakaApexDone, c_anchorTop, 0, 905);
 }
 // shows the button while mutations wait (and the screen is closed), and fills in the screen
 void libAffx_DehakaApexUpdate () {
@@ -709,11 +710,15 @@ void libAffx_DehakaApexUpdate () {
     }
     libAffx_SetDialogControlText(libAffx_DehakaApexTitle, StringToText("Apex Form: " + IntToString(pending) + " to pick"));
     while (i <= 9) {
-        libAffx_SetDialogControlText(libAffx_DehakaApexOwned[i], StringToText("Owned: " + IntToString(libAffx_DehakaStacks(libAffx_DehakaMutationToken(i)))));
+        if (always == i) {
+            libAffx_SetDialogControlText(libAffx_DehakaApexOwned[i], StringToText("Owned: " + IntToString(libAffx_DehakaStacks(libAffx_DehakaMutationToken(i))) + "   (always picked)"));
+        } else {
+            libAffx_SetDialogControlText(libAffx_DehakaApexOwned[i], StringToText("Owned: " + IntToString(libAffx_DehakaStacks(libAffx_DehakaMutationToken(i)))));
+        }
         libAffx_SetDialogControlEnabled(libAffx_DehakaApexPick[i], pending > 0);
         libAffx_SetDialogControlEnabled(libAffx_DehakaApexPickAll[i], pending > 0);
         if (always == i) {
-            libAffx_SetDialogControlText(libAffx_DehakaApexAlways[i], StringToText("Always: on"));
+            libAffx_SetDialogControlText(libAffx_DehakaApexAlways[i], StringToText("Stop"));
             libAffx_SetDialogControlColor(libAffx_DehakaApexAlways[i], Color(100, 50, 0));
         } else {
             libAffx_SetDialogControlText(libAffx_DehakaApexAlways[i], StringToText("Always"));
