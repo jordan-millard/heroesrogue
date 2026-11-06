@@ -194,6 +194,21 @@ unit libAffx_DVaMech () {
 }
 // Pilot Pro: the mech talents disabled, the pilot talents shown (also done by the starter's TalentsDisable/TalentsShow)
 void libAffx_DVaPilotTalents () {
+    int n = CatalogFieldValueCount(c_gameCatalogHero, "DVa", "TalentTreeArray", c_playerAny);
+    int k = 0;
+    string line = "TEMP tree " + IntToString(n) + ":";
+    while (k < n) {
+        line = line + " " + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(k) + "].Talent", c_playerAny) + "/" + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(k) + "].Tier", c_playerAny);
+        k += 1;
+    }
+    libAffx_DisplayChatMessage(StringToText(line));
+    line = "TEMP tier1 " + IntToString(libGame_gv_talents_TalentChoices[libAffx_player][1].lv_numberOfTalentsForThisTier) + ":";
+    k = 1;
+    while (k <= 5) {
+        line = line + " " + libGame_gv_talents_TalentChoices[libAffx_player][1].lv_talentData[k].lv_talentCatalogLink;
+        k += 1;
+    }
+    libAffx_DisplayChatMessage(StringToText(line));
     libAffx_DisableTalent("DVaFullMetal", true);
     libAffx_DisableTalent("DVaMechProMoves", true);
     libAffx_DisableTalent("DVaLiquidCooling", true);
