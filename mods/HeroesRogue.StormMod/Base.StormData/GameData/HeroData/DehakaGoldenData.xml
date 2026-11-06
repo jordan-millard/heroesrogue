@@ -371,6 +371,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <HealTakenAdditiveMultiplier index="Life" value="0" />
     </Modification>
   </CBehaviorBuff>
+  <!-- never added: holds the script mutations' values for the Mutations tooltip (Resilience share, max Essence) -->
+  <CBehaviorBuff id="DehakaGoldenMutationsInfo" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxArray index="Life" value="0" />
+      <VitalMaxArray index="Energy" value="0" />
+    </Modification>
+  </CBehaviorBuff>
   <!-- Evolution 81-100: Adaptation heals this much more at its end (the script tracks the damage taken) -->
   <CEffectCreateHealer id="DehakaGoldenAdaptationHeal" parent="StormSelfOnlyHealingSpell">
     <RechargeVitalRate value="0" />

@@ -575,9 +575,10 @@ void libAffx_DehakaMutationsApply () {
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.UnifiedMoveSpeedFactor", libAffx_player, 0.02 * IntToFixed(libAffx_DehakaMutationsSet[5]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.HealTakenAdditiveMultiplier[Life]", libAffx_player, 0.01 * IntToFixed(libAffx_DehakaMutationsSet[7]));
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutations", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.05 * IntToFixed(libAffx_DehakaMutationsSet[9]));
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutationsInfo", "Modification.VitalMaxArray[Life]", libAffx_player, 100.0 * libAffx_DehakaResilience);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DehakaGoldenMutationsInfo", "Modification.VitalMaxArray[Energy]", libAffx_player, IntToFixed(libAffx_DehakaMutationsSet[8]));
         UnitBehaviorRemove(hero, "DehakaGoldenMutations", 1);
     }
-    total -= libAffx_DehakaMutationsSet[6] + libAffx_DehakaMutationsSet[8];
     if (total > 0 && !UnitHasBehavior2(hero, "DehakaGoldenMutations")) {
         UnitBehaviorAdd(hero, "DehakaGoldenMutations", hero, 1);
     }
