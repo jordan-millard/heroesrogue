@@ -16,7 +16,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="DVaGoldenFireTrailDamage" parent="DVaBoostersImpactDamage">
     <MultiplicativeModifierArray index="DVaGoldenFireTick" Modifier="-0.85" />
   </CEffectDamage>
-  <!-- Pilot Pro, Streak at 100: the exploding mech a Big Shot hit summons (Self-Destruct's full damage, smaller blast) -->
+  <!-- Pilot Pro, Streak at 100: the mech a Big Shot hit drops (Self-Destruct's full damage, smaller blast, 4 seconds later) -->
   <CEffectDamage id="DVaGoldenMiniNukeDamage" parent="DVaMechSelfDestructDetonationSearchDamageNear" />
   <!-- Pilot Pro, Ricochet (talent): a Light Gun attack's bounce, for 50% -->
   <CEffectDamage id="DVaGoldenRicochetDamage" parent="DVaPilotWeaponDamage">
@@ -102,7 +102,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Pilot Pro ===== -->
-  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage; the mech talents are disabled and Pilot Pro's own talents shown in their place (level 1 Quick Reload, Extra Life; 4 Lag Spike, Kiting; 7 Ammo Box, Health Pack; 10 MEKA Drop; 13 Clutch Play; 16 Stim, Ricochet; 20 World Record). High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
+  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage; the mech talents are disabled and Pilot Pro's own talents shown in their place (level 1 Quick Reload, Extra Life; 4 Lag Spike, Kiting; 7 Ammo Box, Health Pack; 10 MEKA Drop; 13 Clutch Play; 16 Stim, Ricochet; 20 World Record). High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 add 0.25% Ability Lifesteal each (script), 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero drops a mech at its location that explodes 4 seconds later (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DVaGoldenHighScoreTokenCounter" parent="StormQuestToken">
     <Face value="DVaGoldenHighScoreTokenCounter" />
     <Max value="100000" />
@@ -296,6 +296,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <VitalMaxFractionArray index="Life" value="2" />
       <AbilLinkDisableArray value="DVaPilotCallMech" />
       <AbilLinkDisableArray value="DVaPilotCallMechMEKAfall" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Streak 1-40: Ability Lifesteal, 0.25% per stack (the script sets the amount and reapplies it) -->
+  <CBehaviorBuff id="DVaGoldenStreakLeech">
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <BehaviorFlags index="Permanent" value="1" />
+    <Modification>
+      <VitalDamageLeechArray index="Life">
+        <KindArray index="Ability" value="0" />
+      </VitalDamageLeechArray>
+      <VitalDamageLeechScoreArray Value="Healing" />
     </Modification>
   </CBehaviorBuff>
   <!-- Quick Reload (Pilot Pro talent): Light Gun hits on enemy Heroes take 0.25 seconds off Big Shot's recharge -->
@@ -622,7 +633,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorAbility id="DVaGoldenMekaDropButton">
     <Buttons Face="DVaGoldenMekaDrop" Type="AbilCmd" AbilCmd="DVaGoldenMekaDrop,Execute" ShowValidator="DVaGoldenMekaDropHas" UseValidator="DVaGoldenMekaDropHas" />
   </CBehaviorAbility>
-  <!-- Streak at 100: half a second after a Big Shot hit, a mech explodes at the Hero's location (once every 60 seconds) -->
+  <!-- Streak at 100: a Big Shot hit drops a self-destructing mech at the Hero's location; it blows up 4 seconds later
+       (once every 60 seconds) -->
   <CBehaviorBuff id="DVaGoldenMiniNukeCooldown">
     <Alignment value="Negative" />
     <InfoFlags index="Hidden" value="0" />
@@ -639,9 +651,19 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <SearchFlags index="DoActorSearch" value="1" />
   </CEffectEnumArea>
   <CEffectCreatePersistent id="DVaGoldenMiniNukePersistent">
-    <InitialDelay value="0.5" />
+    <InitialDelay value="4" />
     <InitialEffect value="DVaGoldenMiniNukeSearch" />
   </CEffectCreatePersistent>
+  <!-- the mech, glowing and in its Self-Destruct pose, until it blows up -->
+  <CActorModel id="DVaGoldenMiniNukeMech" parent="StormModelAnimationStyleContinuousUnit">
+    <On Terms="Effect.DVaGoldenMiniNukePersistent.Start" Send="Create" />
+    <On Terms="ActorCreation" Send="AnimPlay Heroic Spell,B PlayForever" />
+    <On Terms="ActorCreation" Send="ModelMaterialApply DVaMechSelfDestructGlaze" />
+    <On Terms="ActorCreation" Send="Create DVaPilotSelfDestructLaunchSound" />
+    <On Terms="Effect.DVaGoldenMiniNukePersistent.Stop" Send="Destroy Immediate" />
+    <Model value="HeroDVaMech" />
+    <HostSiteOps Ops="SOpShadow" HoldPosition="1" HoldRotation="1" />
+  </CActorModel>
   <CActorModel id="DVaMechSelfDestructExplosion">
     <On Terms="Effect.DVaGoldenMiniNukeSearch.Start" Send="Create" />
   </CActorModel>
