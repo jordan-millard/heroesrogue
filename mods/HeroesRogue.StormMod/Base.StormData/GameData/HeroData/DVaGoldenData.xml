@@ -98,7 +98,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Pilot Pro ===== -->
-  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, and Light Gun deals 50% more damage. High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
+  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, and Light Gun deals 50% more damage, its hits on enemy Heroes taking 0.25 seconds off Big Shot's recharge. High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DVaGoldenHighScoreTokenCounter" parent="StormQuestToken">
     <Face value="DVaGoldenHighScoreTokenCounter" />
     <Max value="100000" />
@@ -292,6 +292,17 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <AbilLinkDisableArray value="DVaPilotCallMechMEKAfall" />
     </Modification>
   </CBehaviorBuff>
+  <!-- Light Gun hits on enemy Heroes take 0.25 seconds off Big Shot's recharge (Chance 0, the starter turns it on) -->
+  <CEffectModifyUnit id="DVaGoldenPistolBigShotRecharge">
+    <Chance value="0" />
+    <ImpactUnit Value="Caster" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <Cost Abil="DVaPilotBigShot,Execute" CooldownOperation="Add" CooldownTimeUse="-0.25" ChargeTimeUse="-0.25" />
+  </CEffectModifyUnit>
+  <CEffectSet id="DVaPilotWeaponPostImpactSet">
+    <EffectArray value="DVaGoldenPistolBigShotRecharge" />
+  </CEffectSet>
   <!-- Streak at 100: half a second after a Big Shot hit, a mech explodes at the Hero's location (once every 60 seconds) -->
   <CBehaviorBuff id="DVaGoldenMiniNukeCooldown">
     <Alignment value="Negative" />

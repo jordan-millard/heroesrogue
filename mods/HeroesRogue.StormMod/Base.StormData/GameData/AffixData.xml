@@ -29461,515 +29461,6 @@
             </String>
         </Instances>
 
-        <Instances Id="DVaBoostRider">
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="DVaBoostersRushdown">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="DVaBoostersHitTheNitrous">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 DVaGoldenBoostMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 DVaGoldenTurboTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 DVaGoldenRiderTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="DVaGoldenRiderTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="DVaGoldenTurboTokenCounter 0.1 gains">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.CountMax 2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.CountStart 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.TimeUse 7">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Effect,DVaBoostersApplyCooldown,Cost[0].CooldownTimeUse 0.5">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Effect,DVaBoostersImpactDamage,MultiplicativeModifierArray[DVaBoostPower].Modifier 0">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Set Effect,DVaBoostersHitTheNitrousImpactDamage,MultiplicativeModifierArray[DVaBoostPower].Modifier 0">
-                <Field Id="CatalogModification" Index="6" />
-            </String>
-            <String String="1 1 Set Effect,DVaGoldenFireTrailDamage,MultiplicativeModifierArray[DVaBoostPower].Modifier 0">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="AffixAdded libAffx_DVaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_DVaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="DVaJetRam">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaBoostRider">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,DVaBoostersImpactDamage,MultiplicativeModifierArray[DVaBoostCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,DVaBoostersHitTheNitrousImpactDamage,MultiplicativeModifierArray[DVaBoostCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,DVaGoldenFireTrailDamage,MultiplicativeModifierArray[DVaBoostCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-        </Instances>
-        <Instances Id="DVaQuickBoost">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaBoostRider">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 3 Add Abil,DVaBoostersOn,Cost.Charge.TimeUse -0.5">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="DVaProMovesBoon">
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaBoostRider">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DVaMechProMoves">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DVaDivertingPowerBoon">
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaBoostRider">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DVaDefenseMatrixDivertingPower">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DVaBulldoze">
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaBoostRider">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,DVaGoldenBulldozeApply,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="DVaAfterburner">
-            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaBoostRider">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,DVaGoldenAfterburnerApply,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Effect,DVaGoldenAfterburnerStunApply,Chance 1">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="DVaNuclearStarter">
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="DVaSelfDestructNuclearOption">
-                <Field Id="TalentsAdd" />
-            </String>
-            <String String="DvaGetOnThePoint">
-                <Field Id="TalentsAdd" Index="1" />
-            </String>
-            <String String="1 0 DVaGoldenNuclearMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 DVaGoldenYieldTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 DVaGoldenMeltdownTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="DVaGoldenMeltdownTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="DVaGoldenYieldTokenCounter 0.1 gains">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Multiply Effect,DVaMechSelfDestructDetonationSearch,AreaArray[0].Radius 1.2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Multiply Validator,DVaMechSelfDestructTargetWithinFalloffRadius,Range 1.2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Effect,DVaMechSelfDestructDetonationSearchDamage,MultiplicativeModifierArray[DVaNukePower].Modifier 0">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Effect,DVaMechSelfDestructDetonationSearchDamageNear,MultiplicativeModifierArray[DVaNukePower].Modifier 0">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="AffixAdded libAffx_DVaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_DVaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="DVaPayload">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaNuclearStarter">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,DVaMechSelfDestructDetonationSearchDamage,MultiplicativeModifierArray[DVaNukeCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,DVaMechSelfDestructDetonationSearchDamageNear,MultiplicativeModifierArray[DVaNukeCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="DVaHotCore">
-            <Int Int="3">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Common">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaNuclearStarter">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 DVaGoldenHotCore">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="DVaLiquidCoolingBoon">
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaNuclearStarter">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DVaLiquidCooling">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DVaEmergencyShieldingBoon">
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaNuclearStarter">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DVaMechEmergencyShielding">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DVaEjection">
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaNuclearStarter">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 DVaGoldenEjectionMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="DVaAssemblyLine">
-            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaNuclearStarter">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 DVaGoldenAssemblyMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-        <Instances Id="DVaPilotPro">
-            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Starter">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <String String="1 0 DVaGoldenPilotMarker">
-                <Field Id="Behavior" />
-            </String>
-            <String String="1 0 DVaGoldenHighScoreTokenCounter">
-                <Field Id="Behavior" Index="1" />
-            </String>
-            <String String="1 0 DVaGoldenStreakTokenCounter">
-                <Field Id="Behavior" Index="2" />
-            </String>
-            <String String="1 0 DVaGoldenPilotKit">
-                <Field Id="Behavior" Index="3" />
-            </String>
-            <String String="DVaGoldenStreakTokenCounter 1.0">
-                <Field Id="QuestRetain" />
-            </String>
-            <String String="DVaGoldenHighScoreTokenCounter 0.1 gains">
-                <Field Id="QuestRetain" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.CountMax 2">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.CountStart 2">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.CountUse 1">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.TimeUse 6">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="4" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,InterruptCost.Cooldown.TimeUse 0.5">
-                <Field Id="CatalogModification" Index="5" />
-            </String>
-            <String String="1 1 Set Abil,DVaPilotBigShot,CastIntroTime 0.2">
-                <Field Id="CatalogModification" Index="6" />
-            </String>
-            <String String="1 1 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaGoldenPistolPower].Modifier 0.5">
-                <Field Id="CatalogModification" Index="7" />
-            </String>
-            <String String="1 1 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
-                <Field Id="CatalogModification" Index="8" />
-            </String>
-            <String String="1 1 Set Effect,DVaPilotBigShotDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
-                <Field Id="CatalogModification" Index="9" />
-            </String>
-            <String String="1 1 Set Effect,DVaBigShotPewPewPewTalentDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
-                <Field Id="CatalogModification" Index="10" />
-            </String>
-            <String String="1 1 Set Effect,DVaGoldenMiniNukeDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
-                <Field Id="CatalogModification" Index="11" />
-            </String>
-            <String String="AffixAdded libAffx_DVaStart">
-                <Field Id="Trigger" />
-            </String>
-            <String String="HeroTakedown libAffx_DVaTakedown">
-                <Field Id="Trigger" Index="1" />
-            </String>
-        </Instances>
-        <Instances Id="DVaLightGun">
-            <Int Int="0">
-                <Field Id="Max" />
-            </Int>
-            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaPilotPro">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 2 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" />
-            </String>
-            <String String="1 2 Set Effect,DVaPilotBigShotDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" Index="1" />
-            </String>
-            <String String="1 2 Set Effect,DVaBigShotPewPewPewTalentDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" Index="2" />
-            </String>
-            <String String="1 2 Set Effect,DVaGoldenMiniNukeDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
-                <Field Id="CatalogModification" Index="3" />
-            </String>
-        </Instances>
-        <Instances Id="DVaPewPewPewBoon">
-            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Uncommon">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaPilotPro">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DVaBigShotPewPewPew">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DVaHeadshotBoon">
-            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Rare">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaPilotPro">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="DVaHeadshot">
-                <Field Id="TalentsAdd" />
-            </String>
-        </Instances>
-        <Instances Id="DVaDodgeRoll">
-            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Epic">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaPilotPro">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 1 Set Effect,DVaGoldenDodgePersistent,Chance 1">
-                <Field Id="CatalogModification" />
-            </String>
-        </Instances>
-        <Instances Id="DVaSpeedrun">
-            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
-                <Field Id="Icon" />
-            </String>
-            <String String="Legendary">
-                <Field Id="Rarity" />
-            </String>
-            <String String="DVa">
-                <Field Id="HeroSpecific" />
-            </String>
-            <User Type="Affix" Instance="DVaPilotPro">
-                <Field Id="AffixesRequired" />
-            </User>
-            <String String="1 0 DVaGoldenSpeedrunMarker">
-                <Field Id="Behavior" />
-            </String>
-        </Instances>
-
         <Instances Id="DehakaTongueOfThePack">
             <String String="Assets/Textures/storm_ui_icon_dehaka_drag.dds">
                 <Field Id="Icon" />
@@ -30576,6 +30067,518 @@
                 <Field Id="HeroSpecific" />
             </String>
             <String String="1 0 DehakaGoldenBrushMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
+        <Instances Id="DVaBoostRider">
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DVaBoostersRushdown">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DVaBoostersHitTheNitrous">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 DVaGoldenBoostMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DVaGoldenTurboTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DVaGoldenRiderTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DVaGoldenRiderTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DVaGoldenTurboTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DVaBoostersOn,Cost.Charge.TimeUse 7">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,DVaBoostersApplyCooldown,Cost[0].CooldownTimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,DVaBoostersImpactDamage,MultiplicativeModifierArray[DVaBoostPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,DVaBoostersHitTheNitrousImpactDamage,MultiplicativeModifierArray[DVaBoostPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,DVaGoldenFireTrailDamage,MultiplicativeModifierArray[DVaBoostPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_DVaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DVaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DVaJetRam">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaBoostRider">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DVaBoostersImpactDamage,MultiplicativeModifierArray[DVaBoostCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,DVaBoostersHitTheNitrousImpactDamage,MultiplicativeModifierArray[DVaBoostCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,DVaGoldenFireTrailDamage,MultiplicativeModifierArray[DVaBoostCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="DVaQuickBoost">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaBoostRider">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,DVaBoostersOn,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DVaProMovesBoon">
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaBoostRider">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DVaMechProMoves">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DVaDivertingPowerBoon">
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaBoostRider">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DVaDefenseMatrixDivertingPower">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DVaBulldoze">
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaBoostRider">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DVaGoldenBulldozeApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DVaAfterburner">
+            <String String="Assets/Textures/storm_ui_icon_dva_boosters.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaBoostRider">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DVaGoldenAfterburnerApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,DVaGoldenAfterburnerStunApply,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DVaNuclearStarter">
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="DVaSelfDestructNuclearOption">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="DvaGetOnThePoint">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 DVaGoldenNuclearMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DVaGoldenYieldTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DVaGoldenMeltdownTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="DVaGoldenMeltdownTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DVaGoldenYieldTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Multiply Effect,DVaMechSelfDestructDetonationSearch,AreaArray[0].Radius 1.2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Validator,DVaMechSelfDestructTargetWithinFalloffRadius,Range 1.2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,DVaMechSelfDestructDetonationSearchDamage,MultiplicativeModifierArray[DVaNukePower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,DVaMechSelfDestructDetonationSearchDamageNear,MultiplicativeModifierArray[DVaNukePower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_DVaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DVaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DVaPayload">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaNuclearStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DVaMechSelfDestructDetonationSearchDamage,MultiplicativeModifierArray[DVaNukeCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,DVaMechSelfDestructDetonationSearchDamageNear,MultiplicativeModifierArray[DVaNukeCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DVaHotCore">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaNuclearStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 DVaGoldenHotCore">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DVaLiquidCoolingBoon">
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaNuclearStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DVaLiquidCooling">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DVaEmergencyShieldingBoon">
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaNuclearStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DVaMechEmergencyShielding">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DVaEjection">
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaNuclearStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DVaGoldenEjectionMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DVaAssemblyLine">
+            <String String="Assets/Textures/storm_ui_icon_dva_selfdestruct.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaNuclearStarter">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DVaGoldenAssemblyMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="DVaPilotPro">
+            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 DVaGoldenPilotMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 DVaGoldenHighScoreTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 DVaGoldenStreakTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 DVaGoldenPilotKit">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="DVaGoldenStreakTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="DVaGoldenHighScoreTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,InterruptCost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Abil,DVaPilotBigShot,CastIntroTime 0.2">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaGoldenPistolPower].Modifier 0.5">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,DVaGoldenPistolBigShotRecharge,Chance 1">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
+                <Field Id="CatalogModification" Index="9" />
+            </String>
+            <String String="1 1 Set Effect,DVaPilotBigShotDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
+                <Field Id="CatalogModification" Index="10" />
+            </String>
+            <String String="1 1 Set Effect,DVaBigShotPewPewPewTalentDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
+                <Field Id="CatalogModification" Index="11" />
+            </String>
+            <String String="1 1 Set Effect,DVaGoldenMiniNukeDamage,MultiplicativeModifierArray[DVaPilotPower].Modifier 0">
+                <Field Id="CatalogModification" Index="12" />
+            </String>
+            <String String="AffixAdded libAffx_DVaStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_DVaTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="DVaLightGun">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaPilotPro">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,DVaPilotWeaponDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,DVaPilotBigShotDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,DVaBigShotPewPewPewTalentDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,DVaGoldenMiniNukeDamage,MultiplicativeModifierArray[DVaPilotCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="DVaPewPewPewBoon">
+            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaPilotPro">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DVaBigShotPewPewPew">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DVaHeadshotBoon">
+            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaPilotPro">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="DVaHeadshot">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="DVaDodgeRoll">
+            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaPilotPro">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,DVaGoldenDodgePersistent,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="DVaSpeedrun">
+            <String String="Assets/Textures/storm_ui_icon_dva_bigshot.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="DVa">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="DVaPilotPro">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 DVaGoldenSpeedrunMarker">
                 <Field Id="Behavior" />
             </String>
         </Instances>
