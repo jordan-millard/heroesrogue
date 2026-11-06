@@ -1,0 +1,507 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden D.Va. The quest tokens are on the pilot (D.Va's hero unit); every 0.25 seconds the mech gets the same counts.
+// Boost Rider: Boosters hits on enemy Heroes add Turbo; takedowns add Rider: recharge, then boost speed, then knockback, then at 100 a fire trail.
+// Nuclear Option: Self-Destruct charges 50% faster (script); hits add Yield; takedowns add Meltdown: charge rate (script), then
+// detonation delay, then blast size, then at 100 a 2 second Stun.
+// Pilot Pro: D.Va is ejected and the mech removed after every spawn; Big Shot hits add High Score; takedowns add Streak:
+// Big Shot recharge, then pistol range, then at 100 an exploding mech on a Big Shot hit (once every 60 seconds).
+// ============================================================
+
+const fixed libAffx_DVaTakedownWindow = 3.0;
+const fixed libAffx_DVaPastCapDamagePerStack = 0.01;
+bool libAffx_DVaStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DVaBoostTime; // per enemy player, last Boost Rider hit
+int libAffx_DVaBoostAdded; // Boost Rider: takedown stacks already applied to the catalog this game
+int libAffx_DVaBoostAdded2; // Boost Rider: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DVaBoostAdded3; // Boost Rider: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DVaBoostPastApplied; // Boost Rider: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DVaNukeTime; // per enemy player, last Nuclear Option hit
+int libAffx_DVaNukeAdded; // Nuclear Option: takedown stacks already applied to the catalog this game
+int libAffx_DVaNukeAdded2; // Nuclear Option: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DVaNukeAdded3; // Nuclear Option: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_DVaNukePastApplied; // Nuclear Option: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_DVaPilotTime; // per enemy player, last Pilot Pro hit
+int libAffx_DVaPilotAdded; // Pilot Pro: takedown stacks already applied to the catalog this game
+int libAffx_DVaPilotAdded2; // Pilot Pro: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_DVaPilotPastApplied; // Pilot Pro: takedown quest stacks past the cap applied as damage this game
+fixed libAffx_DVaChargeLeft; // Nuclear Option: extra Self-Destruct charge not yet added (under 1)
+fixed libAffx_DVaDetonatedTime; // Ejection: when the mech last blew up (0: handled)
+unit libAffx_DVaLastMech; // Assembly Line: the mech last seen
+fixed libAffx_DVaLastMechTime; // and when it showed up
+bool libAffx_DVaAssembled; // and whether its charge was checked
+unit libAffx_DVaDropMech; // Pilot Pro: the mech D.Va was ordered out of (removed once she is out)
+fixed libAffx_DVaSpeedrunTime; // Speedrun: the last Stun
+actor[16] libAffx_DVaFireActors; // Rider at 100: the fire patches shown
+fixed[16] libAffx_DVaFireTimes; // and when each was placed (0: none)
+int libAffx_DVaFireNext; // the next slot
+string[6] libAffx_DVaTokens; // the quest tokens the mech copies
+
+unit libAffx_DVaHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_DVaIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_DVaStacks(string tokenId) {
+    unit hero = libAffx_DVaHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_DVaQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_DVaInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_DVaTakedownWindow;
+}
+// DVaGoldenRiderTokenCounter: stacks 1-40: 1% of the 7 second recharge each; 41-80 boost speed, 81-100 knockback, 100 fire trail (script), then damage
+void libAffx_DVaSyncBoost () {
+    unit hero = libAffx_DVaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DVaGoldenBoostMarker")) {
+        return;
+    }
+    stacks = libAffx_DVaStacks("DVaGoldenRiderTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DVaBoostAdded) {
+        libAffx_CatalogReferenceModify("Abil,DVaBoostersOn,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaBoostAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaBoostAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): boosting 1% faster each (1% of the 10.35 boost speed)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DVaBoostAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,DVaBoostersMoveSpeedActive,Modification.MoveSpeedMaximum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaBoostAdded2) * 0.1035, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,DVaBoostersMoveSpeedActive,Modification.MoveSpeedMinimum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaBoostAdded2) * 0.1035, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaBoostAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): 1% stronger knockback each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DVaBoostAdded3) {
+        libAffx_CatalogReferenceModify("Effect,DVaBoostersKnockbackForce,Amount", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaBoostAdded3) * 0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaBoostAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DVaBoostPastApplied) {
+        libAffx_DVaBoostPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaBoostPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaBoostPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DVaBoostPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DVaBoostPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DVaBoostPastCapDamage", hero, 1);
+    }
+}
+// DVaGoldenMeltdownTokenCounter: stacks 1-40: Self-Destruct charges 1% faster each (libAffx_DVaChargeRate); 41-80 detonation delay, 81-100 blast size, 100 Stun (script), then damage
+void libAffx_DVaSyncNuke () {
+    unit hero = libAffx_DVaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DVaGoldenNuclearMarker")) {
+        return;
+    }
+    stacks = libAffx_DVaStacks("DVaGoldenMeltdownTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DVaNukeAdded) {
+        libAffx_DVaNukeAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): the mech blows up 1% of 4 seconds sooner each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DVaNukeAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,DVaMechSelfDestructMechDetonationCountdown,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaNukeAdded2) * -0.04, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaNukeAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the blast is 1% of 10 larger each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_DVaNukeAdded3) {
+        libAffx_CatalogReferenceModify("Effect,DVaMechSelfDestructDetonationSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaNukeAdded3) * 0.1, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaNukeAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DVaNukePastApplied) {
+        libAffx_DVaNukePastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaNukePastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaNukePastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DVaNukePastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DVaNukePastCapDamage")) {
+        UnitBehaviorAdd(hero, "DVaNukePastCapDamage", hero, 1);
+    }
+}
+// DVaGoldenStreakTokenCounter: stacks 1-40: 1% of the 6 second recharge each; 41-80 Light Gun range, 100 exploding mech (script), then damage
+void libAffx_DVaSyncPilot () {
+    unit hero = libAffx_DVaHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "DVaGoldenPilotMarker")) {
+        return;
+    }
+    stacks = libAffx_DVaStacks("DVaGoldenStreakTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_DVaPilotAdded) {
+        libAffx_CatalogReferenceModify("Abil,DVaPilotBigShot,Cost[0].Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaPilotAdded) * -0.06, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaPilotAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): 0.5% of 5.5 Light Gun range each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_DVaPilotAdded2) {
+        libAffx_CatalogReferenceModify("Weapon,DVaPilotWeapon,Range", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaPilotAdded2) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Weapon,DVaPilotWeapon,MinScanRange", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaPilotAdded2) * 0.0275, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_DVaPilotAdded2 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_DVaPilotPastApplied) {
+        libAffx_DVaPilotPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaPilotPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaPilotPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "DVaPilotPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "DVaPilotPastCapDamage")) {
+        UnitBehaviorAdd(hero, "DVaPilotPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_DVaSync_Func (bool testConds, bool runActions) {
+    libAffx_DVaSyncBoost();
+    libAffx_DVaSyncNuke();
+    libAffx_DVaSyncPilot();
+    return true;
+}
+// the mech D.Va is in (null when she's out of it)
+unit libAffx_DVaMech () {
+    unit pilot = libAffx_DVaHero();
+    if (pilot == null) {
+        return null;
+    }
+    return UnitTransport(pilot);
+}
+// the quest tokens live on the pilot (D.Va's hero unit); the mech's abilities read them from the mech, so it gets the same counts
+void libAffx_DVaMirror (unit mech, string tokenId) {
+    int want = libAffx_DVaStacks(tokenId);
+    int have = FixedToInt(UnitGetTokenCount(mech, tokenId));
+    if (want != have) {
+        libGame_gf_ModifyTokenCount(want - have, tokenId, mech);
+    }
+}
+// Nuclear Option: how much faster Self-Destruct charges (50%, 5% per Hot Core, 1% per Meltdown stack up to 40)
+fixed libAffx_DVaChargeRate () {
+    unit pilot = libAffx_DVaHero();
+    if (pilot == null || !UnitHasBehavior2(pilot, "DVaGoldenNuclearMarker")) {
+        return 0.0;
+    }
+    return 0.5 + 0.05 * IntToFixed(UnitBehaviorCount(pilot, "DVaGoldenHotCore")) + 0.01 * IntToFixed(MinI(40, libAffx_DVaStacks("DVaGoldenMeltdownTokenCounter")));
+}
+// adds extra Self-Destruct charge (in percent; fractions carry over), and shows it on the mech's bar like the base script
+void libAffx_DVaAddCharge (fixed amount) {
+    fixed used = PlayerGetChargeUsed(libAffx_player, "Abil/DVaMechSelfDestruct");
+    int whole;
+    unit mech = libAffx_DVaMech();
+    libAffx_DVaChargeLeft += amount;
+    whole = FixedToInt(libAffx_DVaChargeLeft);
+    if (whole <= 0) {
+        return;
+    }
+    libAffx_DVaChargeLeft -= IntToFixed(whole);
+    whole = MinI(whole, FixedToInt(used));
+    if (whole <= 0) {
+        return;
+    }
+    PlayerAddChargeUsed(libAffx_player, "Abil/DVaMechSelfDestruct", IntToFixed(-whole));
+    if (mech != null) {
+        UnitSetPropertyFixed(mech, c_unitPropEnergy, UnitGetPropertyFixed(mech, c_unitPropEnergyMax, c_unitPropCurrent) - PlayerGetChargeUsed(libAffx_player, "Abil/DVaMechSelfDestruct"));
+    }
+}
+// Self-Destruct charge from the mech's weapon (and Fusion Generator): the rate's share of one more
+bool libAffx_DVaChargeHit_Func (bool testConds, bool runActions) {
+    fixed rate = libAffx_DVaChargeRate();
+    if (rate <= 0.0) {
+        return false;
+    }
+    libAffx_DVaAddCharge(rate);
+    return true;
+}
+// Self-Destruct charge from damage the mech takes: the base gives 1 per 4% of its maximum Health, this adds the rate's share
+bool libAffx_DVaChargeTaken_Func (bool testConds, bool runActions) {
+    unit mech = EventUnit();
+    fixed rate = libAffx_DVaChargeRate();
+    fixed most;
+    if (rate <= 0.0 || UnitGetOwner(mech) != libAffx_player || !UnitIsAlive(mech) || UnitHasBehavior2(mech, "DVaMechSelfDestructAbandoned")) {
+        return false;
+    }
+    most = UnitGetPropertyFixed(mech, c_unitPropLifeMax, c_unitPropCurrent);
+    if (most <= 0.0) {
+        return false;
+    }
+    libAffx_DVaAddCharge((EventUnitDamageAmount() + EventUnitDamageBehaviorShield()) / most * 25.0 * rate);
+    return true;
+}
+// Ejection: the mech blew up (Call Mech's cooldown is cut on the next tick that sees it)
+bool libAffx_DVaDetonated_Func (bool testConds, bool runActions) {
+    unit pilot = libAffx_DVaHero();
+    if (pilot == null || !UnitHasBehavior2(pilot, "DVaGoldenEjectionMarker")) {
+        return false;
+    }
+    libAffx_DVaDetonatedTime = GameGetMissionTime();
+    return true;
+}
+// every 0.25 seconds: Pilot Pro ejects D.Va and removes the mech; the mech's quest tokens follow the pilot's; Assembly Line,
+// Ejection, Meltdown at 100 and Rider's fire trail
+bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
+    unit pilot = libAffx_DVaHero();
+    unit mech;
+    fixed now = GameGetMissionTime();
+    fixed cd;
+    fixed used;
+    point spot;
+    int i = 0;
+    while (i < 16) {
+        if (libAffx_DVaFireTimes[i] > 0.0 && now - libAffx_DVaFireTimes[i] >= 2.0) {
+            ActorSend(libAffx_DVaFireActors[i], "Destroy");
+            libAffx_DVaFireTimes[i] = 0.0;
+        }
+        i += 1;
+    }
+    if (pilot == null) {
+        return true;
+    }
+    mech = UnitTransport(pilot);
+    // Pilot Pro: out of the mech (the base script's unload trigger swaps the UI to the pilot), then the mech goes away
+    if (UnitHasBehavior2(pilot, "DVaGoldenPilotMarker")) {
+        if (mech != null && UnitIsAlive(pilot)) {
+            libAffx_DVaDropMech = mech;
+            UnitIssueOrder(mech, Order(AbilityCommand("DVaMechTransport", 1)), c_orderQueueReplace);
+        } else if (mech == null && libAffx_DVaDropMech != null) {
+            UnitRemove(libAffx_DVaDropMech);
+            libAffx_DVaDropMech = null;
+        }
+        return true;
+    }
+    if (mech != null) {
+        i = 0;
+        while (i < 6) {
+            libAffx_DVaMirror(mech, libAffx_DVaTokens[i]);
+            i += 1;
+        }
+        // Assembly Line: a new mech starts at 50% Self-Destruct charge (a second after it shows up, once the base script set its charge)
+        if (mech != libAffx_DVaLastMech) {
+            libAffx_DVaLastMech = mech;
+            libAffx_DVaLastMechTime = now;
+            libAffx_DVaAssembled = false;
+        }
+        if (!libAffx_DVaAssembled && now - libAffx_DVaLastMechTime >= 1.0) {
+            libAffx_DVaAssembled = true;
+            used = PlayerGetChargeUsed(libAffx_player, "Abil/DVaMechSelfDestruct");
+            if (UnitHasBehavior2(pilot, "DVaGoldenAssemblyMarker") && used > 50.0) {
+                PlayerAddChargeUsed(libAffx_player, "Abil/DVaMechSelfDestruct", 50.0 - used);
+                UnitSetPropertyFixed(mech, c_unitPropEnergy, UnitGetPropertyFixed(mech, c_unitPropEnergyMax, c_unitPropCurrent) - 50.0);
+            }
+        }
+        // Rider at 100: a patch of fire where the mech is while boosting
+        if (UnitHasBehavior2(pilot, "DVaGoldenBoostMarker") && libAffx_DVaStacks("DVaGoldenRiderTokenCounter") >= 100 && UnitHasBehavior2(mech, "DVaBoostersActive")) {
+            spot = UnitGetPosition(mech);
+            UnitCreateEffectPoint(mech, "DVaGoldenFireTrailPersistent", spot);
+            if (libAffx_DVaFireTimes[libAffx_DVaFireNext] > 0.0) {
+                ActorSend(libAffx_DVaFireActors[libAffx_DVaFireNext], "Destroy");
+            }
+            libAffx_DVaFireActors[libAffx_DVaFireNext] = libNtve_gf_CreateActorAtPoint("DVaGoldenFirePatch", spot);
+            libAffx_DVaFireTimes[libAffx_DVaFireNext] = now;
+            libAffx_DVaFireNext = ModI(libAffx_DVaFireNext + 1, 16);
+        }
+    }
+    // Meltdown at 100: the blast Stuns
+    if (UnitHasBehavior2(pilot, "DVaGoldenNuclearMarker") && libAffx_DVaStacks("DVaGoldenMeltdownTokenCounter") >= 100) {
+        CatalogFieldValueSet(c_gameCatalogEffect, "DVaGoldenMeltdownStunApply", "Chance", libAffx_player, "1");
+    }
+    // Ejection: Call Mech recharges 80% faster after a Self-Destruct
+    if (libAffx_DVaDetonatedTime > 0.0) {
+        cd = PlayerGetCooldown(libAffx_player, "Abil/DVaPilotCallMech");
+        if (cd > 0.0) {
+            PlayerAddCooldown(libAffx_player, "Abil/DVaPilotCallMech", -0.8 * cd);
+            libAffx_DVaDetonatedTime = 0.0;
+        } else if (now - libAffx_DVaDetonatedTime > 6.0) {
+            libAffx_DVaDetonatedTime = 0.0;
+        }
+    }
+    return true;
+}
+// Boost Rider hit on an enemy Hero: takedown window, DVaGoldenTurboTokenCounter, the heal, and on-hit boons
+bool libAffx_DVaBoostHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DVaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DVaGoldenBoostMarker")) {
+        return false;
+    }
+    libAffx_DVaBoostTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "DVaGoldenTurboTokenCounter", hero);
+    return true;
+}
+// Boost Rider: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_DVaBoostWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DVaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DVaGoldenBoostMarker")) {
+        return false;
+    }
+    libAffx_DVaBoostTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// Nuclear Option hit on an enemy Hero: takedown window, DVaGoldenYieldTokenCounter, the heal, and on-hit boons
+bool libAffx_DVaNukeHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DVaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DVaGoldenNuclearMarker")) {
+        return false;
+    }
+    libAffx_DVaNukeTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "DVaGoldenYieldTokenCounter", hero);
+    return true;
+}
+// Pilot Pro hit on an enemy Hero: takedown window, DVaGoldenHighScoreTokenCounter, the heal, and on-hit boons
+bool libAffx_DVaPilotHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DVaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DVaGoldenPilotMarker")) {
+        return false;
+    }
+    libAffx_DVaPilotTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "DVaGoldenHighScoreTokenCounter", hero);
+    // Streak at 100: the hit summons an exploding mech at the Hero (once every 60 seconds)
+    if (libAffx_DVaStacks("DVaGoldenStreakTokenCounter") >= 100 && !UnitHasBehavior2(hero, "DVaGoldenMiniNukeCooldown")) {
+        UnitBehaviorAdd(hero, "DVaGoldenMiniNukeCooldown", hero, 1);
+        UnitCreateEffectPoint(hero, "DVaGoldenMiniNukePersistent", UnitGetPosition(victim));
+    }
+    // Speedrun: the first Hero each shot hits is Stunned
+    if (UnitHasBehavior2(hero, "DVaGoldenSpeedrunMarker") && GameGetMissionTime() - libAffx_DVaSpeedrunTime > 0.25) {
+        libAffx_DVaSpeedrunTime = GameGetMissionTime();
+        UnitCreateEffectUnit(hero, "DVaGoldenSpeedrunApply", victim);
+    }
+    return true;
+}
+// Pilot Pro: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_DVaPilotWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_DVaHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || !UnitHasBehavior2(hero, "DVaGoldenPilotMarker")) {
+        return false;
+    }
+    libAffx_DVaPilotTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_DVaTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_DVaTakedownCrossStart () {
+    unit hero = libAffx_DVaHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_DVaTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "DVaGoldenRiderTokenCounter"));
+    libAffx_DVaTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "DVaGoldenMeltdownTokenCounter"));
+    libAffx_DVaTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "DVaGoldenStreakTokenCounter"));
+}
+void libAffx_DVaTakedownCross () {
+    unit hero = libAffx_DVaHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "DVaGoldenRiderTokenCounter")) == libAffx_DVaTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "DVaGoldenMeltdownTokenCounter")) == libAffx_DVaTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "DVaGoldenStreakTokenCounter")) == libAffx_DVaTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "DVaGoldenBoostMarker") && FixedToInt(UnitGetTokenCount(hero, "DVaGoldenRiderTokenCounter")) == libAffx_DVaTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "DVaGoldenRiderTokenCounter", hero);
+        libAffx_DVaSyncBoost();
+    }
+    if (UnitHasBehavior2(hero, "DVaGoldenNuclearMarker") && FixedToInt(UnitGetTokenCount(hero, "DVaGoldenMeltdownTokenCounter")) == libAffx_DVaTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "DVaGoldenMeltdownTokenCounter", hero);
+        libAffx_DVaSyncNuke();
+    }
+    if (UnitHasBehavior2(hero, "DVaGoldenPilotMarker") && FixedToInt(UnitGetTokenCount(hero, "DVaGoldenStreakTokenCounter")) == libAffx_DVaTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "DVaGoldenStreakTokenCounter", hero);
+        libAffx_DVaSyncPilot();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_DVaTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_DVaHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_DVaTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "DVaGoldenBoostMarker") && libAffx_DVaBoostTime[killedPlayer] > 0.0 && now - libAffx_DVaBoostTime[killedPlayer] <= 6.0) {
+        libAffx_DVaBoostTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DVaGoldenRiderTokenCounter", hero);
+        libAffx_DVaSyncBoost();
+        libAffx_DVaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "DVaGoldenNuclearMarker") && libAffx_DVaNukeTime[killedPlayer] > 0.0 && now - libAffx_DVaNukeTime[killedPlayer] <= 10.0) {
+        libAffx_DVaNukeTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DVaGoldenMeltdownTokenCounter", hero);
+        libAffx_DVaSyncNuke();
+        libAffx_DVaQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "DVaGoldenPilotMarker") && libAffx_DVaPilotTime[killedPlayer] > 0.0 && now - libAffx_DVaPilotTime[killedPlayer] <= 6.0) {
+        libAffx_DVaPilotTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "DVaGoldenStreakTokenCounter", hero);
+        libAffx_DVaSyncPilot();
+        libAffx_DVaQuestDing();
+    }
+    libAffx_DVaTakedownCross();
+    return true;
+}
+bool libAffx_DVaStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_DVaStarted) {
+        return true;
+    }
+    libAffx_DVaStarted = true;
+    trig = TriggerCreate("libAffx_DVaBoostHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaBoostersImpactDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaBoostersHitTheNitrousImpactDamage");
+    trig = TriggerCreate("libAffx_DVaBoostWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaGoldenFireTrailDamage");
+    trig = TriggerCreate("libAffx_DVaNukeHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaMechSelfDestructDetonationSearchDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaMechSelfDestructDetonationSearchDamageNear");
+    trig = TriggerCreate("libAffx_DVaPilotHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaPilotBigShotDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaBigShotPewPewPewTalentDamage");
+    trig = TriggerCreate("libAffx_DVaPilotWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "DVaPilotWeaponDamage");
+    libAffx_DVaTokens[0] = "DVaGoldenTurboTokenCounter";
+    libAffx_DVaTokens[1] = "DVaGoldenRiderTokenCounter";
+    libAffx_DVaTokens[2] = "DVaGoldenYieldTokenCounter";
+    libAffx_DVaTokens[3] = "DVaGoldenMeltdownTokenCounter";
+    libAffx_DVaTokens[4] = "DVaGoldenHighScoreTokenCounter";
+    libAffx_DVaTokens[5] = "DVaGoldenStreakTokenCounter";
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DVaTick_Func"), 0.25, c_timeGame);
+    trig = TriggerCreate("libAffx_DVaChargeHit_Func");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DVaMechSelfDestructAddCharge");
+    TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DVaMechDefenseMatrixFusionGeneratorAddChargetoCaster");
+    TriggerAddDamageEvent(TriggerCreate("libAffx_DVaChargeTaken_Func"), null, "HeroDVaMech", c_unitDamageTypeAny, c_unitDamageEither, null);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DVaDetonated_Func"), libAffx_player, "DVaMechSelfDestructDetonationSet");
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DVaSync_Func"), 1.0, c_timeGame);
+    return true;
+}

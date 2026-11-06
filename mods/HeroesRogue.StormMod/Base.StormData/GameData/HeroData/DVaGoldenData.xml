@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden D.Va. Starters: Boost Rider (Boosters), Nuclear Option (Self-Destruct) and Pilot Pro (no mech: D.Va stays a pilot). D.Va is a pilot unit (her hero unit, which carries the quest tokens) inside a mech; the script copies the token counts onto the mech. Each damage effect has its own multipliers: the Uncommon boon (a LibAffx multiplier), hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/DVaGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="DVaGoldenBoostMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DVaGoldenNuclearMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DVaGoldenPilotMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DVaGoldenEjectionMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DVaGoldenAssemblyMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="DVaGoldenSpeedrunMarker" parent="CarryBehaviorParent" />
+  <!-- Boost Rider, Rider at 100: boosting leaves a fire trail; each patch burns enemies for 30% of Boosters damage per
+       second (15% each half second, at most once per half second per enemy however many patches overlap) -->
+  <CEffectDamage id="DVaGoldenFireTrailDamage" parent="DVaBoostersImpactDamage">
+    <MultiplicativeModifierArray index="DVaGoldenFireTick" Modifier="-0.85" />
+  </CEffectDamage>
+  <!-- Pilot Pro, Streak at 100: the exploding mech a Big Shot hit summons (Self-Destruct's full damage, smaller blast) -->
+  <CEffectDamage id="DVaGoldenMiniNukeDamage" parent="DVaMechSelfDestructDetonationSearchDamageNear" />
+
+  <!-- ===== Boost Rider ===== -->
+  <!-- Boosters stores 2 charges (7 second recharge; the 10 second cooldown set when boosting ends is cut to 0.5); gain Rush-down and Hit the Nitrous. Turbo quest (10% of each map's gains kept for good): 0.5% Boosters damage per enemy Hero hit. Rider quest: takedowns within 6 seconds of a Boosters hit; stacks 1-40 make Boosters recharge 1% faster each, 41-80 make boosting 1% faster each, 81-100 make the knockback 1% stronger each, at 100 boosting leaves a fire trail (30% of Boosters damage per second, script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DVaGoldenTurboTokenCounter" parent="StormQuestToken">
+    <Face value="DVaGoldenTurboTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DVaGoldenRiderTokenCounter" parent="StormQuestToken">
+    <Face value="DVaGoldenRiderTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DVaGoldenTurboTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DVaGoldenTurboTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DVaBoostersImpactDamage">
+    <MultiplicativeModifierArray index="DVaBoostPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaBoostCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaBoostHit" Accumulator="DVaGoldenTurboTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DVaBoostLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaBoostersHitTheNitrousImpactDamage">
+    <MultiplicativeModifierArray index="DVaBoostPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaBoostCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaBoostHit" Accumulator="DVaGoldenTurboTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DVaBoostLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaGoldenFireTrailDamage">
+    <MultiplicativeModifierArray index="DVaBoostPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaBoostCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaBoostHit" Accumulator="DVaGoldenTurboTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DVaBoostLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="DVaGoldenTurboTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_boosters.dds" />
+  </CButton>
+  <CButton id="DVaGoldenRiderTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_boosters.dds" />
+  </CButton>
+
+  <!-- ===== Nuclear Option ===== -->
+  <!-- Self-Destruct charges 50% faster from damage dealt and taken (script, on top of the base charge) and its blast is 20% larger; gain Nuclear Option and Get On The Point!. Yield quest (10% of each map's gains kept for good): 10% Self-Destruct damage per enemy Hero hit. Meltdown quest: takedowns within 10 seconds of a Self-Destruct hit; stacks 1-40 make Self-Destruct charge 1% faster each (script), 41-80 make the mech blow up 1% sooner each, 81-100 make the blast 1% larger each, at 100 the blast Stuns every enemy it hits for 2 seconds (script turns it on), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DVaGoldenYieldTokenCounter" parent="StormQuestToken">
+    <Face value="DVaGoldenYieldTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DVaGoldenMeltdownTokenCounter" parent="StormQuestToken">
+    <Face value="DVaGoldenMeltdownTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DVaGoldenYieldTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DVaGoldenYieldTokenCounter" />
+    <Scale value="0.1" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DVaMechSelfDestructDetonationSearchDamage">
+    <MultiplicativeModifierArray index="DVaNukePower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaNukeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaNukeHit" Accumulator="DVaGoldenYieldTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DVaNukeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaMechSelfDestructDetonationSearchDamageNear">
+    <MultiplicativeModifierArray index="DVaNukePower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaNukeCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaNukeHit" Accumulator="DVaGoldenYieldTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="DVaNukeLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="DVaGoldenYieldTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_selfdestruct.dds" />
+  </CButton>
+  <CButton id="DVaGoldenMeltdownTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_selfdestruct.dds" />
+  </CButton>
+
+  <!-- ===== Pilot Pro ===== -->
+  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, and Light Gun deals 50% more damage. High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="DVaGoldenHighScoreTokenCounter" parent="StormQuestToken">
+    <Face value="DVaGoldenHighScoreTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="DVaGoldenStreakTokenCounter" parent="StormQuestToken">
+    <Face value="DVaGoldenStreakTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="DVaGoldenHighScoreTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="DVaGoldenHighScoreTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="DVaPilotWeaponDamage">
+    <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaGoldenPistolPower" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaPilotBigShotDamage">
+    <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaBigShotPewPewPewTalentDamage">
+    <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaGoldenMiniNukeDamage">
+    <MultiplicativeModifierArray index="DVaPilotPower" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="DVaPilotLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaPilotBigShotDamage">
+    <MultiplicativeModifierArray index="DVaPilotHit" Accumulator="DVaGoldenHighScoreTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CEffectDamage id="DVaBigShotPewPewPewTalentDamage">
+    <MultiplicativeModifierArray index="DVaPilotHit" Accumulator="DVaGoldenHighScoreTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="DVaGoldenHighScoreTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+  </CButton>
+  <CButton id="DVaGoldenStreakTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+  </CButton>
+  <!-- Boost Rider: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DVaBoostPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Nuclear Option: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DVaNukePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Pilot Pro: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="DVaPilotPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- ===== Boost Rider ===== -->
+  <!-- Boosters has charges: the 10 second cooldown it sets when boosting ends is cut to 0.5 (a starter mod), and the
+       talents that take time off Boosters' cooldown also take it off the charge -->
+  <CEffectModifyUnit id="DVaBoostersRushDownTalentImpactModifyCooldown">
+    <Cost index="0" ChargeTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="DVaBoostersRushdownCooldownReduction">
+    <Cost index="0" ChargeTimeUse="-7" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="DVaBoostersComingThroughTalentModifyCooldown">
+    <Cost index="0" ChargeTimeUse="-3" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="DVaBoostersGetOnThePointTalentPeriodicModifyCooldown">
+    <Cost index="0" ChargeTimeUse="-0.0625" />
+  </CEffectModifyUnit>
+  <!-- Rider at 100: the fire trail (the script drops a patch every 0.25 seconds while boosting) -->
+  <CBehaviorBuff id="DVaGoldenBurnLimiter">
+    <Duration value="0.4375" />
+  </CBehaviorBuff>
+  <CValidatorUnitCompareBehaviorCount id="DVaGoldenTargetNotBurning">
+    <WhichUnit Value="Target" />
+    <Behavior value="DVaGoldenBurnLimiter" />
+    <Compare value="LT" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectApplyBehavior id="DVaGoldenBurnLimiterApply">
+    <Behavior value="DVaGoldenBurnLimiter" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DVaGoldenFireTrailSet">
+    <ValidatorArray value="DVaGoldenTargetNotBurning" />
+    <EffectArray value="DVaGoldenFireTrailDamage" />
+    <EffectArray value="DVaGoldenBurnLimiterApply" />
+  </CEffectSet>
+  <CEffectEnumArea id="DVaGoldenFireTrailSearch">
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="DVaGoldenFireTrailSet">
+      <Radius value="1.5" />
+    </AreaArray>
+  </CEffectEnumArea>
+  <CEffectCreatePersistent id="DVaGoldenFireTrailPersistent">
+    <PeriodCount value="8" />
+    <PeriodicPeriodArray value="0.25" />
+    <PeriodicEffectArray value="DVaGoldenFireTrailSearch" />
+  </CEffectCreatePersistent>
+  <!-- one patch of fire (the script places it and removes it after 2 seconds) -->
+  <CActorModel id="DVaGoldenFirePatch">
+    <Model value="FirebatOilSpillIgnitedModel" />
+  </CActorModel>
+  <!-- Bulldoze (Epic): Heroes knocked back are Slowed 60% for 2 seconds (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="DVaGoldenBulldozeSlow" parent="StormSlowParent">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_boosters.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="-0.6" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenBulldozeApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="TargetNotUnstoppable" />
+    <Behavior value="DVaGoldenBulldozeSlow" />
+  </CEffectApplyBehavior>
+  <!-- Afterburner (Legendary): Unstoppable while boosting, and Heroes knocked back are Stunned for 0.5 seconds (Chance 0,
+       the boon turns them on) -->
+  <CValidatorUnitCompareBehaviorCount id="DVaGoldenCasterBoosting">
+    <WhichUnit Value="Caster" />
+    <Behavior value="DVaBoostersActive" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CBehaviorBuff id="DVaGoldenAfterburnerUnstoppable" parent="StormUnstoppableParent">
+    <Duration value="3" />
+    <RemoveValidatorArray value="DVaGoldenCasterBoosting" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenAfterburnerApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="DVaGoldenAfterburnerUnstoppable" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="DVaGoldenAfterburnerStun" parent="StormStun">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenAfterburnerStunApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="TargetNotUnstoppable" />
+    <Behavior value="DVaGoldenAfterburnerStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DVaBoostersInitialSet">
+    <EffectArray value="DVaGoldenAfterburnerApply" />
+  </CEffectSet>
+  <CEffectSet id="DVaBoostersImpactSet">
+    <EffectArray value="DVaGoldenBulldozeApply" />
+    <EffectArray value="DVaGoldenAfterburnerStunApply" />
+  </CEffectSet>
+  <!-- ===== Nuclear Option ===== -->
+  <!-- Hot Core (Common, max 3): Self-Destruct charges 5% faster each (the script reads the stacks) -->
+  <CBehaviorBuff id="DVaGoldenHotCore" parent="CarryBehaviorParent">
+    <MaxStackCount value="3" />
+  </CBehaviorBuff>
+  <!-- Meltdown at 100: the blast Stuns every enemy it hits for 2 seconds (Chance 0, the script turns it on) -->
+  <CBehaviorBuff id="DVaGoldenMeltdownStun" parent="StormStun">
+    <Duration value="2" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenMeltdownStunApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetNotUnstoppable" />
+    <Behavior value="DVaGoldenMeltdownStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="DVaMechSelfDestructDetonationSearchImpactSet">
+    <EffectArray value="DVaGoldenMeltdownStunApply" />
+  </CEffectSet>
+  <!-- ===== Pilot Pro ===== -->
+  <!-- D.Va stays a pilot: 3 times the Health, and Call Mech can't be used (the script ejects her and removes the mech) -->
+  <CBehaviorBuff id="DVaGoldenPilotKit" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="2" />
+      <AbilLinkDisableArray value="DVaPilotCallMech" />
+      <AbilLinkDisableArray value="DVaPilotCallMechMEKAfall" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Streak at 100: half a second after a Big Shot hit, a mech explodes at the Hero's location (once every 60 seconds) -->
+  <CBehaviorBuff id="DVaGoldenMiniNukeCooldown">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_dva_selfdestruct.dds" />
+    <Duration value="60" />
+    <BehaviorFlags index="EnabledWhileDead" value="1" />
+    <BehaviorFlags index="Permanent" value="1" />
+  </CBehaviorBuff>
+  <CEffectEnumArea id="DVaGoldenMiniNukeSearch">
+    <SearchFilters value="-;Player,Ally,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden" />
+    <AreaArray Effect="DVaGoldenMiniNukeDamage">
+      <Radius value="4" />
+    </AreaArray>
+    <SearchFlags index="DoActorSearch" value="1" />
+  </CEffectEnumArea>
+  <CEffectCreatePersistent id="DVaGoldenMiniNukePersistent">
+    <InitialDelay value="0.5" />
+    <InitialEffect value="DVaGoldenMiniNukeSearch" />
+  </CEffectCreatePersistent>
+  <CActorModel id="DVaMechSelfDestructExplosion">
+    <On Terms="Effect.DVaGoldenMiniNukeSearch.Start" Send="Create" />
+  </CActorModel>
+  <CActorSound id="DVaGoldenMiniNukeSound" parent="SoundOneShot">
+    <On Terms="Effect.DVaGoldenMiniNukeSearch.Start" Send="Create" />
+    <Sound value="DVaMech_SelfDestruct_Explosion" />
+  </CActorSound>
+  <!-- Dodge Roll (Epic): firing Big Shot also knocks D.Va 3 back, away from where she aimed (Chance 0, the boon turns it on) -->
+  <CBehaviorBuff id="DVaGoldenDodgeRoll" parent="PushPullParent">
+    <Duration value="0.25" />
+    <Modification>
+      <MoveSpeedMaximum value="12" />
+      <MoveSpeedMinimum value="12" />
+    </Modification>
+    <InitialEffect value="DVaGoldenDodgeForce" />
+    <PeriodicEffect value="DVaGoldenDodgeForce" />
+    <Period value="0.0625" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenDodgeApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="DVaGoldenDodgeRoll" />
+  </CEffectApplyBehavior>
+  <CEffectApplyForce id="DVaGoldenDodgeForce">
+    <WhichLocation Effect="DVaGoldenDodgeApply" Value="TargetPoint" />
+    <WhichUnit Value="Caster" />
+    <Amount value="75" />
+  </CEffectApplyForce>
+  <CEffectCreatePersistent id="DVaGoldenDodgePersistent">
+    <Chance value="0" />
+    <WhichLocation Value="CasterPoint" />
+    <OffsetVectorStartLocation Value="CasterPoint" />
+    <OffsetVectorEndLocation Value="TargetPoint" />
+    <InitialOffset Y="1" />
+    <InitialEffect value="DVaGoldenDodgeApply" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="DVaBigShotInitialSet">
+    <EffectArray value="DVaGoldenDodgePersistent" />
+  </CEffectSet>
+  <!-- Speedrun (Legendary): the first Hero each Big Shot hits is Stunned for 0.5 seconds (script) -->
+  <CBehaviorBuff id="DVaGoldenSpeedrunStun" parent="StormStun">
+    <Duration value="0.5" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="DVaGoldenSpeedrunApply">
+    <ValidatorArray value="TargetNotUnstoppable" />
+    <Behavior value="DVaGoldenSpeedrunStun" />
+  </CEffectApplyBehavior>
+</Catalog>
