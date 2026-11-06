@@ -6,7 +6,7 @@ include "AffixTriggers"
 // Nuclear Option: Self-Destruct charges 50% faster (script); hits add Yield; takedowns add Meltdown: charge rate (script), then
 // detonation delay, then blast size, then at 100 a 2 second Stun.
 // Pilot Pro: D.Va is ejected and the mech removed after every spawn; Big Shot hits add High Score; takedowns add Streak:
-// Ability Lifesteal, then pistol range, then at 100 a self-destructing mech on a Big Shot hit (once every 60 seconds).
+// Big Shot cast time, then pistol range, then at 100 a self-destructing mech on a Big Shot hit (once every 60 seconds).
 // ============================================================
 
 const fixed libAffx_DVaTakedownWindow = 3.0;
@@ -38,7 +38,6 @@ fixed[16] libAffx_DVaFireTimes; // and when each was placed (0: none)
 int libAffx_DVaFireNext; // the next slot
 int libAffx_DVaPilotTalentTicks; // Pilot Pro: ticks until its talents are set again
 fixed libAffx_DVaScoreLast; // High Score: the Big Shot modifier last set
-fixed libAffx_DVaLeechLast; // Streak: the Ability Lifesteal last set
 string[6] libAffx_DVaTokens; // the quest tokens the mech copies
 
 unit libAffx_DVaHero() {
@@ -144,7 +143,7 @@ void libAffx_DVaSyncNuke () {
         UnitBehaviorAdd(hero, "DVaNukePastCapDamage", hero, 1);
     }
 }
-// DVaGoldenStreakTokenCounter: stacks 1-40: 0.25% Ability Lifesteal each (libAffx_DVaTick); 41-80 Light Gun range, 100 self-destructing mech (script), then damage
+// DVaGoldenStreakTokenCounter: stacks 1-40: Big Shot casts 0.0075 seconds faster each (0.5 to 0.2 at 40); 41-80 Light Gun range, 100 self-destructing mech (script), then damage
 void libAffx_DVaSyncPilot () {
     unit hero = libAffx_DVaHero();
     int stacks;
@@ -157,6 +156,7 @@ void libAffx_DVaSyncPilot () {
     stacks = libAffx_DVaStacks("DVaGoldenStreakTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_DVaPilotAdded) {
+        libAffx_CatalogReferenceModify("Abil,DVaPilotBigShot,CastIntroTime", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_DVaPilotAdded) * -0.0075, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_DVaPilotAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): 0.5% of 5.5 Light Gun range each
@@ -345,7 +345,6 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
     unit mech;
     fixed now = GameGetMissionTime();
     fixed score;
-    fixed leech;
     fixed cd;
     fixed used;
     point spot;
@@ -376,16 +375,6 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
     mech = UnitTransport(pilot);
     // Pilot Pro: out of the mech (the base script's unload trigger swaps the UI to the pilot), then the mech goes away
     if (UnitHasBehavior2(pilot, "DVaGoldenPilotMarker")) {
-        // Streak 1-40: 0.25% Ability Lifesteal per stack (a behavior's amount only changes when it's applied again)
-        leech = IntToFixed(MinI(libAffx_DVaStacks("DVaGoldenStreakTokenCounter"), 40)) * 0.0025;
-        if (leech != libAffx_DVaLeechLast) {
-            libAffx_DVaLeechLast = leech;
-            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "DVaGoldenStreakLeech", "Modification.VitalDamageLeechArray[Life].KindArray[Ability]", libAffx_player, leech);
-            UnitBehaviorRemove(pilot, "DVaGoldenStreakLeech", 1);
-        }
-        if (leech > 0.0 && !UnitHasBehavior2(pilot, "DVaGoldenStreakLeech")) {
-            UnitBehaviorAdd(pilot, "DVaGoldenStreakLeech", pilot, 1);
-        }
         if (mech != null && UnitIsAlive(pilot)) {
             libAffx_DVaDropMech = mech;
             UnitIssueOrder(mech, Order(AbilityCommand("DVaMechTransport", 1)), c_orderQueueReplace);
