@@ -845,6 +845,7 @@ void libAffx_DehakaPrimalSync () {
         UnitAddChargeUsed(hero, "Abil/DehakaEssenceCollection", IntToFixed(s1 - libAffx_DehakaEssenceMaxAdded));
         libAffx_DehakaEssenceMaxAdded = s1;
     }
+    CatalogFieldValueSet(c_gameCatalogEffect, "DehakaEssenceCollectionRemoveChargeCountPersistent", "PeriodCount", libAffx_player, IntToString(MaxI(60, libHDEH_gv_heroDehakaEssenceCollectionMaxStackCount[libAffx_player])));
     s2 = MaxI(0, MinI(n - 40, 40));
     if (s2 > 0) {
         cd = 240.0;

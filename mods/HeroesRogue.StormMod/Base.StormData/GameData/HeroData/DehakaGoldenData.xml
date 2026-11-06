@@ -79,7 +79,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Primal Evolution ===== -->
-  <!-- Every 25 Essence collected (20 with Rapid Adaptation) grants a random mutation (script; each win keeps 10% of that map's mutations, rounded up): 2% Health, 2% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed (also added to the Movement Speed boons, so it adds to them), 1% shorter Stuns, Silences and Slows (script, up to 75%), 1% Healing Received, 1 max Essence (script), or 5% Attack Damage. Essence Collection heals 20% more. Gain Adaptation at level 1; Isolation can't be taken. No hit quest. Evolution quest: takedowns within 6 seconds of any hit; stacks 1-40 add 1 max Essence each, 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage taken each, at 100 fatal damage Burrows Dehaka instead (once every 60 seconds), then 2% damage each (all script but the last). -->
+  <!-- Every 25 Essence collected (20 with Rapid Adaptation) grants a random mutation (script; each win keeps 10% of that map's mutations, rounded up): 2% Health, 2% Attack Speed, 1% Life Steal, 3% Ability damage, 2% Movement Speed (also added to the Movement Speed boons, so it adds to them), 1% shorter Stuns, Silences and Slows (script, up to 75%), 1% Healing Received, 1 max Essence (script), or 5% Attack Damage. Essence Collection heals 20% more and can be used at full Health (Or validators); its drain follows the raised max Essence (script). Gain Adaptation at level 1; Isolation can't be taken. No hit quest. Evolution quest: takedowns within 6 seconds of any hit; stacks 1-40 add 1 max Essence each, 41-80 make Brushstalker recharge 3% faster each, 81-100 make Adaptation heal 1% more of the damage taken each, at 100 fatal damage Burrows Dehaka instead (once every 60 seconds), then 2% damage each (all script but the last). -->
   <CBehaviorTokenCounter id="DehakaGoldenEvolutionTokenCounter" parent="StormQuestToken">
     <Face value="DehakaGoldenEvolutionTokenCounter" />
     <Max value="100000" />
@@ -239,6 +239,35 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <CombineArray value="TargetInShrub" />
     <CombineArray value="DehakaGoldenCasterHasBrushMarker" />
   </CValidatorCombine>
+  <!-- Primal Evolution: Essence Collection works at full Health (the button's disable check and the cast's check) -->
+  <CValidatorUnitCompareBehaviorCount id="DehakaGoldenSourceHasPrimal">
+    <WhichUnit Value="Source" />
+    <Behavior value="DehakaGoldenPrimalMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="DehakaGoldenCasterHasPrimal">
+    <WhichUnit Value="Caster" />
+    <Behavior value="DehakaGoldenPrimalMarker" />
+    <Compare value="GE" />
+    <Value value="1" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorCombine id="DehakaGoldenEssenceSourceLifeCheck">
+    <Type value="Or" />
+    <CombineArray value="SourceLifeNotFull" />
+    <CombineArray value="DehakaGoldenSourceHasPrimal" />
+  </CValidatorCombine>
+  <CValidatorCombine id="DehakaGoldenEssenceCasterLifeCheck">
+    <Type value="Or" />
+    <CombineArray value="CasterLifeNotFull" />
+    <CombineArray value="DehakaGoldenCasterHasPrimal" />
+  </CValidatorCombine>
+  <CBehaviorBuff id="DehakaEssenceCollectionEnabler">
+    <DisableValidatorArray index="0" value="DehakaGoldenEssenceSourceLifeCheck" />
+  </CBehaviorBuff>
+  <CEffectSet id="DehakaEssenceCollectionInitialApplySet">
+    <ValidatorArray index="0" value="DehakaGoldenEssenceCasterLifeCheck" />
+  </CEffectSet>
   <CEffectCreatePersistent id="DehakaBrushstalkerEmergingCreatePersistent">
     <ValidatorArray index="1" value="DehakaGoldenBrushstalkerTarget" />
   </CEffectCreatePersistent>
