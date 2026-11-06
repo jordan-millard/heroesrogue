@@ -194,26 +194,9 @@ unit libAffx_DVaMech () {
 }
 // Pilot Pro: the mech talents disabled, the pilot talents shown (also done by the starter's TalentsDisable/TalentsShow)
 void libAffx_DVaPilotTalents () {
-    int n = CatalogFieldValueCount(c_gameCatalogHero, "DVa", "TalentTreeArray", c_playerAny);
-    int k = 0;
+    int k = 1;
     bool found = false;
     string entry;
-    string line = "TEMP tree " + IntToString(n) + ":";
-    while (k < n) {
-        line = line + " " + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(k) + "].Talent", c_playerAny) + "/" + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(k) + "].Tier", c_playerAny);
-        k += 1;
-    }
-    libAffx_DisplayChatMessage(StringToText(line));
-    line = (libGame_gv_players[libAffx_player].lv_heroData.lv_heroCatalogLink);
-    libAffx_DisplayChatMessage(StringToText("TEMP hero link " + line + " has " + IntToString(CatalogFieldValueCount(c_gameCatalogHero, line, "TalentTreeArray", c_playerAny)) + " entries; DVa has " + IntToString(n) + "; last DVa entry " + CatalogFieldValueGet(c_gameCatalogHero, "DVa", "TalentTreeArray[" + IntToString(n - 1) + "].Talent", c_playerAny)));
-    line = "TEMP tier1 " + IntToString(libGame_gv_talents_TalentChoices[libAffx_player][1].lv_numberOfTalentsForThisTier) + ":";
-    k = 1;
-    while (k <= 5) {
-        line = line + " " + libGame_gv_talents_TalentChoices[libAffx_player][1].lv_talentData[k].lv_talentCatalogLink;
-        k += 1;
-    }
-    libAffx_DisplayChatMessage(StringToText(line));
-    k = 1;
     while (k <= 5) {
         entry = libGame_gv_talents_TalentChoices[libAffx_player][1].lv_talentData[k].lv_talentCatalogLink;
         if (entry == "DVaGoldenQuickReload") {
@@ -246,7 +229,6 @@ void libAffx_DVaPilotTalents () {
             SetTalentsEnabled(false);
             SetTalentsEnabled(true);
         }
-        libAffx_DisplayChatMessage(StringToText("TEMP: pilot talents not in the tree; mech talents left pickable"));
         return;
     }
     libAffx_DisableTalent("DVaFullMetal", true);
@@ -286,7 +268,6 @@ void libAffx_DVaPilotTalents () {
         SetTalentsEnabled(true);
     }
     libGame_gf_TalentsUpdateChoicePanelForPlayer(libAffx_player);
-    libAffx_DisplayChatMessage(StringToText("TEMP: Pilot Pro talents set again"));
 }
 // the quest tokens live on the pilot (D.Va's hero unit); the mech's abilities read them from the mech, so it gets the same counts
 void libAffx_DVaMirror (unit mech, string tokenId) {
@@ -454,41 +435,6 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// TEMPORARY: chat readout of the High Score quest's checks on each Big Shot hit
-bool libAffx_DVaDebugHit_Func (bool testConds, bool runActions) {
-    unit victim = EventUnit();
-    unit hero = libAffx_DVaHero();
-    string line = "BigShot hit: hero ";
-    if (hero == null) {
-        line = line + "null";
-    } else {
-        line = line + UnitGetType(hero);
-        if (UnitHasBehavior2(hero, "DVaGoldenPilotMarker")) {
-            line = line + " marker yes";
-        } else {
-            line = line + " marker NO";
-        }
-        line = line + " score " + IntToString(libAffx_DVaStacks("DVaGoldenHighScoreTokenCounter"));
-    }
-    line = line + " srcUnit " + UnitGetType(EventUnitDamageSourceUnit()) + " mod " + CatalogFieldValueGet(c_gameCatalogEffect, "DVaPilotBigShotDamage", "MultiplicativeModifierArray[DVaPilotHit].Modifier", libAffx_player);
-    line = line + " src " + IntToString(EventUnitDamageSourcePlayer()) + " me " + IntToString(libAffx_player) + " victim " + UnitGetType(victim) + " owner " + IntToString(UnitGetOwner(victim));
-    if (libAffx_DVaIsEnemyHero(victim)) {
-        line = line + " enemyHero yes";
-    } else {
-        line = line + " enemyHero NO";
-    }
-    libAffx_DisplayChatMessage(StringToText(line));
-    return true;
-}
-// TEMPORARY: names the damage effect of every hit D.Va lands on an enemy Hero (except Light Gun)
-bool libAffx_DVaDebugAny_Func (bool testConds, bool runActions) {
-    unit victim = EventUnit();
-    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || EventUnitDamageEffect() == "DVaPilotWeaponDamage") {
-        return false;
-    }
-    libAffx_DisplayChatMessage(StringToText("TEMP: hit with " + EventUnitDamageEffect() + " for " + FixedToString(EventUnitDamageAmount(), 0)));
-    return true;
-}
 // Boost Rider hit on an enemy Hero: takedown window, DVaGoldenTurboTokenCounter, the heal, and on-hit boons
 bool libAffx_DVaBoostHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -654,8 +600,6 @@ bool libAffx_DVaStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(trig, libAffx_player, "DVaMechDefenseMatrixFusionGeneratorAddChargetoCaster");
     TriggerAddDamageEvent(TriggerCreate("libAffx_DVaChargeTaken_Func"), null, "HeroDVaMech", c_unitDamageTypeAny, c_unitDamageEither, null);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DVaDetonated_Func"), libAffx_player, "DVaMechSelfDestructDetonationSet");
-    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DVaDebugHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DVaPilotBigShotDamage");
-    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DVaDebugAny_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DVaSync_Func"), 1.0, c_timeGame);
     return true;
