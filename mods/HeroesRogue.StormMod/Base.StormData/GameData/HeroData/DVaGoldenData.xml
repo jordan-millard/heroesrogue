@@ -98,7 +98,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Pilot Pro ===== -->
-  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, and Light Gun deals 50% more damage, its hits on enemy Heroes taking 0.25 seconds off Big Shot's recharge. High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
+  <!-- D.Va stays a pilot all game: the script ejects her and removes the mech after every spawn, and Call Mech can't be used; the pilot has 3 times the Health (+200% maximum Health), Big Shot stores 2 charges (6 second recharge) and casts in 0.2 seconds instead of 0.5, Headshot! moves to level 10 (a copy that cuts the charge recharge; the level 20 one and the mech Heroics Bunny Hop and Micro-Missiles are disabled), and Light Gun deals 50% more damage, its hits on enemy Heroes taking 0.25 seconds off Big Shot's recharge. High Score quest (10% of each map's gains kept for good): 1% Big Shot damage per Big Shot hit on an enemy Hero. Streak quest: takedowns within 6 seconds of a Big Shot or Light Gun hit; stacks 1-40 make Big Shot recharge 1% faster each, 41-80 add 0.5% Light Gun range each, at 100 a Big Shot hit on an enemy Hero summons an exploding mech at its location (Self-Destruct's full damage in 4, once every 60 seconds, script), then 2% damage each. -->
   <CBehaviorTokenCounter id="DVaGoldenHighScoreTokenCounter" parent="StormQuestToken">
     <Face value="DVaGoldenHighScoreTokenCounter" />
     <Max value="100000" />
@@ -303,6 +303,36 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="DVaPilotWeaponPostImpactSet">
     <EffectArray value="DVaGoldenPistolBigShotRecharge" />
   </CEffectSet>
+  <!-- Headshot! at level 10 (Pilot Pro shows it; the level 20 one and the mech Heroics are disabled): Big Shot deals 75%
+       more damage, like the base talent, and its charges recharge 2 seconds faster (the base one cuts the cooldown, which
+       does nothing with charges) -->
+  <CTalent id="DVaGoldenHeadshot">
+    <Face value="DVaGoldenHeadshot" />
+    <Abil value="DVaPilotBigShot" />
+    <AbilityModificationArray>
+      <Modifications>
+        <Type value="FlatModification" />
+        <Catalog value="Abil" />
+        <Entry value="DVaPilotBigShot" />
+        <Field value="Cost[0].Charge.TimeUse" />
+        <Value value="-2.000000" />
+      </Modifications>
+    </AbilityModificationArray>
+  </CTalent>
+  <CButton id="DVaGoldenHeadshot" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_dva_bigshot.dds" />
+    <HotkeyAlias value="DVaPilotBigShot" />
+  </CButton>
+  <CValidatorPlayerTalent id="DVaGoldenHasHeadshot">
+    <Find value="1" />
+    <Value value="DVaGoldenHeadshot" />
+  </CValidatorPlayerTalent>
+  <CEffectDamage id="DVaPilotBigShotDamage">
+    <MultiplicativeModifierArray index="DVaGoldenHeadshot" Validator="DVaGoldenHasHeadshot" Modifier="0.75" />
+  </CEffectDamage>
+  <CHero id="DVa">
+    <TalentTreeArray Talent="DVaGoldenHeadshot" Tier="4" Column="3" />
+  </CHero>
   <!-- Streak at 100: half a second after a Big Shot hit, a mech explodes at the Hero's location (once every 60 seconds) -->
   <CBehaviorBuff id="DVaGoldenMiniNukeCooldown">
     <Alignment value="Negative" />
