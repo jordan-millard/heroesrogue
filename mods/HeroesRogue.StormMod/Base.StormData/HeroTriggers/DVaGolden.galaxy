@@ -36,6 +36,7 @@ fixed libAffx_DVaSpeedrunTime; // Speedrun: the last Stun
 actor[16] libAffx_DVaFireActors; // Rider at 100: the fire patches shown
 fixed[16] libAffx_DVaFireTimes; // and when each was placed (0: none)
 int libAffx_DVaFireNext; // the next slot
+int libAffx_DVaPilotTalentTicks; // Pilot Pro: ticks until its talents are set again
 string[6] libAffx_DVaTokens; // the quest tokens the mech copies
 
 unit libAffx_DVaHero() {
@@ -190,6 +191,42 @@ unit libAffx_DVaMech () {
     }
     return UnitTransport(pilot);
 }
+// Pilot Pro: the mech talents disabled, the pilot talents shown (also done by the starter's TalentsDisable/TalentsShow)
+void libAffx_DVaPilotTalents () {
+    libAffx_DisableTalent("DVaFullMetal", true);
+    libAffx_DisableTalent("DVaMechProMoves", true);
+    libAffx_DisableTalent("DVaLiquidCooling", true);
+    libAffx_DisableTalent("DVaBoostersRushdown", true);
+    libAffx_DisableTalent("DVaDefenseMatrixAggressionMatrix", true);
+    libAffx_DisableTalent("DVaSelfDestructNuclearOption", true);
+    libAffx_DisableTalent("DvaGetOnThePoint", true);
+    libAffx_DisableTalent("DVaBoostersHitTheNitrous", true);
+    libAffx_DisableTalent("DVaDefenseMatrixFusionGenerator", true);
+    libAffx_DisableTalent("DVaBunnyHop", true);
+    libAffx_DisableTalent("DVaMicroMissiles", true);
+    libAffx_DisableTalent("DVaTargetLocked", true);
+    libAffx_DisableTalent("DVaInForTheKill", true);
+    libAffx_DisableTalent("DVaDefenseMatrixDivertingPower", true);
+    libAffx_DisableTalent("DVaMechEmergencyShielding", true);
+    libAffx_DisableTalent("DVaBunnyHopStopAndPop", true);
+    libAffx_DisableTalent("DVaTimingAttack", true);
+    libAffx_DisableTalent("DVaHeadshot", true);
+    libAffx_DisableTalent("DVaMechAblativeArmor", true);
+    libAffx_ShowTalent("DVaGoldenHeadshot", true);
+    libAffx_ShowTalent("DVaGoldenQuickReload", true);
+    libAffx_ShowTalent("DVaGoldenExtraLife", true);
+    libAffx_ShowTalent("DVaGoldenLagSpike", true);
+    libAffx_ShowTalent("DVaGoldenKiting", true);
+    libAffx_ShowTalent("DVaGoldenAmmoBox", true);
+    libAffx_ShowTalent("DVaGoldenHealthPack", true);
+    libAffx_ShowTalent("DVaGoldenMekaDrop", true);
+    libAffx_ShowTalent("DVaGoldenClutchPlay", true);
+    libAffx_ShowTalent("DVaGoldenStim", true);
+    libAffx_ShowTalent("DVaGoldenRicochet", true);
+    libAffx_ShowTalent("DVaGoldenWorldRecord", true);
+    libAffx_UpdateEmptyTalentTiers(libAffx_player);
+    libAffx_DisplayChatMessage(StringToText("TEMP: Pilot Pro talents set again"));
+}
 // the quest tokens live on the pilot (D.Va's hero unit); the mech's abilities read them from the mech, so it gets the same counts
 void libAffx_DVaMirror (unit mech, string tokenId) {
     int want = libAffx_DVaStacks(tokenId);
@@ -279,6 +316,12 @@ bool libAffx_DVaTick_Func (bool testConds, bool runActions) {
     if (pilot == null) {
         return true;
     }
+    if (UnitHasBehavior2(pilot, "DVaGoldenPilotMarker") && libAffx_DVaPilotTalentTicks < 8) {
+        libAffx_DVaPilotTalentTicks += 1;
+        if (libAffx_DVaPilotTalentTicks == 8) {
+            libAffx_DVaPilotTalents();
+        }
+    }
     mech = UnitTransport(pilot);
     // Pilot Pro: out of the mech (the base script's unload trigger swaps the UI to the pilot), then the mech goes away
     if (UnitHasBehavior2(pilot, "DVaGoldenPilotMarker")) {
@@ -362,6 +405,15 @@ bool libAffx_DVaDebugHit_Func (bool testConds, bool runActions) {
         line = line + " enemyHero NO";
     }
     libAffx_DisplayChatMessage(StringToText(line));
+    return true;
+}
+// TEMPORARY: names the damage effect of every hit D.Va lands on an enemy Hero (except Light Gun)
+bool libAffx_DVaDebugAny_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    if (EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_DVaIsEnemyHero(victim) || EventUnitDamageEffect() == "DVaPilotWeaponDamage") {
+        return false;
+    }
+    libAffx_DisplayChatMessage(StringToText("TEMP: hit with " + EventUnitDamageEffect() + " for " + FixedToString(EventUnitDamageAmount(), 0)));
     return true;
 }
 // Boost Rider hit on an enemy Hero: takedown window, DVaGoldenTurboTokenCounter, the heal, and on-hit boons
@@ -530,6 +582,7 @@ bool libAffx_DVaStart (bool testConds, bool runActions) {
     TriggerAddDamageEvent(TriggerCreate("libAffx_DVaChargeTaken_Func"), null, "HeroDVaMech", c_unitDamageTypeAny, c_unitDamageEither, null);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_DVaDetonated_Func"), libAffx_player, "DVaMechSelfDestructDetonationSet");
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DVaDebugHit_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "DVaPilotBigShotDamage");
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_DVaDebugAny_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, null);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_DVaSync_Func"), 1.0, c_timeGame);
     return true;
