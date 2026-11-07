@@ -88,7 +88,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Gas Bag ===== -->
-  <!-- A gas cloud around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (script sets the amount), 3% for 6 seconds after a Hook hit on an enemy Hero and while Shambling Horror is on; Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data) and 5% per enemy Hero Gorged (script). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), at 100 a Hero Gorge lets go of is hit by a gas burst for 10% of Stitches' maximum Health (script), then 2% damage each. -->
+  <!-- A gas cloud around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (script sets the amount), 3% for 6 seconds after a Hook, Gorge, Devour or inner Slam hit on an enemy Hero and while Shambling Horror is on; Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data) and 5% per enemy Hero Gorged (script). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), at 100 a Hero Gorge lets go of is hit by a gas burst for 10% of Stitches' maximum Health (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenLeftoversTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenLeftoversTokenCounter" />
     <Max value="100000" />
@@ -372,6 +372,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Behavior value="StitchesGoldenChopChop" />
   </CValidatorUnitCompareBehaviorCount>
   <CEffectSet id="StitchesSlamMediumSearchImpactSet">
+    <EffectArray value="StitchesGoldenGasSurgeApply" />
     <EffectArray value="StitchesGoldenSlamRushSet" />
     <EffectArray value="StitchesGoldenMeatShakeHeal" />
     <EffectArray value="StitchesGoldenChopChopApply" />
@@ -405,7 +406,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectSet>
   <!-- ===== Gas Bag ===== -->
   <!-- Gas Bag: a cloud of gas around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (the script
-       sets the amount from his Health), tripled for 6 seconds after a Hook hit on an enemy Hero and while Shambling Horror is on -->
+       sets the amount from his Health), tripled for 6 seconds after a Hook, Gorge, Devour or inner Slam hit on an enemy Hero and while Shambling Horror
+       is on -->
   <CBehaviorBuff id="StitchesGoldenGasAura" parent="CarryBehaviorParent">
     <DisableValidatorArray value="CasterNotStasis" />
     <DisableValidatorArray value="SourceNotDead" />
@@ -438,7 +440,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <WhichUnit Value="Caster" />
     <Behavior value="StitchesGoldenGasSurge" />
   </CEffectApplyBehavior>
+  <!-- surges: a Hook, Devour or inner Slam hit on an enemy Hero (here and in the Slam block); Gorge in script -->
   <CEffectSet id="StitchesHookImpactSet">
+    <EffectArray value="StitchesGoldenGasSurgeApply" />
+  </CEffectSet>
+  <CEffectSet id="StitchesDevourHeroDamageSet">
     <EffectArray value="StitchesGoldenGasSurgeApply" />
   </CEffectSet>
   <CValidatorUnitCompareBehaviorCount id="StitchesGoldenCasterIsGasBag">

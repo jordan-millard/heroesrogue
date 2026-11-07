@@ -259,7 +259,7 @@ bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Gas Bag, Leftovers: Gorging an enemy Hero adds 5
+// Gas Bag, Leftovers: Gorging an enemy Hero adds 5 (and starts a gas surge)
 bool libAffx_StitchesGorgeStart_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit hero = libAffx_StitchesHero();
@@ -267,6 +267,8 @@ bool libAffx_StitchesGorgeStart_Func (bool testConds, bool runActions) {
         return false;
     }
     libGame_gf_ModifyTokenCount(5, "StitchesGoldenLeftoversTokenCounter", hero);
+    // and the gas surges (triple damage) for 6 seconds
+    UnitBehaviorAdd(hero, "StitchesGoldenGasSurge", hero, 1);
     return true;
 }
 // Gas Bag, Stench at 100: the Hero Gorge lets go of is hit by a gas burst
