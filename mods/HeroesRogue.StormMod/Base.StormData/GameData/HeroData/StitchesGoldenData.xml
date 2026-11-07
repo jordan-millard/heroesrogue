@@ -291,8 +291,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
     <BehaviorCategories index="Fast" value="1" />
     <Duration value="1" />
+    <ExpireEffect value="StitchesGoldenSlamRush2Apply" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0" />
+      <MoveSpeedMultiplier value="1" />
     </Modification>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="StitchesGoldenSlamRush1Apply">
@@ -301,10 +302,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
   <CBehaviorBuff id="StitchesGoldenSlamRush2">
     <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="2" />
+    <Duration value="1" />
+    <ExpireEffect value="StitchesGoldenSlamRush3Apply" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0" />
+      <MoveSpeedMultiplier value="1" />
     </Modification>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="StitchesGoldenSlamRush2Apply">
@@ -313,10 +317,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
   <CBehaviorBuff id="StitchesGoldenSlamRush3">
     <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="3" />
+    <Duration value="1" />
+    <ExpireEffect value="StitchesGoldenSlamRush4Apply" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0" />
+      <MoveSpeedMultiplier value="1" />
     </Modification>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="StitchesGoldenSlamRush3Apply">
@@ -325,23 +332,37 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectApplyBehavior>
   <CBehaviorBuff id="StitchesGoldenSlamRush4">
     <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="4" />
+    <Duration value="1" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0" />
+      <MoveSpeedMultiplier value="1" />
     </Modification>
   </CBehaviorBuff>
   <CEffectApplyBehavior id="StitchesGoldenSlamRush4Apply">
     <WhichUnit Value="Caster" />
     <Behavior value="StitchesGoldenSlamRush4" />
   </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="StitchesGoldenSlamRush2Clear">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="StitchesGoldenSlamRush2" />
+  </CEffectRemoveBehavior>
+  <CEffectRemoveBehavior id="StitchesGoldenSlamRush3Clear">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="StitchesGoldenSlamRush3" />
+  </CEffectRemoveBehavior>
+  <CEffectRemoveBehavior id="StitchesGoldenSlamRush4Clear">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="StitchesGoldenSlamRush4" />
+  </CEffectRemoveBehavior>
   <CEffectSet id="StitchesGoldenSlamRushSet">
     <Chance value="0" />
     <ValidatorArray value="TargetIsHero" />
+    <EffectArray value="StitchesGoldenSlamRush2Clear" />
+    <EffectArray value="StitchesGoldenSlamRush3Clear" />
+    <EffectArray value="StitchesGoldenSlamRush4Clear" />
     <EffectArray value="StitchesGoldenSlamRush1Apply" />
-    <EffectArray value="StitchesGoldenSlamRush2Apply" />
-    <EffectArray value="StitchesGoldenSlamRush3Apply" />
-    <EffectArray value="StitchesGoldenSlamRush4Apply" />
   </CEffectSet>
   <!-- Meat Shake (Epic): each Slam hit on an enemy Hero heals 2% of Stitches' maximum Health (Chance 0: the boon) -->
   <CEffectCreateHealer id="StitchesGoldenMeatShakeHeal" parent="StormSelfOnlyHealingSpellPercent">

@@ -106,10 +106,10 @@ void libAffx_StitchesSyncSlammer () {
     stacks = libAffx_StitchesStacks("StitchesGoldenQuakeTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_StitchesSlammerAdded) {
-        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush1,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush2,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush3,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush4,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush1,Modification.MoveSpeedMultiplier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush2,Modification.MoveSpeedMultiplier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush3,Modification.MoveSpeedMultiplier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush4,Modification.MoveSpeedMultiplier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_StitchesSlammerAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): Slam is 1% larger each
