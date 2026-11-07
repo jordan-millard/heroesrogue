@@ -52,7 +52,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Slammer ===== -->
-  <!-- Slam stores 2 charges (6 second recharge) and costs half Mana; gain Vile Cleaver and Pulverize. Smash quest (10% of each map's gains kept for good): 0.25% Slam damage per enemy Hero hit. Quake quest: takedowns within 6 seconds of a Slam hit; stacks 1-40 add 2% each to a Movement Speed burst (fading over 2 seconds) that Slam hits on enemy Heroes give, 41-80 make Slam 1% larger each, 81-100 make its Slow 1% stronger each, at 100 a second Slam 0.5 seconds later (script), then 2% damage each. -->
+  <!-- Slam stores 2 charges (6 second recharge) and costs half Mana; gain Vile Cleaver and Pulverize. Smash quest (10% of each map's gains kept for good): 0.5% Slam damage per enemy Hero hit. Quake quest: takedowns within 6 seconds of a Slam hit; stacks 1-40 add 2% each to a Movement Speed burst (fading over 4 seconds) that Slam hits on enemy Heroes give, 41-80 make Slam 1% larger each, 81-100 make its Slow 1% stronger each, at 100 a second Slam 0.5 seconds later (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenSmashTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenSmashTokenCounter" />
     <Max value="100000" />
@@ -66,7 +66,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="StitchesGoldenSmashTokenCounter" />
-    <Scale value="0.0025" />
+    <Scale value="0.005" />
   </CAccumulatorToken>
   <CEffectDamage id="StitchesSlamMediumRangeDamage">
     <MultiplicativeModifierArray index="StitchesSlammerPower" Modifier="0" />
@@ -282,14 +282,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectModifyUnit id="StitchesPutridBilePotentBileModifyUnit">
     <Cost Abil="StitchesSlam,Execute" CooldownOperation="Add" CooldownTimeUse="-0.375" ChargeTimeUse="-0.375" />
   </CEffectModifyUnit>
-  <!-- Quake 1-40: a Slam hit on an enemy Hero gives a Movement Speed burst that decays over 2 seconds (2% per stack, up to
+  <!-- Quake 1-40: a Slam hit on an enemy Hero gives a Movement Speed burst that decays over 4 seconds (2% per stack, up to
        80%; the quest sets the amounts; Chance 0: the starter turns it on) -->
   <CBehaviorBuff id="StitchesGoldenSlamRush1">
     <Alignment value="Positive" />
     <InfoFlags index="Hidden" value="0" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="0.5" />
+    <Duration value="1" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />
     </Modification>
@@ -301,7 +301,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="StitchesGoldenSlamRush2">
     <Alignment value="Positive" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="1" />
+    <Duration value="2" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />
     </Modification>
@@ -313,7 +313,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="StitchesGoldenSlamRush3">
     <Alignment value="Positive" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="1.5" />
+    <Duration value="3" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />
     </Modification>
@@ -325,7 +325,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="StitchesGoldenSlamRush4">
     <Alignment value="Positive" />
     <BehaviorCategories index="Fast" value="1" />
-    <Duration value="2" />
+    <Duration value="4" />
     <Modification>
       <UnifiedMoveSpeedFactor value="0" />
     </Modification>
