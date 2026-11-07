@@ -226,7 +226,7 @@ bool libAffx_StitchesHookArrive_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Every second: Slammer's echo at 100 Quake; Gas Bag's gas damage (2% of maximum Health per tick, the burst 10%) and
+// Every second: Slammer's echo at 100 Quake; Gas Bag's gas damage (1% of maximum Health per tick, tripled in data while surging; the burst 10%) and
 // maximum Health (Stench 41-80 and Bloated); Deflated's size
 bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_StitchesHero();
@@ -240,7 +240,7 @@ bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
     }
     if (UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker")) {
         life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasDamage", "Amount", libAffx_player, life * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasDamage", "Amount", libAffx_player, life * 0.01);
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasBurstDamage", "Amount", libAffx_player, life * 0.1);
         health = IntToFixed(MaxI(0, MinI(libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") - 40, 40))) * 0.01;
         health += StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "StitchesGoldenBloatedValue", "Modification.VitalMaxFractionArray[Life]", libAffx_player));
