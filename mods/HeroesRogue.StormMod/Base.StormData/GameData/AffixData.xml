@@ -30826,6 +30826,346 @@
                 <Field Id="Behavior" />
             </String>
         </Instances>
+        <Instances Id="StitchesSlammer">
+            <String String="Assets/Textures/storm_ui_icon_stitches_slam.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="StitchesVileCleaver">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="StitchesPulverizeSlam">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 StitchesGoldenSlammerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 StitchesGoldenSmashTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 StitchesGoldenQuakeTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="StitchesGoldenQuakeTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="StitchesGoldenSmashTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,StitchesSlam,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,StitchesSlam,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,StitchesSlam,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,StitchesSlam,Cost.Charge.TimeUse 6">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,StitchesSlam,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Multiply Abil,StitchesSlam,Cost.Vital[Energy] 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,StitchesGoldenSlamRushSet,Chance 1">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,StitchesSlamMediumRangeDamage,MultiplicativeModifierArray[StitchesSlammerPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,StitchesSlamDamage,MultiplicativeModifierArray[StitchesSlammerPower].Modifier 0">
+                <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="AffixAdded libAffx_StitchesStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_StitchesTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesHeavyHands">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_stitches_slam.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesSlammer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,StitchesSlamMediumRangeDamage,MultiplicativeModifierArray[StitchesSlammerCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,StitchesSlamDamage,MultiplicativeModifierArray[StitchesSlammerCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesTenderizerBoon">
+            <String String="Assets/Textures/storm_ui_icon_stitches_slam.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesSlammer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="StitchesTenderizer">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesFlareUpBoon">
+            <String String="Assets/Textures/storm_ui_icon_stitches_acidcloud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesSlammer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="StitchesFlareUp">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesMeatShake">
+            <String String="Assets/Textures/storm_ui_icon_stitches_slam.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesSlammer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,StitchesGoldenMeatShakeHeal,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesChopChopBoon">
+            <String String="Assets/Textures/storm_ui_icon_stitches_chopchop.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesSlammer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,StitchesGoldenChopChopApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesGasBag">
+            <String String="Assets/Textures/storm_ui_icon_stitches_acidcloud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="StitchesHungryforMore">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="StitchesHeroicAbilityGorge">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="StitchesHeroicAbilityPutridBile">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 StitchesGoldenGasBagMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 StitchesGoldenLeftoversTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 StitchesGoldenStenchTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="1 0 StitchesGoldenGasAura">
+                <Field Id="Behavior" Index="3" />
+            </String>
+            <String String="1 0 StitchesGoldenGasBagSlow">
+                <Field Id="Behavior" Index="4" />
+            </String>
+            <String String="StitchesGoldenStenchTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="StitchesGoldenLeftoversTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="StitchesHungryForMoreQuestToken 0.1 gains">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,StitchesDevourCreateHealer,RechargeVitalFraction 0.4">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,StitchesGoldenGasDamage,MultiplicativeModifierArray[StitchesGasBagPower].Modifier 0">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,StitchesGoldenGasBurstDamage,MultiplicativeModifierArray[StitchesGasBagPower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="AffixAdded libAffx_StitchesStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_StitchesTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesRotten">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_stitches_acidcloud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesGasBag">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,StitchesGoldenGasDamage,MultiplicativeModifierArray[StitchesGasBagCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,StitchesGoldenGasBurstDamage,MultiplicativeModifierArray[StitchesGasBagCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesBloated">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_stitches_hungry.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesGasBag">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Behavior,StitchesGoldenBloatedValue,Modification.VitalMaxFractionArray[Life] 0.03">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesPatchworkCreationBoon">
+            <String String="Assets/Textures/storm_ui_icon_stitches_patchwork.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesGasBag">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="StitchesPatchworkCreation">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesDigestiveJuicesBoon">
+            <String String="Assets/Textures/storm_ui_icon_stitches_cannibalize.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesGasBag">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="StitchesDigestiveJuices">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesChokingFumes">
+            <String String="Assets/Textures/storm_ui_icon_stitches_acidcloud.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesGasBag">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,StitchesGoldenChokingFumesApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesGiftFromTheEmbalmerBoon">
+            <String String="Assets/Textures/storm_ui_icon_stitches_cannibalize.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="StitchesGasBag">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,StitchesGoldenEmbalmerHeal,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="StitchesDeflated">
+            <String String="Assets/Textures/storm_ui_icon_stitches_patchwork.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Stitches">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="1 0 StitchesGoldenDeflatedMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
 
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">

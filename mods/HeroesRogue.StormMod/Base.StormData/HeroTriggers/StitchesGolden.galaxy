@@ -4,6 +4,10 @@ include "AffixTriggers"
 // Golden Stitches. Hooker: enemy Heroes hooked add Catch (Basic Attack damage) and open a 6 second takedown window.
 // Takedowns add Reel: Heroic recharge, then hook speed, then a Slow on arrival, then at 100 Invulnerability on
 // casting Hook and on hooking a Hero, then 2% damage per stack.
+// Slammer: Slam hits on enemy Heroes add Smash; takedowns add Quake: a speed burst on Hero hits, then Slam size, then
+// its Slow, then at 100 a second Slam, then 2% damage per stack.
+// Gas Bag: a gas cloud around Stitches; Regeneration Globes add Leftovers (data); takedowns within 6 seconds of a gas
+// hit add Stench: cloud size, then maximum Health, then at 100 a gas burst when Gorge lets go, then 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_StitchesTakedownWindow = 3.0;
@@ -14,6 +18,15 @@ int libAffx_StitchesHookerAdded; // Hooker: takedown stacks already applied to t
 int libAffx_StitchesHookerAdded2; // Hooker: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_StitchesHookerAdded3; // Hooker: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_StitchesHookerPastApplied; // Hooker: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_StitchesSlammerTime; // per enemy player, last Slammer hit
+int libAffx_StitchesSlammerAdded; // Slammer: takedown stacks already applied to the catalog this game
+int libAffx_StitchesSlammerAdded2; // Slammer: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_StitchesSlammerAdded3; // Slammer: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_StitchesSlammerPastApplied; // Slammer: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_StitchesGasBagTime; // per enemy player, last Gas Bag hit
+int libAffx_StitchesGasBagAdded; // Gas Bag: takedown stacks already applied to the catalog this game
+int libAffx_StitchesGasBagPastApplied; // Gas Bag: takedown quest stacks past the cap applied as damage this game
+fixed libAffx_StitchesHealthApplied; // Gas Bag: the maximum Health fraction last applied
 
 unit libAffx_StitchesHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -80,8 +93,98 @@ void libAffx_StitchesSyncHooker () {
         UnitBehaviorAdd(hero, "StitchesHookerPastCapDamage", hero, 1);
     }
 }
+// StitchesGoldenQuakeTokenCounter: stacks 1-40: 2% each to the speed burst (the 4 steps get 100%, 75%, 50% and 25% of it); 41-80 Slam size, 81-100 Slow, 100 echo (script), then damage
+void libAffx_StitchesSyncSlammer () {
+    unit hero = libAffx_StitchesHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "StitchesGoldenSlammerMarker")) {
+        return;
+    }
+    stacks = libAffx_StitchesStacks("StitchesGoldenQuakeTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_StitchesSlammerAdded) {
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush1,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush2,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush3,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenSlamRush4,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded) * 0.005, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesSlammerAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): Slam is 1% larger each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_StitchesSlammerAdded2) {
+        libAffx_CatalogReferenceModify("Effect,StitchesSlamMediumSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded2) * 0.0525, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,StitchesSlamLargeSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded2) * 0.095, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesSlammerAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Slam's Slow is 1% stronger each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_StitchesSlammerAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,StitchesSlamSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesSlammerAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesSlammerAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_StitchesSlammerPastApplied) {
+        libAffx_StitchesSlammerPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesSlammerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesSlammerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "StitchesSlammerPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "StitchesSlammerPastCapDamage")) {
+        UnitBehaviorAdd(hero, "StitchesSlammerPastCapDamage", hero, 1);
+    }
+}
+// StitchesGoldenStenchTokenCounter: stacks 1-40: the gas cloud is 1% larger each; 41-80 maximum Health (libAffx_StitchesTick_Func), 100 gas burst (script), then damage
+void libAffx_StitchesSyncGasBag () {
+    unit hero = libAffx_StitchesHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker")) {
+        return;
+    }
+    stacks = libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_StitchesGasBagAdded) {
+        libAffx_CatalogReferenceModify("Effect,StitchesGoldenGasSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesGasBagAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesGasBagAdded = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_StitchesGasBagPastApplied) {
+        libAffx_StitchesGasBagPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesGasBagPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesGasBagPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "StitchesGasBagPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "StitchesGasBagPastCapDamage")) {
+        UnitBehaviorAdd(hero, "StitchesGasBagPastCapDamage", hero, 1);
+    }
+}
 bool libAffx_StitchesSync_Func (bool testConds, bool runActions) {
     libAffx_StitchesSyncHooker();
+    libAffx_StitchesSyncSlammer();
+    libAffx_StitchesSyncGasBag();
+    return true;
+}
+fixed libAffx_StitchesStitchesSlamInitialSetLastEcho = -1.0;
+// StitchesGoldenSlamEchoMarker: StitchesSlamInitialSet is cast again toward the same point 0.5 seconds later. The echo is skipped by its own event.
+bool libAffx_StitchesStitchesSlamInitialSetEcho_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_StitchesHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    if (hero == null || !UnitHasBehavior2(hero, "StitchesGoldenSlamEchoMarker") || GameGetMissionTime() == libAffx_StitchesStitchesSlamInitialSetLastEcho) {
+        return false;
+    }
+    Wait(0.5, c_timeGame);
+    if (!UnitIsAlive(hero) || target == null) {
+        return true;
+    }
+    libAffx_StitchesStitchesSlamInitialSetLastEcho = GameGetMissionTime();
+    UnitCreateEffectPoint(hero, "StitchesSlamInitialSet", target);
     return true;
 }
 // an enemy-team Hero (the base hero test counts allies too)
@@ -123,6 +226,49 @@ bool libAffx_StitchesHookArrive_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Every second: Slammer's echo at 100 Quake; Gas Bag's gas damage (1% of maximum Health per tick, the burst 10%) and
+// maximum Health (Stench 41-80 and Bloated); Deflated's size
+bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_StitchesHero();
+    fixed life;
+    fixed health;
+    if (hero == null) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenSlammerMarker") && libAffx_StitchesStacks("StitchesGoldenQuakeTokenCounter") >= 100 && !UnitHasBehavior2(hero, "StitchesGoldenSlamEchoMarker")) {
+        UnitBehaviorAdd(hero, "StitchesGoldenSlamEchoMarker", hero, 1);
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker")) {
+        life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasDamage", "Amount", libAffx_player, life * 0.01);
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasBurstDamage", "Amount", libAffx_player, life * 0.1);
+        health = IntToFixed(MaxI(0, MinI(libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") - 40, 40))) * 0.01;
+        health += StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "StitchesGoldenBloatedValue", "Modification.VitalMaxFractionArray[Life]", libAffx_player));
+        if (health != libAffx_StitchesHealthApplied) {
+            libAffx_StitchesHealthApplied = health;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesGoldenGasBagHealth", "Modification.VitalMaxFractionArray[Life]", libAffx_player, health);
+            UnitBehaviorRemove(hero, "StitchesGoldenGasBagHealth", 1);
+        }
+        if (health > 0.0 && !UnitHasBehavior2(hero, "StitchesGoldenGasBagHealth")) {
+            UnitBehaviorAdd(hero, "StitchesGoldenGasBagHealth", hero, 1);
+        }
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenDeflatedMarker")) {
+        UnitSetScale(hero, 50.0, 50.0, 50.0);
+        UnitSetPropertyFixed(hero, c_unitPropRadius, 0.53125);
+    }
+    return true;
+}
+// Gas Bag, Stench at 100: the Hero Gorge lets go of is hit by a gas burst
+bool libAffx_StitchesGorgeEnd_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker") || !libAffx_StitchesIsFoe(victim) || libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") < 100) {
+        return false;
+    }
+    UnitCreateEffectPoint(hero, "StitchesGoldenGasBurstSearch", UnitGetPosition(victim));
+    return true;
+}
 // Hooker hit on an enemy Hero: takedown window, StitchesGoldenCatchTokenCounter, the heal, and on-hit boons
 bool libAffx_StitchesHookerHit_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
@@ -135,27 +281,69 @@ bool libAffx_StitchesHookerHit_Func (bool testConds, bool runActions) {
     libAffx_StitchesHookInvulnerable();
     return true;
 }
+// Slammer hit on an enemy Hero: takedown window, StitchesGoldenSmashTokenCounter, the heal, and on-hit boons
+bool libAffx_StitchesSlammerHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_StitchesIsEnemyHero(victim) || !UnitHasBehavior2(hero, "StitchesGoldenSlammerMarker")) {
+        return false;
+    }
+    libAffx_StitchesSlammerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "StitchesGoldenSmashTokenCounter", hero);
+    return true;
+}
+// Gas Bag hit on an enemy Hero: takedown window, StitchesGoldenLeftoversTokenCounter, the heal, and on-hit boons
+bool libAffx_StitchesGasBagHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_StitchesIsEnemyHero(victim) || !UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker")) {
+        return false;
+    }
+    libAffx_StitchesGasBagTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "StitchesGoldenLeftoversTokenCounter", hero);
+    return true;
+}
+// Gas Bag: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_StitchesGasBagWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_StitchesIsEnemyHero(victim) || !UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker")) {
+        return false;
+    }
+    libAffx_StitchesGasBagTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
 // Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
 // own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
-int[2] libAffx_StitchesTakedownBefore; // each starter's takedown stacks before this takedown
+int[4] libAffx_StitchesTakedownBefore; // each starter's takedown stacks before this takedown
 void libAffx_StitchesTakedownCrossStart () {
     unit hero = libAffx_StitchesHero();
     if (hero == null) {
         return;
     }
     libAffx_StitchesTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter"));
+    libAffx_StitchesTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenQuakeTokenCounter"));
+    libAffx_StitchesTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenStenchTokenCounter"));
 }
 void libAffx_StitchesTakedownCross () {
     unit hero = libAffx_StitchesHero();
     if (hero == null) {
         return;
     }
-    if (FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter")) == libAffx_StitchesTakedownBefore[1]) {
+    if (FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter")) == libAffx_StitchesTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenQuakeTokenCounter")) == libAffx_StitchesTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenStenchTokenCounter")) == libAffx_StitchesTakedownBefore[3]) {
         return;
     }
     if (UnitHasBehavior2(hero, "StitchesGoldenHookerMarker") && FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter")) == libAffx_StitchesTakedownBefore[1]) {
         libGame_gf_ModifyTokenCount(1, "StitchesGoldenReelTokenCounter", hero);
         libAffx_StitchesSyncHooker();
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenSlammerMarker") && FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenQuakeTokenCounter")) == libAffx_StitchesTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "StitchesGoldenQuakeTokenCounter", hero);
+        libAffx_StitchesSyncSlammer();
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker") && FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenStenchTokenCounter")) == libAffx_StitchesTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "StitchesGoldenStenchTokenCounter", hero);
+        libAffx_StitchesSyncGasBag();
     }
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -178,6 +366,18 @@ bool libAffx_StitchesTakedown (bool testConds, bool runActions) {
         libAffx_StitchesSyncHooker();
         libAffx_StitchesQuestDing();
     }
+    if (UnitHasBehavior2(hero, "StitchesGoldenSlammerMarker") && libAffx_StitchesSlammerTime[killedPlayer] > 0.0 && now - libAffx_StitchesSlammerTime[killedPlayer] <= 6.0) {
+        libAffx_StitchesSlammerTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "StitchesGoldenQuakeTokenCounter", hero);
+        libAffx_StitchesSyncSlammer();
+        libAffx_StitchesQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker") && libAffx_StitchesGasBagTime[killedPlayer] > 0.0 && now - libAffx_StitchesGasBagTime[killedPlayer] <= 6.0) {
+        libAffx_StitchesGasBagTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "StitchesGoldenStenchTokenCounter", hero);
+        libAffx_StitchesSyncGasBag();
+        libAffx_StitchesQuestDing();
+    }
     libAffx_StitchesTakedownCross();
     return true;
 }
@@ -189,8 +389,17 @@ bool libAffx_StitchesStart (bool testConds, bool runActions) {
     libAffx_StitchesStarted = true;
     trig = TriggerCreate("libAffx_StitchesHookerHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "StitchesHookDamage");
+    trig = TriggerCreate("libAffx_StitchesSlammerHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "StitchesSlamMediumRangeDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "StitchesSlamDamage");
+    trig = TriggerCreate("libAffx_StitchesGasBagHit_Func");
+    trig = TriggerCreate("libAffx_StitchesGasBagWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "StitchesGoldenGasDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_StitchesStitchesSlamInitialSetEcho_Func"), libAffx_player, "StitchesSlamInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_StitchesHookCast_Func"), libAffx_player, "StitchesHookLaunchCreatePersistent");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StitchesHookArrive_Func"), null, "StitchesHooked", c_unitBehaviorChangeDestroy);
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_StitchesTick_Func"), 1.0, c_timeGame);
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StitchesGorgeEnd_Func"), null, "StitchesGorgeInitialTargetBehavior", c_unitBehaviorChangeDestroy);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_StitchesSync_Func"), 1.0, c_timeGame);
     return true;

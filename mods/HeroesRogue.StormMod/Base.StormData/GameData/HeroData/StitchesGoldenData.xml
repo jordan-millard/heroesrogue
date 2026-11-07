@@ -3,11 +3,15 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Stitches. Starters: Hooker (Hook: half Mana, no cast time, 3 hooks, Basic Attacks on Heroes shorten its cooldown; Tenderizer and Master Hooker). Each damage effect has its own multipliers: starter power, hit quest (accumulator, on Basic Attacks) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/StitchesGolden.galaxy. -->
+  <!-- Golden Stitches. Starters: Hooker (Hook: half Mana, no cast time, 3 hooks, Basic Attacks on Heroes shorten its cooldown; Tenderizer and Master Hooker), Slammer (Slam: 2 charges, half Mana; Vile Cleaver and Pulverize) and Gas Bag (a gas cloud around Stitches; Hungry for More and Gorge at level 1). Each damage effect has its own multipliers: starter power, hit quest (accumulator, on Basic Attacks) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/StitchesGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="StitchesGoldenHookerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="StitchesGoldenSlammerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="StitchesGoldenGasBagMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="StitchesGoldenHookSlamMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="StitchesGoldenFreshCatchMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="StitchesGoldenSlamEchoMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="StitchesGoldenDeflatedMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hooker ===== -->
   <!-- Hook costs half Mana, has no cast time and fires 3 hooks in a narrow cone that can each pull an enemy; Basic Attacks against enemy Heroes take 0.5 seconds off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
@@ -40,8 +44,94 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="StitchesGoldenReelTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_stitches_hook.dds" />
   </CButton>
+
+  <!-- ===== Slammer ===== -->
+  <!-- Slam stores 2 charges (6 second recharge) and costs half Mana; gain Vile Cleaver and Pulverize. Smash quest (10% of each map's gains kept for good): 0.25% Slam damage per enemy Hero hit. Quake quest: takedowns within 6 seconds of a Slam hit; stacks 1-40 add 2% each to a Movement Speed burst (fading over 2 seconds) that Slam hits on enemy Heroes give, 41-80 make Slam 1% larger each, 81-100 make its Slow 1% stronger each, at 100 a second Slam 0.5 seconds later (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="StitchesGoldenSmashTokenCounter" parent="StormQuestToken">
+    <Face value="StitchesGoldenSmashTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="StitchesGoldenQuakeTokenCounter" parent="StormQuestToken">
+    <Face value="StitchesGoldenQuakeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="StitchesGoldenSmashTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="StitchesGoldenSmashTokenCounter" />
+    <Scale value="0.0025" />
+  </CAccumulatorToken>
+  <CEffectDamage id="StitchesSlamMediumRangeDamage">
+    <MultiplicativeModifierArray index="StitchesSlammerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesSlammerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesSlammerHit" Accumulator="StitchesGoldenSmashTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="StitchesSlammerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="StitchesSlamDamage">
+    <MultiplicativeModifierArray index="StitchesSlammerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesSlammerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesSlammerHit" Accumulator="StitchesGoldenSmashTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="StitchesSlammerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="StitchesGoldenSmashTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
+  </CButton>
+  <CButton id="StitchesGoldenQuakeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
+  </CButton>
+
+  <!-- ===== Gas Bag ===== -->
+  <!-- A gas cloud around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (script sets the amount); Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), at 100 a Hero Gorge lets go of is hit by a gas burst for 10% of Stitches' maximum Health (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="StitchesGoldenLeftoversTokenCounter" parent="StormQuestToken">
+    <Face value="StitchesGoldenLeftoversTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="StitchesGoldenStenchTokenCounter" parent="StormQuestToken">
+    <Face value="StitchesGoldenStenchTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="StitchesGoldenLeftoversTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="StitchesGoldenLeftoversTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="StitchesGoldenGasDamage">
+    <MultiplicativeModifierArray index="StitchesGasBagPower" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesGasBagCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesGasBagHit" Accumulator="StitchesGoldenLeftoversTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="StitchesGasBagLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="StitchesGoldenGasBurstDamage">
+    <MultiplicativeModifierArray index="StitchesGasBagPower" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesGasBagCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesGasBagHit" Accumulator="StitchesGoldenLeftoversTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="StitchesGasBagLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="StitchesGoldenLeftoversTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stitches_acidcloud.dds" />
+  </CButton>
+  <CButton id="StitchesGoldenStenchTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stitches_acidcloud.dds" />
+  </CButton>
   <!-- Hooker: takedown quest stacks past the cap add damage to all of the hero's damage -->
   <CBehaviorBuff id="StitchesHookerPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Slammer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="StitchesSlammerPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Gas Bag: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="StitchesGasBagPastCapDamage" parent="CarryBehaviorParent">
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
@@ -102,4 +192,249 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Duration value="1" />
     <InitialEffect value="StitchesGoldenFreshCatchDamage" />
   </CBehaviorBuff>
+  <!-- ===== Slammer ===== -->
+  <!-- Slammer: Slam stores charges, so the effects that take time off its cooldown also take it off the recharge -->
+  <CEffectModifyUnit id="StitchesSlamPlaytimeTalentModifyUnit">
+    <Cost Abil="StitchesSlam,Execute" CooldownOperation="Add" CooldownTimeUse="-0.75" ChargeTimeUse="-0.75" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="StitchesSlamPlaytimeTalentDelayModifyUnit">
+    <Cost Abil="StitchesSlam,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" ChargeTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <CEffectModifyUnit id="StitchesPutridBilePotentBileModifyUnit">
+    <Cost Abil="StitchesSlam,Execute" CooldownOperation="Add" CooldownTimeUse="-0.375" ChargeTimeUse="-0.375" />
+  </CEffectModifyUnit>
+  <!-- Quake 1-40: a Slam hit on an enemy Hero gives a Movement Speed burst that decays over 2 seconds (2% per stack, up to
+       80%; the quest sets the amounts; Chance 0: the starter turns it on) -->
+  <CBehaviorBuff id="StitchesGoldenSlamRush1">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_slam.dds" />
+    <BehaviorCategories index="Fast" value="1" />
+    <Duration value="0.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenSlamRush1Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="StitchesGoldenSlamRush1" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="StitchesGoldenSlamRush2">
+    <Alignment value="Positive" />
+    <BehaviorCategories index="Fast" value="1" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenSlamRush2Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="StitchesGoldenSlamRush2" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="StitchesGoldenSlamRush3">
+    <Alignment value="Positive" />
+    <BehaviorCategories index="Fast" value="1" />
+    <Duration value="1.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenSlamRush3Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="StitchesGoldenSlamRush3" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="StitchesGoldenSlamRush4">
+    <Alignment value="Positive" />
+    <BehaviorCategories index="Fast" value="1" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenSlamRush4Apply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="StitchesGoldenSlamRush4" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="StitchesGoldenSlamRushSet">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectArray value="StitchesGoldenSlamRush1Apply" />
+    <EffectArray value="StitchesGoldenSlamRush2Apply" />
+    <EffectArray value="StitchesGoldenSlamRush3Apply" />
+    <EffectArray value="StitchesGoldenSlamRush4Apply" />
+  </CEffectSet>
+  <!-- Meat Shake (Epic): each Slam hit on an enemy Hero heals 2% of Stitches' maximum Health (Chance 0: the boon) -->
+  <CEffectCreateHealer id="StitchesGoldenMeatShakeHeal" parent="StormSelfOnlyHealingSpellPercent">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <RechargeVitalFraction value="0.02" />
+  </CEffectCreateHealer>
+  <!-- Chop Chop (Legendary): a Slam hit on an enemy Hero readies 3 Basic Attacks that deal 50% more damage, hit enemies
+       within 4 of the target for the same, and heal Stitches for all of it (Chance 0: the boon) -->
+  <CBehaviorBuff id="StitchesGoldenChopChop">
+    <Alignment value="Positive" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_chopchop.dds" />
+    <MaxStackCount value="3" />
+    <Duration value="6" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenChopChopApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="StitchesGoldenChopChop" />
+    <Count value="3" />
+  </CEffectApplyBehavior>
+  <CValidatorUnitCompareBehaviorCount id="StitchesGoldenCasterHasChopChop">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="StitchesGoldenChopChop" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="StitchesSlamMediumSearchImpactSet">
+    <EffectArray value="StitchesGoldenSlamRushSet" />
+    <EffectArray value="StitchesGoldenMeatShakeHeal" />
+    <EffectArray value="StitchesGoldenChopChopApply" />
+  </CEffectSet>
+  <CEffectSet id="StitchesSlamLargeSearchImpactSet">
+    <EffectArray value="StitchesGoldenSlamRushSet" />
+    <EffectArray value="StitchesGoldenMeatShakeHeal" />
+    <EffectArray value="StitchesGoldenChopChopApply" />
+  </CEffectSet>
+  <CEffectDamage id="StitchesHeroWeaponDamage">
+    <MultiplicativeModifierArray index="StitchesGoldenChopChop" Validator="StitchesGoldenCasterHasChopChop" Modifier="0.5" />
+    <LeechFlatModifierArray index="StitchesGoldenChopChop" Validator="StitchesGoldenCasterHasChopChop" Modifier="1" />
+  </CEffectDamage>
+  <!-- the cleave: the Basic Attack's damage (its modifiers come along) to other enemies within 4 of the target -->
+  <CEffectDamage id="StitchesGoldenChopChopCleaveDamage" parent="StitchesHeroWeaponDamage" />
+  <CEffectEnumArea id="StitchesGoldenChopChopCleave">
+    <ValidatorArray value="StitchesGoldenCasterHasChopChop" />
+    <ImpactLocation Value="TargetUnit" />
+    <SearchFilters value="-;Player,Ally,Neutral,Structure,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <ExcludeArray Effect="StitchesWeaponPostImpactSet" Value="Target" />
+    <AreaArray Effect="StitchesGoldenChopChopCleaveDamage">
+      <Radius value="4" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
+  <CEffectRemoveBehavior id="StitchesGoldenChopChopUse">
+    <WhichUnit Value="Caster" />
+    <BehaviorLink value="StitchesGoldenChopChop" />
+    <Count value="1" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="StitchesWeaponPostImpactSet">
+    <EffectArray value="StitchesGoldenChopChopCleave" />
+    <EffectArray value="StitchesGoldenChopChopUse" />
+  </CEffectSet>
+  <!-- ===== Gas Bag ===== -->
+  <!-- Gas Bag: a cloud of gas around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (the script
+       sets the amount from his Health) -->
+  <CBehaviorBuff id="StitchesGoldenGasAura" parent="CarryBehaviorParent">
+    <DisableValidatorArray value="CasterNotStasis" />
+    <DisableValidatorArray value="SourceNotDead" />
+    <DisableValidatorArray value="TargetNotSpecialDeathState" />
+    <Period value="1" />
+    <PeriodicEffect value="StitchesGoldenGasSearch" />
+  </CBehaviorBuff>
+  <CEffectEnumArea id="StitchesGoldenGasSearch">
+    <ValidatorArray value="CasterNotDead" />
+    <ImpactLocation Value="SourceUnit" />
+    <SearchFilters value="-;Self,Player,Ally,Neutral,ImmuneToAOE,Structure,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="StitchesGoldenGasImpactSet">
+      <Radius value="3" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
+  <CEffectDamage id="StitchesGoldenGasDamage" parent="StormSpellNoTowerAggro">
+    <Amount value="25" />
+  </CEffectDamage>
+  <!-- Choking Fumes (Epic): enemy Heroes in the gas deal 25% less damage (Chance 0: the boon) -->
+  <CBehaviorBuff id="StitchesGoldenChokingFumes">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_acidcloud.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="1.25" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.25" />
+      <DamageDealtFraction index="Basic" value="-0.25" />
+      <DamageDealtFraction index="Ability" value="-0.25" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenChokingFumesApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="StitchesGoldenChokingFumes" />
+  </CEffectApplyBehavior>
+  <!-- Gift from the Embalmer (Legendary): each enemy Hero in the gas heals Stitches 1% of his maximum Health per second
+       (Chance 0: the boon) -->
+  <CEffectCreateHealer id="StitchesGoldenEmbalmerHeal" parent="StormSelfOnlyHealingSpellPercent">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <RechargeVitalFraction value="0.01" />
+  </CEffectCreateHealer>
+  <CEffectSet id="StitchesGoldenGasImpactSet">
+    <EffectArray value="StitchesGoldenGasDamage" />
+    <EffectArray value="StitchesGoldenChokingFumesApply" />
+    <EffectArray value="StitchesGoldenEmbalmerHeal" />
+  </CEffectSet>
+  <!-- the cloud: Shambling Horror's gas pulse each tick -->
+  <CActorModel id="StitchesGoldenGasPulse" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.StitchesGoldenGasSearch.Start; At Caster" Send="Create" />
+    <HostSiteOps Ops="SOpSourcePointStationary SOpAttachCenter" />
+    <Model value="StitchesBlightCastModel" />
+    <Scale value="0.8,0.8,0.8" />
+  </CActorModel>
+  <!-- Gas Bag: Stitches moves 10% slower -->
+  <CBehaviorBuff id="StitchesGoldenGasBagSlow" parent="CarryBehaviorParent">
+    <Modification>
+      <MoveSpeedMultiplier value="0.9" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Leftovers quest: each Regeneration Globe adds 1 (the quest's accumulator is on the gas) -->
+  <CValidatorUnitCompareBehaviorCount id="StitchesGoldenTargetIsGasBag">
+    <Compare value="GT" />
+    <Behavior value="StitchesGoldenGasBagMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectModifyTokenCount id="StitchesGoldenLeftoversAdd" parent="BaseEffectModifyTokenCount">
+    <ValidatorArray value="StitchesGoldenTargetIsGasBag" />
+    <EffectCategory index="Quest" value="1" />
+    <TokenId value="StitchesGoldenLeftoversTokenCounter" />
+  </CEffectModifyTokenCount>
+  <CEffectSet id="RegenGlobeImpactSet">
+    <EffectArray value="StitchesGoldenLeftoversAdd" />
+  </CEffectSet>
+  <!-- Stench 41-80 (1% each) and Bloated (3% each): maximum Health (the script sets the amount and re-adds it). Bloated
+       adds to StitchesGoldenBloatedValue, which is never applied: the script reads it. -->
+  <CBehaviorBuff id="StitchesGoldenGasBagHealth" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="StitchesGoldenBloatedValue">
+    <Modification>
+      <VitalMaxFractionArray index="Life" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Stench at 100: a Hero Gorge lets go is hit by a gas burst, 10% of Stitches' maximum Health to enemies within 4
+       (script) -->
+  <CEffectDamage id="StitchesGoldenGasBurstDamage" parent="StormSpellNoTowerAggro">
+    <Amount value="250" />
+  </CEffectDamage>
+  <CEffectEnumArea id="StitchesGoldenGasBurstSearch">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Self,Player,Ally,Neutral,ImmuneToAOE,Structure,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="StitchesGoldenGasBurstDamage">
+      <Radius value="4" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
+  <CActorModel id="StitchesGoldenGasBurstModel" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.StitchesGoldenGasBurstSearch.Start" Send="Create" />
+    <HostSiteOps Ops="SOpTargetPointStationary" />
+    <Model value="StitchesBlightCastModel" />
+    <Scale value="1.1,1.1,1.1" />
+  </CActorModel>
 </Catalog>

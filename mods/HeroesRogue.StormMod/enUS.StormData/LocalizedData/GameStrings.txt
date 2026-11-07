@@ -3184,12 +3184,54 @@ Button/Name/StitchesGoldenCatchTokenCounter=Catch
 Button/Tooltip/StitchesGoldenCatchTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenCatchTokenCounter$*1" precision="1"/>%</c></c>
 Button/Name/StitchesGoldenReelTokenCounter=Reel
 Button/Tooltip/StitchesGoldenReelTokenCounter=<c val="#TooltipQuest">Reel stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenReelTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make your Heroic Abilities recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Hook fly <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each Slow the enemy Heroes Hook pulls in by <c val="#TooltipNumbers">1%</c> for <c val="#TooltipNumbers">2</c> seconds when they arrive. At <c val="#TooltipNumbers">100</c> stacks, casting Hook and hooking an enemy Hero each make you Invulnerable for <c val="#TooltipNumbers">0.75</c> seconds. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/StitchesSlammer=Slammer
+Affix/Tooltip/StitchesSlammer=Gain <c val="#TooltipNumbers">Vile Cleaver</c> and <c val="#TooltipNumbers">Pulverize</c>. Slam costs half Mana and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">6</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each Slam hit on an enemy Hero adds <c val="#TooltipNumbers">0.25%</c> Slam damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Slam hit make Slam hits on enemy Heroes give you a burst of Movement Speed that fades over <c val="#TooltipNumbers">2</c> seconds (up to <c val="#TooltipNumbers">80%</c>), then make Slam larger (up to <c val="#TooltipNumbers">40%</c>), then make its Slow stronger (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, a second Slam follows each Slam <c val="#TooltipNumbers">0.5</c> seconds later. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/StitchesHeavyHands=Heavy Hands
+Affix/Tooltip/StitchesHeavyHands=Slam deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/StitchesTenderizerBoon=Tenderizer
+Affix/Tooltip/StitchesTenderizerBoon=Gain the talent <c val="#TooltipNumbers">Tenderizer</c>.
+Affix/Name/StitchesFlareUpBoon=Flare Up
+Affix/Tooltip/StitchesFlareUpBoon=Gain the talent <c val="#TooltipNumbers">Flare Up</c>.
+Affix/Name/StitchesMeatShake=Meat Shake
+Affix/Tooltip/StitchesMeatShake=Each Slam hit on an enemy Hero heals you for <c val="#TooltipNumbers">2%</c> of your maximum Health.
+Affix/Name/StitchesChopChopBoon=Chop Chop
+Affix/Tooltip/StitchesChopChopBoon=A Slam hit on an enemy Hero readies your next <c val="#TooltipNumbers">3</c> Basic Attacks: they deal <c val="#TooltipNumbers">50%</c> more damage, hit enemies within <c val="#TooltipNumbers">4</c> of the target for the same, and heal you for all the damage they deal.
+Button/Name/StitchesGoldenSmashTokenCounter=Smash
+Button/Tooltip/StitchesGoldenSmashTokenCounter=<c val="#TooltipQuest">Bonus Slam damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenSmashTokenCounter$*0.25" precision="1"/>%</c></c>
+Button/Name/StitchesGoldenQuakeTokenCounter=Quake
+Button/Tooltip/StitchesGoldenQuakeTokenCounter=<c val="#TooltipQuest">Quake stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenQuakeTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each add <c val="#TooltipNumbers">2%</c> to a burst of Movement Speed that Slam hits on enemy Heroes give you, fading over <c val="#TooltipNumbers">2</c> seconds. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Slam <c val="#TooltipNumbers">1%</c> larger. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Slam's Slow <c val="#TooltipNumbers">1%</c> stronger. At <c val="#TooltipNumbers">100</c> stacks, a second Slam follows each Slam <c val="#TooltipNumbers">0.5</c> seconds later. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/StitchesGasBag=Gas Bag
+Affix/Tooltip/StitchesGasBag=Gain <c val="#TooltipNumbers">Hungry for More</c> and <c val="#TooltipNumbers">Gorge</c> at level 1 (you can't pick <c val="#TooltipNumbers">Putrid Bile</c>). A cloud of gas around you (<c val="#TooltipNumbers">3</c> radius) deals <c val="#TooltipNumbers">1%</c> of your maximum Health per second to enemies. Devour heals twice as much. You move <c val="#TooltipNumbers">10%</c> slower.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Regeneration Globe you collect adds <c val="#TooltipNumbers">1%</c> gas damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of gassing them make the cloud larger (up to <c val="#TooltipNumbers">40%</c>), then add maximum Health (up to <c val="#TooltipNumbers">40%</c>). At <c val="#TooltipNumbers">100</c>, a Hero Gorge lets go of is hit by a gas burst for <c val="#TooltipNumbers">10%</c> of your maximum Health to enemies around it. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second. Hungry for More also keeps <c val="#TooltipNumbers">10%</c> of the stacks it gained that map.
+Affix/Name/StitchesRotten=Rotten
+Affix/Tooltip/StitchesRotten=Your gas deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/StitchesBloated=Bloated
+Affix/Tooltip/StitchesBloated=Gain <c val="#TooltipNumbers">3%</c> maximum Health.
+Affix/Name/StitchesPatchworkCreationBoon=Patchwork Creation
+Affix/Tooltip/StitchesPatchworkCreationBoon=Gain the talent <c val="#TooltipNumbers">Patchwork Creation</c>.
+Affix/Name/StitchesDigestiveJuicesBoon=Digestive Juices
+Affix/Tooltip/StitchesDigestiveJuicesBoon=Gain the talent <c val="#TooltipNumbers">Digestive Juices</c>.
+Affix/Name/StitchesChokingFumes=Choking Fumes
+Affix/Tooltip/StitchesChokingFumes=Enemy Heroes in your gas deal <c val="#TooltipNumbers">25%</c> less damage.
+Affix/Name/StitchesGiftFromTheEmbalmerBoon=Gift from the Embalmer
+Affix/Tooltip/StitchesGiftFromTheEmbalmerBoon=Each enemy Hero in your gas heals you for <c val="#TooltipNumbers">1%</c> of your maximum Health per second.
+Button/Name/StitchesGoldenLeftoversTokenCounter=Leftovers
+Button/Tooltip/StitchesGoldenLeftoversTokenCounter=<c val="#TooltipQuest">Bonus gas damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenLeftoversTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/StitchesGoldenStenchTokenCounter=Stench
+Button/Tooltip/StitchesGoldenStenchTokenCounter=<c val="#TooltipQuest">Stench stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenStenchTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make your gas cloud <c val="#TooltipNumbers">1%</c> larger. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each add <c val="#TooltipNumbers">1%</c> maximum Health. At <c val="#TooltipNumbers">100</c> stacks, a Hero Gorge lets go of is hit by a gas burst for <c val="#TooltipNumbers">10%</c> of your maximum Health to enemies around it. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/StitchesDeflated=Deflated
+Affix/Tooltip/StitchesDeflated=You are half as big: your model and your size for collisions and being hit are halved.
 Behavior/Name/StitchesGoldenHookSlow=Reeled In
 Behavior/Tooltip/StitchesGoldenHookSlow=Slowed after being hooked.
 Behavior/Name/StitchesGoldenHookInvulnerable=Hooker
 Behavior/Tooltip/StitchesGoldenHookInvulnerable=Invulnerable.
 Behavior/Name/StitchesGoldenFreshCatchStun=Fresh Catch
 Behavior/Tooltip/StitchesGoldenFreshCatchStun=Stunned after being hooked.
+Behavior/Name/StitchesGoldenSlamRush1=Quake
+Behavior/Tooltip/StitchesGoldenSlamRush1=Moving faster after a Slam hit.
+Behavior/Name/StitchesGoldenChopChop=Chop Chop
+Behavior/Tooltip/StitchesGoldenChopChop=Basic Attacks deal more damage, cleave and heal.
+Behavior/Name/StitchesGoldenChokingFumes=Choking Fumes
+Behavior/Tooltip/StitchesGoldenChokingFumes=Dealing less damage.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks gained that map (on top of what you started with).
 Affix/Tooltip/Append/TyrandeTheMark=
