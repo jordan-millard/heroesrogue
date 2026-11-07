@@ -3168,6 +3168,28 @@ Behavior/Name/DVaGoldenSpeedrunStun=Speedrun
 Behavior/Tooltip/DVaGoldenSpeedrunStun=Stunned.
 Behavior/Name/DVaGoldenMiniNukeCooldown=Streak
 Behavior/Tooltip/DVaGoldenMiniNukeCooldown=The next exploding mech is recharging.
+Affix/Name/StitchesHooker=Hooker
+Affix/Tooltip/StitchesHooker=Gain <c val="#TooltipNumbers">Tenderizer</c> and <c val="#TooltipNumbers">Master Hooker</c>. Hook costs half Mana, has no cast time and fires <c val="#TooltipNumbers">3</c> hooks in a narrow cone that can each pull an enemy in. Basic Attacks against enemy Heroes take <c val="#TooltipNumbers">0.5</c> seconds off Hook's cooldown.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero you hook adds <c val="#TooltipNumbers">1%</c> Basic Attack damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Hook hit make your Heroic Abilities recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make Hook fly faster (up to <c val="#TooltipNumbers">40%</c>), then Slow the Heroes you pull in (up to <c val="#TooltipNumbers">20%</c> for <c val="#TooltipNumbers">2</c> seconds). At <c val="#TooltipNumbers">100</c>, casting Hook and hooking an enemy Hero each make you Invulnerable for <c val="#TooltipNumbers">0.75</c> seconds. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/StitchesLongChain=Long Chain
+Affix/Tooltip/StitchesLongChain=Hook recharges <c val="#TooltipNumbers">1</c> second faster.
+Affix/Name/StitchesSerratedEdgeBoon=Serrated Edge
+Affix/Tooltip/StitchesSerratedEdgeBoon=Gain the talent <c val="#TooltipNumbers">Serrated Edge</c>.
+Affix/Name/StitchesMeatHookBoon=Meat Hook
+Affix/Tooltip/StitchesMeatHookBoon=Gain the talent <c val="#TooltipNumbers">Meat Hook</c>.
+Affix/Name/StitchesHookSlam=Hook Slam
+Affix/Tooltip/StitchesHookSlam=An enemy Hero Hook pulls in takes a free Slam when it arrives.
+Affix/Name/StitchesFreshCatch=Fresh Catch
+Affix/Tooltip/StitchesFreshCatch=An enemy Hero Hook pulls in is Stunned for <c val="#TooltipNumbers">1</c> second when it arrives and takes <c val="#TooltipNumbers">10%</c> of its maximum Health as damage.
+Button/Name/StitchesGoldenCatchTokenCounter=Catch
+Button/Tooltip/StitchesGoldenCatchTokenCounter=<c val="#TooltipQuest">Bonus Basic Attack damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenCatchTokenCounter$*1" precision="1"/>%</c></c>
+Button/Name/StitchesGoldenReelTokenCounter=Reel
+Button/Tooltip/StitchesGoldenReelTokenCounter=<c val="#TooltipQuest">Reel stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:StitchesGoldenReelTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make your Heroic Abilities recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Hook fly <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each Slow the enemy Heroes Hook pulls in by <c val="#TooltipNumbers">1%</c> for <c val="#TooltipNumbers">2</c> seconds when they arrive. At <c val="#TooltipNumbers">100</c> stacks, casting Hook and hooking an enemy Hero each make you Invulnerable for <c val="#TooltipNumbers">0.75</c> seconds. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/StitchesGoldenHookSlow=Reeled In
+Behavior/Tooltip/StitchesGoldenHookSlow=Slowed after being hooked.
+Behavior/Name/StitchesGoldenHookInvulnerable=Hooker
+Behavior/Tooltip/StitchesGoldenHookInvulnerable=Invulnerable.
+Behavior/Name/StitchesGoldenFreshCatchStun=Fresh Catch
+Behavior/Tooltip/StitchesGoldenFreshCatchStun=Stunned after being hooked.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks gained that map (on top of what you started with).
 Affix/Tooltip/Append/TyrandeTheMark=

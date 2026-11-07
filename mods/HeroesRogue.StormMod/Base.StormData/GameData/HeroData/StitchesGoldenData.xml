@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Stitches. Starters: Hooker (Hook: half Mana, no cast time, 3 hooks, Basic Attacks on Heroes shorten its cooldown; Tenderizer and Master Hooker). Each damage effect has its own multipliers: starter power, hit quest (accumulator, on Basic Attacks) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/StitchesGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="StitchesGoldenHookerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="StitchesGoldenHookSlamMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="StitchesGoldenFreshCatchMarker" parent="CarryBehaviorParent" />
+
+  <!-- ===== Hooker ===== -->
+  <!-- Hook costs half Mana, has no cast time and fires 3 hooks in a narrow cone that can each pull an enemy; Basic Attacks against enemy Heroes take 0.5 seconds off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="StitchesGoldenCatchTokenCounter" parent="StormQuestToken">
+    <Face value="StitchesGoldenCatchTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="StitchesGoldenReelTokenCounter" parent="StormQuestToken">
+    <Face value="StitchesGoldenReelTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="StitchesGoldenCatchTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="StitchesGoldenCatchTokenCounter" />
+    <Scale value="0.01" />
+  </CAccumulatorToken>
+  <CEffectDamage id="StitchesHookDamage">
+    <MultiplicativeModifierArray index="StitchesHookerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesHookerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesHookerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="StitchesHeroWeaponDamage">
+    <MultiplicativeModifierArray index="StitchesHookerHit" Accumulator="StitchesGoldenCatchTokenCounterAccumulator" />
+  </CEffectDamage>
+  <CButton id="StitchesGoldenCatchTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stitches_hook.dds" />
+  </CButton>
+  <CButton id="StitchesGoldenReelTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_stitches_hook.dds" />
+  </CButton>
+  <!-- Hooker: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="StitchesHookerPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- Hooker: Hook fires 2 more hooks, about 5 degrees to each side (the persistent's extra periods; the side hooks only
+       launch for a Hooker Stitches). The first Hero a hook pulls in ends the cast, as in the base game. -->
+  <CValidatorUnitCompareBehaviorCount id="StitchesGoldenCasterIsHooker">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="StitchesGoldenHookerMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="StitchesGoldenSideHookSet">
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
+  <CEffectCreatePersistent id="StitchesHookLaunchCreatePersistent">
+    <PeriodCount value="3" />
+    <PeriodicEffectArray index="1" value="StitchesGoldenSideHookSet" />
+    <PeriodicEffectArray index="2" value="StitchesGoldenSideHookSet" />
+    <PeriodicPeriodArray index="1" value="0" />
+    <PeriodicPeriodArray index="2" value="0" />
+    <PeriodicOffsetArray index="1" X="1.05" Y="-11.95" />
+    <PeriodicOffsetArray index="2" X="-1.05" Y="-11.95" />
+  </CEffectCreatePersistent>
+  <!-- Hooker: Basic Attacks against enemy Heroes take 0.5 seconds off Hook's cooldown (Chance 0: the starter turns it on) -->
+  <CEffectModifyUnit id="StitchesGoldenAttackHookCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="StitchesHook,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" />
+  </CEffectModifyUnit>
+  <CEffectSet id="StitchesWeaponPreImpactSet">
+    <EffectArray value="StitchesGoldenAttackHookCooldown" />
+  </CEffectSet>
+  <!-- Reel 81-100: enemy Heroes pulled in are Slowed on arrival (the quest adds 1% per stack; the script applies it) -->
+  <CBehaviorBuff id="StitchesGoldenHookSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_hook.dds" />
+    <Duration value="2" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Reel at 100: casting Hook and hooking an enemy Hero each make Stitches Invulnerable for 0.75 seconds (script) -->
+  <CBehaviorBuff id="StitchesGoldenHookInvulnerable" parent="StormInvulnerable">
+    <Duration value="0.75" />
+  </CBehaviorBuff>
+  <!-- Fresh Catch (Legendary): an enemy Hero pulled in is Stunned for 1 second and takes 10% of its max Health (script) -->
+  <CEffectDamage id="StitchesGoldenFreshCatchDamage" parent="StormSpellPercentDamage">
+    <ValidatorArray value="TargetIsHero" />
+    <VitalFractionMax index="Life" value="0.1" />
+  </CEffectDamage>
+  <CBehaviorBuff id="StitchesGoldenFreshCatchStun" parent="StormStun">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_stitches_cannibalize.dds" />
+    <Duration value="1" />
+    <InitialEffect value="StitchesGoldenFreshCatchDamage" />
+  </CBehaviorBuff>
+</Catalog>

@@ -1,0 +1,197 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Stitches. Hooker: enemy Heroes hooked add Catch (Basic Attack damage) and open a 6 second takedown window.
+// Takedowns add Reel: Heroic recharge, then hook speed, then a Slow on arrival, then at 100 Invulnerability on
+// casting Hook and on hooking a Hero, then 2% damage per stack.
+// ============================================================
+
+const fixed libAffx_StitchesTakedownWindow = 3.0;
+const fixed libAffx_StitchesPastCapDamagePerStack = 0.01;
+bool libAffx_StitchesStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_StitchesHookerTime; // per enemy player, last Hooker hit
+int libAffx_StitchesHookerAdded; // Hooker: takedown stacks already applied to the catalog this game
+int libAffx_StitchesHookerAdded2; // Hooker: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_StitchesHookerAdded3; // Hooker: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_StitchesHookerPastApplied; // Hooker: takedown quest stacks past the cap applied as damage this game
+
+unit libAffx_StitchesHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_StitchesIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_StitchesStacks(string tokenId) {
+    unit hero = libAffx_StitchesHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_StitchesQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_StitchesInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_StitchesTakedownWindow;
+}
+// StitchesGoldenReelTokenCounter: stacks 1-40: 1% of Gorge's 65 and Putrid Bile's 75 second cooldowns each; 41-80 hook speed, 81-100 Slow on arrival, 100 Invulnerability (script), then damage
+void libAffx_StitchesSyncHooker () {
+    unit hero = libAffx_StitchesHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "StitchesGoldenHookerMarker")) {
+        return;
+    }
+    stacks = libAffx_StitchesStacks("StitchesGoldenReelTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_StitchesHookerAdded) {
+        libAffx_CatalogReferenceModify("Abil,StitchesGorge,Cost[0].Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesHookerAdded) * -0.65, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Abil,StitchesPutridBile,Cost[0].Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesHookerAdded) * -0.75, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesHookerAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): Hook flies 1% faster each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_StitchesHookerAdded2) {
+        libAffx_CatalogReferenceModify("Mover,StitchesHookMissile,MotionPhases[0].Speed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesHookerAdded2) * 0.375, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,StitchesHookMissile,MotionPhases[0].MaxSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesHookerAdded2) * 0.2, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesHookerAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): hooked Heroes are Slowed 1% more each on arrival (applied by libAffx_StitchesHookArrive_Func)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_StitchesHookerAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,StitchesGoldenHookSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesHookerAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_StitchesHookerAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_StitchesHookerPastApplied) {
+        libAffx_StitchesHookerPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesHookerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesHookerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "StitchesHookerPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "StitchesHookerPastCapDamage")) {
+        UnitBehaviorAdd(hero, "StitchesHookerPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_StitchesSync_Func (bool testConds, bool runActions) {
+    libAffx_StitchesSyncHooker();
+    return true;
+}
+// an enemy-team Hero (the base hero test counts allies too)
+bool libAffx_StitchesIsFoe (unit target) {
+    if (!libAffx_StitchesIsEnemyHero(target)) {
+        return false;
+    }
+    return libGame_gf_TeamNumberOfPlayer(UnitGetOwner(target)) != libGame_gf_TeamNumberOfPlayer(libAffx_player);
+}
+// Reel at 100: 0.75 seconds of Invulnerability
+void libAffx_StitchesHookInvulnerable () {
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "StitchesGoldenHookerMarker") || libAffx_StitchesStacks("StitchesGoldenReelTokenCounter") < 100) {
+        return;
+    }
+    UnitBehaviorAdd(hero, "StitchesGoldenHookInvulnerable", hero, 1);
+}
+// Hooker: Hook cast
+bool libAffx_StitchesHookCast_Func (bool testConds, bool runActions) {
+    libAffx_StitchesHookInvulnerable();
+    return true;
+}
+// Hooker: an enemy Hero a hook pulled in arrives (the pull's end removes StitchesHooked): Reel's Slow (stacks 81-100),
+// Hook Slam (a free Slam toward it) and Fresh Catch (1 second Stun, 10% of its max Health)
+bool libAffx_StitchesHookArrive_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || !UnitIsAlive(hero) || !UnitIsAlive(victim) || !UnitHasBehavior2(hero, "StitchesGoldenHookerMarker") || !libAffx_StitchesIsFoe(victim)) {
+        return false;
+    }
+    if (libAffx_StitchesStacks("StitchesGoldenReelTokenCounter") > 80) {
+        UnitBehaviorAdd(victim, "StitchesGoldenHookSlow", hero, 1);
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenFreshCatchMarker")) {
+        UnitBehaviorAdd(victim, "StitchesGoldenFreshCatchStun", hero, 1);
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenHookSlamMarker")) {
+        UnitCreateEffectPoint(hero, "StitchesSlamInitialSet", UnitGetPosition(victim));
+    }
+    return true;
+}
+// Hooker hit on an enemy Hero: takedown window, StitchesGoldenCatchTokenCounter, the heal, and on-hit boons
+bool libAffx_StitchesHookerHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_StitchesHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_StitchesIsEnemyHero(victim) || !UnitHasBehavior2(hero, "StitchesGoldenHookerMarker")) {
+        return false;
+    }
+    libAffx_StitchesHookerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "StitchesGoldenCatchTokenCounter", hero);
+    libAffx_StitchesHookInvulnerable();
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[2] libAffx_StitchesTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_StitchesTakedownCrossStart () {
+    unit hero = libAffx_StitchesHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_StitchesTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter"));
+}
+void libAffx_StitchesTakedownCross () {
+    unit hero = libAffx_StitchesHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter")) == libAffx_StitchesTakedownBefore[1]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "StitchesGoldenHookerMarker") && FixedToInt(UnitGetTokenCount(hero, "StitchesGoldenReelTokenCounter")) == libAffx_StitchesTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "StitchesGoldenReelTokenCounter", hero);
+        libAffx_StitchesSyncHooker();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_StitchesTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_StitchesHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_StitchesTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "StitchesGoldenHookerMarker") && libAffx_StitchesHookerTime[killedPlayer] > 0.0 && now - libAffx_StitchesHookerTime[killedPlayer] <= 6.0) {
+        libAffx_StitchesHookerTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "StitchesGoldenReelTokenCounter", hero);
+        libAffx_StitchesSyncHooker();
+        libAffx_StitchesQuestDing();
+    }
+    libAffx_StitchesTakedownCross();
+    return true;
+}
+bool libAffx_StitchesStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_StitchesStarted) {
+        return true;
+    }
+    libAffx_StitchesStarted = true;
+    trig = TriggerCreate("libAffx_StitchesHookerHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "StitchesHookDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_StitchesHookCast_Func"), libAffx_player, "StitchesHookLaunchCreatePersistent");
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StitchesHookArrive_Func"), null, "StitchesHooked", c_unitBehaviorChangeDestroy);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_StitchesSync_Func"), 1.0, c_timeGame);
+    return true;
+}
