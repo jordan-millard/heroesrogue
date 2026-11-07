@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Stitches. Starters: Hooker (Hook: half Mana, no cast time, 3 hooks, Basic Attacks on Heroes shorten its cooldown; Tenderizer and Master Hooker), Slammer (Slam: 2 charges, half Mana; Vile Cleaver and Pulverize) and Gas Bag (a gas cloud around Stitches; Hungry for More and Gorge at level 1). Each damage effect has its own multipliers: starter power, hit quest (accumulator, on Basic Attacks) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/StitchesGolden.galaxy. -->
+  <!-- Golden Stitches. Starters: Hooker (Hook: half Mana, no cast time, 4 hooks, Basic Attacks on Heroes shorten its cooldown; Tenderizer and Master Hooker), Slammer (Slam: 2 charges, half Mana; Vile Cleaver and Pulverize) and Gas Bag (a gas cloud around Stitches; Hungry for More and Gorge at level 1). Each damage effect has its own multipliers: starter power, hit quest (accumulator, on Basic Attacks) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/StitchesGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="StitchesGoldenHookerMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="StitchesGoldenSlammerMarker" parent="CarryBehaviorParent" />
@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="StitchesGoldenDeflatedMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hooker ===== -->
-  <!-- Hook costs 40% of its Mana, has no cast time and fires 3 hooks in a narrow cone that can each pull an enemy; Basic Attacks against enemy Heroes take 1 second off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Hook and Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
+  <!-- Hook costs 40% of its Mana, has no cast time and fires 4 hooks in a narrow cone (the 4th at a random angle) that can each pull an enemy; Basic Attacks against enemy Heroes take 1 second off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Hook and Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenCatchTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenCatchTokenCounter" />
     <Max value="100000" />
@@ -145,8 +145,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
-  <!-- Hooker: Hook fires 2 more hooks, about 5 degrees to each side (the persistent's extra periods; the side hooks only
-       launch for a Hooker Stitches). The first Hero a hook pulls in ends the cast, as in the base game. -->
+  <!-- Hooker: Hook fires 2 more hooks, about 5 degrees to each side, and a 4th at a random angle between them (the
+       persistent's extra periods; the extra hooks only launch for a Hooker Stitches). The first Hero a hook pulls in ends the cast, as in the base game. -->
   <CValidatorUnitCompareBehaviorCount id="StitchesGoldenCasterIsHooker">
     <WhichUnit Value="Caster" />
     <Compare value="GT" />
@@ -156,14 +156,87 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="StitchesGoldenCasterIsHooker" />
     <EffectArray value="StitchesHookInitialLaunchMissile" />
   </CEffectSet>
+  <CBehaviorBuff id="StitchesGoldenRandomHookFired">
+    <Duration value="0.25" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="StitchesGoldenRandomHookFiredApply">
+    <WhichUnit Value="Caster" />
+    <Behavior value="StitchesGoldenRandomHookFired" />
+  </CEffectApplyBehavior>
+  <CValidatorUnitCompareBehaviorCount id="StitchesGoldenRandomHookNotFired">
+    <WhichUnit Value="Caster" />
+    <Compare value="EQ" />
+    <Value value="0" />
+    <Behavior value="StitchesGoldenRandomHookFired" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectSet id="StitchesGoldenRandomHook1">
+    <Chance value="0.1667" />
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <ValidatorArray value="StitchesGoldenRandomHookNotFired" />
+    <EffectArray value="StitchesGoldenRandomHookFiredApply" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
+  <CEffectSet id="StitchesGoldenRandomHook2">
+    <Chance value="0.2000" />
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <ValidatorArray value="StitchesGoldenRandomHookNotFired" />
+    <EffectArray value="StitchesGoldenRandomHookFiredApply" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
+  <CEffectSet id="StitchesGoldenRandomHook3">
+    <Chance value="0.2500" />
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <ValidatorArray value="StitchesGoldenRandomHookNotFired" />
+    <EffectArray value="StitchesGoldenRandomHookFiredApply" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
+  <CEffectSet id="StitchesGoldenRandomHook4">
+    <Chance value="0.3333" />
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <ValidatorArray value="StitchesGoldenRandomHookNotFired" />
+    <EffectArray value="StitchesGoldenRandomHookFiredApply" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
+  <CEffectSet id="StitchesGoldenRandomHook5">
+    <Chance value="0.5000" />
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <ValidatorArray value="StitchesGoldenRandomHookNotFired" />
+    <EffectArray value="StitchesGoldenRandomHookFiredApply" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
+  <CEffectSet id="StitchesGoldenRandomHook6">
+    <Chance value="1.0000" />
+    <ValidatorArray value="StitchesGoldenCasterIsHooker" />
+    <ValidatorArray value="StitchesGoldenRandomHookNotFired" />
+    <EffectArray value="StitchesGoldenRandomHookFiredApply" />
+    <EffectArray value="StitchesHookInitialLaunchMissile" />
+  </CEffectSet>
   <CEffectCreatePersistent id="StitchesHookLaunchCreatePersistent">
-    <PeriodCount value="3" />
+    <PeriodCount value="9" />
     <PeriodicEffectArray index="1" value="StitchesGoldenSideHookSet" />
     <PeriodicEffectArray index="2" value="StitchesGoldenSideHookSet" />
     <PeriodicPeriodArray index="1" value="0" />
     <PeriodicPeriodArray index="2" value="0" />
     <PeriodicOffsetArray index="1" X="1.05" Y="-11.95" />
     <PeriodicOffsetArray index="2" X="-1.05" Y="-11.95" />
+    <PeriodicEffectArray index="3" value="StitchesGoldenRandomHook1" />
+    <PeriodicPeriodArray index="3" value="0" />
+    <PeriodicOffsetArray index="3" X="-0.942" Y="-11.963" />
+    <PeriodicEffectArray index="4" value="StitchesGoldenRandomHook2" />
+    <PeriodicPeriodArray index="4" value="0" />
+    <PeriodicOffsetArray index="4" X="-0.628" Y="-11.984" />
+    <PeriodicEffectArray index="5" value="StitchesGoldenRandomHook3" />
+    <PeriodicPeriodArray index="5" value="0" />
+    <PeriodicOffsetArray index="5" X="-0.314" Y="-11.996" />
+    <PeriodicEffectArray index="6" value="StitchesGoldenRandomHook4" />
+    <PeriodicPeriodArray index="6" value="0" />
+    <PeriodicOffsetArray index="6" X="0.314" Y="-11.996" />
+    <PeriodicEffectArray index="7" value="StitchesGoldenRandomHook5" />
+    <PeriodicPeriodArray index="7" value="0" />
+    <PeriodicOffsetArray index="7" X="0.628" Y="-11.984" />
+    <PeriodicEffectArray index="8" value="StitchesGoldenRandomHook6" />
+    <PeriodicPeriodArray index="8" value="0" />
+    <PeriodicOffsetArray index="8" X="0.942" Y="-11.963" />
   </CEffectCreatePersistent>
   <!-- Hooker: Basic Attacks against enemy Heroes take 1 second off Hook's cooldown (Chance 0: the starter turns it on) -->
   <CEffectModifyUnit id="StitchesGoldenAttackHookCooldown">
