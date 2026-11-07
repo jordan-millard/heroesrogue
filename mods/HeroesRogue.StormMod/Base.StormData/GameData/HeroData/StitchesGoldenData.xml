@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="StitchesGoldenDeflatedMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hooker ===== -->
-  <!-- Hook costs half Mana, has no cast time and fires 3 hooks in a narrow cone that can each pull an enemy; Basic Attacks against enemy Heroes take 0.5 seconds off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
+  <!-- Hook costs 40% of its Mana, has no cast time and fires 3 hooks in a narrow cone that can each pull an enemy; Basic Attacks against enemy Heroes take 1 second off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Hook and Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenCatchTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenCatchTokenCounter" />
     <Max value="100000" />
@@ -33,10 +33,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectDamage id="StitchesHookDamage">
     <MultiplicativeModifierArray index="StitchesHookerPower" Modifier="0" />
     <MultiplicativeModifierArray index="StitchesHookerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesHookerHit" Accumulator="StitchesGoldenCatchTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="StitchesHookerLegacy" Modifier="0" />
   </CEffectDamage>
   <CEffectDamage id="StitchesHeroWeaponDamage">
+    <MultiplicativeModifierArray index="StitchesHookerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesHookerCommon" Modifier="0" />
     <MultiplicativeModifierArray index="StitchesHookerHit" Accumulator="StitchesGoldenCatchTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="StitchesHookerLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="StitchesGoldenChopChop" Validator="StitchesGoldenCasterHasChopChop" Modifier="0.5" />
+    <LeechFlatModifierArray index="StitchesGoldenChopChop" Validator="StitchesGoldenCasterHasChopChop" Modifier="1" />
   </CEffectDamage>
   <CButton id="StitchesGoldenCatchTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_stitches_hook.dds" />
@@ -159,13 +165,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicOffsetArray index="1" X="1.05" Y="-11.95" />
     <PeriodicOffsetArray index="2" X="-1.05" Y="-11.95" />
   </CEffectCreatePersistent>
-  <!-- Hooker: Basic Attacks against enemy Heroes take 0.5 seconds off Hook's cooldown (Chance 0: the starter turns it on) -->
+  <!-- Hooker: Basic Attacks against enemy Heroes take 1 second off Hook's cooldown (Chance 0: the starter turns it on) -->
   <CEffectModifyUnit id="StitchesGoldenAttackHookCooldown">
     <Chance value="0" />
     <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
     <ValidatorArray value="TargetIsHero" />
     <ImpactUnit Value="Caster" />
-    <Cost Abil="StitchesHook,Execute" CooldownOperation="Add" CooldownTimeUse="-0.5" />
+    <Cost Abil="StitchesHook,Execute" CooldownOperation="Add" CooldownTimeUse="-1" />
   </CEffectModifyUnit>
   <CEffectSet id="StitchesWeaponPreImpactSet">
     <EffectArray value="StitchesGoldenAttackHookCooldown" />
@@ -301,10 +307,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="StitchesGoldenMeatShakeHeal" />
     <EffectArray value="StitchesGoldenChopChopApply" />
   </CEffectSet>
-  <CEffectDamage id="StitchesHeroWeaponDamage">
-    <MultiplicativeModifierArray index="StitchesGoldenChopChop" Validator="StitchesGoldenCasterHasChopChop" Modifier="0.5" />
-    <LeechFlatModifierArray index="StitchesGoldenChopChop" Validator="StitchesGoldenCasterHasChopChop" Modifier="1" />
-  </CEffectDamage>
+  <!-- (Chop Chop's Basic Attack bonus and heal are on StitchesHeroWeaponDamage's one block, with Hooker's modifiers) -->
   <!-- the cleave: the Basic Attack's damage (its modifiers come along) to other enemies within 4 of the target -->
   <CEffectDamage id="StitchesGoldenChopChopCleaveDamage" parent="StitchesHeroWeaponDamage" />
   <CEffectEnumArea id="StitchesGoldenChopChopCleave">
