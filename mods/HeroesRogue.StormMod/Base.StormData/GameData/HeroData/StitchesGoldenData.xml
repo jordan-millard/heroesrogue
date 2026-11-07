@@ -88,7 +88,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Gas Bag ===== -->
-  <!-- A gas cloud around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (script sets the amount); Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), at 100 a Hero Gorge lets go of is hit by a gas burst for 10% of Stitches' maximum Health (script), then 2% damage each. -->
+  <!-- A gas cloud around Stitches (3 radius) deals 2% of his maximum Health per second to enemies (script sets the amount); Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data) and 5% per enemy Hero Gorged (script). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), at 100 a Hero Gorge lets go of is hit by a gas burst for 10% of Stitches' maximum Health (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenLeftoversTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenLeftoversTokenCounter" />
     <Max value="100000" />
@@ -403,7 +403,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="StitchesGoldenChopChopUse" />
   </CEffectSet>
   <!-- ===== Gas Bag ===== -->
-  <!-- Gas Bag: a cloud of gas around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (the script
+  <!-- Gas Bag: a cloud of gas around Stitches (3 radius) deals 2% of his maximum Health per second to enemies (the script
        sets the amount from his Health) -->
   <CBehaviorBuff id="StitchesGoldenGasAura" parent="CarryBehaviorParent">
     <DisableValidatorArray value="CasterNotStasis" />
