@@ -14,7 +14,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="StitchesGoldenDeflatedMarker" parent="CarryBehaviorParent" />
 
   <!-- ===== Hooker ===== -->
-  <!-- Hook costs 40% of its Mana, has no cast time and fires 4 hooks in a narrow cone (the 4th at a random angle) that can each pull an enemy; Basic Attacks against enemy Heroes take 1 second off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1% Hook and Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
+  <!-- Hook costs 40% of its Mana, has no cast time and fires 4 hooks in a narrow cone (the 4th at a random angle) that can each pull an enemy; Basic Attacks against enemy Heroes take 1 second off its cooldown; gain Tenderizer and Master Hooker. Catch quest (10% of each map's gains kept for good): 1.5% Hook and Basic Attack damage per enemy Hero hooked. Reel quest: takedowns within 6 seconds of a Hook hit; stacks 1-40 make Gorge and Putrid Bile recharge 1% faster each, 41-80 make Hook fly 1% faster each, 81-100 Slow hooked Heroes 1% more each on arrival (script), at 100 Invulnerability for 0.75 seconds on casting Hook and on hooking a Hero (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenCatchTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenCatchTokenCounter" />
     <Max value="100000" />
@@ -28,7 +28,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="StitchesGoldenCatchTokenCounter" />
-    <Scale value="0.01" />
+    <Scale value="0.015" />
   </CAccumulatorToken>
   <CEffectDamage id="StitchesHookDamage">
     <MultiplicativeModifierArray index="StitchesHookerPower" Modifier="0" />
