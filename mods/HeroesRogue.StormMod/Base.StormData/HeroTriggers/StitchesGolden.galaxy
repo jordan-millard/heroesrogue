@@ -7,7 +7,7 @@ include "AffixTriggers"
 // Slammer: Slam hits on enemy Heroes add Smash; takedowns add Quake: a speed burst on Hero hits, then Slam size, then
 // its Slow, then at 100 a second Slam, then 2% damage per stack.
 // Gas Bag: a gas cloud around Stitches; Regeneration Globes (data) and Gorging an enemy Hero (5) add Leftovers; takedowns within 6 seconds of a gas
-// hit add Stench: cloud size, then maximum Health, then at 100 a gas burst when Gorge lets go, then 2% damage per stack.
+// hit add Stench: cloud size, then maximum Health, then tick speed, then at 100 the gas hits buildings, then 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_StitchesTakedownWindow = 3.0;
@@ -27,6 +27,8 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_StitchesGasBagTime; // per enemy pla
 int libAffx_StitchesGasBagAdded; // Gas Bag: takedown stacks already applied to the catalog this game
 int libAffx_StitchesGasBagPastApplied; // Gas Bag: takedown quest stacks past the cap applied as damage this game
 fixed libAffx_StitchesHealthApplied; // Gas Bag: the maximum Health fraction last applied
+fixed libAffx_StitchesGasPeriod = 1.0; // Gas Bag: the gas tick period last applied (Stench 81-100)
+bool libAffx_StitchesGasStructures; // Gas Bag: Stench 100 turned on the gas against buildings
 
 unit libAffx_StitchesHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -137,7 +139,7 @@ void libAffx_StitchesSyncSlammer () {
         UnitBehaviorAdd(hero, "StitchesSlammerPastCapDamage", hero, 1);
     }
 }
-// StitchesGoldenStenchTokenCounter: stacks 1-40: the gas cloud is 1% larger each; 41-80 maximum Health (libAffx_StitchesTick_Func), 100 gas burst (script), then damage
+// StitchesGoldenStenchTokenCounter: stacks 1-40: the gas cloud is 1% larger each; 41-80 maximum Health, 81-100 tick speed, 100 buildings (libAffx_StitchesTick_Func), then damage
 void libAffx_StitchesSyncGasBag () {
     unit hero = libAffx_StitchesHero();
     int stacks;
@@ -151,6 +153,7 @@ void libAffx_StitchesSyncGasBag () {
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_StitchesGasBagAdded) {
         libAffx_CatalogReferenceModify("Effect,StitchesGoldenGasSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesGasBagAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,StitchesGoldenGasStructureSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_StitchesGasBagAdded) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_StitchesGasBagAdded = wanted;
     }
     // stacks past 100: 0.02 each to all damage
@@ -226,12 +229,13 @@ bool libAffx_StitchesHookArrive_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Every second: Slammer's echo at 100 Quake; Gas Bag's gas damage (1% of maximum Health per tick, tripled in data while surging; the burst 10%) and
-// maximum Health (Stench 41-80 and Bloated); Deflated's size
+// Every second: Slammer's echo at 100 Quake; Gas Bag's gas damage (1% of maximum Health per tick, tripled in data while surging),
+// maximum Health (Stench 41-80 and Bloated), tick speed (Stench 81-100) and buildings (Stench 100); Deflated's size
 bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_StitchesHero();
     fixed life;
     fixed health;
+    fixed period;
     if (hero == null) {
         return false;
     }
@@ -241,7 +245,6 @@ bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
     if (UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker")) {
         life = UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent);
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasDamage", "Amount", libAffx_player, life * 0.01);
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasBurstDamage", "Amount", libAffx_player, life * 0.1);
         health = IntToFixed(MaxI(0, MinI(libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") - 40, 40))) * 0.01;
         health += StringToFixed(CatalogFieldValueGet(c_gameCatalogBehavior, "StitchesGoldenBloatedValue", "Modification.VitalMaxFractionArray[Life]", libAffx_player));
         if (health != libAffx_StitchesHealthApplied) {
@@ -251,6 +254,21 @@ bool libAffx_StitchesTick_Func (bool testConds, bool runActions) {
         }
         if (health > 0.0 && !UnitHasBehavior2(hero, "StitchesGoldenGasBagHealth")) {
             UnitBehaviorAdd(hero, "StitchesGoldenGasBagHealth", hero, 1);
+        }
+        // Stench 81-100: the gas ticks 1% faster each (the aura is re-added to pick up its new period)
+        period = 1.0 - IntToFixed(MaxI(0, MinI(libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") - 80, 20))) * 0.01;
+        if (period != libAffx_StitchesGasPeriod) {
+            libAffx_StitchesGasPeriod = period;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "StitchesGoldenGasAura", "Period", libAffx_player, period);
+            if (UnitHasBehavior2(hero, "StitchesGoldenGasAura")) {
+                UnitBehaviorRemove(hero, "StitchesGoldenGasAura", 1);
+                UnitBehaviorAdd(hero, "StitchesGoldenGasAura", hero, 1);
+            }
+        }
+        // Stench 100: the gas hits enemy buildings too
+        if (libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") >= 100 && !libAffx_StitchesGasStructures) {
+            libAffx_StitchesGasStructures = true;
+            CatalogFieldValueSetFixed(c_gameCatalogEffect, "StitchesGoldenGasStructureSearch", "Chance", libAffx_player, 1.0);
         }
     }
     if (UnitHasBehavior2(hero, "StitchesGoldenDeflatedMarker")) {
@@ -269,16 +287,6 @@ bool libAffx_StitchesGorgeStart_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(5, "StitchesGoldenLeftoversTokenCounter", hero);
     // and the gas surges (triple damage) for 6 seconds
     UnitBehaviorAdd(hero, "StitchesGoldenGasSurge", hero, 1);
-    return true;
-}
-// Gas Bag, Stench at 100: the Hero Gorge lets go of is hit by a gas burst
-bool libAffx_StitchesGorgeEnd_Func (bool testConds, bool runActions) {
-    unit victim = EventUnit();
-    unit hero = libAffx_StitchesHero();
-    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "StitchesGoldenGasBagMarker") || !libAffx_StitchesIsFoe(victim) || libAffx_StitchesStacks("StitchesGoldenStenchTokenCounter") < 100) {
-        return false;
-    }
-    UnitCreateEffectPoint(hero, "StitchesGoldenGasBurstSearch", UnitGetPosition(victim));
     return true;
 }
 // Hooker hit on an enemy Hero: takedown window, StitchesGoldenCatchTokenCounter, the heal, and on-hit boons
@@ -411,7 +419,6 @@ bool libAffx_StitchesStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_StitchesHookCast_Func"), libAffx_player, "StitchesHookLaunchCreatePersistent");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StitchesHookArrive_Func"), null, "StitchesHooked", c_unitBehaviorChangeDestroy);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_StitchesTick_Func"), 1.0, c_timeGame);
-    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StitchesGorgeEnd_Func"), null, "StitchesGorgeInitialTargetBehavior", c_unitBehaviorChangeDestroy);
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_StitchesGorgeStart_Func"), null, "StitchesGorgeInitialTargetBehavior", c_unitBehaviorChangeCreate);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_StitchesSync_Func"), 1.0, c_timeGame);

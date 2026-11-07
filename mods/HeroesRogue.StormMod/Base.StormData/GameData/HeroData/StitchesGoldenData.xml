@@ -88,7 +88,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Gas Bag ===== -->
-  <!-- A gas cloud around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (script sets the amount), 3% for 6 seconds after a Hook, Gorge, Devour or inner Slam hit on an enemy Hero and while Shambling Horror is on; Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data) and 5% per enemy Hero Gorged (script). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), at 100 a Hero Gorge lets go of is hit by a gas burst for 10% of Stitches' maximum Health (script), then 2% damage each. -->
+  <!-- A gas cloud around Stitches (3 radius) deals 1% of his maximum Health per second to enemies (script sets the amount), 3% for 6 seconds after a Hook, Gorge, Devour or inner Slam hit on an enemy Hero and while Shambling Horror is on; Devour heals twice as much; Stitches moves 10% slower; gain Hungry for More (its quest keeps 10% of each map's gains) and Gorge at level 1 (Putrid Bile disabled). Leftovers quest (10% of each map's gains kept for good): 1% gas damage per Regeneration Globe (data) and 5% per enemy Hero Gorged (script). Stench quest: takedowns within 6 seconds of a gas hit; stacks 1-40 make the cloud 1% larger each, 41-80 add 1% maximum Health each (script), 81-100 make the gas tick 1% faster each (script), at 100 the gas also hits enemy buildings (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="StitchesGoldenLeftoversTokenCounter" parent="StormQuestToken">
     <Face value="StitchesGoldenLeftoversTokenCounter" />
     <Max value="100000" />
@@ -110,12 +110,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="StitchesGasBagHit" Accumulator="StitchesGoldenLeftoversTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="StitchesGasBagLegacy" Modifier="0" />
     <MultiplicativeModifierArray index="StitchesGoldenGasSurge" Validator="StitchesGoldenGasSurging" Modifier="2" />
-  </CEffectDamage>
-  <CEffectDamage id="StitchesGoldenGasBurstDamage">
-    <MultiplicativeModifierArray index="StitchesGasBagPower" Modifier="0" />
-    <MultiplicativeModifierArray index="StitchesGasBagCommon" Modifier="0" />
-    <MultiplicativeModifierArray index="StitchesGasBagHit" Accumulator="StitchesGoldenLeftoversTokenCounterAccumulator" />
-    <MultiplicativeModifierArray index="StitchesGasBagLegacy" Modifier="0" />
   </CEffectDamage>
   <CButton id="StitchesGoldenLeftoversTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_stitches_acidcloud.dds" />
@@ -434,8 +428,23 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <DisableValidatorArray value="SourceNotDead" />
     <DisableValidatorArray value="TargetNotSpecialDeathState" />
     <Period value="1" />
-    <PeriodicEffect value="StitchesGoldenGasSearch" />
+    <PeriodicEffect value="StitchesGoldenGasTickSet" />
   </CBehaviorBuff>
+  <CEffectSet id="StitchesGoldenGasTickSet">
+    <EffectArray value="StitchesGoldenGasSearch" />
+    <EffectArray value="StitchesGoldenGasStructureSearch" />
+  </CEffectSet>
+  <!-- Stench at 100: the gas also hits enemy buildings (Chance 0: the script turns it on) -->
+  <CEffectEnumArea id="StitchesGoldenGasStructureSearch">
+    <Chance value="0" />
+    <ValidatorArray value="CasterNotDead" />
+    <ImpactLocation Value="SourceUnit" />
+    <SearchFilters value="Structure;Self,Player,Ally,Neutral,Missile,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="StitchesGoldenGasImpactSet">
+      <Radius value="3" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
   <CEffectEnumArea id="StitchesGoldenGasSearch">
     <ValidatorArray value="CasterNotDead" />
     <ImpactLocation Value="SourceUnit" />
@@ -558,23 +567,4 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <VitalMaxFractionArray index="Life" value="0" />
     </Modification>
   </CBehaviorBuff>
-  <!-- Stench at 100: a Hero Gorge lets go is hit by a gas burst, 10% of Stitches' maximum Health to enemies within 4
-       (script) -->
-  <CEffectDamage id="StitchesGoldenGasBurstDamage" parent="StormSpellNoTowerAggro">
-    <Amount value="250" />
-  </CEffectDamage>
-  <CEffectEnumArea id="StitchesGoldenGasBurstSearch">
-    <ImpactLocation Value="TargetPoint" />
-    <SearchFilters value="-;Self,Player,Ally,Neutral,ImmuneToAOE,Structure,Missile,Stasis,Dead,Hidden,Invulnerable" />
-    <AreaArray Effect="StitchesGoldenGasBurstDamage">
-      <Radius value="4" />
-    </AreaArray>
-    <SearchFlags index="ExtendByUnitRadius" value="1" />
-  </CEffectEnumArea>
-  <CActorModel id="StitchesGoldenGasBurstModel" parent="StormModelAnimationStyleOneShot">
-    <On Terms="Effect.StitchesGoldenGasBurstSearch.Start" Send="Create" />
-    <HostSiteOps Ops="SOpTargetPointStationary" />
-    <Model value="StitchesBlightCastModel" />
-    <Scale value="1.1,1.1,1.1" />
-  </CActorModel>
 </Catalog>
