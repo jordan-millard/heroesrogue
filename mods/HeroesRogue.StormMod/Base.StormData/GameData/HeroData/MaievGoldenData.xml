@@ -25,7 +25,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Fan Dancer ===== -->
-  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 Heroes still brings one back in 0.5 seconds) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.5% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Vault last 2% longer each, 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
+  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 or more Heroes refunds a charge) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.5% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Vault last 2% longer each, 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MaievGoldenEdgeTokenCounter" parent="StormQuestToken">
     <Face value="MaievGoldenEdgeTokenCounter" />
     <Max value="100000" />
@@ -170,11 +170,16 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Behavior value="MaievGoldenWardenMarker" />
   </CValidatorUnitCompareBehaviorCount>
   <!-- ===== Fan Dancer ===== -->
-  <!-- Fan of Knives stores charges, so hitting 2 Heroes (base: its cooldown drops to 0.5 seconds) also brings the next
-       charge back in 0.5 seconds -->
-  <CEffectModifyUnit id="MaievFanOfKnivesModifyCooldown">
-    <Cost Abil="MaievFanOfKnives,Execute" CooldownOperation="Set" CooldownTimeUse="0.5" ChargeTimeUse="0.5" />
+  <!-- Fan of Knives stores charges, so hitting 2 or more Heroes (base: its cooldown drops to 0.5 seconds) refunds a charge
+       instead (Chance 0: the starter turns it on) -->
+  <CEffectModifyUnit id="MaievGoldenFanChargeRefund">
+    <Chance value="0" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="MaievFanOfKnives,Execute" CooldownOperation="Add" ChargeCountUse="-1" />
   </CEffectModifyUnit>
+  <CEffectSet id="MaievFanOfKnivesResetSet">
+    <EffectArray value="MaievGoldenFanChargeRefund" />
+  </CEffectSet>
   <CEffectSet id="MaievFanOfKnivesImpactSet">
     <EffectArray value="MaievGoldenFanPercentDamage" />
   </CEffectSet>

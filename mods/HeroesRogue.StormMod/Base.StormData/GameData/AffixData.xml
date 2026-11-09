@@ -31216,17 +31216,20 @@
             <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Charge.TimeUse 5">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Cooldown.TimeUse 0.5">
+            <String String="1 1 Set Effect,MaievGoldenFanChargeRefund,Chance 1">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Multiply Abil,MaievFanOfKnives,Cost.Vital[Energy] 0.5">
+            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Cooldown.TimeUse 0.5">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,MaievFanOfKnivesDamage,MultiplicativeModifierArray[MaievFanPower].Modifier 0">
+            <String String="1 1 Multiply Abil,MaievFanOfKnives,Cost.Vital[Energy] 0.5">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,MaievGoldenFanPercentDamage,MultiplicativeModifierArray[MaievFanPower].Modifier 0">
+            <String String="1 1 Set Effect,MaievFanOfKnivesDamage,MultiplicativeModifierArray[MaievFanPower].Modifier 0">
                 <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="1 1 Set Effect,MaievGoldenFanPercentDamage,MultiplicativeModifierArray[MaievFanPower].Modifier 0">
+                <Field Id="CatalogModification" Index="8" />
             </String>
             <String String="AffixAdded libAffx_MaievStart">
                 <Field Id="Trigger" />
