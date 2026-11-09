@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Golden Maiev. Fan Dancer: Fan of Knives hits on enemy Heroes add Edge; takedowns add Flourish: Fan size, then Vault
 // duration, then maximum Health damage, then at 100 a second Fan for 50%, then 2% damage per stack.
 // Jailer of the Watchers: enemy Heroes tethered by Umbral Bind add Shackles; takedowns add Sentence: Umbral Bind
-// CC duration, then Basic Attack cooldown cut, then a stronger pull, then at 100 Protected on binding, then 2% damage.
+// CC duration, then Basic Attack cooldown cut, then a stronger pull, then at 100 range and 2 binds, then 2% damage.
 // Shadow Warden: spirit hits on enemy Heroes add Vengeance; takedowns add Vigil: Vault recharge, then spirit speed
 // and distance, then spirit width, then at 100 a doubled Warden's Cage, then 2% damage per stack.
 // ============================================================
@@ -123,7 +123,7 @@ void libAffx_MaievSyncFan () {
         UnitBehaviorAdd(hero, "MaievFanPastCapDamage", hero, 1);
     }
 }
-// MaievGoldenSentenceTokenCounter: stacks 1-40: Stuns, Roots and Slows on Maiev 2% shorter each; 41-80 Basic Attack cooldown cut, 81-100 pull strength, 100 Protected (script), then damage
+// MaievGoldenSentenceTokenCounter: stacks 1-40: Stuns, Roots and Slows on Maiev 2% shorter each; 41-80 Basic Attack cooldown cut, 81-100 pull strength, 100 range and 2 binds (script), then damage
 void libAffx_MaievSyncJailer () {
     unit hero = libAffx_MaievHero();
     int stacks;
@@ -266,8 +266,7 @@ bool libAffx_MaievFanCast_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Jailer of the Watchers: an enemy Hero is tethered by Umbral Bind: Shackles, the takedown window and, at 100 Sentence,
-// Protected for 1 second
+// Jailer of the Watchers: an enemy Hero is tethered by Umbral Bind: Shackles and the takedown window
 bool libAffx_MaievBind_Func (bool testConds, bool runActions) {
     unit victim = EventUnit();
     unit hero = libAffx_MaievHero();
@@ -276,8 +275,29 @@ bool libAffx_MaievBind_Func (bool testConds, bool runActions) {
     }
     libAffx_MaievJailerTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "MaievGoldenShacklesTokenCounter", hero);
-    if (UnitIsAlive(hero) && libAffx_MaievStacks("MaievGoldenSentenceTokenCounter") >= 100) {
-        UnitBehaviorAdd(hero, "MaievGoldenJailerProtected", hero, 1);
+    return true;
+}
+// Jailer of the Watchers, Sentence at 100: Umbral Bind empowers 2 Basic Attacks. The first empowered attack gives the
+// empowerment back once; Umbral Bind's cooldown restarts when the second is used.
+bool libAffx_MaievBindAttack_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MaievHero();
+    if (hero == null || !UnitHasBehavior2(hero, "MaievGoldenJailerMarker")) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenJailerSecondBind")) {
+        UnitBehaviorRemove(hero, "MaievGoldenJailerSecondBind", 1);
+        return true;
+    }
+    if (libAffx_MaievStacks("MaievGoldenSentenceTokenCounter") < 100) {
+        return false;
+    }
+    UnitBehaviorAdd(hero, "MaievGoldenJailerSecondBind", hero, 1);
+    Wait(0.0625, c_timeGame);
+    if (UnitIsAlive(hero) && !UnitHasBehavior2(hero, "MaievUmbralBindPrimed")) {
+        UnitBehaviorAdd(hero, "MaievUmbralBindPrimed", hero, 1);
+    }
+    else {
+        UnitBehaviorRemove(hero, "MaievGoldenJailerSecondBind", 1);
     }
     return true;
 }
@@ -300,8 +320,8 @@ bool libAffx_MaievVault_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Every second: quest rewards switched on by stack counts (Flourish 81: Fan of Knives' Health damage; Vigil 100: Warden's
-// Cage's second ring)
+// Every second: quest rewards switched on by stack counts (Flourish 81: Fan of Knives' Health damage; Sentence 100: +0.5
+// attack range; Vigil 100: Warden's Cage's second ring)
 bool libAffx_MaievTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_MaievHero();
     if (hero == null) {
@@ -310,6 +330,9 @@ bool libAffx_MaievTick_Func (bool testConds, bool runActions) {
     if (!libAffx_MaievFanPercentOn && UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker") && libAffx_MaievStacks("MaievGoldenFlourishTokenCounter") > 80) {
         libAffx_MaievFanPercentOn = true;
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "MaievGoldenFanPercentDamage", "Chance", libAffx_player, 1.0);
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenJailerMarker") && libAffx_MaievStacks("MaievGoldenSentenceTokenCounter") >= 100 && !UnitHasBehavior2(hero, "MaievGoldenJailerReach")) {
+        UnitBehaviorAdd(hero, "MaievGoldenJailerReach", hero, 1);
     }
     if (!libAffx_MaievCageDoubled && UnitHasBehavior2(hero, "MaievGoldenWardenMarker") && libAffx_MaievStacks("MaievGoldenVigilTokenCounter") >= 100) {
         libAffx_MaievCageDoubled = true;
@@ -445,6 +468,7 @@ bool libAffx_MaievStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MaievGoldenVaultSpiritDamage");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievFanCast_Func"), libAffx_player, "MaievFanOfKnivesInitialPersistent");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_MaievBind_Func"), null, "MaievUmbralBindTetherTimer", c_unitBehaviorChangeCreate);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievBindAttack_Func"), libAffx_player, "MaievWeaponUmbralBindSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievVault_Func"), libAffx_player, "MaievGoldenVaultSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MaievTick_Func"), 1.0, c_timeGame);
     // also picks up stacks loaded from the bank

@@ -61,7 +61,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Jailer of the Watchers ===== -->
-  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds), and its empowered attack swings almost instantly (+700% attack speed while primed); Basic Attacks against enemy Heroes take 1 second off it; gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 1% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Stuns, Roots and Slows on Maiev 2% shorter each, 41-80 make the Basic Attack cooldown cut 0.025 seconds bigger each (2 seconds at 80), 81-100 make the pull 1% stronger each, at 100 Protected for 1 second on tethering a Hero (script), then 2% damage each. -->
+  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds), and its empowered attacks have +1 range; Basic Attacks against enemy Heroes take 1 second off it; gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 1% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Stuns, Roots and Slows on Maiev 2% shorter each, 41-80 make the Basic Attack cooldown cut 0.025 seconds bigger each (2 seconds at 80), 81-100 make the pull 1% stronger each, at 100 +0.5 range on all Basic Attacks and Umbral Bind empowers 2 Basic Attacks (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MaievGoldenShacklesTokenCounter" parent="StormQuestToken">
     <Face value="MaievGoldenShacklesTokenCounter" />
     <Max value="100000" />
@@ -268,9 +268,18 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="MaievUmbralBindTetherDetachSet">
     <EffectArray value="MaievGoldenBoundForJusticeRemove" />
   </CEffectSet>
-  <!-- Sentence at 100: binding an enemy Hero makes Maiev Protected for 1 second (script) -->
-  <CBehaviorBuff id="MaievGoldenJailerProtected" parent="StormInvulnerable">
-    <Duration value="1" />
+  <!-- Sentence at 100: +0.5 range on all Basic Attacks (the script adds it) -->
+  <CBehaviorBuff id="MaievGoldenJailerReach">
+    <BehaviorFlags index="Permanent" value="1" />
+    <InfoFlags index="Hidden" value="1" />
+    <Modification>
+      <WeaponRange value="0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Sentence at 100: Umbral Bind empowers 2 Basic Attacks; this marks that the first was used and the empowerment given
+       back (script) -->
+  <CBehaviorBuff id="MaievGoldenJailerSecondBind">
+    <InfoFlags index="Hidden" value="1" />
   </CBehaviorBuff>
   <!-- ===== Shadow Warden ===== -->
   <!-- Vault of the Wardens runs a set: the leap, the spirit left behind (Chance 0: the starter turns it on) and Shadow Step
