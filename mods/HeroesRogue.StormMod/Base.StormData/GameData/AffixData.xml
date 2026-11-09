@@ -31167,6 +31167,523 @@
             </String>
         </Instances>
 
+        <Instances Id="MaievFanDancer">
+            <String String="Assets/Textures/storm_ui_icon_maiev_knives.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MaievFanOfKnivesPinDown">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MaievFanOfKnivesBladeDance">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MaievGoldenFanDancerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MaievGoldenEdgeTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MaievGoldenFlourishTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MaievGoldenFlourishTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MaievGoldenEdgeTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="MaievFanOfKnivesPinDownQuestToken 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="MaievFanOfKnivesPinDownDamageToken 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Charge.CountMax 2">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Charge.CountStart 2">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Charge.CountUse 1">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Charge.TimeUse 5">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Abil,MaievFanOfKnives,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Multiply Abil,MaievFanOfKnives,Cost.Vital[Energy] 0.5">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MaievFanOfKnivesDamage,MultiplicativeModifierArray[MaievFanPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="1 1 Set Effect,MaievGoldenFanPercentDamage,MultiplicativeModifierArray[MaievFanPower].Modifier 0">
+                <Field Id="CatalogModification" Index="7" />
+            </String>
+            <String String="AffixAdded libAffx_MaievStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MaievTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievGlaiveEdges">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_maiev_knives.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievFanDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MaievFanOfKnivesDamage,MultiplicativeModifierArray[MaievFanCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MaievGoldenFanPercentDamage,MultiplicativeModifierArray[MaievFanCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievQuickFan">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_maiev_knives.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievFanDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MaievFanOfKnives,Cost.Charge.TimeUse -0.25">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MaievNaishasMementoBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_memento.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievFanDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievFanOfKnivesNaishasMemento">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MaievElunesWrathBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_knives.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievFanDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievFanOfKnivesElunesWrath">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MaievBladedArmorBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_knives.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievFanDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievFanOfKnivesBladedArmor">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MaievStormOfBlades">
+            <String String="Assets/Textures/storm_ui_icon_maiev_knives_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievFanDancer">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MaievGoldenStormOfBladesMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+        <Instances Id="MaievJailerOfTheWatchers">
+            <String String="Assets/Textures/storm_ui_icon_maiev_umbra_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MaievUmbralBindChainGang">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MaievUmbralBindCruelChain">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 MaievGoldenJailerMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MaievGoldenShacklesTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MaievGoldenSentenceTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MaievGoldenSentenceTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MaievGoldenShacklesTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Multiply Abil,MaievUmbralBind,Cost.Vital[Energy] 0.5">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Multiply Abil,MaievUmbralBind,Cost.Cooldown.TimeUse 0.5">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,MaievUmbralBindPullDamage,MultiplicativeModifierArray[MaievJailerPower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,MaievWeaponUmbralBindDamage,MultiplicativeModifierArray[MaievJailerPower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="AffixAdded libAffx_MaievStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MaievTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievShadowChains">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_maiev_umbra_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievJailerOfTheWatchers">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MaievUmbralBindPullDamage,MultiplicativeModifierArray[MaievJailerCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MaievWeaponUmbralBindDamage,MultiplicativeModifierArray[MaievJailerCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievQuickBind">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_maiev_umbra_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievJailerOfTheWatchers">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MaievUmbralBind,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MaievBondsOfJusticeBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_umbra_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievJailerOfTheWatchers">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievUmbralBindBondsOfJustice">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MaievUmbralBindBondsOfJusticeQuestToken 0.5">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MaievUmbralBindBondsOfJusticeDamageToken 0.5">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievBondsOfCorruptionBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_orb_corruption.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievJailerOfTheWatchers">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievUmbralBindBondsOfCorruption">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MaievBoundForJustice">
+            <String String="Assets/Textures/storm_ui_icon_maiev_umbra_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievJailerOfTheWatchers">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MaievGoldenBoundForJusticeApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MaievChainPrison">
+            <String String="Assets/Textures/storm_ui_icon_maiev_umbra_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievJailerOfTheWatchers">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Behavior,MaievUmbralBindArrivalStun,Duration 0.75">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MaievShadowWarden">
+            <String String="Assets/Textures/storm_ui_icon_maiev_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="MaievWardensCage">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="MaievContainmentDisc">
+                <Field Id="TalentsDisable" />
+            </String>
+            <String String="1 0 MaievGoldenWardenMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 MaievGoldenVengeanceTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 MaievGoldenVigilTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="MaievGoldenVigilTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="MaievGoldenVengeanceTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MaievVaultOfTheWardens,Cost.Charge.CountMax 3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Abil,MaievVaultOfTheWardens,Cost.Charge.CountStart 3">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Abil,MaievVaultOfTheWardens,Cost.Charge.HideCount 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,MaievGoldenVaultSpiritPersistent,Chance 1">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,MaievGoldenAttackVaultCooldown,Chance 1">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,MaievSpiritOfVengeanceDamage,MultiplicativeModifierArray[MaievWardenPower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="1 1 Set Effect,MaievGoldenVaultSpiritDamage,MultiplicativeModifierArray[MaievWardenPower].Modifier 0">
+                <Field Id="CatalogModification" Index="6" />
+            </String>
+            <String String="AffixAdded libAffx_MaievStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_MaievTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievVengefulBlades">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_maiev_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievShadowWarden">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,MaievSpiritOfVengeanceDamage,MultiplicativeModifierArray[MaievWardenCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,MaievGoldenVaultSpiritDamage,MultiplicativeModifierArray[MaievWardenCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="MaievAgileWarden">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_maiev_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievShadowWarden">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,MaievVaultOfTheWardens,Cost.Charge.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MaievSuddenVengeanceBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_rush_2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievShadowWarden">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievSpiritOfVengeanceSuddenVengeance">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MaievRuthlessSpiritBoon">
+            <String String="Assets/Textures/storm_ui_icon_maiev_rush_1.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievShadowWarden">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="MaievSpiritOfVengeanceRuthlessSpirit">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="MaievShadowStep">
+            <String String="Assets/Textures/storm_ui_icon_maiev_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievShadowWarden">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,MaievGoldenShadowStepApply,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="MaievTheHunt">
+            <String String="Assets/Textures/storm_ui_icon_maiev_trait.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Maiev">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="MaievShadowWarden">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 0 MaievGoldenTheHuntMarker">
+                <Field Id="Behavior" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

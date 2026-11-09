@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Maiev. Starters: Fan Dancer (Fan of Knives: 2 charges, half Mana; Pin Down and Blade Dance), Jailer of the Watchers (Umbral Bind: half Mana, half cooldown; Chain Gang and Cruel Chain) and Shadow Warden (Vault: 3 charges, each Vault leaves an exploding spirit, Basic Attacks on Heroes speed its recharge; Warden's Cage at level 1). Each damage effect has its own multipliers: starter power, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/MaievGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="MaievGoldenFanDancerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MaievGoldenJailerMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MaievGoldenWardenMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MaievGoldenStormOfBladesMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="MaievGoldenTheHuntMarker" parent="CarryBehaviorParent" />
+  <!-- Fan Dancer, Flourish 81-100: Fan of Knives also deals a share of an enemy Hero's maximum Health (the quest sets it;
+       Chance 0: the script turns it on at 81) -->
+  <CEffectDamage id="MaievGoldenFanPercentDamage" parent="StormSpellPercentDamage">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="MaievGoldenCasterIsFanDancer" />
+    <VitalFractionMax index="Life" value="0" />
+  </CEffectDamage>
+  <!-- Shadow Warden: the spirit each Vault leaves behind explodes for 50% of Spirit of Vengeance's damage (it inherits the
+       Ruthless Spirit bonus) -->
+  <CEffectDamage id="MaievGoldenVaultSpiritDamage" parent="MaievSpiritOfVengeanceDamage">
+    <Amount value="75" />
+  </CEffectDamage>
+
+  <!-- ===== Fan Dancer ===== -->
+  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 Heroes still brings one back in 0.5 seconds) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.5% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Vault last 2% longer each, 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="MaievGoldenEdgeTokenCounter" parent="StormQuestToken">
+    <Face value="MaievGoldenEdgeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MaievGoldenFlourishTokenCounter" parent="StormQuestToken">
+    <Face value="MaievGoldenFlourishTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MaievGoldenEdgeTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MaievGoldenEdgeTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MaievFanOfKnivesDamage">
+    <MultiplicativeModifierArray index="MaievFanPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievFanCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievFanHit" Accumulator="MaievGoldenEdgeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievFanLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MaievGoldenFanPercentDamage">
+    <MultiplicativeModifierArray index="MaievFanPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievFanCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievFanHit" Accumulator="MaievGoldenEdgeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievFanLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MaievGoldenEdgeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_maiev_knives.dds" />
+  </CButton>
+  <CButton id="MaievGoldenFlourishTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_maiev_knives.dds" />
+  </CButton>
+
+  <!-- ===== Jailer of the Watchers ===== -->
+  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds); gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 0.5% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Umbral Bind recharge 1% faster each, 41-80 Slow tethered Heroes 1% each while tethered (Chance turned on by script at 41), 81-100 make the pull 1% stronger each, at 100 Protected for 1 second on tethering a Hero (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="MaievGoldenShacklesTokenCounter" parent="StormQuestToken">
+    <Face value="MaievGoldenShacklesTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MaievGoldenSentenceTokenCounter" parent="StormQuestToken">
+    <Face value="MaievGoldenSentenceTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MaievGoldenShacklesTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MaievGoldenShacklesTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MaievUmbralBindPullDamage">
+    <MultiplicativeModifierArray index="MaievJailerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievJailerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievJailerHit" Accumulator="MaievGoldenShacklesTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievJailerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MaievWeaponUmbralBindDamage">
+    <MultiplicativeModifierArray index="MaievJailerPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievJailerCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievJailerHit" Accumulator="MaievGoldenShacklesTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievJailerLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MaievGoldenShacklesTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_maiev_umbra_1.dds" />
+  </CButton>
+  <CButton id="MaievGoldenSentenceTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_maiev_umbra_1.dds" />
+  </CButton>
+
+  <!-- ===== Shadow Warden ===== -->
+  <!-- Vault of the Wardens stores 3 charges and each Vault leaves a spirit where Maiev leapt from that explodes 1.5 seconds later for 50% of Spirit of Vengeance's damage (2.5 radius); Basic Attacks against enemy Heroes take 0.25 seconds off Vault's recharge; gain Warden's Cage at level 1 (Containment Disc disabled). Vengeance quest (10% of each map's gains kept for good): 0.5% spirit damage per spirit hit on an enemy Hero (Spirit of Vengeance and the Vault spirit). Vigil quest: takedowns within 6 seconds of a spirit hit; stacks 1-40 make Vault recharge 1% faster each, 41-80 make Spirit of Vengeance fly 1% faster and farther each, 81-100 make the spirits 1% wider each, at 100 Warden's Cage gets a second ring of Avatars (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="MaievGoldenVengeanceTokenCounter" parent="StormQuestToken">
+    <Face value="MaievGoldenVengeanceTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="MaievGoldenVigilTokenCounter" parent="StormQuestToken">
+    <Face value="MaievGoldenVigilTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="MaievGoldenVengeanceTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="MaievGoldenVengeanceTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="MaievSpiritOfVengeanceDamage">
+    <MultiplicativeModifierArray index="MaievWardenPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievWardenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievWardenHit" Accumulator="MaievGoldenVengeanceTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievWardenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="MaievGoldenVaultSpiritDamage">
+    <MultiplicativeModifierArray index="MaievWardenPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievWardenCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievWardenHit" Accumulator="MaievGoldenVengeanceTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievWardenLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="MaievGoldenVengeanceTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+  </CButton>
+  <CButton id="MaievGoldenVigilTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+  </CButton>
+  <!-- Fan Dancer: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="MaievFanPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Jailer of the Watchers: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="MaievJailerPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Shadow Warden: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="MaievWardenPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <CValidatorUnitCompareBehaviorCount id="MaievGoldenCasterIsFanDancer">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="MaievGoldenFanDancerMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="MaievGoldenCasterIsJailer">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="MaievGoldenJailerMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CValidatorUnitCompareBehaviorCount id="MaievGoldenCasterIsWarden">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="MaievGoldenWardenMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <!-- ===== Fan Dancer ===== -->
+  <!-- Fan of Knives stores charges, so hitting 2 Heroes (base: its cooldown drops to 0.5 seconds) also brings the next
+       charge back in 0.5 seconds -->
+  <CEffectModifyUnit id="MaievFanOfKnivesModifyCooldown">
+    <Cost Abil="MaievFanOfKnives,Execute" CooldownOperation="Set" CooldownTimeUse="0.5" ChargeTimeUse="0.5" />
+  </CEffectModifyUnit>
+  <CEffectSet id="MaievFanOfKnivesImpactSet">
+    <EffectArray value="MaievGoldenFanPercentDamage" />
+  </CEffectSet>
+  <!-- Flourish at 100: the second Fan of Knives deals 50% damage. Attacker damage responses act on the final damage, so this
+       halves it after every other bonus (the script adds this for the echo's moment). -->
+  <CBehaviorBuff id="MaievGoldenFanEcho">
+    <Duration value="0.25" />
+    <DamageResponse>
+      <Chance value="1" />
+      <Location value="Attacker" />
+      <ModifyFraction value="0.5" />
+      <RequireEffectArray value="MaievFanOfKnivesDamage" />
+      <RequireEffectArray value="MaievGoldenFanPercentDamage" />
+    </DamageResponse>
+  </CBehaviorBuff>
+  <!-- Storm of Blades (Legendary): the script throws 6 more fans around Maiev. Each is Fan of Knives' knives and crescent only
+       (no Blade Dance, no turning lock); hits, quests and the 2-Hero reset count as for the main fan. -->
+  <CEffectCreatePersistent id="MaievGoldenFanCopyPersistent">
+    <OffsetVectorStartLocation Value="OriginPoint" />
+    <PeriodCount value="8" />
+    <PeriodicEffectArray value="MaievFanOfKnivesLeftKnife1Persistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesLeftKnife2Persistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesLeftKnife3Persistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesCenterKnifePersistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesRightKnife1Persistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesRightKnife2Persistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesRightKnife3Persistent" />
+    <PeriodicEffectArray value="MaievFanOfKnivesSearchArea" />
+    <PeriodicOffsetArray X="-3.25" Y="3" Z="0.2" />
+    <PeriodicOffsetArray X="-2.75" Y="1.5" Z="0.2" />
+    <PeriodicOffsetArray X="-1.4" Y="0.4" Z="0.2" />
+    <PeriodicOffsetArray Z="0.2" />
+    <PeriodicOffsetArray X="1.4" Y="0.4" Z="0.2" />
+    <PeriodicOffsetArray X="2.75" Y="1.5" Z="0.2" />
+    <PeriodicOffsetArray X="3.25" Y="3" Z="0.2" />
+    <PeriodicOffsetArray />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0.0625" />
+  </CEffectCreatePersistent>
+  <!-- ===== Jailer of the Watchers ===== -->
+  <!-- Sentence 41-80: enemy Heroes are Slowed while Umbral Bind tethers them, not after the pull (the quest sets the amount;
+       Chance 0: the script turns it on at 41). Bound for Justice (Epic): tethered enemy Heroes deal 20% less damage. Both
+       end with the tether. -->
+  <CBehaviorBuff id="MaievGoldenBindSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_umbra_1.dds" />
+    <Duration value="2.5" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MaievGoldenBindSlowApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ValidatorArray value="MaievGoldenCasterIsJailer" />
+    <Behavior value="MaievGoldenBindSlow" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="MaievGoldenBindSlowRemove">
+    <BehaviorLink value="MaievGoldenBindSlow" />
+  </CEffectRemoveBehavior>
+  <CBehaviorBuff id="MaievGoldenBoundForJustice">
+    <Alignment value="Negative" />
+    <InfoFlags index="Hidden" value="0" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_umbra_2.dds" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="2.5" />
+    <Modification>
+      <DamageDealtFraction index="Splash" value="-0.2" />
+      <DamageDealtFraction index="Basic" value="-0.2" />
+      <DamageDealtFraction index="Ability" value="-0.2" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MaievGoldenBoundForJusticeApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="MaievGoldenBoundForJustice" />
+  </CEffectApplyBehavior>
+  <CEffectRemoveBehavior id="MaievGoldenBoundForJusticeRemove">
+    <BehaviorLink value="MaievGoldenBoundForJustice" />
+  </CEffectRemoveBehavior>
+  <CEffectSet id="MaievUmbralBindTetherAttachSet">
+    <EffectArray value="MaievGoldenBindSlowApply" />
+    <EffectArray value="MaievGoldenBoundForJusticeApply" />
+  </CEffectSet>
+  <CEffectSet id="MaievUmbralBindTetherDetachSet">
+    <EffectArray value="MaievGoldenBindSlowRemove" />
+    <EffectArray value="MaievGoldenBoundForJusticeRemove" />
+  </CEffectSet>
+  <!-- Sentence at 100: binding an enemy Hero makes Maiev Protected for 1 second (script) -->
+  <CBehaviorBuff id="MaievGoldenJailerProtected" parent="StormInvulnerable">
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <!-- ===== Shadow Warden ===== -->
+  <!-- Vault of the Wardens runs a set: the leap, the spirit left behind (Chance 0: the starter turns it on) and Shadow Step
+       (Chance 0: the Epic) -->
+  <CAbilEffectInstant id="MaievVaultOfTheWardens">
+    <Effect value="MaievGoldenVaultSet" />
+  </CAbilEffectInstant>
+  <CEffectSet id="MaievGoldenVaultSet">
+    <EffectArray value="MaievVaultOfTheWardensAirborneStasisApplyBehavior" />
+    <EffectArray value="MaievGoldenVaultSpiritPersistent" />
+    <EffectArray value="MaievGoldenShadowStepApply" />
+  </CEffectSet>
+  <!-- the spirit stays where Maiev leapt from and explodes 1.5 seconds later (2.5 radius; Vigil 81-100 widens it) -->
+  <CEffectCreatePersistent id="MaievGoldenVaultSpiritPersistent">
+    <Chance value="0" />
+    <ValidatorArray value="CasterNotDead" />
+    <WhichLocation Value="CasterPoint" />
+    <ExpireDelay value="1.5" />
+    <ExpireEffect value="MaievGoldenVaultSpiritSearch" />
+  </CEffectCreatePersistent>
+  <CEffectEnumArea id="MaievGoldenVaultSpiritSearch">
+    <ImpactLocation Value="TargetPoint" />
+    <SearchFilters value="-;Player,Ally,Neutral,ImmuneToAOE,Missile,Item,Stasis,Dead,Hidden,Invulnerable" />
+    <AreaArray Effect="MaievGoldenVaultSpiritDamage">
+      <Radius value="2.5" />
+    </AreaArray>
+    <SearchFlags index="ExtendByUnitRadius" value="1" />
+  </CEffectEnumArea>
+  <CActorModel id="MaievGoldenVaultSpiritModel" parent="StormModelAnimationStyleContinuous">
+    <On Terms="Effect.MaievGoldenVaultSpiritPersistent.Start; At Effect" Send="Create" />
+    <On Terms="ActorCreation" Send="ModelMaterialApply MaievSpiritOfVengeanceMissileMaterial" />
+    <On Terms="ActorCreation" Send="TimerSet 1.500000 SpiritDone" />
+    <On Terms="TimerExpired; TimerName SpiritDone" Send="Destroy" />
+    <HostSiteOps Ops="SOpAttachOrigin" HoldPosition="1" HoldRotation="1" />
+    <Model value="MaievSpiritOfVengeanceMissile" />
+  </CActorModel>
+  <CActorModel id="MaievGoldenVaultSpiritExplosion" parent="StormModelAnimationStyleOneShot">
+    <On Terms="Effect.MaievGoldenVaultSpiritSearch.Start; At Target" Send="Create" />
+    <On Terms="ActorCreation" Send="Create MaievSpiritOfVengeanceSuddenVengeanceExplosionSound" />
+    <HostSiteOps Ops="SOpAttachOrigin" HoldPosition="1" HoldRotation="1" />
+    <Model value="MaievSpiritOfVengeanceSuddenVengeanceExplosionFX" />
+  </CActorModel>
+  <!-- the spirit's damage grows with level as Spirit of Vengeance's does -->
+  <CHero id="Maiev">
+    <LevelScalingArray Ability="MaievVaultOfTheWardens">
+      <Modifications>
+        <Catalog value="Effect" />
+        <Entry value="MaievGoldenVaultSpiritDamage" />
+        <Field value="Amount" />
+        <Value value="0.040000" />
+        <AffectedByAbilityPower value="1" />
+        <AffectedByOverdrive value="1" />
+      </Modifications>
+    </LevelScalingArray>
+  </CHero>
+  <!-- Shadow Warden: Basic Attacks against enemy Heroes take 0.25 seconds off Vault's recharge (Chance 0: the starter turns it on) -->
+  <CEffectModifyUnit id="MaievGoldenAttackVaultCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="MaievVaultOfTheWardens,Execute" CooldownOperation="Add" CooldownTimeUse="-0.25" ChargeTimeUse="-0.25" />
+  </CEffectModifyUnit>
+  <CEffectSet id="MaievWeaponPostImpactSet">
+    <EffectArray value="MaievGoldenAttackVaultCooldown" />
+  </CEffectSet>
+  <CEffectSet id="MaievUmbralBindWeaponPostImpactSet">
+    <EffectArray value="MaievGoldenAttackVaultCooldown" />
+  </CEffectSet>
+  <!-- Vigil at 100: Warden's Cage's second ring (used once the script sets 16 periods) -->
+  <CEffectCreatePersistent id="MaievWardensCageInitialPersistent">
+    <PeriodicOffsetArray index="8" X="5.7742" Y="2.3918" />
+    <PeriodicOffsetArray index="9" X="2.3918" Y="5.7742" />
+    <PeriodicOffsetArray index="10" X="-2.3918" Y="5.7742" />
+    <PeriodicOffsetArray index="11" X="-5.7742" Y="2.3918" />
+    <PeriodicOffsetArray index="12" X="-5.7742" Y="-2.3918" />
+    <PeriodicOffsetArray index="13" X="-2.3918" Y="-5.7742" />
+    <PeriodicOffsetArray index="14" X="2.3918" Y="-5.7742" />
+    <PeriodicOffsetArray index="15" X="5.7742" Y="-2.3918" />
+  </CEffectCreatePersistent>
+  <!-- Shadow Step (Epic): Vault makes Maiev Unstoppable for 1 second -->
+  <CBehaviorBuff id="MaievGoldenShadowStep" parent="StormUnstoppableParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="1" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="MaievGoldenShadowStepApply">
+    <Chance value="0" />
+    <WhichUnit Value="Caster" />
+    <Behavior value="MaievGoldenShadowStep" />
+  </CEffectApplyBehavior>
+  <!-- The Hunt (Legendary): Vault Shields Maiev for 100% of her current Health, decaying to nothing over 4 seconds: 8 Shields of
+       12.5% expire one every 0.5 seconds (the script sets the amounts and re-adds them) -->
+  <CBehaviorBuff id="MaievGoldenTheHuntShield1" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="0.5" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield2" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="1.0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield3" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="1.5" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield4" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="2.0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield5" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="2.5" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield6" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="3.0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield7" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="3.5" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+  <CBehaviorBuff id="MaievGoldenTheHuntShield8" parent="StormShield">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="4.0" />
+    <DamageResponse ModifyLimit="0" />
+  </CBehaviorBuff>
+</Catalog>

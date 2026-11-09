@@ -1,0 +1,456 @@
+include "AffixTriggers"
+
+// ============================================================
+// Golden Maiev. Fan Dancer: Fan of Knives hits on enemy Heroes add Edge; takedowns add Flourish: Fan size, then Vault
+// duration, then maximum Health damage, then at 100 a second Fan for 50%, then 2% damage per stack.
+// Jailer of the Watchers: enemy Heroes tethered by Umbral Bind add Shackles; takedowns add Sentence: Umbral Bind
+// recharge, then a Slow while tethered, then a stronger pull, then at 100 Protected on binding, then 2% damage per stack.
+// Shadow Warden: spirit hits on enemy Heroes add Vengeance; takedowns add Vigil: Vault recharge, then spirit speed
+// and distance, then spirit width, then at 100 a doubled Warden's Cage, then 2% damage per stack.
+// ============================================================
+
+const fixed libAffx_MaievTakedownWindow = 3.0;
+const fixed libAffx_MaievPastCapDamagePerStack = 0.01;
+bool libAffx_MaievStarted;
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MaievFanTime; // per enemy player, last Fan Dancer hit
+int libAffx_MaievFanAdded; // Fan Dancer: takedown stacks already applied to the catalog this game
+int libAffx_MaievFanAdded2; // Fan Dancer: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MaievFanAdded3; // Fan Dancer: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_MaievFanPastApplied; // Fan Dancer: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MaievJailerTime; // per enemy player, last Jailer of the Watchers hit
+int libAffx_MaievJailerAdded; // Jailer of the Watchers: takedown stacks already applied to the catalog this game
+int libAffx_MaievJailerAdded2; // Jailer of the Watchers: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MaievJailerAdded3; // Jailer of the Watchers: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_MaievJailerPastApplied; // Jailer of the Watchers: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_MaievWardenTime; // per enemy player, last Shadow Warden hit
+int libAffx_MaievWardenAdded; // Shadow Warden: takedown stacks already applied to the catalog this game
+int libAffx_MaievWardenAdded2; // Shadow Warden: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_MaievWardenAdded3; // Shadow Warden: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_MaievWardenPastApplied; // Shadow Warden: takedown quest stacks past the cap applied as damage this game
+bool libAffx_MaievFanPercentOn; // Fan Dancer: Flourish 81 turned on Fan of Knives' Health damage
+bool libAffx_MaievBindSlowOn; // Jailer of the Watchers: Sentence 41 turned on the bind Slow
+bool libAffx_MaievCageDoubled; // Shadow Warden: Vigil 100 doubled Warden's Cage
+
+unit libAffx_MaievHero() {
+    return libGame_gv_players[libAffx_player].lv_heroUnit;
+}
+bool libAffx_MaievIsEnemyHero(unit target) {
+    int owner = UnitGetOwner(target);
+    if (!UnitTypeTestAttribute(UnitGetType(target), c_unitAttributeHeroic)) {
+        return false;
+    }
+    return owner >= 1 && owner <= libCore_gv_bALMaxPlayers && owner != libAffx_player;
+}
+int libAffx_MaievStacks(string tokenId) {
+    unit hero = libAffx_MaievHero();
+    if (hero == null) {
+        return 0;
+    }
+    return FixedToInt(UnitGetTokenCount(hero, tokenId));
+}
+void libAffx_MaievQuestDing() {
+    SoundPlayForPlayer(SoundLink("TalentQuestProgressCounterIncreaseSound", -1), c_maxPlayers, PlayerGroupSingle(libAffx_player), 100.0, 0.0);
+}
+bool libAffx_MaievInWindow (fixed hitTime, fixed now) {
+    return hitTime > 0.0 && now - hitTime <= libAffx_MaievTakedownWindow;
+}
+// MaievGoldenFlourishTokenCounter: stacks 1-40: Fan of Knives is 1% larger each; 41-80 Vault lasts 2% longer, 81-100 Health damage, 100 echo (script), then damage
+void libAffx_MaievSyncFan () {
+    unit hero = libAffx_MaievHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker")) {
+        return;
+    }
+    stacks = libAffx_MaievStacks("MaievGoldenFlourishTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MaievFanAdded) {
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[0].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.033300, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[0].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.009300, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[1].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.035000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[2].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.032336, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[2].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.013393, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[3].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.024748, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[3].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.024748, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[4].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.013393, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[4].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.032336, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[5].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.035000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[6].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.013393, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[6].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.032336, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[7].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.024748, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[7].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.024748, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[8].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.032336, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[8].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.013393, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[9].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.035000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[10].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.033300, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[10].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.009300, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[11].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.030000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[12].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.024000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[12].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.007500, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[13].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.015000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[13].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.014000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[14].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.017000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[15].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.015000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[15].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.014000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[16].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.024000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[16].Y", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * -0.007500, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[17].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.030000, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievFanAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): Vault of the Wardens lasts 2% longer each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MaievFanAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,MaievVaultOfTheWardensAirborneStasis,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,MaievVaultOfTheWardensAirborneStasisEvasion,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievFanAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Fan of Knives deals 0.25% of an enemy Hero's maximum Health more each (on from 81: libAffx_MaievTick_Func)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MaievFanAdded3) {
+        libAffx_CatalogReferenceModify("Effect,MaievGoldenFanPercentDamage,VitalFractionMax[Life]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded3) * 0.0025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievFanAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MaievFanPastApplied) {
+        libAffx_MaievFanPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MaievFanPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MaievFanPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "MaievFanPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MaievFanPastCapDamage")) {
+        UnitBehaviorAdd(hero, "MaievFanPastCapDamage", hero, 1);
+    }
+}
+// MaievGoldenSentenceTokenCounter: stacks 1-40: 1% of the halved 7 second cooldown each; 41-80 Slow while tethered, 81-100 pull strength, 100 Protected (script), then damage
+void libAffx_MaievSyncJailer () {
+    unit hero = libAffx_MaievHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MaievGoldenJailerMarker")) {
+        return;
+    }
+    stacks = libAffx_MaievStacks("MaievGoldenSentenceTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MaievJailerAdded) {
+        libAffx_CatalogReferenceModify("Abil,MaievUmbralBind,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievJailerAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): tethered Heroes are Slowed 1% more each (on from 41: libAffx_MaievTick_Func)
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MaievJailerAdded2) {
+        libAffx_CatalogReferenceModify("Behavior,MaievGoldenBindSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded2) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievJailerAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): the pull is 1% faster each over the same time, so it pulls 1% farther
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MaievJailerAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,MaievUmbralBindPull,Modification.MoveSpeedMaximum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded3) * 0.2105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,MaievUmbralBindPull,Modification.MoveSpeedMinimum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded3) * 0.2105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievJailerAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MaievJailerPastApplied) {
+        libAffx_MaievJailerPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MaievJailerPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MaievJailerPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "MaievJailerPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MaievJailerPastCapDamage")) {
+        UnitBehaviorAdd(hero, "MaievJailerPastCapDamage", hero, 1);
+    }
+}
+// MaievGoldenVigilTokenCounter: stacks 1-40: 1% of Vault's 13 second recharge each; 41-80 spirit speed and distance, 81-100 spirit width, 100 doubled cage (script), then damage
+void libAffx_MaievSyncWarden () {
+    unit hero = libAffx_MaievHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "MaievGoldenWardenMarker")) {
+        return;
+    }
+    stacks = libAffx_MaievStacks("MaievGoldenVigilTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_MaievWardenAdded) {
+        libAffx_CatalogReferenceModify("Abil,MaievVaultOfTheWardens,Cost.Charge.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded) * -0.13, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievWardenAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): Spirit of Vengeance flies 1% faster and farther each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_MaievWardenAdded2) {
+        libAffx_CatalogReferenceModify("Mover,MaievSpiritOfVengeanceMissile,Speed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,MaievSpiritOfVengeanceMissile,MinSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,MaievSpiritOfVengeanceMissile,MaxSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,MaievSpiritOfVengeanceReturnMissile,MotionPhases[1].Speed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.12, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,MaievSpiritOfVengeanceReturnMissile,MotionPhases[1].MinSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Mover,MaievSpiritOfVengeanceReturnMissile,MotionPhases[1].MaxSpeed", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.105, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievSpiritOfVengeanceLaunchMissileAdvanced,ImpactLocation.ProjectionDistanceScale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded2) * 0.11, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievWardenAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): Spirit of Vengeance's path and the Vault spirit's explosion are 1% wider each
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_MaievWardenAdded3) {
+        libAffx_CatalogReferenceModify("Effect,MaievSpiritOfVengeanceMissileScan,AreaArray[0].RectangleWidth", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded3) * 0.03, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievGoldenVaultSpiritSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievWardenAdded3) * 0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_MaievWardenAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_MaievWardenPastApplied) {
+        libAffx_MaievWardenPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MaievWardenPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "MaievWardenPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "MaievWardenPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "MaievWardenPastCapDamage")) {
+        UnitBehaviorAdd(hero, "MaievWardenPastCapDamage", hero, 1);
+    }
+}
+bool libAffx_MaievSync_Func (bool testConds, bool runActions) {
+    libAffx_MaievSyncFan();
+    libAffx_MaievSyncJailer();
+    libAffx_MaievSyncWarden();
+    return true;
+}
+// an enemy-team Hero (the base hero test counts allies too)
+bool libAffx_MaievIsFoe (unit target) {
+    if (!libAffx_MaievIsEnemyHero(target)) {
+        return false;
+    }
+    return libGame_gf_TeamNumberOfPlayer(UnitGetOwner(target)) != libGame_gf_TeamNumberOfPlayer(libAffx_player);
+}
+// Storm of Blades: 6 more fans around Maiev, at the cast's distance, turned 51.4286 degrees apart from the cast's direction
+void libAffx_MaievFanCopies (unit hero, point target) {
+    point origin = UnitGetPosition(hero);
+    fixed angle = AngleBetweenPoints(origin, target);
+    fixed dist = DistanceBetweenPoints(origin, target);
+    int i;
+    for (i = 1; i <= 6; i += 1) {
+        UnitCreateEffectPoint(hero, "MaievGoldenFanCopyPersistent", PointWithOffsetPolar(origin, dist, angle + IntToFixed(i) * 51.4286));
+    }
+}
+// Fan Dancer: a Fan of Knives is cast. Storm of Blades throws the other fans; at 100 Flourish a second Fan of Knives (and
+// its Storm of Blades fans) follows 0.3 seconds later toward the same point for 50% damage. The echo's own event is skipped.
+fixed libAffx_MaievFanLast = -1.0;
+bool libAffx_MaievFanCast_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MaievHero();
+    point target = EventPlayerEffectUsedPoint(c_effectLocationTargetPoint);
+    bool storm;
+    if (hero == null || target == null || !UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker") || GameGetMissionTime() == libAffx_MaievFanLast) {
+        return false;
+    }
+    libAffx_MaievFanLast = GameGetMissionTime();
+    storm = UnitHasBehavior2(hero, "MaievGoldenStormOfBladesMarker");
+    if (storm) {
+        libAffx_MaievFanCopies(hero, target);
+    }
+    if (libAffx_MaievStacks("MaievGoldenFlourishTokenCounter") < 100) {
+        return true;
+    }
+    Wait(0.3, c_timeGame);
+    if (!UnitIsAlive(hero)) {
+        return true;
+    }
+    libAffx_MaievFanLast = GameGetMissionTime();
+    UnitBehaviorAdd(hero, "MaievGoldenFanEcho", hero, 1);
+    UnitCreateEffectPoint(hero, "MaievFanOfKnivesInitialPersistent", target);
+    if (storm) {
+        libAffx_MaievFanCopies(hero, target);
+    }
+    return true;
+}
+// Jailer of the Watchers: an enemy Hero is tethered by Umbral Bind: Shackles, the takedown window and, at 100 Sentence,
+// Protected for 1 second
+bool libAffx_MaievBind_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MaievHero();
+    if (hero == null || !UnitHasBehavior2(hero, "MaievGoldenJailerMarker") || !libAffx_MaievIsFoe(victim)) {
+        return false;
+    }
+    libAffx_MaievJailerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MaievGoldenShacklesTokenCounter", hero);
+    if (UnitIsAlive(hero) && libAffx_MaievStacks("MaievGoldenSentenceTokenCounter") >= 100) {
+        UnitBehaviorAdd(hero, "MaievGoldenJailerProtected", hero, 1);
+    }
+    return true;
+}
+// The Hunt (Legendary): Vault Shields Maiev for 100% of her current Health, decaying over 4 seconds (8 Shields of 12.5%, the
+// k-th lasting 0.5 * k seconds; all are refilled on each Vault)
+bool libAffx_MaievVault_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MaievHero();
+    fixed life;
+    int k;
+    string shield;
+    if (hero == null || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MaievGoldenTheHuntMarker")) {
+        return false;
+    }
+    life = UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent);
+    for (k = 1; k <= 8; k += 1) {
+        shield = "MaievGoldenTheHuntShield" + IntToString(k);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, shield, "DamageResponse.ModifyLimit", libAffx_player, life / IntToFixed(8));
+        UnitBehaviorRemove(hero, shield, 1);
+        UnitBehaviorAdd(hero, shield, hero, 1);
+    }
+    return true;
+}
+// Every second: quest rewards switched on by stack counts (Flourish 81: Fan of Knives' Health damage; Sentence 41: the bind
+// Slow; Vigil 100: Warden's Cage's second ring)
+bool libAffx_MaievTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MaievHero();
+    if (hero == null) {
+        return false;
+    }
+    if (!libAffx_MaievFanPercentOn && UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker") && libAffx_MaievStacks("MaievGoldenFlourishTokenCounter") > 80) {
+        libAffx_MaievFanPercentOn = true;
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "MaievGoldenFanPercentDamage", "Chance", libAffx_player, 1.0);
+    }
+    if (!libAffx_MaievBindSlowOn && UnitHasBehavior2(hero, "MaievGoldenJailerMarker") && libAffx_MaievStacks("MaievGoldenSentenceTokenCounter") > 40) {
+        libAffx_MaievBindSlowOn = true;
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "MaievGoldenBindSlowApply", "Chance", libAffx_player, 1.0);
+    }
+    if (!libAffx_MaievCageDoubled && UnitHasBehavior2(hero, "MaievGoldenWardenMarker") && libAffx_MaievStacks("MaievGoldenVigilTokenCounter") >= 100) {
+        libAffx_MaievCageDoubled = true;
+        CatalogFieldValueSet(c_gameCatalogEffect, "MaievWardensCageInitialPersistent", "PeriodCount", libAffx_player, "16");
+    }
+    return true;
+}
+// Fan Dancer hit on an enemy Hero: takedown window, MaievGoldenEdgeTokenCounter, the heal, and on-hit boons
+bool libAffx_MaievFanHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MaievHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MaievIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker")) {
+        return false;
+    }
+    libAffx_MaievFanTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MaievGoldenEdgeTokenCounter", hero);
+    return true;
+}
+// Jailer of the Watchers hit on an enemy Hero: takedown window, MaievGoldenShacklesTokenCounter, the heal, and on-hit boons
+bool libAffx_MaievJailerHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MaievHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MaievIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MaievGoldenJailerMarker")) {
+        return false;
+    }
+    libAffx_MaievJailerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MaievGoldenShacklesTokenCounter", hero);
+    return true;
+}
+// Jailer of the Watchers: these effects on an enemy Hero only refresh the takedown window (no quest token, heal or on-hit boons)
+bool libAffx_MaievJailerWindow_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MaievHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MaievIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MaievGoldenJailerMarker")) {
+        return false;
+    }
+    libAffx_MaievJailerTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    return true;
+}
+// Shadow Warden hit on an enemy Hero: takedown window, MaievGoldenVengeanceTokenCounter, the heal, and on-hit boons
+bool libAffx_MaievWardenHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_MaievHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_MaievIsEnemyHero(victim) || !UnitHasBehavior2(hero, "MaievGoldenWardenMarker")) {
+        return false;
+    }
+    libAffx_MaievWardenTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "MaievGoldenVengeanceTokenCounter", hero);
+    return true;
+}
+// Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
+// own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
+int[4] libAffx_MaievTakedownBefore; // each starter's takedown stacks before this takedown
+void libAffx_MaievTakedownCrossStart () {
+    unit hero = libAffx_MaievHero();
+    if (hero == null) {
+        return;
+    }
+    libAffx_MaievTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "MaievGoldenFlourishTokenCounter"));
+    libAffx_MaievTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "MaievGoldenSentenceTokenCounter"));
+    libAffx_MaievTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "MaievGoldenVigilTokenCounter"));
+}
+void libAffx_MaievTakedownCross () {
+    unit hero = libAffx_MaievHero();
+    if (hero == null) {
+        return;
+    }
+    if (FixedToInt(UnitGetTokenCount(hero, "MaievGoldenFlourishTokenCounter")) == libAffx_MaievTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "MaievGoldenSentenceTokenCounter")) == libAffx_MaievTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "MaievGoldenVigilTokenCounter")) == libAffx_MaievTakedownBefore[3]) {
+        return;
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker") && FixedToInt(UnitGetTokenCount(hero, "MaievGoldenFlourishTokenCounter")) == libAffx_MaievTakedownBefore[1]) {
+        libGame_gf_ModifyTokenCount(1, "MaievGoldenFlourishTokenCounter", hero);
+        libAffx_MaievSyncFan();
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenJailerMarker") && FixedToInt(UnitGetTokenCount(hero, "MaievGoldenSentenceTokenCounter")) == libAffx_MaievTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "MaievGoldenSentenceTokenCounter", hero);
+        libAffx_MaievSyncJailer();
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenWardenMarker") && FixedToInt(UnitGetTokenCount(hero, "MaievGoldenVigilTokenCounter")) == libAffx_MaievTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "MaievGoldenVigilTokenCounter", hero);
+        libAffx_MaievSyncWarden();
+    }
+}
+// HeroTakedown: the takedown quests and takedown boons
+bool libAffx_MaievTakedown (bool testConds, bool runActions) {
+    int killedPlayer = libGame_gf_HeroParticipatedInTakedownKilledPlayer();
+    unit hero = libAffx_MaievHero();
+    fixed now = GameGetMissionTime();
+    if (testConds) {
+        if (libGame_gf_HeroParticipatedInTakedownKillingPlayer() != libAffx_player || hero == null) {
+            return false;
+        }
+    }
+    if (killedPlayer < 1 || killedPlayer > libCore_gv_bALMaxPlayers) {
+        return true;
+    }
+    libAffx_MaievTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker") && libAffx_MaievFanTime[killedPlayer] > 0.0 && now - libAffx_MaievFanTime[killedPlayer] <= 6.0) {
+        libAffx_MaievFanTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MaievGoldenFlourishTokenCounter", hero);
+        libAffx_MaievSyncFan();
+        libAffx_MaievQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenJailerMarker") && libAffx_MaievJailerTime[killedPlayer] > 0.0 && now - libAffx_MaievJailerTime[killedPlayer] <= 6.0) {
+        libAffx_MaievJailerTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MaievGoldenSentenceTokenCounter", hero);
+        libAffx_MaievSyncJailer();
+        libAffx_MaievQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "MaievGoldenWardenMarker") && libAffx_MaievWardenTime[killedPlayer] > 0.0 && now - libAffx_MaievWardenTime[killedPlayer] <= 6.0) {
+        libAffx_MaievWardenTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "MaievGoldenVigilTokenCounter", hero);
+        libAffx_MaievSyncWarden();
+        libAffx_MaievQuestDing();
+    }
+    libAffx_MaievTakedownCross();
+    return true;
+}
+bool libAffx_MaievStart (bool testConds, bool runActions) {
+    trigger trig;
+    if (libAffx_MaievStarted) {
+        return true;
+    }
+    libAffx_MaievStarted = true;
+    trig = TriggerCreate("libAffx_MaievFanHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MaievFanOfKnivesDamage");
+    trig = TriggerCreate("libAffx_MaievJailerHit_Func");
+    trig = TriggerCreate("libAffx_MaievJailerWindow_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MaievUmbralBindPullDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MaievWeaponUmbralBindDamage");
+    trig = TriggerCreate("libAffx_MaievWardenHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MaievSpiritOfVengeanceDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "MaievGoldenVaultSpiritDamage");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievFanCast_Func"), libAffx_player, "MaievFanOfKnivesInitialPersistent");
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_MaievBind_Func"), null, "MaievUmbralBindTetherTimer", c_unitBehaviorChangeCreate);
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievVault_Func"), libAffx_player, "MaievGoldenVaultSet");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MaievTick_Func"), 1.0, c_timeGame);
+    // also picks up stacks loaded from the bank
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MaievSync_Func"), 1.0, c_timeGame);
+    return true;
+}

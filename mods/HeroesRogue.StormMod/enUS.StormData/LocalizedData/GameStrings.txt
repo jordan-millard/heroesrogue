@@ -3240,6 +3240,84 @@ Behavior/Name/StitchesGoldenChokingFumes=Choking Fumes
 Behavior/Tooltip/StitchesGoldenChokingFumes=Dealing less damage.
 Behavior/Name/StitchesGoldenGasSurge=Gas Surge
 Behavior/Tooltip/StitchesGoldenGasSurge=Your gas deals triple damage.
+Affix/Name/MaievFanDancer=Fan Dancer
+Affix/Tooltip/MaievFanDancer=Gain <c val="#TooltipNumbers">Pin Down</c> and <c val="#TooltipNumbers">Blade Dance</c>. Fan of Knives costs half Mana and stores <c val="#TooltipNumbers">2</c> charges (<c val="#TooltipNumbers">5</c> second recharge).<n/><n/><c val="#TooltipQuest">Quest:</c> Each Fan of Knives hit on an enemy Hero adds <c val="#TooltipNumbers">0.5%</c> Fan of Knives damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Fan of Knives hit make Fan of Knives larger (up to <c val="#TooltipNumbers">40%</c>), then make Vault of the Wardens last longer (up to <c val="#TooltipNumbers">80%</c>), then make Fan of Knives deal maximum Health damage to Heroes (up to <c val="#TooltipNumbers">5%</c>). At <c val="#TooltipNumbers">100</c>, a second Fan of Knives follows each one <c val="#TooltipNumbers">0.3</c> seconds later for <c val="#TooltipNumbers">50%</c> damage. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second. Pin Down's quest keeps <c val="#TooltipNumbers">50%</c>.
+Affix/Name/MaievGlaiveEdges=Glaive Edges
+Affix/Tooltip/MaievGlaiveEdges=Fan of Knives deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/MaievQuickFan=Quick Fan
+Affix/Tooltip/MaievQuickFan=Fan of Knives recharges <c val="#TooltipNumbers">0.25</c> seconds faster.
+Affix/Name/MaievNaishasMementoBoon=Naisha's Memento
+Affix/Tooltip/MaievNaishasMementoBoon=Gain the talent <c val="#TooltipNumbers">Naisha's Memento</c>.
+Affix/Name/MaievElunesWrathBoon=Elune's Wrath
+Affix/Tooltip/MaievElunesWrathBoon=Gain the talent <c val="#TooltipNumbers">Elune's Wrath</c>.
+Affix/Name/MaievBladedArmorBoon=Bladed Armor
+Affix/Tooltip/MaievBladedArmorBoon=Gain the talent <c val="#TooltipNumbers">Bladed Armor</c>: each enemy Hero Fan of Knives hits gives you stacking Armor.
+Affix/Name/MaievStormOfBlades=Storm of Blades
+Affix/Tooltip/MaievStormOfBlades=Fan of Knives fires in all directions: <c val="#TooltipNumbers">6</c> more fans fly out around you at the same distance.
+Button/Name/MaievGoldenEdgeTokenCounter=Keen Edge
+Button/Tooltip/MaievGoldenEdgeTokenCounter=<c val="#TooltipQuest">Bonus Fan of Knives damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MaievGoldenEdgeTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/MaievGoldenFlourishTokenCounter=Flourish
+Button/Tooltip/MaievGoldenFlourishTokenCounter=<c val="#TooltipQuest">Flourish stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MaievGoldenFlourishTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Fan of Knives <c val="#TooltipNumbers">1%</c> larger. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Vault of the Wardens last <c val="#TooltipNumbers">2%</c> longer. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Fan of Knives deal <c val="#TooltipNumbers">0.25%</c> of an enemy Hero's maximum Health as bonus damage. At <c val="#TooltipNumbers">100</c> stacks, a second Fan of Knives follows each one <c val="#TooltipNumbers">0.3</c> seconds later for <c val="#TooltipNumbers">50%</c> damage. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/MaievJailerOfTheWatchers=Jailer of the Watchers
+Affix/Tooltip/MaievJailerOfTheWatchers=Gain <c val="#TooltipNumbers">Chain Gang</c> and <c val="#TooltipNumbers">Cruel Chain</c>. Umbral Bind costs half Mana and has half the cooldown.<n/><n/><c val="#TooltipQuest">Quest:</c> Each enemy Hero Umbral Bind tethers adds <c val="#TooltipNumbers">0.5%</c> Umbral Bind damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of an Umbral Bind tether or hit make it recharge faster (up to <c val="#TooltipNumbers">40%</c>), then Slow the Heroes it tethers while they're tethered (up to <c val="#TooltipNumbers">40%</c>), then make its pull stronger (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, tethering an enemy Hero makes you Protected for <c val="#TooltipNumbers">1</c> second. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/MaievShadowChains=Shadow Chains
+Affix/Tooltip/MaievShadowChains=Umbral Bind deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/MaievQuickBind=Quick Bind
+Affix/Tooltip/MaievQuickBind=Umbral Bind recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/MaievBondsOfJusticeBoon=Bonds of Justice
+Affix/Tooltip/MaievBondsOfJusticeBoon=Gain the talent <c val="#TooltipNumbers">Bonds of Justice</c>.<n/><n/>Keep <c val="#TooltipNumbers">50%</c> of its quest after a win.
+Affix/Name/MaievBondsOfCorruptionBoon=Bonds of Corruption
+Affix/Tooltip/MaievBondsOfCorruptionBoon=Gain the talent <c val="#TooltipNumbers">Bonds of Corruption</c>.
+Affix/Name/MaievBoundForJustice=Bound for Justice
+Affix/Tooltip/MaievBoundForJustice=Enemy Heroes tethered by Umbral Bind deal <c val="#TooltipNumbers">20%</c> less damage while they are tethered.
+Affix/Name/MaievChainPrison=Chain Prison
+Affix/Tooltip/MaievChainPrison=Enemy Heroes Umbral Bind pulls in are Stunned for <c val="#TooltipNumbers">0.75</c> seconds when they arrive (instead of <c val="#TooltipNumbers">0.25</c>).
+Button/Name/MaievGoldenShacklesTokenCounter=Shackles
+Button/Tooltip/MaievGoldenShacklesTokenCounter=<c val="#TooltipQuest">Bonus Umbral Bind damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MaievGoldenShacklesTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/MaievGoldenSentenceTokenCounter=Sentence
+Button/Tooltip/MaievGoldenSentenceTokenCounter=<c val="#TooltipQuest">Sentence stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MaievGoldenSentenceTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Umbral Bind recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each Slow the enemy Heroes Umbral Bind tethers by <c val="#TooltipNumbers">1%</c> while they're tethered. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Umbral Bind's pull <c val="#TooltipNumbers">1%</c> stronger. At <c val="#TooltipNumbers">100</c> stacks, tethering an enemy Hero makes you Protected for <c val="#TooltipNumbers">1</c> second. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Affix/Name/MaievShadowWarden=Shadow Warden
+Affix/Tooltip/MaievShadowWarden=Gain <c val="#TooltipNumbers">Warden's Cage</c> at level <c val="#TooltipNumbers">1</c> (you can't pick <c val="#TooltipNumbers">Containment Disc</c>). Vault of the Wardens stores <c val="#TooltipNumbers">3</c> charges, and each Vault leaves a spirit behind that explodes <c val="#TooltipNumbers">1.5</c> seconds later for <c val="#TooltipNumbers">50%</c> of Spirit of Vengeance's damage to enemies within <c val="#TooltipNumbers">2.5</c>. Basic Attacks against enemy Heroes take <c val="#TooltipNumbers">0.25</c> seconds off Vault's recharge.<n/><n/><c val="#TooltipQuest">Quest:</c> Each spirit hit on an enemy Hero (Spirit of Vengeance or a Vault spirit) adds <c val="#TooltipNumbers">0.5%</c> spirit damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a spirit hit make Vault recharge faster (up to <c val="#TooltipNumbers">40%</c>), then make Spirit of Vengeance fly faster and farther (up to <c val="#TooltipNumbers">40%</c>), then make your spirits wider (up to <c val="#TooltipNumbers">20%</c>). At <c val="#TooltipNumbers">100</c>, Warden's Cage is doubled: a second ring of Avatars stands just outside the first, so escaping takes two hits. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second.
+Affix/Name/MaievVengefulBlades=Vengeful Blades
+Affix/Tooltip/MaievVengefulBlades=Your spirits deal <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/MaievAgileWarden=Agile Warden
+Affix/Tooltip/MaievAgileWarden=Vault of the Wardens recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/MaievSuddenVengeanceBoon=Sudden Vengeance
+Affix/Tooltip/MaievSuddenVengeanceBoon=Gain the talent <c val="#TooltipNumbers">Sudden Vengeance</c>.
+Affix/Name/MaievRuthlessSpiritBoon=Ruthless Spirit
+Affix/Tooltip/MaievRuthlessSpiritBoon=Gain the talent <c val="#TooltipNumbers">Ruthless Spirit</c>.
+Affix/Name/MaievShadowStep=Shadow Step
+Affix/Tooltip/MaievShadowStep=Vault of the Wardens makes you Unstoppable for <c val="#TooltipNumbers">1</c> second.
+Affix/Name/MaievTheHunt=The Hunt
+Affix/Tooltip/MaievTheHunt=Vault of the Wardens Shields you for <c val="#TooltipNumbers">100%</c> of your current Health, decaying over <c val="#TooltipNumbers">4</c> seconds.
+Button/Name/MaievGoldenVengeanceTokenCounter=Vengeance
+Button/Tooltip/MaievGoldenVengeanceTokenCounter=<c val="#TooltipQuest">Bonus spirit damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MaievGoldenVengeanceTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/MaievGoldenVigilTokenCounter=Vigil
+Button/Tooltip/MaievGoldenVigilTokenCounter=<c val="#TooltipQuest">Vigil stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:MaievGoldenVigilTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Vault of the Wardens recharge <c val="#TooltipNumbers">1%</c> faster. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make Spirit of Vengeance fly <c val="#TooltipNumbers">1%</c> faster and farther. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make your spirits <c val="#TooltipNumbers">1%</c> wider. At <c val="#TooltipNumbers">100</c> stacks, Warden's Cage is doubled: a second ring of Avatars stands just outside the first. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/MaievGoldenBindSlow=Sentenced
+Behavior/Tooltip/MaievGoldenBindSlow=Slowed while tethered.
+Behavior/Name/MaievGoldenBoundForJustice=Bound for Justice
+Behavior/Tooltip/MaievGoldenBoundForJustice=Dealing less damage while tethered.
+Behavior/Name/MaievGoldenJailerProtected=Jailer
+Behavior/Tooltip/MaievGoldenJailerProtected=Protected.
+Behavior/Name/MaievGoldenShadowStep=Shadow Step
+Behavior/Tooltip/MaievGoldenShadowStep=Unstoppable.
+Behavior/Name/MaievGoldenTheHuntShield1=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield1=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield2=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield2=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield3=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield3=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield4=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield4=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield5=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield5=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield6=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield6=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield7=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield7=Shielded.
+Behavior/Name/MaievGoldenTheHuntShield8=The Hunt
+Behavior/Tooltip/MaievGoldenTheHuntShield8=Shielded.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks gained that map (on top of what you started with).
 Affix/Tooltip/Append/TyrandeTheMark=
