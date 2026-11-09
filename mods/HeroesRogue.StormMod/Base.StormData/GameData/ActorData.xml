@@ -4,8 +4,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
   <CActorUnit id="AffixBuddyDrone" parent="StormUnitBase" unitName="AffixBuddyDrone">
     <On Terms="UnitBirth" Send="Create TalentScoutingDroneLaunch" />
-    <On Terms="UnitBirth" Send="Create TalentScoutingDroneLoop" />
-    <On Terms="UnitDeath" Target="TalentScoutingDroneLoop" Send="Destroy" />
+    <!-- no TalentScoutingDroneLoop: its constant hum got annoying -->
     <Inherits index="TeamColor" value="1" />
     <StatusBarFlags index="Shields" value="0" />
     <StatusBarFlags index="Life" value="0" />
