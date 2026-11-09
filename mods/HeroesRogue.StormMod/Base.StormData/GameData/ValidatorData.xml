@@ -331,8 +331,14 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CValidatorUnitCompareBehaviorCount>
 
   
+  <!-- Sappers' range counts towers, forts, keeps and gates, not the walls left beside a broken gate -->
+  <CValidatorCombine id="AffixSapperStructureNotWall">
+    <Type value="And" />
+    <CombineArray value="IsStructureTarget" />
+    <CombineArray value="TargetIsNotTownWall" />
+  </CValidatorCombine>
   <CValidatorLocationEnumArea id="AffixSapperIsNearStructure">
-    <AreaArray Compare="GT" Validator="IsStructureTarget">
+    <AreaArray Compare="GT" Validator="AffixSapperStructureNotWall">
       <Radius value="9.25" />
     </AreaArray>
     <LaunchLocation Value="SourceUnit" />
