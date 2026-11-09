@@ -31371,6 +31371,9 @@
             <String String="1 0 MaievGoldenSentenceTokenCounter">
                 <Field Id="Behavior" Index="2" />
             </String>
+            <String String="1 0 MaievGoldenJailerResolve">
+                <Field Id="Behavior" Index="3" />
+            </String>
             <String String="MaievGoldenSentenceTokenCounter 1.0">
                 <Field Id="QuestRetain" />
             </String>
@@ -31383,11 +31386,14 @@
             <String String="1 1 Multiply Abil,MaievUmbralBind,Cost.Cooldown.TimeUse 0.5">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Effect,MaievUmbralBindPullDamage,MultiplicativeModifierArray[MaievJailerPower].Modifier 0">
+            <String String="1 1 Set Effect,MaievGoldenAttackBindCooldown,Chance 1">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,MaievWeaponUmbralBindDamage,MultiplicativeModifierArray[MaievJailerPower].Modifier 0">
+            <String String="1 1 Set Effect,MaievUmbralBindPullDamage,MultiplicativeModifierArray[MaievJailerPower].Modifier 0">
                 <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,MaievWeaponUmbralBindDamage,MultiplicativeModifierArray[MaievJailerPower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
             </String>
             <String String="AffixAdded libAffx_MaievStart">
                 <Field Id="Trigger" />

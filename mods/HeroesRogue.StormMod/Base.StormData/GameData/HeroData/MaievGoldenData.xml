@@ -61,7 +61,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Jailer of the Watchers ===== -->
-  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds); gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 0.5% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Umbral Bind recharge 1% faster each, 41-80 Slow tethered Heroes 1% each while tethered (Chance turned on by script at 41), 81-100 make the pull 1% stronger each, at 100 Protected for 1 second on tethering a Hero (script), then 2% damage each. -->
+  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds); Basic Attacks against enemy Heroes take 1 second off it; gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 1% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Stuns, Roots and Slows on Maiev 2% shorter each, 41-80 make the Basic Attack cooldown cut 0.025 seconds bigger each (2 seconds at 80), 81-100 make the pull 1% stronger each, at 100 Protected for 1 second on tethering a Hero (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MaievGoldenShacklesTokenCounter" parent="StormQuestToken">
     <Face value="MaievGoldenShacklesTokenCounter" />
     <Max value="100000" />
@@ -75,7 +75,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="MaievGoldenShacklesTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="MaievUmbralBindPullDamage">
     <MultiplicativeModifierArray index="MaievJailerPower" Modifier="0" />
@@ -221,25 +221,26 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicPeriodArray value="0.0625" />
   </CEffectCreatePersistent>
   <!-- ===== Jailer of the Watchers ===== -->
-  <!-- Sentence 41-80: enemy Heroes are Slowed while Umbral Bind tethers them, not after the pull (the quest sets the amount;
-       Chance 0: the script turns it on at 41). Bound for Justice (Epic): tethered enemy Heroes deal 20% less damage. Both
-       end with the tether. -->
-  <CBehaviorBuff id="MaievGoldenBindSlow" parent="StormSlowParent">
-    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_umbra_1.dds" />
-    <Duration value="2.5" />
+  <!-- Sentence 1-40: Stuns, Roots and Slows on Maiev last 2% shorter each (the quest lowers the factors from 1 to 0.2) -->
+  <CBehaviorBuff id="MaievGoldenJailerResolve">
+    <BehaviorFlags index="Permanent" value="1" />
+    <InfoFlags index="Hidden" value="1" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0" />
+      <BehaviorCategoryDurationFactor index="Stun" value="1" />
+      <BehaviorCategoryDurationFactor index="DebuffRoot" value="1" />
+      <BehaviorCategoryDurationFactor index="Slow" value="1" />
     </Modification>
   </CBehaviorBuff>
-  <CEffectApplyBehavior id="MaievGoldenBindSlowApply">
+  <!-- Jailer of the Watchers: Basic Attacks against enemy Heroes take 1 second off Umbral Bind's cooldown, up to 2 with
+       Sentence 41-80 (Chance 0: the starter turns it on) -->
+  <CEffectModifyUnit id="MaievGoldenAttackBindCooldown">
     <Chance value="0" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
     <ValidatorArray value="TargetIsHero" />
-    <ValidatorArray value="MaievGoldenCasterIsJailer" />
-    <Behavior value="MaievGoldenBindSlow" />
-  </CEffectApplyBehavior>
-  <CEffectRemoveBehavior id="MaievGoldenBindSlowRemove">
-    <BehaviorLink value="MaievGoldenBindSlow" />
-  </CEffectRemoveBehavior>
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="MaievUmbralBind,Execute" CooldownOperation="Add" CooldownTimeUse="-1" />
+  </CEffectModifyUnit>
+  <!-- Bound for Justice (Epic): tethered enemy Heroes deal 20% less damage; it ends with the tether -->
   <CBehaviorBuff id="MaievGoldenBoundForJustice">
     <Alignment value="Negative" />
     <InfoFlags index="Hidden" value="0" />
@@ -262,11 +263,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <BehaviorLink value="MaievGoldenBoundForJustice" />
   </CEffectRemoveBehavior>
   <CEffectSet id="MaievUmbralBindTetherAttachSet">
-    <EffectArray value="MaievGoldenBindSlowApply" />
     <EffectArray value="MaievGoldenBoundForJusticeApply" />
   </CEffectSet>
   <CEffectSet id="MaievUmbralBindTetherDetachSet">
-    <EffectArray value="MaievGoldenBindSlowRemove" />
     <EffectArray value="MaievGoldenBoundForJusticeRemove" />
   </CEffectSet>
   <!-- Sentence at 100: binding an enemy Hero makes Maiev Protected for 1 second (script) -->
@@ -337,9 +336,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectModifyUnit>
   <CEffectSet id="MaievWeaponPostImpactSet">
     <EffectArray value="MaievGoldenAttackVaultCooldown" />
+    <EffectArray value="MaievGoldenAttackBindCooldown" />
   </CEffectSet>
   <CEffectSet id="MaievUmbralBindWeaponPostImpactSet">
     <EffectArray value="MaievGoldenAttackVaultCooldown" />
+    <EffectArray value="MaievGoldenAttackBindCooldown" />
   </CEffectSet>
   <!-- Vigil at 100: Warden's Cage's second ring (used once the script sets 16 periods) -->
   <CEffectCreatePersistent id="MaievWardensCageInitialPersistent">

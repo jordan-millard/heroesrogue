@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Golden Maiev. Fan Dancer: Fan of Knives hits on enemy Heroes add Edge; takedowns add Flourish: Fan size, then Vault
 // duration, then maximum Health damage, then at 100 a second Fan for 50%, then 2% damage per stack.
 // Jailer of the Watchers: enemy Heroes tethered by Umbral Bind add Shackles; takedowns add Sentence: Umbral Bind
-// recharge, then a Slow while tethered, then a stronger pull, then at 100 Protected on binding, then 2% damage per stack.
+// CC duration, then Basic Attack cooldown cut, then a stronger pull, then at 100 Protected on binding, then 2% damage.
 // Shadow Warden: spirit hits on enemy Heroes add Vengeance; takedowns add Vigil: Vault recharge, then spirit speed
 // and distance, then spirit width, then at 100 a doubled Warden's Cage, then 2% damage per stack.
 // ============================================================
@@ -28,7 +28,6 @@ int libAffx_MaievWardenAdded2; // Shadow Warden: takedown quest stage 2 stacks a
 int libAffx_MaievWardenAdded3; // Shadow Warden: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_MaievWardenPastApplied; // Shadow Warden: takedown quest stacks past the cap applied as damage this game
 bool libAffx_MaievFanPercentOn; // Fan Dancer: Flourish 81 turned on Fan of Knives' Health damage
-bool libAffx_MaievBindSlowOn; // Jailer of the Watchers: Sentence 41 turned on the bind Slow
 bool libAffx_MaievCageDoubled; // Shadow Warden: Vigil 100 doubled Warden's Cage
 
 unit libAffx_MaievHero() {
@@ -124,7 +123,7 @@ void libAffx_MaievSyncFan () {
         UnitBehaviorAdd(hero, "MaievFanPastCapDamage", hero, 1);
     }
 }
-// MaievGoldenSentenceTokenCounter: stacks 1-40: 1% of the halved 7 second cooldown each; 41-80 Slow while tethered, 81-100 pull strength, 100 Protected (script), then damage
+// MaievGoldenSentenceTokenCounter: stacks 1-40: Stuns, Roots and Slows on Maiev 2% shorter each; 41-80 Basic Attack cooldown cut, 81-100 pull strength, 100 Protected (script), then damage
 void libAffx_MaievSyncJailer () {
     unit hero = libAffx_MaievHero();
     int stacks;
@@ -137,13 +136,15 @@ void libAffx_MaievSyncJailer () {
     stacks = libAffx_MaievStacks("MaievGoldenSentenceTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_MaievJailerAdded) {
-        libAffx_CatalogReferenceModify("Abil,MaievUmbralBind,Cost.Cooldown.TimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.07, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,MaievGoldenJailerResolve,Modification.BehaviorCategoryDurationFactor[Stun]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,MaievGoldenJailerResolve,Modification.BehaviorCategoryDurationFactor[DebuffRoot]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,MaievGoldenJailerResolve,Modification.BehaviorCategoryDurationFactor[Slow]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MaievJailerAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): tethered Heroes are Slowed 1% more each (on from 41: libAffx_MaievTick_Func)
+    // stage 2 (stacks 41 to 80): Basic Attacks against enemy Heroes take 0.025 seconds more off Umbral Bind's cooldown each (2 seconds at 80)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_MaievJailerAdded2) {
-        libAffx_CatalogReferenceModify("Behavior,MaievGoldenBindSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded2) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,MaievGoldenAttackBindCooldown,Cost[0].CooldownTimeUse", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded2) * -0.025, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MaievJailerAdded2 = wanted;
     }
     // stage 3 (stacks 81 to 100): the pull is 1% faster each over the same time, so it pulls 1% farther
@@ -299,8 +300,8 @@ bool libAffx_MaievVault_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Every second: quest rewards switched on by stack counts (Flourish 81: Fan of Knives' Health damage; Sentence 41: the bind
-// Slow; Vigil 100: Warden's Cage's second ring)
+// Every second: quest rewards switched on by stack counts (Flourish 81: Fan of Knives' Health damage; Vigil 100: Warden's
+// Cage's second ring)
 bool libAffx_MaievTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_MaievHero();
     if (hero == null) {
@@ -309,10 +310,6 @@ bool libAffx_MaievTick_Func (bool testConds, bool runActions) {
     if (!libAffx_MaievFanPercentOn && UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker") && libAffx_MaievStacks("MaievGoldenFlourishTokenCounter") > 80) {
         libAffx_MaievFanPercentOn = true;
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "MaievGoldenFanPercentDamage", "Chance", libAffx_player, 1.0);
-    }
-    if (!libAffx_MaievBindSlowOn && UnitHasBehavior2(hero, "MaievGoldenJailerMarker") && libAffx_MaievStacks("MaievGoldenSentenceTokenCounter") > 40) {
-        libAffx_MaievBindSlowOn = true;
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "MaievGoldenBindSlowApply", "Chance", libAffx_player, 1.0);
     }
     if (!libAffx_MaievCageDoubled && UnitHasBehavior2(hero, "MaievGoldenWardenMarker") && libAffx_MaievStacks("MaievGoldenVigilTokenCounter") >= 100) {
         libAffx_MaievCageDoubled = true;
