@@ -1121,6 +1121,8 @@ void libAffx_InitAffixes();
 void libAffx_InitTriggers();
 // Map choice (MapChoice.galaxy)
 void libAffx_MapChoiceRun();
+void libAffx_MapChoiceSetNext(int map);
+int libAffx_MapChoiceShow(bool includeCurrentMap);
 // Objective results on the extra maps (MapObjectives.galaxy)
 void libAffx_MapObjectiveReport(int team);
 void libAffx_MapObjectivesStart();

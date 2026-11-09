@@ -22,7 +22,8 @@ bool[libAffx_mapChoiceOptions + 1][libAffx_mapChoiceMaxHeroIndex + 1] libAffx_ma
 int[libAffx_mapChoiceOptions + 1][24] libAffx_mapChoiceRoleCounts; // index: team * 8 + role
 int[libAffx_mapChoiceOptions + 1] libAffx_mapChoiceButtons;
 int libAffx_mapChoiceDialog = c_invalidDialogId;
-int libAffx_mapChoiceSelected;
+int libAffx_mapChoiceSelected; // the option picked; -1: the ARAM challenge was skipped
+int libAffx_mapChoiceSkipButton; // ARAM challenge only: skip it and pick a regular map
 bool libAffx_mapChoiceAram; // offering the ARAM challenge instead of the next round
 bool libAffx_mapChoiceTriggerRegistered;
 
@@ -361,6 +362,13 @@ void libAffx_MapChoiceCreateDialog() {
         libAffx_SetDialogControlPosition(libAffx_mapChoiceButtons[option], c_anchorCenter, x, 400);
         libAffx_SetDialogControlText(libAffx_mapChoiceButtons[option], StringExternal("MapChoice/Choose"));
     }
+    libAffx_mapChoiceSkipButton = 0;
+    if (libAffx_mapChoiceAram) {
+        libAffx_mapChoiceSkipButton = libAffx_CreateDialogControlButton(libAffx_mapChoiceDialog);
+        libAffx_SetDialogControlSize(libAffx_mapChoiceSkipButton, libAffx_gameoverButtonWidth, libAffx_gameoverButtonHeight);
+        libAffx_SetDialogControlPosition(libAffx_mapChoiceSkipButton, c_anchorBottom, 0, 40);
+        libAffx_SetDialogControlText(libAffx_mapChoiceSkipButton, StringExternal("MapChoice/AramSkip"));
+    }
 }
 bool libAffx_MapChoiceClicked_Func (bool testConds, bool runActions) {
     int eventDialog = EventDialogControl();
@@ -372,6 +380,9 @@ bool libAffx_MapChoiceClicked_Func (bool testConds, bool runActions) {
         if (eventDialog == libAffx_mapChoiceButtons[option] && libAffx_mapChoiceButtons[option] != 0) {
             libAffx_mapChoiceSelected = option;
         }
+    }
+    if (eventDialog == libAffx_mapChoiceSkipButton && libAffx_mapChoiceSkipButton != 0) {
+        libAffx_mapChoiceSelected = -1;
     }
     return true;
 }
@@ -389,7 +400,8 @@ void libAffx_MapChoiceUpdateVisibility() {
 // ------------------------------------------------------------
 // Entry points
 // ------------------------------------------------------------
-// Shows the dialog, waits for a pick, and saves the chosen AI rosters. Returns the chosen map.
+// Shows the dialog, waits for a pick, and saves the chosen AI rosters. Returns the chosen map, or 0 when the ARAM
+// challenge was skipped.
 int libAffx_MapChoiceShow(bool includeCurrentMap) {
     int option;
     int player;
@@ -407,6 +419,10 @@ int libAffx_MapChoiceShow(bool includeCurrentMap) {
     option = libAffx_mapChoiceSelected;
     DialogDestroy(libAffx_mapChoiceDialog);
     libAffx_mapChoiceDialog = c_invalidDialogId;
+    libAffx_mapChoiceSkipButton = 0;
+    if (option < 0) {
+        return 0;
+    }
 
     for (player = 1; player <= libCore_gv_bALMaxPlayers; player += 1) {
         if (player == libAffx_player) { continue; }
@@ -418,11 +434,13 @@ int libAffx_MapChoiceShow(bool includeCurrentMap) {
     }
     return libAffx_mapChoiceMaps[option];
 }
-void libAffx_MapChoiceRun() {
-    int map = libAffx_MapChoiceShow(false);
+void libAffx_MapChoiceSetNext(int map) {
     GameSetNextMap(libAffx_MapChoiceGetMapPath(map));
     libAffx_nextMap = libAffx_GetMapString(map);
     libAffx_BankSaveValueString("MapLoadAttempt", libAffx_nextMap);
+}
+void libAffx_MapChoiceRun() {
+    libAffx_MapChoiceSetNext(libAffx_MapChoiceShow(false));
 }
 // Round 1: runs from the curated hero select once the human hero is locked.
 // Saves the hero and the chosen map, then reloads into it so the previewed rosters are used.

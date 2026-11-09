@@ -1,8 +1,8 @@
 // ============================================================
 // ARAM challenges: after winning round 4 and round 8 (with Extra maps on, each can be turned off in the
 // options), the player picks one of 3 ARAM maps and plays alone against 3 AI: ranged assassins after
-// round 4, tanks with +20% Health after round 8. A challenge doesn't count as a round and has no boons
-// or curses. Winning gives an Uncommon or better boon next game; dying once or losing gives a curse.
+// round 4, tanks with +20% Health after round 8, or skips it for a regular map. A challenge doesn't count as a
+// round and has no boons or curses. Winning gives a Rare or better boon next game; dying once or losing gives a curse.
 // ============================================================
 
 const int libAffx_aramRound1 = 4;
@@ -60,9 +60,16 @@ bool libAffx_AramShouldOffer() {
     return false;
 }
 void libAffx_AramChoiceRun() {
+    int map;
     libAffx_mapChoiceAram = true;
-    libAffx_MapChoiceRun();
+    map = libAffx_MapChoiceShow(false);
     libAffx_mapChoiceAram = false;
+    if (map == 0) {
+        libAffx_DisplayChatMessage(StringExternal("Message/AramChallengeSkipped"));
+        libAffx_MapChoiceRun();
+        return;
+    }
+    libAffx_MapChoiceSetNext(map);
 }
 
 // Handles the end of an ARAM challenge. Returns false when this wasn't one.
@@ -92,7 +99,7 @@ void libAffx_AramQueueRewardBoon() {
     }
     libAffx_BankSaveValueString("AramReward", "");
     libAffx_DisplayChatMessage(StringExternal("Message/AramRewardBoon"));
-    libAffx_QueueBoon(libAffx_rarityUncommon, 1, false, false);
+    libAffx_QueueBoon(libAffx_rarityRare, 1, false, false);
 }
 void libAffx_AramQueueRewardCurse() {
     if (libAffx_BankLoadValueString("AramReward") != "Curse") {
