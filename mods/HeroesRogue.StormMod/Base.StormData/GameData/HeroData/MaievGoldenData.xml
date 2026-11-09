@@ -61,7 +61,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Jailer of the Watchers ===== -->
-  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds); Basic Attacks against enemy Heroes take 1 second off it; gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 1% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Stuns, Roots and Slows on Maiev 2% shorter each, 41-80 make the Basic Attack cooldown cut 0.025 seconds bigger each (2 seconds at 80), 81-100 make the pull 1% stronger each, at 100 Protected for 1 second on tethering a Hero (script), then 2% damage each. -->
+  <!-- Umbral Bind costs half Mana and has half the cooldown (7 seconds), and its empowered attack swings almost instantly (+700% attack speed while primed); Basic Attacks against enemy Heroes take 1 second off it; gain Chain Gang and Cruel Chain. Shackles quest (10% of each map's gains kept for good): 1% Umbral Bind damage (pull and cleave) per enemy Hero tethered (script). Sentence quest: takedowns within 6 seconds of a tether, pull or cleave hit; stacks 1-40 make Stuns, Roots and Slows on Maiev 2% shorter each, 41-80 make the Basic Attack cooldown cut 0.025 seconds bigger each (2 seconds at 80), 81-100 make the pull 1% stronger each, at 100 Protected for 1 second on tethering a Hero (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MaievGoldenShacklesTokenCounter" parent="StormQuestToken">
     <Face value="MaievGoldenShacklesTokenCounter" />
     <Max value="100000" />
