@@ -28,6 +28,9 @@ int libAffx_MaievWardenAdded2; // Shadow Warden: takedown quest stage 2 stacks a
 int libAffx_MaievWardenAdded3; // Shadow Warden: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_MaievWardenPastApplied; // Shadow Warden: takedown quest stacks past the cap applied as damage this game
 bool libAffx_MaievFanPercentOn; // Fan Dancer: Flourish 81 turned on Fan of Knives' Health damage
+trigger libAffx_MaievResolveTrigger; // Jailer of the Watchers: cuts Stuns, Roots and Slows (Sentence 1-40)
+string libAffx_MaievResolveLast; // Jailer of the Watchers: the last Stun, Root or Slow cut (one cut per behavior)
+fixed libAffx_MaievResolveTime; // Jailer of the Watchers: when it was cut
 bool libAffx_MaievCageDoubled; // Shadow Warden: Vigil 100 doubled Warden's Cage
 
 unit libAffx_MaievHero() {
@@ -123,7 +126,7 @@ void libAffx_MaievSyncFan () {
         UnitBehaviorAdd(hero, "MaievFanPastCapDamage", hero, 1);
     }
 }
-// MaievGoldenSentenceTokenCounter: stacks 1-40: Stuns, Roots and Slows on Maiev 2% shorter each; 41-80 Basic Attack cooldown cut, 81-100 pull strength, 100 range and 2 binds (script), then damage
+// MaievGoldenSentenceTokenCounter: stacks 1-40: Stuns, Roots and Slows on Maiev 2% shorter each (libAffx_MaievJailerResolve_Func); 41-80 Basic Attack cooldown cut, 81-100 pull strength, 100 range and 2 binds (script), then damage
 void libAffx_MaievSyncJailer () {
     unit hero = libAffx_MaievHero();
     int stacks;
@@ -136,9 +139,6 @@ void libAffx_MaievSyncJailer () {
     stacks = libAffx_MaievStacks("MaievGoldenSentenceTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_MaievJailerAdded) {
-        libAffx_CatalogReferenceModify("Behavior,MaievGoldenJailerResolve,Modification.BehaviorCategoryDurationFactor[Stun]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,MaievGoldenJailerResolve,Modification.BehaviorCategoryDurationFactor[DebuffRoot]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,MaievGoldenJailerResolve,Modification.BehaviorCategoryDurationFactor[Slow]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievJailerAdded) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MaievJailerAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): Basic Attacks against enemy Heroes take 0.025 seconds more off Umbral Bind's cooldown each (2 seconds at 80)
@@ -275,6 +275,29 @@ bool libAffx_MaievBind_Func (bool testConds, bool runActions) {
     }
     libAffx_MaievJailerTime[UnitGetOwner(victim)] = GameGetMissionTime();
     libGame_gf_ModifyTokenCount(1, "MaievGoldenShacklesTokenCounter", hero);
+    return true;
+}
+// Jailer of the Watchers, Sentence 1-40: Stuns, Roots and Slows on Maiev last 2% shorter each (80% at 40). Their time left
+// is cut when they land or are refreshed (a behavior in two of the categories is cut once).
+bool libAffx_MaievJailerResolve_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MaievHero();
+    string cc = EventUnitBehavior();
+    fixed left;
+    int stacks;
+    if (hero == null || EventUnit() != hero || !UnitHasBehavior2(hero, "MaievGoldenJailerMarker")) {
+        return false;
+    }
+    if (cc == libAffx_MaievResolveLast && GameGetMissionTime() == libAffx_MaievResolveTime) {
+        return false;
+    }
+    stacks = MinI(libAffx_MaievStacks("MaievGoldenSentenceTokenCounter"), 40);
+    left = UnitBehaviorDuration(hero, cc);
+    if (stacks <= 0 || left <= 0.0) {
+        return false;
+    }
+    libAffx_MaievResolveLast = cc;
+    libAffx_MaievResolveTime = GameGetMissionTime();
+    UnitBehaviorSetDurationRemaining(hero, cc, left * (1.0 - IntToFixed(stacks) * 0.02));
     return true;
 }
 // Jailer of the Watchers, Sentence at 100: Umbral Bind empowers 2 Basic Attacks. The first empowered attack gives the
@@ -469,6 +492,13 @@ bool libAffx_MaievStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievFanCast_Func"), libAffx_player, "MaievFanOfKnivesInitialPersistent");
     TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_MaievBind_Func"), null, "MaievUmbralBindTetherTimer", c_unitBehaviorChangeCreate);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievBindAttack_Func"), libAffx_player, "MaievWeaponUmbralBindSet");
+    libAffx_MaievResolveTrigger = TriggerCreate("libAffx_MaievJailerResolve_Func");
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeRefresh);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategoryDebuffRoot, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategoryDebuffRoot, c_unitBehaviorChangeRefresh);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeRefresh);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievVault_Func"), libAffx_player, "MaievGoldenVaultSet");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MaievTick_Func"), 1.0, c_timeGame);
     // also picks up stacks loaded from the bank

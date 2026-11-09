@@ -221,16 +221,6 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicPeriodArray value="0.0625" />
   </CEffectCreatePersistent>
   <!-- ===== Jailer of the Watchers ===== -->
-  <!-- Sentence 1-40: Stuns, Roots and Slows on Maiev last 2% shorter each (the quest lowers the factors from 1 to 0.2) -->
-  <CBehaviorBuff id="MaievGoldenJailerResolve">
-    <BehaviorFlags index="Permanent" value="1" />
-    <InfoFlags index="Hidden" value="1" />
-    <Modification>
-      <BehaviorCategoryDurationFactor index="Stun" value="1" />
-      <BehaviorCategoryDurationFactor index="DebuffRoot" value="1" />
-      <BehaviorCategoryDurationFactor index="Slow" value="1" />
-    </Modification>
-  </CBehaviorBuff>
   <!-- Jailer of the Watchers: Basic Attacks against enemy Heroes take 1 second off Umbral Bind's cooldown, up to 2 with
        Sentence 41-80 (Chance 0: the starter turns it on) -->
   <CEffectModifyUnit id="MaievGoldenAttackBindCooldown">
