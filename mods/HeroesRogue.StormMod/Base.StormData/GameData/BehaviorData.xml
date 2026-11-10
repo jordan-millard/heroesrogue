@@ -456,6 +456,26 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
 <!-- Mythic: your team's mercenaries, bosses, map objective units and vehicles get half the round's Mythic bonus (values
      set by libAffx_ApplyDifficulty) -->
+<!-- Savage Camps: mercenary and map boss Health and damage 3x -->
+<CBehaviorBuff id="AffixSavageCampsFull" parent="CarryBehaviorParent">
+  <Modification>
+    <DamageDealtFraction index="Basic" value="2" />
+    <DamageDealtFraction index="Ability" value="2" />
+    <DamageDealtFraction index="Splash" value="2" />
+    <VitalMaxFractionArray index="Life" value="2" />
+  </Modification>
+</CBehaviorBuff>
+
+<!-- Savage Camps: mercenary and map boss Health and damage 2x: half the bonus, for captured ones -->
+<CBehaviorBuff id="AffixSavageCampsHalf" parent="CarryBehaviorParent">
+  <Modification>
+    <DamageDealtFraction index="Basic" value="1" />
+    <DamageDealtFraction index="Ability" value="1" />
+    <DamageDealtFraction index="Splash" value="1" />
+    <VitalMaxFractionArray index="Life" value="1" />
+  </Modification>
+</CBehaviorBuff>
+
 <CBehaviorBuff id="AffixObjectiveDifficultyBehavior" parent="CarryBehaviorParent">
   <Modification>
     <DamageDealtFraction index="Ability" value="0" />

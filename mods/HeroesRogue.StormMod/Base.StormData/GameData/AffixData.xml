@@ -1405,6 +1405,46 @@
                 <Field Id="Trigger" />
             </String>
         </Instances>
+        <Instances Id="SavageCamps">
+            <Int Int="1">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/affix_icon_raid_boss.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="AffixAdded libAffx_SavageCampsAffixAdded">
+                <Field Id="Trigger" />
+            </String>
+            <String String="UnitCreated libAffx_SavageCampsUnitCreated">
+                <Field Id="Trigger" Index="1" />
+            </String>
+            <String String="UnitChangeOwner libAffx_SavageCampsUnitChangeOwner">
+                <Field Id="Trigger" Index="2" />
+            </String>
+        </Instances>
+        <Instances Id="BloodPact">
+            <Int Int="1">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_auriel_resurrect.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <Int Int="1">
+                <Field Id="Curse" />
+            </Int>
+            <String String="HeroKilled libAffx_BloodPactHeroKilled">
+                <Field Id="Trigger" />
+            </String>
+        </Instances>
         <Instances Id="BadBargain">
             <Int Int="2">
                 <Field Id="Max" />

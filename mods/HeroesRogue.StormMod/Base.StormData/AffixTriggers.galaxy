@@ -609,6 +609,126 @@ bool libAffx_BadBargainHeroKilled (bool testConds, bool runActions) {
     return true;
 }
 // ============================================================
+// Savage Camps
+// ============================================================
+// Mercenaries and map bosses: 3x Health and damage while neutral or the enemy's, 2x (half the bonus) once your team
+// captures them
+bool libAffx_SavageCampsIsTarget (unit unitVar) {
+    string unitType = UnitGetType(unitVar);
+    return UnitTypeTestAttribute(unitType, c_unitAttributeMerc) || UnitTypeTestAttribute(unitType, c_unitAttributeMapBoss);
+}
+void libAffx_SavageCampsUpdate (unit unitVar) {
+    int owner;
+    string want = "";
+    fixed lifePercent;
+    if (unitVar == null || !UnitIsAlive(unitVar) || UnitTypeTestAttribute(UnitGetType(unitVar), c_unitAttributeHeroic)) {
+        return;
+    }
+    owner = UnitGetOwner(unitVar);
+    if (libAffx_SavageCampsIsTarget(unitVar)) {
+        if (libAffx_IsOrderPlayer(owner)) {
+            want = "AffixSavageCampsHalf";
+        } else {
+            want = "AffixSavageCampsFull";
+        }
+    }
+    lifePercent = UnitGetPropertyFixed(unitVar, c_unitPropLifePercent, c_unitPropCurrent);
+    if (want != "AffixSavageCampsFull" && UnitHasBehavior2(unitVar, "AffixSavageCampsFull")) {
+        UnitBehaviorRemove(unitVar, "AffixSavageCampsFull", 1);
+    }
+    if (want != "AffixSavageCampsHalf" && UnitHasBehavior2(unitVar, "AffixSavageCampsHalf")) {
+        UnitBehaviorRemove(unitVar, "AffixSavageCampsHalf", 1);
+    }
+    if (want != "" && !UnitHasBehavior2(unitVar, want)) {
+        UnitBehaviorAdd(unitVar, want, unitVar, 1);
+    }
+    // the bigger (or smaller) maximum keeps the unit at the same share of its Health
+    UnitSetPropertyFixed(unitVar, c_unitPropLifePercent, lifePercent);
+}
+bool libAffx_SavageCampsAffixAdded (bool testConds, bool runActions) {
+    unitgroup unitGroup = UnitGroup(null, c_playerAny, RegionEntireMap(), UnitFilter(0, 0, (1 << c_targetFilterMissile), (1 << (c_targetFilterDead - 32))), 0);
+    int i = UnitGroupCount(unitGroup, c_unitCountAll);
+    for (;; i -= 1) {
+        if (i <= 0) { break; }
+        libAffx_SavageCampsUpdate(UnitGroupUnitFromEnd(unitGroup, i));
+    }
+    return true;
+}
+bool libAffx_SavageCampsUnitCreated (bool testConds, bool runActions) {
+    libAffx_SavageCampsUpdate(EventUnitCreatedUnit());
+    return true;
+}
+bool libAffx_SavageCampsUnitChangeOwner (bool testConds, bool runActions) {
+    libAffx_SavageCampsUpdate(EventUnit());
+    return true;
+}
+// ============================================================
+// Blood Pact
+// ============================================================
+// An enemy Hero dying fully heals the other enemy Heroes, and its respawn timer is twice as long (as Bad Bargain does
+// for allied Heroes)
+const fixed libAffx_BloodPactModifier = 1.0;
+bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
+    unit deadUnit = libGame_gf_HeroKilledUnit();
+    int deadPlayer = libGame_gf_HeroKilledPlayer();
+    int killingPlayer = libGame_gf_HeroKilledKillingPlayer();
+    fixed deathTime;
+    int player;
+    unitgroup heroGroup;
+    int groupCount;
+    unit heroUnit;
+    if (libGame_gv_gameOver || deadPlayer < 6 || deadPlayer > 10) {
+        return false;
+    }
+    if (deadUnit != libGame_gv_players[deadPlayer].lv_heroUnit && UnitGetType(libGame_gv_players[deadPlayer].lv_heroUnit) != "HeroLostVikingsController") {
+        return false;
+    }
+    if (UnitTestState(deadUnit, c_unitStateHallucination)) {
+        return false;
+    }
+    // full heal for every other living enemy Hero
+    for (player = 6; player <= 10; player += 1) {
+        heroGroup = libGame_gv_players[player].lv_heroUnitGroup;
+        groupCount = UnitGroupCount(heroGroup, c_unitCountAll);
+        for (;; groupCount -= 1) {
+            if (groupCount <= 0) { break; }
+            heroUnit = UnitGroupUnitFromEnd(heroGroup, groupCount);
+            if (heroUnit == null || heroUnit == deadUnit || !UnitIsAlive(heroUnit)) { continue; }
+            UnitSetPropertyFixed(heroUnit, c_unitPropLifePercent, 100.0);
+        }
+    }
+    if (libGame_diabloUsedSouls[deadPlayer]) {
+        return true;
+    }
+    // twice the respawn time
+    if (UnitGetType(deadUnit) == "HeroMurky" && !((UnitIsAlive(libGame_gv_heroDeathMurkyRespawnEggs[deadPlayer]) == false) || (libGame_gv_heroDeathMurkyRespawnEggs[deadPlayer] == null))) {
+        deathTime = libCore_gv_bALMurkyWithEggDeathTime * (1 + libAffx_BloodPactModifier);
+    } else {
+        deathTime = libCore_gf_HeroDeathTime(deadPlayer, UnitLevel(libGame_gv_players[deadPlayer].lv_heroUnit)) * (1 + libAffx_BloodPactModifier);
+    }
+    if (UnitGetType(deadUnit) == "HeroLeoric") {
+        libGame_gf_HeroDeathStartRespawnTimer(deadPlayer, deathTime);
+        if ((TimerGetDuration(libGame_gv_players[deadPlayer].lv_respawnTimer) > 0.0)) {
+            UnitBehaviorSetDuration(deadUnit, "LeoricUndying", TimerGetRemaining(libGame_gv_players[deadPlayer].lv_respawnTimer));
+            UnitBehaviorSetDuration(deadUnit, "Dead", TimerGetRemaining(libGame_gv_players[deadPlayer].lv_respawnTimer));
+            libGDHL_gv_hero_Leoric_Undying_Dead_Duration[deadPlayer] = UnitBehaviorDurationTotal(deadUnit, "LeoricUndying");
+            CatalogFieldValueSetFixed(c_gameCatalogEffect, "LeoricUndyingLifeRegenModifyUnit", "VitalArray[" + IntToString(0) + "].ChangeFraction", deadPlayer, (0.5 / (libGDHL_gv_hero_Leoric_Undying_Dead_Duration[deadPlayer] - 2.0)));
+        }
+    } else if (UnitGetType(deadUnit) == "HeroOlaf") {
+        TimerStart(libGDHL_gv_lostVikingsPlayer[deadPlayer].lv_olafDeathTimer, TimerGetRemaining(libGDHL_gv_lostVikingsPlayer[deadPlayer].lv_olafDeathTimer) * (1 + libAffx_BloodPactModifier), false, c_timeGame);
+    } else if (UnitGetType(deadUnit) == "HeroBaleog") {
+        TimerStart(libGDHL_gv_lostVikingsPlayer[deadPlayer].lv_baleogDeathTimer, TimerGetRemaining(libGDHL_gv_lostVikingsPlayer[deadPlayer].lv_baleogDeathTimer) * (1 + libAffx_BloodPactModifier), false, c_timeGame);
+    } else if (UnitGetType(deadUnit) == "HeroErik") {
+        TimerStart(libGDHL_gv_lostVikingsPlayer[deadPlayer].lv_erikDeathTimer, TimerGetRemaining(libGDHL_gv_lostVikingsPlayer[deadPlayer].lv_erikDeathTimer) * (1 + libAffx_BloodPactModifier), false, c_timeGame);
+    } else {
+        libGame_gf_HeroDeathStartRespawnTimer(deadPlayer, deathTime);
+        libGame_gf_HeroDeathUpdateUIElementsForDeath(true, true, true, deadPlayer, killingPlayer);
+        libGame_gf_HeroDeathEnableDisableDeadSoundStateForPlayer(true, deadPlayer);
+        libGame_gf_HeroDeathPortHeroBackAndSetDeathState(deadPlayer, libGame_gv_players[deadPlayer].lv_spawnPoint);
+    }
+    return true;
+}
+// ============================================================
 // Faulty Catapults
 // ============================================================
 bool libAffx_FaultyCatapultsOncePerGame (bool testConds, bool runActions) {
