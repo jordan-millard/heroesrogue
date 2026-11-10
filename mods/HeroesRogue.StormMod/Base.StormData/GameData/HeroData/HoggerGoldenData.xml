@@ -64,7 +64,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Hogwild ===== -->
-  <!-- Hogg Wild has a 9 second cooldown (counted from when it ends, as in the base game) and doesn't run out (10 minutes; its paths run until they hit terrain) until cancelled or stopped; gain Bloodthirst, No Control (30 second cooldown instead of 60) and Dig In (level 1 active, 45 second cooldown: while Hogg Wild rolls, stop in place and keep spinning, but Hogg Wild ends in 6 seconds); Loot Hoard lasts 30 seconds instead of 5. Rampage quest (10% of each map's gains kept for good): 1% Hogg Wild damage per enemy Hero hit, at most once per Hero per second. Stampede quest: takedowns within 6 seconds of a Hogg Wild hit; stacks 1-40 make its area 1% larger each, 41-80 make each hit deal 1% more damage (the engine ticks at most 16 times a second, so faster ticks become harder ones), 81-100 Slow enemies hit 1% each for 1 second (script turns it on at 81), at 100 a Hogg Wild hit on an enemy Hero has a 10% chance to drop Meat and a 10% chance to throw dynamite at them, rolled once per Hero per second (script), then 2% damage each. -->
+  <!-- Hogg Wild has a 9 second cooldown (counted from when it ends, as in the base game) and doesn't run out (10 minutes; its paths run until they hit terrain) until cancelled or stopped; gain Bloodthirst, No Control (30 second cooldown instead of 60) and Dig In (level 1 active, 45 second cooldown: while Hogg Wild rolls, stop in place and keep spinning, but Hogg Wild ends in 6 seconds); Loot Hoard lasts 30 seconds instead of 5. No Control's Hogg Wild counts as Hogg Wild: hit quest, takedown window, every Stampede reward, Filthy Water and Sewage. Rampage quest (10% of each map's gains kept for good): 1% Hogg Wild damage per enemy Hero hit, at most once per Hero per second. Stampede quest: takedowns within 6 seconds of a Hogg Wild hit; stacks 1-40 make its area 1% larger each, 41-80 make each hit deal 1% more damage (the engine ticks at most 16 times a second, so faster ticks become harder ones), 81-100 Slow enemies hit 1% each for 1 second (script turns it on at 81), at 100 a Hogg Wild hit on an enemy Hero has a 10% chance to drop Meat and a 10% chance to throw dynamite at them, rolled once per Hero per second (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="HoggerGoldenRampageTokenCounter" parent="StormQuestToken">
     <Face value="HoggerGoldenRampageTokenCounter" />
     <Max value="100000" />
@@ -81,6 +81,13 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="HoggerHoggWildDamage">
+    <MultiplicativeModifierArray index="HoggerWildPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerWildCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerWildHit" Accumulator="HoggerGoldenRampageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HoggerWildLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerGoldenWildTempo" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoggerNoControlDamage">
     <MultiplicativeModifierArray index="HoggerWildPower" Modifier="0" />
     <MultiplicativeModifierArray index="HoggerWildCommon" Modifier="0" />
     <MultiplicativeModifierArray index="HoggerWildHit" Accumulator="HoggerGoldenRampageTokenCounterAccumulator" />
@@ -317,6 +324,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Behavior value="HoggerGoldenSewage" />
   </CEffectApplyBehavior>
   <CEffectSet id="HoggerHoggWildImpactSet">
+    <EffectArray value="HoggerGoldenWildSlowApply" />
+    <EffectArray value="HoggerGoldenSewageApply" />
+  </CEffectSet>
+  <!-- No Control's Hogg Wild counts as Hogg Wild for the Hogwild starter: Stampede's Slow and Sewage too -->
+  <CEffectSet id="HoggerNoControlImpactSet">
     <EffectArray value="HoggerGoldenWildSlowApply" />
     <EffectArray value="HoggerGoldenSewageApply" />
   </CEffectSet>

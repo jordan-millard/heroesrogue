@@ -118,12 +118,14 @@ void libAffx_HoggerSyncWild () {
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_HoggerWildAdded) {
         libAffx_CatalogReferenceModify("Effect,HoggerHoggWildSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded) * 0.02625, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,HoggerNoControlSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded) * 0.02625, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_HoggerWildAdded = wanted;
     }
     // stage 2 (stacks 41 to 80): each Hogg Wild hit deals 1% more damage each
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_HoggerWildAdded2) {
         libAffx_CatalogReferenceModify("Effect,HoggerHoggWildDamage,MultiplicativeModifierArray[HoggerGoldenWildTempo].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,HoggerNoControlDamage,MultiplicativeModifierArray[HoggerGoldenWildTempo].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_HoggerWildAdded2 = wanted;
     }
     // stage 3 (stacks 81 to 100): enemies hit are Slowed 1% more each (on from 81: libAffx_HoggerTick_Func)
@@ -446,11 +448,14 @@ bool libAffx_HoggerStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerStaggeringBlowDamage");
     trig = TriggerCreate("libAffx_HoggerWildHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerNoControlDamage");
     trig = TriggerCreate("libAffx_HoggerKingHit_Func");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerBlowCast_Func"), libAffx_player, "HoggerStaggeringBlowInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerMeat_Func"), libAffx_player, "HoggerRiverpawLootHoardApplyMeatHoT");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerTick_Func"), 0.25, c_timeGame);
-    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_HoggerWildLoot_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
+    trig = TriggerCreate("libAffx_HoggerWildLoot_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerNoControlDamage");
     libAffx_HoggerKingResistTrigger = TriggerCreate("libAffx_HoggerKingResist_Func");
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeRefresh);
