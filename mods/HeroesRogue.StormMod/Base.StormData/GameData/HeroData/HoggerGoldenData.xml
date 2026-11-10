@@ -3,9 +3,11 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Hogger. Starters: Brute (Staggering Blow: 3 seconds less cooldown, Basic Attacks on Heroes take 1 second off it; Brute Force and Headbanger). Each damage effect has its own multipliers: starter power, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/HoggerGolden.galaxy. -->
+  <!-- Golden Hogger. Starters: Brute (Staggering Blow: 3 seconds less cooldown, pulls and always Stuns, Basic Attacks on Heroes take 2 seconds off it), Hogwild (Hogg Wild: 2 charges; Pummel and Dust Devil) and Hoard King (Hoardapult and Secret Stash at level 1; Meat fills Rage, Rage adds damage, Hoard adds max Rage). Each damage effect has its own multipliers: starter power, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/HoggerGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="HoggerGoldenBruteMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="HoggerGoldenWildMarker" parent="CarryBehaviorParent" />
+  <CBehaviorBuff id="HoggerGoldenKingMarker" parent="CarryBehaviorParent" />
   <!-- Brute, Brawn 81-100: Staggering Blow deals 0.5% of Hogger's missing Health per stack as bonus damage (the script sets the
        amount on each cast and turns it on from 81) -->
   <CEffectDamage id="HoggerGoldenBruteMissingDamage" parent="StormSpell">
@@ -14,7 +16,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Brute ===== -->
-  <!-- Staggering Blow has 3 seconds less cooldown and Basic Attacks against enemy Heroes take 1 second off it; gain Brute Force and Headbanger (Brute Force's quest keeps 50%). Swing quest (10% of each map's gains kept for good): 0.5% Staggering Blow damage per enemy Hero hit. Brawn quest: takedowns within 6 seconds of a Staggering Blow hit; stacks 1-40 make the knockback 1% farther each (its speed), 41-80 Slow enemies 2% each for 1.25 seconds after Staggering Blow's Stun (script turns it on at 41), 81-100 add 0.5% of Hogger's missing Health as damage each (script), at 100 it kills lane minions (script), then 2% damage each. -->
+  <!-- Staggering Blow has 3 seconds less cooldown, pulls enemies in instead of knocking them away and Stuns everything it moves when the pull ends; Basic Attacks against enemy Heroes take 2 seconds off it. Swing quest (10% of each map's gains kept for good): 0.5% Staggering Blow damage per enemy Hero hit. Brawn quest: takedowns within 6 seconds of a Staggering Blow hit; stacks 1-40 make its area 1% larger each, 41-80 make enemy Heroes hit deal 1% less damage each for 3 seconds (script turns it on at 41), 81-100 add 0.5% of Hogger's missing Health as damage each (script), at 100 it kills lane minions (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="HoggerGoldenSwingTokenCounter" parent="StormQuestToken">
     <Face value="HoggerGoldenSwingTokenCounter" />
     <Max value="100000" />
@@ -60,6 +62,71 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CButton id="HoggerGoldenBrawnTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_hogger_q.dds" />
   </CButton>
+
+  <!-- ===== Hogwild ===== -->
+  <!-- Hogg Wild stores 2 charges (8 second recharge); gain Pummel and Dust Devil. Rampage quest (10% of each map's gains kept for good): 0.5% Hogg Wild damage per enemy Hero hit, once per Hero per cast. Stampede quest: takedowns within 6 seconds of a Hogg Wild hit; stacks 1-40 make its area 1% larger each, 41-80 make each hit deal 1% more damage (the engine ticks at most 16 times a second, so faster ticks become harder ones), 81-100 Slow enemies hit 1% each for 1 second (script turns it on at 81), at 100 Hogg Wild has no wind-up (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="HoggerGoldenRampageTokenCounter" parent="StormQuestToken">
+    <Face value="HoggerGoldenRampageTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="HoggerGoldenStampedeTokenCounter" parent="StormQuestToken">
+    <Face value="HoggerGoldenStampedeTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="HoggerGoldenRampageTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="HoggerGoldenRampageTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HoggerHoggWildDamage">
+    <MultiplicativeModifierArray index="HoggerWildPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerWildCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerWildHit" Accumulator="HoggerGoldenRampageTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HoggerWildLegacy" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerGoldenWildTempo" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="HoggerGoldenRampageTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hogger_e.dds" />
+  </CButton>
+  <CButton id="HoggerGoldenStampedeTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hogger_e.dds" />
+  </CButton>
+
+  <!-- ===== Hoard King ===== -->
+  <!-- Gain Hoardapult and Secret Stash at level 1 (Shockwave can't be picked). Picking up Meat sets Rage to full, and each point of Rage adds 1% to all damage (script). Hoard quest (10% of each map's gains kept for good): 1 per Meat picked up, and 10 per takedown; each adds 1 maximum Rage (script). Plunder quest: every enemy Hero takedown (no hit window); past 100, 2% damage each. -->
+  <CBehaviorTokenCounter id="HoggerGoldenHoardTokenCounter" parent="StormQuestToken">
+    <Face value="HoggerGoldenHoardTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="HoggerGoldenPlunderTokenCounter" parent="StormQuestToken">
+    <Face value="HoggerGoldenPlunderTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="HoggerGoldenHoardTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="HoggerGoldenHoardTokenCounter" />
+    <Scale value="0" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HoggerLootHoardGroundImpactDamage">
+    <MultiplicativeModifierArray index="HoggerKingPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerKingCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerKingLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoggerHoardapultHoggerGroundImpactDamage">
+    <MultiplicativeModifierArray index="HoggerKingPower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerKingCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerKingLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="HoggerGoldenHoardTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hogger_trait.dds" />
+  </CButton>
+  <CButton id="HoggerGoldenPlunderTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hogger_trait.dds" />
+  </CButton>
   <!-- Brute: takedown quest stacks past the cap add damage to all of the hero's damage -->
   <CBehaviorBuff id="HoggerBrutePastCapDamage" parent="CarryBehaviorParent">
     <Modification>
@@ -67,36 +134,53 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
       <DamageDealtFraction index="Ability" value="0" />
     </Modification>
   </CBehaviorBuff>
+  <!-- Hogwild: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="HoggerWildPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Hoard King: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="HoggerKingPastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
-  <!-- Brute: Basic Attacks against enemy Heroes take 1 second off Staggering Blow's cooldown (Chance 0: the starter turns it
+  <!-- Brute: Basic Attacks against enemy Heroes take 2 seconds off Staggering Blow's cooldown (Chance 0: the starter turns it
        on) -->
   <CEffectModifyUnit id="HoggerGoldenAttackBlowCooldown">
     <Chance value="0" />
     <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
     <ValidatorArray value="TargetIsHero" />
     <ImpactUnit Value="Caster" />
-    <Cost Abil="HoggerStaggeringBlow,Execute" CooldownOperation="Add" CooldownTimeUse="-1" />
+    <Cost Abil="HoggerStaggeringBlow,Execute" CooldownOperation="Add" CooldownTimeUse="-2" />
   </CEffectModifyUnit>
   <CEffectSet id="HoggerWeaponPreImpactSet">
     <EffectArray value="HoggerGoldenAttackBlowCooldown" />
   </CEffectSet>
-  <!-- Brute, Brawn 41-80: after Staggering Blow's Stun ends, the target is Slowed for 1.25 seconds (2% per stack, up to 80%;
-       the script turns it on from 41) -->
-  <CBehaviorBuff id="HoggerGoldenBruteDaze" parent="StormSlowParent">
+  <!-- Brute, Brawn 41-80: enemy Heroes hit by Staggering Blow deal 1% less damage per stack for 3 seconds (up to 40%; the
+       script turns it on from 41) -->
+  <CBehaviorBuff id="HoggerGoldenBruteWeaken">
+    <Alignment value="Negative" />
     <InfoIcon value="Assets\Textures\storm_ui_icon_hogger_q.dds" />
-    <Duration value="1.25" />
+    <BehaviorCategories index="DebuffAbilityPower" value="1" />
+    <BehaviorCategories index="DebuffAutoattackDPS" value="1" />
+    <Duration value="3" />
     <Modification>
-      <UnifiedMoveSpeedFactor value="0" />
+      <DamageDealtFraction index="Splash" value="0" />
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
     </Modification>
   </CBehaviorBuff>
-  <CEffectApplyBehavior id="HoggerGoldenBruteDazeApply" parent="StormSlowApply">
+  <CEffectApplyBehavior id="HoggerGoldenBruteWeakenApply">
     <Chance value="0" />
-    <Behavior value="HoggerGoldenBruteDaze" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="HoggerGoldenBruteWeaken" />
   </CEffectApplyBehavior>
-  <CBehaviorBuff id="HoggerStaggeringBlowProcStun">
-    <FinalEffect value="HoggerGoldenBruteDazeApply" />
-  </CBehaviorBuff>
   <!-- Brute, Brawn at 100: Staggering Blow kills lane minions (the script turns it on) -->
   <CEffectDamage id="HoggerGoldenBruteMinionKill" parent="StormSpell">
     <Chance value="0" />
@@ -111,18 +195,102 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Cost Abil="HoggerStaggeringBlow,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" />
   </CEffectModifyUnit>
   <CEffectSet id="HoggerStaggeringBlowSearchImpactSet">
+    <EffectArray value="HoggerGoldenBruteWeakenApply" />
     <EffectArray value="HoggerGoldenBruteMissingDamage" />
     <EffectArray value="HoggerGoldenBruteMinionKill" />
     <EffectArray value="HoggerGoldenFeedbackLoop" />
   </CEffectSet>
-  <!-- Pull Hit (Legendary): Staggering Blow pulls enemies in instead of knocking them away (the boon flips the force), and
-       Stuns everything it moves when the pull ends -->
+  <!-- Brute: Staggering Blow pulls enemies in instead of knocking them away (the starter flips the force), and Stuns
+       everything it moves when the pull ends (Chance 0: the starter turns it on) -->
   <CEffectApplyBehavior id="HoggerGoldenPullHitStun">
     <Chance value="0" />
     <ValidatorArray index="0" value="TargetNotUnstoppable" />
     <Behavior value="HoggerStaggeringBlowProcStun" />
   </CEffectApplyBehavior>
+  <!-- Fuel Hit (Legendary): an enemy Hero Stunned by the pull drops a chunk of Meat -->
+  <CEffectSet id="HoggerGoldenFuelHit">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <EffectArray value="HoggerLootHoardCreateMeatUnitTargetPoint" />
+  </CEffectSet>
   <CEffectSet id="HoggerStaggeringBlowKnockbackPersistentFinalSet">
     <EffectArray value="HoggerGoldenPullHitStun" />
+    <EffectArray value="HoggerGoldenFuelHit" />
+  </CEffectSet>
+  <!-- Hogwild, Stampede 81-100: enemies hit by Hogg Wild are Slowed 1% per stack for 1 second (the script turns it on from 81) -->
+  <CBehaviorBuff id="HoggerGoldenWildSlow" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_hogger_e.dds" />
+    <Duration value="1" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="HoggerGoldenWildSlowApply" parent="StormSlowApply">
+    <Chance value="0" />
+    <Behavior value="HoggerGoldenWildSlow" />
+  </CEffectApplyBehavior>
+  <!-- Sewage (Epic): enemy Heroes hit by Hogg Wild receive 50% less healing for 3 seconds -->
+  <CBehaviorBuff id="HoggerGoldenSewage">
+    <Alignment value="Negative" />
+    <InfoIcon value="Assets\Textures\storm_ui_icon_hogger_e.dds" />
+    <Duration value="3" />
+    <Modification>
+      <HealTakenAdditiveMultiplier index="Life" value="-0.5" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="HoggerGoldenSewageApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <Behavior value="HoggerGoldenSewage" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HoggerHoggWildImpactSet">
+    <EffectArray value="HoggerGoldenWildSlowApply" />
+    <EffectArray value="HoggerGoldenSewageApply" />
+  </CEffectSet>
+  <!-- Hoard King: each Hoard stack adds 1 maximum Rage, and each point of Rage adds 1% to all damage (the script sets both) -->
+  <CBehaviorBuff id="HoggerGoldenKingHoard" parent="CarryBehaviorParent">
+    <Modification>
+      <VitalMaxIncreaseAffectsCurrentArray index="Energy" value="0" />
+      <VitalMaxArray index="Energy" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CBehaviorBuff id="HoggerGoldenKingFury" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <!-- Loot Rain (Epic): the Hoardapult's pile drops 3 more chunks of Meat around it as it lands -->
+  <CEffectCreatePersistent id="HoggerGoldenLootRain">
+    <Chance value="0" />
+    <WhichLocation Value="TargetPoint" />
+    <PeriodCount value="3" />
+    <PeriodicEffectArray value="HoggerLootHoardCreateMeatUnitTargetPoint" />
+    <PeriodicEffectArray value="HoggerLootHoardCreateMeatUnitTargetPoint" />
+    <PeriodicEffectArray value="HoggerLootHoardCreateMeatUnitTargetPoint" />
+    <PeriodicOffsetArray X="2.5" Y="0" />
+    <PeriodicOffsetArray X="-1.25" Y="2.165" />
+    <PeriodicOffsetArray X="-1.25" Y="-2.165" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+    <PeriodicPeriodArray value="0" />
+  </CEffectCreatePersistent>
+  <CEffectSet id="HoggerHoardapultMissileGroundImpactSet">
+    <EffectArray value="HoggerGoldenLootRain" />
+  </CEffectSet>
+  <!-- Heavy Loot (Legendary): Loot Hoard and Hoardapult Stun enemies they hit for 2 seconds -->
+  <CBehaviorBuff id="HoggerGoldenHeavyLootStun" parent="StormStun">
+    <Duration value="2" />
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="HoggerGoldenHeavyLootApply">
+    <Chance value="0" />
+    <ValidatorArray value="TargetNotUnstoppable" />
+    <Behavior value="HoggerGoldenHeavyLootStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HoggerRiverpawLootHoardGroundImpactSet">
+    <EffectArray value="HoggerGoldenHeavyLootApply" />
+  </CEffectSet>
+  <CEffectSet id="HoggerHoardapultHoggerGroundImpactSet">
+    <EffectArray value="HoggerGoldenHeavyLootApply" />
   </CEffectSet>
 </Catalog>

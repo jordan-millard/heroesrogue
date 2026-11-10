@@ -1,8 +1,12 @@
 include "AffixTriggers"
 
 // ============================================================
-// Golden Hogger. Brute: Staggering Blow hits on enemy Heroes add Swing; takedowns add Brawn: knockback distance,
-// then a Slow after the Stun, then missing-Health damage, then at 100 it kills lane minions, then 2% damage per stack.
+// Golden Hogger. Brute: Staggering Blow hits on enemy Heroes add Swing; takedowns add Brawn: area, then weakening
+// Heroes hit, then missing-Health damage, then at 100 it kills lane minions, then 2% damage per stack.
+// Hogwild: Hogg Wild hits on enemy Heroes add Rampage (once per Hero per cast); takedowns add Stampede: area, then
+// damage per hit, then a Slow, then at 100 no wind-up, then 2% damage per stack.
+// Hoard King: picking up Meat adds Hoard (1 max Rage each) and fills Rage; each point of Rage adds 1% damage; every
+// takedown adds Plunder and 10 Hoard; past 100 Plunder, 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_HoggerTakedownWindow = 3.0;
@@ -13,6 +17,20 @@ int libAffx_HoggerBruteAdded; // Brute: takedown stacks already applied to the c
 int libAffx_HoggerBruteAdded2; // Brute: takedown quest stage 2 stacks already applied to the catalog this game
 int libAffx_HoggerBruteAdded3; // Brute: takedown quest stage 3 stacks already applied to the catalog this game
 int libAffx_HoggerBrutePastApplied; // Brute: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildTime; // per enemy player, last Hogwild hit
+int libAffx_HoggerWildAdded; // Hogwild: takedown stacks already applied to the catalog this game
+int libAffx_HoggerWildAdded2; // Hogwild: takedown quest stage 2 stacks already applied to the catalog this game
+int libAffx_HoggerWildAdded3; // Hogwild: takedown quest stage 3 stacks already applied to the catalog this game
+int libAffx_HoggerWildPastApplied; // Hogwild: takedown quest stacks past the cap applied as damage this game
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerKingTime; // per enemy player, last Hoard King hit
+int libAffx_HoggerKingAdded; // Hoard King: takedown stacks already applied to the catalog this game
+int libAffx_HoggerKingPastApplied; // Hoard King: takedown quest stacks past the cap applied as damage this game
+fixed libAffx_HoggerWildCast; // Hogwild: when Hogg Wild was last cast
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildCounted; // Hogwild: per enemy player, the cast that last added Rampage
+bool libAffx_HoggerWildSlowOn; // Hogwild: Stampede 81 turned on the Slow
+bool libAffx_HoggerWildQuick; // Hogwild: Stampede 100 removed the wind-up
+int libAffx_HoggerKingHoard = -1; // Hoard King: the Hoard stacks applied as max Rage
+int libAffx_HoggerKingRage; // Hoard King: the Rage applied as damage
 
 unit libAffx_HoggerHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -37,7 +55,7 @@ void libAffx_HoggerQuestDing() {
 bool libAffx_HoggerInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_HoggerTakedownWindow;
 }
-// HoggerGoldenBrawnTokenCounter: stacks 1-40: the knockback is 1% farther each; 41-80 Slow after the Stun, 81-100 missing-Health damage, 100 kills minions (script), then damage
+// HoggerGoldenBrawnTokenCounter: stacks 1-40: the area is 1% larger each; 41-80 weakens Heroes hit, 81-100 missing-Health damage, 100 kills minions (script), then damage
 void libAffx_HoggerSyncBrute () {
     unit hero = libAffx_HoggerHero();
     int stacks;
@@ -50,14 +68,18 @@ void libAffx_HoggerSyncBrute () {
     stacks = libAffx_HoggerStacks("HoggerGoldenBrawnTokenCounter");
     wanted = MinI(stacks, 40);
     if (wanted != libAffx_HoggerBruteAdded) {
-        libAffx_CatalogReferenceModify("Behavior,HoggerStaggeringBlowKnockback,Modification.MoveSpeedMaximum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded) * 0.1700, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,HoggerStaggeringBlowKnockback,Modification.MoveSpeedMinimum", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded) * 0.1700, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,HoggerStaggeringBlowSearch1,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded) * 0.05750, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,HoggerStaggeringBlowSearch2,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded) * 0.05750, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,HoggerStaggeringBlowSearch3,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded) * 0.05750, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Effect,HoggerStaggeringBlowDummySearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded) * 0.05750, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_HoggerBruteAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): enemies Stunned by Staggering Blow are Slowed 2% more each after the Stun (on from 41: libAffx_HoggerBlowCast_Func)
+    // stage 2 (stacks 41 to 80): enemy Heroes hit deal 1% less damage each for 3 seconds (on from 41: libAffx_HoggerBlowCast_Func)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_HoggerBruteAdded2) {
-        libAffx_CatalogReferenceModify("Behavior,HoggerGoldenBruteDaze,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded2) * -0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,HoggerGoldenBruteWeaken,Modification.DamageDealtFraction[Splash]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded2) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,HoggerGoldenBruteWeaken,Modification.DamageDealtFraction[Basic]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded2) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,HoggerGoldenBruteWeaken,Modification.DamageDealtFraction[Ability]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerBruteAdded2) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_HoggerBruteAdded2 = wanted;
     }
     // stage 3 (stacks 81 to 100): 0.5% of Hogger's missing Health as damage each (libAffx_HoggerBlowCast_Func sets it on each cast)
@@ -77,11 +99,80 @@ void libAffx_HoggerSyncBrute () {
         UnitBehaviorAdd(hero, "HoggerBrutePastCapDamage", hero, 1);
     }
 }
+// HoggerGoldenStampedeTokenCounter: stacks 1-40: Hogg Wild area 1% larger each; 41-80 1% damage per hit, 81-100 Slow, 100 no wind-up (script), then damage
+void libAffx_HoggerSyncWild () {
+    unit hero = libAffx_HoggerHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "HoggerGoldenWildMarker")) {
+        return;
+    }
+    stacks = libAffx_HoggerStacks("HoggerGoldenStampedeTokenCounter");
+    wanted = MinI(stacks, 40);
+    if (wanted != libAffx_HoggerWildAdded) {
+        libAffx_CatalogReferenceModify("Effect,HoggerHoggWildSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded) * 0.02625, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_HoggerWildAdded = wanted;
+    }
+    // stage 2 (stacks 41 to 80): each Hogg Wild hit deals 1% more damage each
+    wanted = MaxI(0, MinI(stacks - 40, 40));
+    if (wanted != libAffx_HoggerWildAdded2) {
+        libAffx_CatalogReferenceModify("Effect,HoggerHoggWildDamage,MultiplicativeModifierArray[HoggerGoldenWildTempo].Modifier", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded2) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_HoggerWildAdded2 = wanted;
+    }
+    // stage 3 (stacks 81 to 100): enemies hit are Slowed 1% more each (on from 81: libAffx_HoggerTick_Func)
+    wanted = MaxI(0, MinI(stacks - 80, 20));
+    if (wanted != libAffx_HoggerWildAdded3) {
+        libAffx_CatalogReferenceModify("Behavior,HoggerGoldenWildSlow,Modification.UnifiedMoveSpeedFactor", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_HoggerWildAdded3) * -0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_HoggerWildAdded3 = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_HoggerWildPastApplied) {
+        libAffx_HoggerWildPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerWildPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerWildPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "HoggerWildPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "HoggerWildPastCapDamage")) {
+        UnitBehaviorAdd(hero, "HoggerWildPastCapDamage", hero, 1);
+    }
+}
+// HoggerGoldenPlunderTokenCounter: no stage rewards: each takedown also adds 10 Hoard (takedown_any); past 100, damage
+void libAffx_HoggerSyncKing () {
+    unit hero = libAffx_HoggerHero();
+    int stacks;
+    int wanted;
+    string bonus;
+    int power;
+    if (hero == null || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        return;
+    }
+    stacks = libAffx_HoggerStacks("HoggerGoldenPlunderTokenCounter");
+    wanted = MinI(stacks, 100);
+    if (wanted != libAffx_HoggerKingAdded) {
+        libAffx_HoggerKingAdded = wanted;
+    }
+    // stacks past 100: 0.02 each to all damage
+    power = MaxI(0, stacks - 100);
+    if (power != libAffx_HoggerKingPastApplied) {
+        libAffx_HoggerKingPastApplied = power;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerKingPastCapDamage", "Modification.DamageDealtFraction[Basic]", libAffx_player, IntToFixed(power) * 0.02);
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerKingPastCapDamage", "Modification.DamageDealtFraction[Ability]", libAffx_player, IntToFixed(power) * 0.02);
+        UnitBehaviorRemove(hero, "HoggerKingPastCapDamage", 1);
+    }
+    if (power > 0 && !UnitHasBehavior2(hero, "HoggerKingPastCapDamage")) {
+        UnitBehaviorAdd(hero, "HoggerKingPastCapDamage", hero, 1);
+    }
+}
 bool libAffx_HoggerSync_Func (bool testConds, bool runActions) {
     libAffx_HoggerSyncBrute();
+    libAffx_HoggerSyncWild();
+    libAffx_HoggerSyncKing();
     return true;
 }
-// Brute: Staggering Blow is cast. Brawn turns on its later rewards: 41 the Slow after the Stun, 81 the missing-Health
+// Brute: Staggering Blow is cast. Brawn turns on its later rewards: 41 weakening enemy Heroes hit, 81 the missing-Health
 // damage (0.5% of Hogger's missing Health per stack past 80, set for this cast), 100 killing lane minions.
 bool libAffx_HoggerBlowCast_Func (bool testConds, bool runActions) {
     unit hero = libAffx_HoggerHero();
@@ -90,17 +181,96 @@ bool libAffx_HoggerBlowCast_Func (bool testConds, bool runActions) {
     if (hero == null || !UnitHasBehavior2(hero, "HoggerGoldenBruteMarker")) {
         return false;
     }
-    stacks = libAffx_HoggerStacks("HoggerGoldenBrawnTokenCounter");
+    stacks = libAffx_HoggerStacks("BRAWN_TOKEN");
     if (stacks > 40) {
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenBruteDazeApply", "Chance", libAffx_player, 1.0);
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenBruteWeakenApply", "Chance", libAffx_player, 1.0);
     }
     if (stacks > 80) {
         missing = MaxF(0.0, UnitGetPropertyFixed(hero, c_unitPropLifeMax, c_unitPropCurrent) - UnitGetPropertyFixed(hero, c_unitPropLife, c_unitPropCurrent));
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenBruteMissingDamage", "Amount", libAffx_player, missing * 0.005 * IntToFixed(MinI(stacks - 80, 20)));
-        CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenBruteMissingDamage", "Chance", libAffx_player, 1.0);
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "MISSING_DAMAGE", "Amount", libAffx_player, missing * 0.005 * IntToFixed(MinI(stacks - 80, 20)));
+        CatalogFieldValueSetFixed(c_gameCatalogEffect, "MISSING_DAMAGE", "Chance", libAffx_player, 1.0);
     }
     if (stacks >= 100) {
         CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenBruteMinionKill", "Chance", libAffx_player, 1.0);
+    }
+    return true;
+}
+// Hogwild: a Hogg Wild cast starts a new count, so each enemy Hero adds Rampage once per cast
+bool libAffx_HoggerWildCast_Func (bool testConds, bool runActions) {
+    libAffx_HoggerWildCast = GameGetMissionTime();
+    return true;
+}
+bool libAffx_HoggerWildFirstHit (unit victim) {
+    int owner = UnitGetOwner(victim);
+    if (libAffx_HoggerWildCounted[owner] == libAffx_HoggerWildCast) {
+        return false;
+    }
+    libAffx_HoggerWildCounted[owner] = libAffx_HoggerWildCast;
+    return true;
+}
+// Hoard King: max Rage follows the Hoard stacks (1 each)
+void libAffx_HoggerKingSync () {
+    unit hero = libAffx_HoggerHero();
+    int hoard;
+    if (hero == null || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        return;
+    }
+    hoard = libAffx_HoggerStacks("HoggerGoldenHoardTokenCounter");
+    if (hoard != libAffx_HoggerKingHoard) {
+        libAffx_HoggerKingHoard = hoard;
+        CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingHoard", "Modification.VitalMaxArray[Energy]", libAffx_player, IntToFixed(hoard));
+        UnitBehaviorRemove(hero, "HoggerGoldenKingHoard", 1);
+    }
+    if (!UnitHasBehavior2(hero, "HoggerGoldenKingHoard")) {
+        UnitBehaviorAdd(hero, "HoggerGoldenKingHoard", hero, 1);
+    }
+}
+// Hoard King: Hogger picks up Meat: 1 Hoard and full Rage
+bool libAffx_HoggerMeat_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_HoggerHero();
+    if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitTarget) != hero || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        return false;
+    }
+    libGame_gf_ModifyTokenCount(1, "HoggerGoldenHoardTokenCounter", hero);
+    libAffx_HoggerKingSync();
+    UnitSetPropertyFixed(hero, c_unitPropEnergyPercent, 100.0);
+    return true;
+}
+// Every 0.25 seconds: Stampede 81 turns on Hogg Wild's Slow and 100 removes its wind-up; Hoard King's max Rage (1 per
+// Hoard) and its damage (1% per point of Rage)
+bool libAffx_HoggerTick_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_HoggerHero();
+    int stacks;
+    int rage;
+    if (hero == null) {
+        return false;
+    }
+    if (UnitHasBehavior2(hero, "HoggerGoldenWildMarker")) {
+        stacks = libAffx_HoggerStacks("HoggerGoldenStampedeTokenCounter");
+        if (!libAffx_HoggerWildSlowOn && stacks > 80) {
+            libAffx_HoggerWildSlowOn = true;
+            CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenWildSlowApply", "Chance", libAffx_player, 1.0);
+        }
+        if (!libAffx_HoggerWildQuick && stacks >= 100) {
+            libAffx_HoggerWildQuick = true;
+            CatalogFieldValueSet(c_gameCatalogAbil, "HoggerHoggWild", "CastIntroTime", libAffx_player, "0");
+        }
+    }
+    if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        libAffx_HoggerKingSync();
+        rage = FixedToInt(UnitGetPropertyFixed(hero, c_unitPropEnergy, c_unitPropCurrent));
+        if (!UnitIsAlive(hero)) {
+            rage = 0;
+        }
+        if (rage != libAffx_HoggerKingRage) {
+            libAffx_HoggerKingRage = rage;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.01 * IntToFixed(rage));
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(rage));
+            UnitBehaviorRemove(hero, "HoggerGoldenKingFury", 1);
+        }
+        if (rage > 0 && !UnitHasBehavior2(hero, "HoggerGoldenKingFury")) {
+            UnitBehaviorAdd(hero, "HoggerGoldenKingFury", hero, 1);
+        }
     }
     return true;
 }
@@ -115,27 +285,62 @@ bool libAffx_HoggerBruteHit_Func (bool testConds, bool runActions) {
     libGame_gf_ModifyTokenCount(1, "HoggerGoldenSwingTokenCounter", hero);
     return true;
 }
+// Hogwild hit on an enemy Hero: takedown window, HoggerGoldenRampageTokenCounter, the heal, and on-hit boons
+bool libAffx_HoggerWildHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_HoggerHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_HoggerIsEnemyHero(victim) || !UnitHasBehavior2(hero, "HoggerGoldenWildMarker")) {
+        return false;
+    }
+    libAffx_HoggerWildTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    if (libAffx_HoggerWildFirstHit(victim)) {
+        libGame_gf_ModifyTokenCount(1, "HoggerGoldenRampageTokenCounter", hero);
+    }
+    return true;
+}
+// Hoard King hit on an enemy Hero: takedown window, HoggerGoldenHoardTokenCounter, the heal, and on-hit boons
+bool libAffx_HoggerKingHit_Func (bool testConds, bool runActions) {
+    unit victim = EventUnit();
+    unit hero = libAffx_HoggerHero();
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_HoggerIsEnemyHero(victim) || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        return false;
+    }
+    libAffx_HoggerKingTime[UnitGetOwner(victim)] = GameGetMissionTime();
+    libGame_gf_ModifyTokenCount(1, "HoggerGoldenHoardTokenCounter", hero);
+    return true;
+}
 // Takedown quests count for each other: each starter keeps its own count (a starter taken later starts from its
 // own saved count), but a takedown that counts for any taken starter adds 1 to every taken starter's takedown quest
-int[2] libAffx_HoggerTakedownBefore; // each starter's takedown stacks before this takedown
+int[4] libAffx_HoggerTakedownBefore; // each starter's takedown stacks before this takedown
 void libAffx_HoggerTakedownCrossStart () {
     unit hero = libAffx_HoggerHero();
     if (hero == null) {
         return;
     }
     libAffx_HoggerTakedownBefore[1] = FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenBrawnTokenCounter"));
+    libAffx_HoggerTakedownBefore[2] = FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenStampedeTokenCounter"));
+    libAffx_HoggerTakedownBefore[3] = FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenPlunderTokenCounter"));
 }
 void libAffx_HoggerTakedownCross () {
     unit hero = libAffx_HoggerHero();
     if (hero == null) {
         return;
     }
-    if (FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenBrawnTokenCounter")) == libAffx_HoggerTakedownBefore[1]) {
+    if (FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenBrawnTokenCounter")) == libAffx_HoggerTakedownBefore[1] && FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenStampedeTokenCounter")) == libAffx_HoggerTakedownBefore[2] && FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenPlunderTokenCounter")) == libAffx_HoggerTakedownBefore[3]) {
         return;
     }
     if (UnitHasBehavior2(hero, "HoggerGoldenBruteMarker") && FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenBrawnTokenCounter")) == libAffx_HoggerTakedownBefore[1]) {
         libGame_gf_ModifyTokenCount(1, "HoggerGoldenBrawnTokenCounter", hero);
         libAffx_HoggerSyncBrute();
+    }
+    if (UnitHasBehavior2(hero, "HoggerGoldenWildMarker") && FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenStampedeTokenCounter")) == libAffx_HoggerTakedownBefore[2]) {
+        libGame_gf_ModifyTokenCount(1, "HoggerGoldenStampedeTokenCounter", hero);
+        libAffx_HoggerSyncWild();
+    }
+    if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker") && FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenPlunderTokenCounter")) == libAffx_HoggerTakedownBefore[3]) {
+        libGame_gf_ModifyTokenCount(1, "HoggerGoldenPlunderTokenCounter", hero);
+        libAffx_HoggerSyncKing();
+        libAffx_HoggerKingSync();
     }
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -152,10 +357,29 @@ bool libAffx_HoggerTakedown (bool testConds, bool runActions) {
         return true;
     }
     libAffx_HoggerTakedownCrossStart();
+    if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        libGame_gf_ModifyTokenCount(1, "HoggerGoldenPlunderTokenCounter", hero);
+        libGame_gf_ModifyTokenCount(10, "HoggerGoldenHoardTokenCounter", hero);
+        libAffx_HoggerSyncKing();
+        libAffx_HoggerKingSync();
+        libAffx_HoggerQuestDing();
+    }
     if (UnitHasBehavior2(hero, "HoggerGoldenBruteMarker") && libAffx_HoggerBruteTime[killedPlayer] > 0.0 && now - libAffx_HoggerBruteTime[killedPlayer] <= 6.0) {
         libAffx_HoggerBruteTime[killedPlayer] = 0.0;
         libGame_gf_ModifyTokenCount(1, "HoggerGoldenBrawnTokenCounter", hero);
         libAffx_HoggerSyncBrute();
+        libAffx_HoggerQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "HoggerGoldenWildMarker") && libAffx_HoggerWildTime[killedPlayer] > 0.0 && now - libAffx_HoggerWildTime[killedPlayer] <= 6.0) {
+        libAffx_HoggerWildTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "HoggerGoldenStampedeTokenCounter", hero);
+        libAffx_HoggerSyncWild();
+        libAffx_HoggerQuestDing();
+    }
+    if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker") && libAffx_HoggerKingTime[killedPlayer] > 0.0 && now - libAffx_HoggerKingTime[killedPlayer] <= -1.0) {
+        libAffx_HoggerKingTime[killedPlayer] = 0.0;
+        libGame_gf_ModifyTokenCount(1, "HoggerGoldenPlunderTokenCounter", hero);
+        libAffx_HoggerSyncKing();
         libAffx_HoggerQuestDing();
     }
     libAffx_HoggerTakedownCross();
@@ -169,7 +393,13 @@ bool libAffx_HoggerStart (bool testConds, bool runActions) {
     libAffx_HoggerStarted = true;
     trig = TriggerCreate("libAffx_HoggerBruteHit_Func");
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerStaggeringBlowDamage");
+    trig = TriggerCreate("libAffx_HoggerWildHit_Func");
+    TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
+    trig = TriggerCreate("libAffx_HoggerKingHit_Func");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerBlowCast_Func"), libAffx_player, "HoggerStaggeringBlowInitialSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerWildCast_Func"), libAffx_player, "HoggerHoggWildInitialSet");
+    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerMeat_Func"), libAffx_player, "HoggerRiverpawLootHoardApplyMeatHoT");
+    TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerTick_Func"), 0.25, c_timeGame);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerSync_Func"), 1.0, c_timeGame);
     return true;
