@@ -25,7 +25,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Fan Dancer ===== -->
-  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 or more Heroes refunds a charge) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.5% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Maiev Protected for 0.02 seconds each after Vault ends (script), 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
+  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 or more Heroes refunds a charge) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.75% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Maiev Protected for 0.02 seconds each after Vault ends (script), 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MaievGoldenEdgeTokenCounter" parent="StormQuestToken">
     <Face value="MaievGoldenEdgeTokenCounter" />
     <Max value="100000" />
@@ -39,7 +39,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="MaievGoldenEdgeTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.0075" />
   </CAccumulatorToken>
   <CEffectDamage id="MaievFanOfKnivesDamage">
     <MultiplicativeModifierArray index="MaievFanPower" Modifier="0" />
