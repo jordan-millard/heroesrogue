@@ -5,7 +5,7 @@ include "AffixTriggers"
 // Heroes hit, then missing-Health damage, then at 100 it kills lane minions, then 2% damage per stack.
 // Hogwild: Hogg Wild hits on enemy Heroes add Rampage (once per Hero per cast); takedowns add Stampede: area, then
 // damage per hit, then a Slow, then at 100 no wind-up, then 2% damage per stack.
-// Hoard King: picking up Meat adds Hoard (1 max Rage each) and fills Rage; each point of Rage adds 1% damage; every
+// Hoard King: picking up Meat adds Hoard (1 max Rage per 5) and half of max Rage; each point of Rage adds 1% damage; every
 // takedown adds Plunder: shorter crowd control, then Movement Speed, then Life Steal, all from current Rage; past 100,
 // 2% damage per stack.
 // ============================================================
@@ -31,7 +31,7 @@ fixed libAffx_HoggerWildCast; // Hogwild: when Hogg Wild was last cast
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildCounted; // Hogwild: per enemy player, the cast that last added Rampage
 bool libAffx_HoggerWildSlowOn; // Hogwild: Stampede 81 turned on the Slow
 bool libAffx_HoggerWildQuick; // Hogwild: Stampede 100 removed the wind-up
-int libAffx_HoggerKingHoard = -1; // Hoard King: the Hoard stacks applied as max Rage
+int libAffx_HoggerKingHoard = -1; // Hoard King: the max Rage applied from Hoard (1 per 5 stacks)
 int libAffx_HoggerKingRage; // Hoard King: the Rage applied to its buff
 int libAffx_HoggerKingPlunder; // Hoard King: the Plunder stacks applied to its buff
 fixed libAffx_HoggerKingResist; // Hoard King: how much shorter crowd control on Hogger is (Plunder 1-40, from Rage)
@@ -214,14 +214,14 @@ bool libAffx_HoggerWildFirstHit (unit victim) {
     libAffx_HoggerWildCounted[owner] = libAffx_HoggerWildCast;
     return true;
 }
-// Hoard King: max Rage follows the Hoard stacks (1 each)
+// Hoard King: max Rage follows the Hoard stacks (1 per 5)
 void libAffx_HoggerKingSync () {
     unit hero = libAffx_HoggerHero();
     int hoard;
     if (hero == null || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
         return;
     }
-    hoard = libAffx_HoggerStacks("HoggerGoldenHoardTokenCounter");
+    hoard = libAffx_HoggerStacks("HoggerGoldenHoardTokenCounter") / 5;
     if (hoard != libAffx_HoggerKingHoard) {
         libAffx_HoggerKingHoard = hoard;
         CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingHoard", "Modification.VitalMaxArray[Energy]", libAffx_player, IntToFixed(hoard));
@@ -231,7 +231,7 @@ void libAffx_HoggerKingSync () {
         UnitBehaviorAdd(hero, "HoggerGoldenKingHoard", hero, 1);
     }
 }
-// Hoard King: Hogger picks up Meat: 1 Hoard and full Rage
+// Hoard King: Hogger picks up Meat: 1 Hoard and half of his maximum Rage
 bool libAffx_HoggerMeat_Func (bool testConds, bool runActions) {
     unit hero = libAffx_HoggerHero();
     if (hero == null || EventPlayerEffectUsedUnit(c_effectUnitTarget) != hero || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
@@ -239,7 +239,7 @@ bool libAffx_HoggerMeat_Func (bool testConds, bool runActions) {
     }
     libGame_gf_ModifyTokenCount(1, "HoggerGoldenHoardTokenCounter", hero);
     libAffx_HoggerKingSync();
-    UnitSetPropertyFixed(hero, c_unitPropEnergyPercent, 100.0);
+    UnitSetPropertyFixed(hero, c_unitPropEnergyPercent, MinF(100.0, UnitGetPropertyFixed(hero, c_unitPropEnergyPercent, c_unitPropCurrent) + 50.0));
     return true;
 }
 // Hoard King, Plunder 1-40: Stuns, Roots, Silences and Slows on Hogger are cut when they land (1% per 2 current Rage at 40
@@ -267,7 +267,7 @@ bool libAffx_HoggerKingResist_Func (bool testConds, bool runActions) {
     return true;
 }
 // Every 0.25 seconds: Stampede 81 turns on Hogg Wild's Slow and 100 removes its wind-up; Hoard King's max Rage (1 per
-// Hoard) and what its current Rage gives: 1% damage per point, and with Plunder (each stage grows to its full rate over its
+// 5 Hoard) and what its current Rage gives: 1% damage per point, and with Plunder (each stage grows to its full rate over its
 // stacks) 1-40 1% shorter crowd control per 2 Rage (up to 75%), 41-80 1% Movement Speed per point, 81-100 1% Life Steal per
 // 10 Rage
 bool libAffx_HoggerTick_Func (bool testConds, bool runActions) {

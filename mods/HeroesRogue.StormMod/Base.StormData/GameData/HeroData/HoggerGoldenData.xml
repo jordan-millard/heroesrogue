@@ -95,7 +95,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Hoard King ===== -->
-  <!-- Gain Hoardapult and Secret Stash at level 1 (Shockwave can't be picked). Picking up Meat sets Rage to full, and each point of Rage adds 1% to all damage (script). Hoard quest (10% of each map's gains kept for good): 1 per Meat picked up; each adds 1 maximum Rage (script). Plunder quest: every enemy Hero takedown (no hit window); stacks 1-40 cut crowd control on Hogger by 1% per 2 current Rage at 40 (up to 75%), 41-80 give 1% Movement Speed per point of Rage at 80, 81-100 give 1% Life Steal per 10 Rage at 100 (each stage grows over its stacks; all script), then 2% damage each. -->
+  <!-- Gain Hoardapult and Secret Stash at level 1 (Shockwave can't be picked). Picking up Meat gives 50% of max Rage, and each point of Rage adds 1% to all damage (script). Hoard quest (10% of each map's gains kept for good): 1 per Meat picked up; every 5 add 1 maximum Rage (script). Plunder quest: every enemy Hero takedown (no hit window); stacks 1-40 cut crowd control on Hogger by 1% per 2 current Rage at 40 (up to 75%), 41-80 give 1% Movement Speed per point of Rage at 80, 81-100 give 1% Life Steal per 10 Rage at 100 (each stage grows over its stacks; all script), then 2% damage each. -->
   <CBehaviorTokenCounter id="HoggerGoldenHoardTokenCounter" parent="StormQuestToken">
     <Face value="HoggerGoldenHoardTokenCounter" />
     <Max value="100000" />
@@ -247,7 +247,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="HoggerGoldenWildSlowApply" />
     <EffectArray value="HoggerGoldenSewageApply" />
   </CEffectSet>
-  <!-- Hoard King: each Hoard stack adds 1 maximum Rage; each point of Rage adds 1% to all damage, and Plunder adds Movement
+  <!-- Hoard King: every 5 Hoard stacks add 1 maximum Rage; each point of Rage adds 1% to all damage, and Plunder adds Movement
        Speed and Life Steal from Rage (the script sets them all) -->
   <CBehaviorBuff id="HoggerGoldenKingHoard" parent="CarryBehaviorParent">
     <Modification>
