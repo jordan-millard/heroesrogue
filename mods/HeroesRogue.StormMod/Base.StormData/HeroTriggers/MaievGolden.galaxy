@@ -1,8 +1,8 @@
 include "AffixTriggers"
 
 // ============================================================
-// Golden Maiev. Fan Dancer: Fan of Knives hits on enemy Heroes add Edge; takedowns add Flourish: Fan size, then Vault
-// duration, then maximum Health damage, then at 100 a second Fan for 50%, then 2% damage per stack.
+// Golden Maiev. Fan Dancer: Fan of Knives hits on enemy Heroes add Edge; takedowns add Flourish: Fan size, then Protected
+// after Vault, then maximum Health damage, then at 100 a second Fan for 50%, then 2% damage per stack.
 // Jailer of the Watchers: enemy Heroes tethered by Umbral Bind add Shackles; takedowns add Sentence: Umbral Bind
 // CC duration, then Basic Attack cooldown cut, then a stronger pull, then at 100 range and 2 binds, then 2% damage.
 // Shadow Warden: spirit hits on enemy Heroes add Vengeance; takedowns add Vigil: Vault recharge, then spirit speed
@@ -56,7 +56,7 @@ void libAffx_MaievQuestDing() {
 bool libAffx_MaievInWindow (fixed hitTime, fixed now) {
     return hitTime > 0.0 && now - hitTime <= libAffx_MaievTakedownWindow;
 }
-// MaievGoldenFlourishTokenCounter: stacks 1-40: Fan of Knives is 1% larger each; 41-80 Vault lasts 2% longer, 81-100 Health damage, 100 echo (script), then damage
+// MaievGoldenFlourishTokenCounter: stacks 1-40: Fan of Knives is 1% larger each; 41-80 Protected after Vault, 81-100 Health damage, 100 echo (script), then damage
 void libAffx_MaievSyncFan () {
     unit hero = libAffx_MaievHero();
     int stacks;
@@ -101,11 +101,10 @@ void libAffx_MaievSyncFan () {
         libAffx_CatalogReferenceModify("Effect,MaievFanOfKnivesSearchArea,AreaArray[0].VertexArray[17].X", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded) * 0.030000, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MaievFanAdded = wanted;
     }
-    // stage 2 (stacks 41 to 80): Vault of the Wardens lasts 2% longer each
+    // stage 2 (stacks 41 to 80): 0.02 seconds Protected after each Vault each (libAffx_MaievVaultEnd_Func applies it)
     wanted = MaxI(0, MinI(stacks - 40, 40));
     if (wanted != libAffx_MaievFanAdded2) {
-        libAffx_CatalogReferenceModify("Behavior,MaievVaultOfTheWardensAirborneStasis,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Behavior,MaievVaultOfTheWardensAirborneStasisEvasion,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded2) * 0.015, c_fixedPrecisionAny), c_upgradeOperationAdd);
+        libAffx_CatalogReferenceModify("Behavior,MaievGoldenFanVaultProtected,Duration", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_MaievFanAdded2) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_MaievFanAdded2 = wanted;
     }
     // stage 3 (stacks 81 to 100): Fan of Knives deals 0.25% of an enemy Hero's maximum Health more each (on from 81: libAffx_MaievTick_Func)
@@ -343,6 +342,22 @@ bool libAffx_MaievVault_Func (bool testConds, bool runActions) {
     }
     return true;
 }
+// Fan Dancer, Flourish 41-80: Vault ending makes Maiev Protected (0.02 seconds per stack, up to 0.8)
+bool libAffx_MaievVaultEnd_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_MaievHero();
+    int stacks;
+    if (hero == null || EventUnit() != hero || !UnitIsAlive(hero) || !UnitHasBehavior2(hero, "MaievGoldenFanDancerMarker")) {
+        return false;
+    }
+    stacks = MinI(libAffx_MaievStacks("MaievGoldenFlourishTokenCounter"), 80) - 40;
+    if (stacks <= 0) {
+        return false; // the duration is 0 (permanent) until stack 41
+    }
+    UnitBehaviorAdd(hero, "MaievGoldenFanVaultProtected", hero, 1);
+    // set it here too, in case the quest's duration hasn't caught up with the stacks yet
+    UnitBehaviorSetDurationRemaining(hero, "MaievGoldenFanVaultProtected", IntToFixed(stacks) * 0.02);
+    return true;
+}
 // Every second: quest rewards switched on by stack counts (Flourish 81: Fan of Knives' Health damage; Sentence 100: +0.5
 // attack range; Vigil 100: Warden's Cage's second ring)
 bool libAffx_MaievTick_Func (bool testConds, bool runActions) {
@@ -500,6 +515,7 @@ bool libAffx_MaievStart (bool testConds, bool runActions) {
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_MaievResolveTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeRefresh);
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_MaievVault_Func"), libAffx_player, "MaievGoldenVaultSet");
+    TriggerAddEventUnitBehaviorChange(TriggerCreate("libAffx_MaievVaultEnd_Func"), null, "MaievVaultOfTheWardensAirborneStasis", c_unitBehaviorChangeDestroy);
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MaievTick_Func"), 1.0, c_timeGame);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_MaievSync_Func"), 1.0, c_timeGame);

@@ -25,7 +25,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Fan Dancer ===== -->
-  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 or more Heroes refunds a charge) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.5% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Vault last 2% longer each, 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
+  <!-- Fan of Knives stores 2 charges (5 second recharge; hitting 2 or more Heroes refunds a charge) and costs half Mana; gain Pin Down (its quest keeps 50%) and Blade Dance. Edge quest (10% of each map's gains kept for good): 0.5% Fan of Knives damage per enemy Hero hit. Flourish quest: takedowns within 6 seconds of a Fan of Knives hit; stacks 1-40 make the fan 1% larger each, 41-80 make Maiev Protected for 0.02 seconds each after Vault ends (script), 81-100 add 0.25% of an enemy Hero's maximum Health each (Chance turned on by script at 81), at 100 a second fan 0.3 seconds later for 50% (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="MaievGoldenEdgeTokenCounter" parent="StormQuestToken">
     <Face value="MaievGoldenEdgeTokenCounter" />
     <Max value="100000" />
@@ -363,6 +363,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <PeriodicOffsetArray index="14" X="2.3918" Y="-5.7742" />
     <PeriodicOffsetArray index="15" X="5.7742" Y="-2.3918" />
   </CEffectCreatePersistent>
+  <!-- Fan Dancer, Flourish 41-80: Maiev is Protected for 0.02 seconds per stack after Vault ends (0.8 at 80; the quest adds the
+       duration, the script applies it from 41) -->
+  <CBehaviorBuff id="MaievGoldenFanVaultProtected" parent="StormInvulnerable">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
+    <Duration value="0" />
+  </CBehaviorBuff>
   <!-- Shadow Step (Epic): Vault makes Maiev Unstoppable for 1 second -->
   <CBehaviorBuff id="MaievGoldenShadowStep" parent="StormUnstoppableParent">
     <InfoIcon value="Assets\Textures\storm_ui_icon_maiev_trait.dds" />
