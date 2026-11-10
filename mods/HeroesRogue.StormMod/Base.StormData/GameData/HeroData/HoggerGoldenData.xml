@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
+
+  <!-- ============================================================ -->
+  <!-- Golden Hogger. Starters: Brute (Staggering Blow: 3 seconds less cooldown, Basic Attacks on Heroes take 1 second off it; Brute Force and Headbanger). Each damage effect has its own multipliers: starter power, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/HoggerGolden.galaxy. -->
+  <!-- ============================================================ -->
+  <CBehaviorBuff id="HoggerGoldenBruteMarker" parent="CarryBehaviorParent" />
+  <!-- Brute, Brawn 81-100: Staggering Blow deals 0.5% of Hogger's missing Health per stack as bonus damage (the script sets the
+       amount on each cast and turns it on from 81) -->
+  <CEffectDamage id="HoggerGoldenBruteMissingDamage" parent="StormSpell">
+    <Chance value="0" />
+    <Amount value="0" />
+  </CEffectDamage>
+
+  <!-- ===== Brute ===== -->
+  <!-- Staggering Blow has 3 seconds less cooldown and Basic Attacks against enemy Heroes take 1 second off it; gain Brute Force and Headbanger (Brute Force's quest keeps 50%). Swing quest (10% of each map's gains kept for good): 0.5% Staggering Blow damage per enemy Hero hit. Brawn quest: takedowns within 6 seconds of a Staggering Blow hit; stacks 1-40 make the knockback 1% farther each (its speed), 41-80 Slow enemies 2% each for 1.25 seconds after Staggering Blow's Stun (script turns it on at 41), 81-100 add 0.5% of Hogger's missing Health as damage each (script), at 100 it kills lane minions (script), then 2% damage each. -->
+  <CBehaviorTokenCounter id="HoggerGoldenSwingTokenCounter" parent="StormQuestToken">
+    <Face value="HoggerGoldenSwingTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CBehaviorTokenCounter id="HoggerGoldenBrawnTokenCounter" parent="StormQuestToken">
+    <Face value="HoggerGoldenBrawnTokenCounter" />
+    <Max value="100000" />
+  </CBehaviorTokenCounter>
+  <CAccumulatorToken id="HoggerGoldenSwingTokenCounterAccumulator" parent="BaseTokenAccumulator">
+    <MinAccumulation value="0" />
+    <MaxAccumulation value="100000" />
+    <ApplicationRule value="Add" />
+    <TokenId value="HoggerGoldenSwingTokenCounter" />
+    <Scale value="0.005" />
+  </CAccumulatorToken>
+  <CEffectDamage id="HoggerStaggeringBlowDamage">
+    <MultiplicativeModifierArray index="HoggerBrutePower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteHit" Accumulator="HoggerGoldenSwingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HoggerBruteLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoggerStaggeringBlowProcDamage">
+    <MultiplicativeModifierArray index="HoggerBrutePower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteHit" Accumulator="HoggerGoldenSwingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HoggerBruteLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoggerStaggeringBlowHeadbangerTalentDamage">
+    <MultiplicativeModifierArray index="HoggerBrutePower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteHit" Accumulator="HoggerGoldenSwingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HoggerBruteLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CEffectDamage id="HoggerGoldenBruteMissingDamage">
+    <MultiplicativeModifierArray index="HoggerBrutePower" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="HoggerBruteHit" Accumulator="HoggerGoldenSwingTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="HoggerBruteLegacy" Modifier="0" />
+  </CEffectDamage>
+  <CButton id="HoggerGoldenSwingTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hogger_q.dds" />
+  </CButton>
+  <CButton id="HoggerGoldenBrawnTokenCounter" parent="StormButtonParent">
+    <Icon value="Assets\Textures\storm_ui_icon_hogger_q.dds" />
+  </CButton>
+  <!-- Brute: takedown quest stacks past the cap add damage to all of the hero's damage -->
+  <CBehaviorBuff id="HoggerBrutePastCapDamage" parent="CarryBehaviorParent">
+    <Modification>
+      <DamageDealtFraction index="Basic" value="0" />
+      <DamageDealtFraction index="Ability" value="0" />
+    </Modification>
+  </CBehaviorBuff>
+
+  <!-- ===== Boons ===== -->
+  <!-- Brute: Basic Attacks against enemy Heroes take 1 second off Staggering Blow's cooldown (Chance 0: the starter turns it
+       on) -->
+  <CEffectModifyUnit id="HoggerGoldenAttackBlowCooldown">
+    <Chance value="0" />
+    <ValidatorArray value="CasterNotBlindedAndTargetNotEvading" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="HoggerStaggeringBlow,Execute" CooldownOperation="Add" CooldownTimeUse="-1" />
+  </CEffectModifyUnit>
+  <CEffectSet id="HoggerWeaponPreImpactSet">
+    <EffectArray value="HoggerGoldenAttackBlowCooldown" />
+  </CEffectSet>
+  <!-- Brute, Brawn 41-80: after Staggering Blow's Stun ends, the target is Slowed for 1.25 seconds (2% per stack, up to 80%;
+       the script turns it on from 41) -->
+  <CBehaviorBuff id="HoggerGoldenBruteDaze" parent="StormSlowParent">
+    <InfoIcon value="Assets\Textures\storm_ui_icon_hogger_q.dds" />
+    <Duration value="1.25" />
+    <Modification>
+      <UnifiedMoveSpeedFactor value="0" />
+    </Modification>
+  </CBehaviorBuff>
+  <CEffectApplyBehavior id="HoggerGoldenBruteDazeApply" parent="StormSlowApply">
+    <Chance value="0" />
+    <Behavior value="HoggerGoldenBruteDaze" />
+  </CEffectApplyBehavior>
+  <CBehaviorBuff id="HoggerStaggeringBlowProcStun">
+    <FinalEffect value="HoggerGoldenBruteDazeApply" />
+  </CBehaviorBuff>
+  <!-- Brute, Brawn at 100: Staggering Blow kills lane minions (the script turns it on) -->
+  <CEffectDamage id="HoggerGoldenBruteMinionKill" parent="StormSpell">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsMinionAndNotMercLaner" />
+    <Amount value="100000" />
+  </CEffectDamage>
+  <!-- Feedback Loop (Epic): each enemy Hero hit by Staggering Blow takes 1.5 seconds off its cooldown -->
+  <CEffectModifyUnit id="HoggerGoldenFeedbackLoop">
+    <Chance value="0" />
+    <ValidatorArray value="TargetIsHero" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="HoggerStaggeringBlow,Execute" CooldownOperation="Add" CooldownTimeUse="-1.5" />
+  </CEffectModifyUnit>
+  <CEffectSet id="HoggerStaggeringBlowSearchImpactSet">
+    <EffectArray value="HoggerGoldenBruteMissingDamage" />
+    <EffectArray value="HoggerGoldenBruteMinionKill" />
+    <EffectArray value="HoggerGoldenFeedbackLoop" />
+  </CEffectSet>
+  <!-- Pull Hit (Legendary): Staggering Blow pulls enemies in instead of knocking them away (the boon flips the force), and
+       Stuns everything it moves when the pull ends -->
+  <CEffectApplyBehavior id="HoggerGoldenPullHitStun">
+    <Chance value="0" />
+    <ValidatorArray index="0" value="TargetNotUnstoppable" />
+    <Behavior value="HoggerStaggeringBlowProcStun" />
+  </CEffectApplyBehavior>
+  <CEffectSet id="HoggerStaggeringBlowKnockbackPersistentFinalSet">
+    <EffectArray value="HoggerGoldenPullHitStun" />
+  </CEffectSet>
+</Catalog>

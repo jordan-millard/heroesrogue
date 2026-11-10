@@ -31705,6 +31705,189 @@
             </String>
         </Instances>
 
+        <Instances Id="HoggerBrute">
+            <String String="Assets/Textures/storm_ui_icon_hogger_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Starter">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <String String="HoggerBruteForce">
+                <Field Id="TalentsAdd" />
+            </String>
+            <String String="HoggerHeadbanger">
+                <Field Id="TalentsAdd" Index="1" />
+            </String>
+            <String String="1 0 HoggerGoldenBruteMarker">
+                <Field Id="Behavior" />
+            </String>
+            <String String="1 0 HoggerGoldenSwingTokenCounter">
+                <Field Id="Behavior" Index="1" />
+            </String>
+            <String String="1 0 HoggerGoldenBrawnTokenCounter">
+                <Field Id="Behavior" Index="2" />
+            </String>
+            <String String="HoggerGoldenBrawnTokenCounter 1.0">
+                <Field Id="QuestRetain" />
+            </String>
+            <String String="HoggerGoldenSwingTokenCounter 0.1 gains">
+                <Field Id="QuestRetain" Index="1" />
+            </String>
+            <String String="HoggerStaggeringBlowBruteForceTalentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="2" />
+            </String>
+            <String String="HoggerEzThroDynamiteJourneymanCookingTalentTokenCounter 0.5">
+                <Field Id="QuestRetain" Index="3" />
+            </String>
+            <String String="1 1 Add Abil,HoggerStaggeringBlow,Cost.Cooldown.TimeUse -3">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,HoggerGoldenAttackBlowCooldown,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 1 Set Effect,HoggerStaggeringBlowDamage,MultiplicativeModifierArray[HoggerBrutePower].Modifier 0">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 1 Set Effect,HoggerStaggeringBlowProcDamage,MultiplicativeModifierArray[HoggerBrutePower].Modifier 0">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+            <String String="1 1 Set Effect,HoggerStaggeringBlowHeadbangerTalentDamage,MultiplicativeModifierArray[HoggerBrutePower].Modifier 0">
+                <Field Id="CatalogModification" Index="4" />
+            </String>
+            <String String="1 1 Set Effect,HoggerGoldenBruteMissingDamage,MultiplicativeModifierArray[HoggerBrutePower].Modifier 0">
+                <Field Id="CatalogModification" Index="5" />
+            </String>
+            <String String="AffixAdded libAffx_HoggerStart">
+                <Field Id="Trigger" />
+            </String>
+            <String String="HeroTakedown libAffx_HoggerTakedown">
+                <Field Id="Trigger" Index="1" />
+            </String>
+        </Instances>
+        <Instances Id="HoggerBigClub">
+            <Int Int="0">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_hogger_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HoggerBrute">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 2 Set Effect,HoggerStaggeringBlowDamage,MultiplicativeModifierArray[HoggerBruteCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 2 Set Effect,HoggerStaggeringBlowProcDamage,MultiplicativeModifierArray[HoggerBruteCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+            <String String="1 2 Set Effect,HoggerStaggeringBlowHeadbangerTalentDamage,MultiplicativeModifierArray[HoggerBruteCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="2" />
+            </String>
+            <String String="1 2 Set Effect,HoggerGoldenBruteMissingDamage,MultiplicativeModifierArray[HoggerBruteCommonMult].Modifier 0.15">
+                <Field Id="CatalogModification" Index="3" />
+            </String>
+        </Instances>
+        <Instances Id="HoggerQuickSwing">
+            <Int Int="3">
+                <Field Id="Max" />
+            </Int>
+            <String String="Assets/Textures/storm_ui_icon_hogger_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Common">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HoggerBrute">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 3 Add Abil,HoggerStaggeringBlow,Cost.Cooldown.TimeUse -0.5">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="HoggerPummelBoon">
+            <String String="Assets/Textures/storm_ui_icon_hogger_e_variant.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Uncommon">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HoggerBrute">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="HoggerPummel">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="HoggerPowerSpikeBoon">
+            <String String="Assets/Textures/storm_ui_icon_hogger_r2.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Rare">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HoggerBrute">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="HoggerPowerSpike">
+                <Field Id="TalentsAdd" />
+            </String>
+        </Instances>
+        <Instances Id="HoggerFeedbackLoop">
+            <String String="Assets/Textures/storm_ui_icon_hogger_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Epic">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HoggerBrute">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,HoggerGoldenFeedbackLoop,Chance 1">
+                <Field Id="CatalogModification" />
+            </String>
+        </Instances>
+        <Instances Id="HoggerPullHit">
+            <String String="Assets/Textures/storm_ui_icon_hogger_q.dds">
+                <Field Id="Icon" />
+            </String>
+            <String String="Legendary">
+                <Field Id="Rarity" />
+            </String>
+            <String String="Hogger">
+                <Field Id="HeroSpecific" />
+            </String>
+            <User Type="Affix" Instance="HoggerBrute">
+                <Field Id="AffixesRequired" />
+            </User>
+            <String String="1 1 Set Effect,HoggerStaggeringBlowApplyForce,Amount -50">
+                <Field Id="CatalogModification" />
+            </String>
+            <String String="1 1 Set Effect,HoggerGoldenPullHitStun,Chance 1">
+                <Field Id="CatalogModification" Index="1" />
+            </String>
+        </Instances>
+
         <Instances Id="SlowWalk">
             <String String="Assets/Textures/affix_icon_epicmount_a.dds">
                 <Field Id="Icon" />

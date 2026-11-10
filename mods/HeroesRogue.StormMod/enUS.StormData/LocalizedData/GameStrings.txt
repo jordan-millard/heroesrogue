@@ -3316,6 +3316,26 @@ Behavior/Name/MaievGoldenTheHuntShield7=The Hunt
 Behavior/Tooltip/MaievGoldenTheHuntShield7=Shielded.
 Behavior/Name/MaievGoldenTheHuntShield8=The Hunt
 Behavior/Tooltip/MaievGoldenTheHuntShield8=Shielded.
+Affix/Name/HoggerBrute=Brute
+Affix/Tooltip/HoggerBrute=Gain <c val="#TooltipNumbers">Brute Force</c> and <c val="#TooltipNumbers">Headbanger</c>. Staggering Blow has <c val="#TooltipNumbers">3</c> seconds less cooldown, and Basic Attacks against enemy Heroes take <c val="#TooltipNumbers">1</c> second off it.<n/><n/><c val="#TooltipQuest">Quest:</c> Each Staggering Blow hit on an enemy Hero adds <c val="#TooltipNumbers">0.5%</c> Staggering Blow damage.<n/><n/><c val="#TooltipQuest">Quest:</c> Enemy Hero takedowns within <c val="#TooltipNumbers">6</c> seconds of a Staggering Blow hit make it knock enemies farther (up to <c val="#TooltipNumbers">40%</c>), then make its Stun Slow enemies afterward (up to <c val="#TooltipNumbers">80%</c> for <c val="#TooltipNumbers">1.25</c> seconds), then make it deal your missing Health as bonus damage (up to <c val="#TooltipNumbers">10%</c>). At <c val="#TooltipNumbers">100</c>, Staggering Blow kills lane minions. Past <c val="#TooltipNumbers">100</c>, each adds <c val="#TooltipNumbers">2%</c> to all damage.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks the first quest gained that map (on top of what you started with) and <c val="#TooltipNumbers">100%</c> of the second. Brute Force's quest keeps <c val="#TooltipNumbers">50%</c>.
+Affix/Name/HoggerBigClub=Big Club
+Affix/Tooltip/HoggerBigClub=Staggering Blow deals <c val="#TooltipNumbers">15%</c> more damage. <c val="#TooltipNumbers">Multiplicative</c> with other damage bonuses.
+Affix/Name/HoggerQuickSwing=Quick Swing
+Affix/Tooltip/HoggerQuickSwing=Staggering Blow recharges <c val="#TooltipNumbers">0.5</c> seconds faster.
+Affix/Name/HoggerPummelBoon=Pummel
+Affix/Tooltip/HoggerPummelBoon=Gain the talent <c val="#TooltipNumbers">Pummel</c>.
+Affix/Name/HoggerPowerSpikeBoon=Power Spike
+Affix/Tooltip/HoggerPowerSpikeBoon=Gain the talent <c val="#TooltipNumbers">Power Spike</c>.
+Affix/Name/HoggerFeedbackLoop=Feedback Loop
+Affix/Tooltip/HoggerFeedbackLoop=Each enemy Hero hit by Staggering Blow takes <c val="#TooltipNumbers">1.5</c> seconds off its cooldown.
+Affix/Name/HoggerPullHit=Pull Hit
+Affix/Tooltip/HoggerPullHit=Staggering Blow pulls enemies toward you instead of knocking them away, and always Stuns them.
+Button/Name/HoggerGoldenSwingTokenCounter=Heavy Swing
+Button/Tooltip/HoggerGoldenSwingTokenCounter=<c val="#TooltipQuest">Bonus Staggering Blow damage: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:HoggerGoldenSwingTokenCounter$*0.5" precision="1"/>%</c></c>
+Button/Name/HoggerGoldenBrawnTokenCounter=Brawn
+Button/Tooltip/HoggerGoldenBrawnTokenCounter=<c val="#TooltipQuest">Brawn stacks: <c val="#TooltipNumbers"><d ref="$BehaviorTokenCount:HoggerGoldenBrawnTokenCounter$" precision="0"/></c></c><n/>Stacks <c val="#TooltipNumbers">1</c> to <c val="#TooltipNumbers">40</c> each make Staggering Blow knock enemies <c val="#TooltipNumbers">1%</c> farther. Stacks <c val="#TooltipNumbers">41</c> to <c val="#TooltipNumbers">80</c> each make enemies Stunned by Staggering Blow Slowed by <c val="#TooltipNumbers">2%</c> for <c val="#TooltipNumbers">1.25</c> seconds after the Stun. Stacks <c val="#TooltipNumbers">81</c> to <c val="#TooltipNumbers">100</c> each make Staggering Blow deal <c val="#TooltipNumbers">0.5%</c> of your missing Health as bonus damage. At <c val="#TooltipNumbers">100</c> stacks, Staggering Blow kills lane minions. Each stack past <c val="#TooltipNumbers">100</c> adds <c val="#TooltipNumbers">2%</c> to all damage. A takedown that counts for any of your other starters for this hero also counts for this one.
+Behavior/Name/HoggerGoldenBruteDaze=Brawn
+Behavior/Tooltip/HoggerGoldenBruteDaze=Slowed.
 Affix/Name/TyrandeTheMark=Accurate Mark
 Affix/Tooltip/TyrandeTheMark=Gain <c val="#TooltipNumbers">Trueshot Aura</c>, <c val="#TooltipNumbers">Mark of Mending</c>, <c val="#TooltipNumbers">Huntress's Fury</c>, and <c val="#TooltipNumbers">Ranger's Mark</c>.<n/><n/><c val="#TooltipGreen">+4s</c> Hunter's Mark Duration<n/><n/><img path="@UI/StormTalentInTextQuestIcon" alignment="uppermiddle" color="B48E4C" width="20" height="22"/><c val="#TooltipQuest">Repeatable Quest:</c> Basic Attacks against enemy Heroes grant <c val="#TooltipNumbers">1</c> stack and increases Attack Damage by <c val="#TooltipNumbers">0.4</c> per stack.<n/><n/>After a win, keep <c val="#TooltipNumbers">10%</c> of the stacks gained that map (on top of what you started with).
 Affix/Tooltip/Append/TyrandeTheMark=
