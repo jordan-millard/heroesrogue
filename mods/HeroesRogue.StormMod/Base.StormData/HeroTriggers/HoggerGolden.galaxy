@@ -242,8 +242,8 @@ bool libAffx_HoggerMeat_Func (bool testConds, bool runActions) {
     UnitSetPropertyFixed(hero, c_unitPropEnergyPercent, MinF(100.0, UnitGetPropertyFixed(hero, c_unitPropEnergyPercent, c_unitPropCurrent) + 50.0));
     return true;
 }
-// Hoard King, Plunder 1-40: Stuns, Roots, Silences and Slows on Hogger are cut when they land (1% per 2 current Rage at 40
-// stacks, up to 75%; a behavior in two of the categories is cut once)
+// Hoard King, Plunder 1-40: Stuns, Roots, Silences and Slows on Hogger are cut when they land or are refreshed (1% per 2
+// current Rage at 40 stacks, up to 75%; a behavior in two of the categories is cut once)
 bool libAffx_HoggerKingResist_Func (bool testConds, bool runActions) {
     unit hero = libAffx_HoggerHero();
     string cc = EventUnitBehavior();
@@ -441,9 +441,13 @@ bool libAffx_HoggerStart (bool testConds, bool runActions) {
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerTick_Func"), 0.25, c_timeGame);
     libAffx_HoggerKingResistTrigger = TriggerCreate("libAffx_HoggerKingResist_Func");
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeRefresh);
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryDebuffRoot, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryDebuffRoot, c_unitBehaviorChangeRefresh);
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryDebuffSilence, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryDebuffSilence, c_unitBehaviorChangeRefresh);
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeRefresh);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerSync_Func"), 1.0, c_timeGame);
     return true;
