@@ -678,8 +678,8 @@ bool libAffx_SavageCampsUnitChangeOwner (bool testConds, bool runActions) {
 // ============================================================
 // Martyr's Ward (affix id BloodPact)
 // ============================================================
-// An enemy Hero dying gives the other enemy Heroes a shield for 300% of their maximum Health that decays to 0 over 20
-// seconds (40 stacks, one removed every 0.5 seconds; a new death restarts it), and its respawn timer is 3 times as long
+// An enemy Hero dying gives the other enemy Heroes a shield for 300% of the dead Hero's maximum Health (the unit that
+// died: one Viking, Murky and so on) that decays to 0 over 20 seconds (40 stacks, one removed every 0.5 seconds; a new death restarts it), and its respawn timer is 3 times as long
 // (as Bad Bargain does for allied Heroes)
 const fixed libAffx_BloodPactModifier = 2.0;
 bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
@@ -691,6 +691,7 @@ bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
     unitgroup heroGroup;
     int groupCount;
     unit heroUnit;
+    fixed shieldStack;
     if (libGame_gv_gameOver || deadPlayer < 6 || deadPlayer > 10) {
         return false;
     }
@@ -700,7 +701,8 @@ bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
     if (UnitTestState(deadUnit, c_unitStateHallucination)) {
         return false;
     }
-    // shield every other living enemy Hero
+    // shield every other living enemy Hero: 300% of the dead Hero's maximum Health in 40 stacks
+    shieldStack = UnitGetPropertyFixed(deadUnit, c_unitPropLifeMax, c_unitPropCurrent) * 3.0 / 40.0;
     for (player = 6; player <= 10; player += 1) {
         heroGroup = libGame_gv_players[player].lv_heroUnitGroup;
         groupCount = UnitGroupCount(heroGroup, c_unitCountAll);
@@ -708,7 +710,7 @@ bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
             if (groupCount <= 0) { break; }
             heroUnit = UnitGroupUnitFromEnd(heroGroup, groupCount);
             if (heroUnit == null || heroUnit == deadUnit || !UnitIsAlive(heroUnit)) { continue; }
-            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AffixMartyrsWardShield", "DamageResponse.ModifyLimit", UnitGetOwner(heroUnit), UnitGetPropertyFixed(heroUnit, c_unitPropLifeMax, c_unitPropCurrent) * 3.0 / 40.0);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "AffixMartyrsWardShield", "DamageResponse.ModifyLimit", UnitGetOwner(heroUnit), shieldStack);
             UnitCreateEffectUnit(heroUnit, "AffixMartyrsWardDecayStop", heroUnit);
             UnitBehaviorRemove(heroUnit, "AffixMartyrsWardShield", 40);
             UnitBehaviorAdd(heroUnit, "AffixMartyrsWardShield", heroUnit, 40);

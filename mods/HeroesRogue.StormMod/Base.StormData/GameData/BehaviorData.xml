@@ -486,9 +486,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </DamageResponse>
 </CBehaviorBuff>
 
-<!-- Martyr's Ward: when an enemy Hero dies, the other enemy Heroes get a shield for 300% of their maximum Health that
+<!-- Martyr's Ward: when an enemy Hero dies, the other enemy Heroes get a shield for 300% of its maximum Health that
      decays to 0 over 20 seconds (as Xal'atath's Marked Resilience): 40 stacks, each 1/40 of the shield (the script sets
-     DamageResponse.ModifyLimit per enemy player from its Hero's maximum Health), one stack removed every 0.5 seconds -->
+     DamageResponse.ModifyLimit per enemy player from the dead Hero's maximum Health), one stack removed every 0.5 seconds -->
 <CBehaviorBuff id="AffixMartyrsWardShield" parent="StormShield">
   <MaxStackCount value="40" />
   <Duration value="20" />
