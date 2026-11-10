@@ -235,6 +235,40 @@ void libAffx_MaievFanCopies (unit hero, point target) {
         UnitCreateEffectPoint(hero, "MaievGoldenFanCopyPersistent", PointWithOffsetPolar(origin, dist, angle + IntToFixed(i) * 51.4286));
     }
 }
+// Fan Dancer, Flourish 100: the second Fan of Knives deals half of what the first does. The modifiers on an effect add up
+// (1 + their sum), so its echo modifier is set to -0.5 x (1 + the others, hit quests counted by their tokens) while it flies,
+// and to 0 after. Modifiers with a validator only count sometimes and are left out, like LibAffx's multipliers do.
+void libAffx_MaievEchoScale (string effect, bool on) {
+    unit hero = libAffx_MaievHero();
+    string path;
+    string acc;
+    string token;
+    fixed total = 1.0;
+    int count;
+    int j;
+    if (on) {
+        count = CatalogFieldValueCount(c_gameCatalogEffect, effect, "MultiplicativeModifierArray", libAffx_player);
+        for (j = 0; j < count; j += 1) {
+            path = "MultiplicativeModifierArray[" + IntToString(j) + "]";
+            if (CatalogFieldValueGet(c_gameCatalogEffect, effect, path + ".Validator", libAffx_player) != "") {
+                continue;
+            }
+            total += StringToFixed(CatalogFieldValueGet(c_gameCatalogEffect, effect, path + ".Modifier", libAffx_player));
+            acc = CatalogFieldValueGet(c_gameCatalogEffect, effect, path + ".Accumulator", libAffx_player);
+            if (acc != "" && hero != null) {
+                token = CatalogFieldValueGet(c_gameCatalogAccumulator, acc, "TokenId", libAffx_player);
+                if (token != "") {
+                    total += UnitGetTokenCount(hero, token) * StringToFixed(CatalogFieldValueGet(c_gameCatalogAccumulator, acc, "Scale", libAffx_player));
+                }
+            }
+        }
+        total = -0.5 * MaxF(0.0, total);
+    }
+    else {
+        total = 0.0;
+    }
+    CatalogFieldValueSet(c_gameCatalogEffect, effect, "MultiplicativeModifierArray[MaievFanEcho].Modifier", libAffx_player, FixedToString(total, 4));
+}
 // Fan Dancer: a Fan of Knives is cast. Storm of Blades throws the other fans; at 100 Flourish a second Fan of Knives (and
 // its Storm of Blades fans) follows 0.3 seconds later toward the same point for 50% damage. The echo's own event is skipped.
 fixed libAffx_MaievFanLast = -1.0;
@@ -258,11 +292,16 @@ bool libAffx_MaievFanCast_Func (bool testConds, bool runActions) {
         return true;
     }
     libAffx_MaievFanLast = GameGetMissionTime();
+    libAffx_MaievEchoScale("MaievFanOfKnivesDamage", true);
+    libAffx_MaievEchoScale("MaievGoldenFanPercentDamage", true);
     UnitBehaviorAdd(hero, "MaievGoldenFanEcho", hero, 1);
     UnitCreateEffectPoint(hero, "MaievFanOfKnivesInitialPersistent", target);
     if (storm) {
         libAffx_MaievFanCopies(hero, target);
     }
+    Wait(0.25, c_timeGame);
+    libAffx_MaievEchoScale("MaievFanOfKnivesDamage", false);
+    libAffx_MaievEchoScale("MaievGoldenFanPercentDamage", false);
     return true;
 }
 // Jailer of the Watchers: an enemy Hero is tethered by Umbral Bind: Shackles and the takedown window

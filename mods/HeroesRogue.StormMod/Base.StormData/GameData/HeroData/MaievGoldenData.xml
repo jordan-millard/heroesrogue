@@ -17,6 +17,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <ValidatorArray value="TargetIsHero" />
     <ValidatorArray value="MaievGoldenCasterIsFanDancer" />
     <VitalFractionMax index="Life" value="0" />
+    <MultiplicativeModifierArray index="MaievFanEcho" Validator="MaievGoldenCasterHasFanEcho" Modifier="0" />
+  </CEffectDamage>
+  <!-- Flourish at 100: the second Fan of Knives deals half of what the first does. The modifiers on an effect add up, so
+       while the echo flies the script sets this one to -0.5 x (1 + all the others), and back to 0 after. -->
+  <CEffectDamage id="MaievFanOfKnivesDamage">
+    <MultiplicativeModifierArray index="MaievFanEcho" Validator="MaievGoldenCasterHasFanEcho" Modifier="0" />
   </CEffectDamage>
   <!-- Shadow Warden: the spirit each Vault leaves behind explodes for 50% of Spirit of Vengeance's damage (it inherits the
        Ruthless Spirit bonus) -->
@@ -166,6 +172,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CBehaviorBuff>
 
   <!-- ===== Boons ===== -->
+  <CValidatorUnitCompareBehaviorCount id="MaievGoldenCasterHasFanEcho">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="MaievGoldenFanEcho" />
+  </CValidatorUnitCompareBehaviorCount>
   <CValidatorUnitCompareBehaviorCount id="MaievGoldenCasterIsFanDancer">
     <WhichUnit Value="Caster" />
     <Compare value="GT" />
@@ -195,17 +206,11 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="MaievFanOfKnivesImpactSet">
     <EffectArray value="MaievGoldenFanPercentDamage" />
   </CEffectSet>
-  <!-- Flourish at 100: the second Fan of Knives deals 50% damage. Attacker damage responses act on the final damage, so this
-       halves it after every other bonus (the script adds this for the echo's moment). -->
+  <!-- Flourish at 100: marks the second Fan of Knives' moment; its damage modifier (MaievFanEcho) halves the damage. An
+       attacker damage response (ModifyFraction 0.5) halved it without the quest and boon bonuses. -->
   <CBehaviorBuff id="MaievGoldenFanEcho">
+    <InfoFlags index="Hidden" value="1" />
     <Duration value="0.25" />
-    <DamageResponse>
-      <Chance value="1" />
-      <Location value="Attacker" />
-      <ModifyFraction value="0.5" />
-      <RequireEffectArray value="MaievFanOfKnivesDamage" />
-      <RequireEffectArray value="MaievGoldenFanPercentDamage" />
-    </DamageResponse>
   </CBehaviorBuff>
   <!-- Storm of Blades (Legendary): the script throws 6 more fans around Maiev. Each is Fan of Knives' knives and crescent only
        (no Blade Dance, no turning lock); hits, quests and the 2-Hero reset count as for the main fan. -->
