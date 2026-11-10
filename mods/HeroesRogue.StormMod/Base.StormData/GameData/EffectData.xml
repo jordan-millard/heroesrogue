@@ -1140,4 +1140,21 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="AffixSappersPossessed" Validator="AffixSappersPossessedVsStructure" Modifier="6" />
   </CEffectDamage>
 
+  <!-- Martyr's Ward: removes one shield stack every 0.5 seconds (AffixMartyrsWardShield in BehaviorData.xml) -->
+  <CEffectRemoveBehavior id="AffixMartyrsWardRemoveStack">
+    <BehaviorLink value="AffixMartyrsWardShield" />
+    <Count value="1" />
+  </CEffectRemoveBehavior>
+  <CEffectCreatePersistent id="AffixMartyrsWardDecay">
+    <WhichLocation Value="CasterUnit" />
+    <PeriodCount value="40" />
+    <PeriodicEffectArray value="AffixMartyrsWardRemoveStack" />
+    <PeriodicPeriodArray value="0.5" />
+    <TimeScaleSource Value="Caster" />
+  </CEffectCreatePersistent>
+  <CEffectDestroyPersistent id="AffixMartyrsWardDecayStop">
+    <Effect value="AffixMartyrsWardDecay" />
+    <Count value="1" />
+  </CEffectDestroyPersistent>
+
 </Catalog>
