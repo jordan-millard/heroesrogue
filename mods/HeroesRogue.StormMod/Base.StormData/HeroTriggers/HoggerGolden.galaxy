@@ -4,7 +4,7 @@ include "AffixTriggers"
 // Golden Hogger. Brute: Staggering Blow hits on enemy Heroes add Swing; takedowns add Brawn: area, then weakening
 // Heroes hit, then missing-Health damage, then at 100 it kills lane minions, then 2% damage per stack.
 // Hogwild: Hogg Wild hits on enemy Heroes add Rampage (once per Hero per cast); takedowns add Stampede: area, then
-// damage per hit, then a Slow, then at 100 no wind-up, then 2% damage per stack.
+// damage per hit, then a Slow, then at 100 hits on Heroes can drop Meat or throw dynamite, then 2% damage per stack.
 // Hoard King: picking up Meat adds Hoard (1 max Rage per 5) and half of max Rage; each point of Rage adds 1% damage; every
 // takedown adds Plunder: shorter crowd control, then Movement Speed, then Life Steal, all from current Rage; past 100,
 // 2% damage per stack.
@@ -30,7 +30,7 @@ trigger libAffx_HoggerKingResistTrigger; // Hoard King: cuts crowd control on Ho
 fixed libAffx_HoggerWildCast; // Hogwild: when Hogg Wild was last cast
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildCounted; // Hogwild: per enemy player, the cast that last added Rampage
 bool libAffx_HoggerWildSlowOn; // Hogwild: Stampede 81 turned on the Slow
-bool libAffx_HoggerWildQuick; // Hogwild: Stampede 100 removed the wind-up
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildLootTime; // Hogwild: per enemy player, the last Stampede 100 loot roll
 int libAffx_HoggerKingHoard = -1; // Hoard King: the max Rage applied from Hoard (1 per 5 stacks)
 int libAffx_HoggerKingRage; // Hoard King: the Rage applied to its buff
 int libAffx_HoggerKingPlunder; // Hoard King: the Plunder stacks applied to its buff
@@ -105,7 +105,7 @@ void libAffx_HoggerSyncBrute () {
         UnitBehaviorAdd(hero, "HoggerBrutePastCapDamage", hero, 1);
     }
 }
-// HoggerGoldenStampedeTokenCounter: stacks 1-40: Hogg Wild area 1% larger each; 41-80 1% damage per hit, 81-100 Slow, 100 no wind-up (script), then damage
+// HoggerGoldenStampedeTokenCounter: stacks 1-40: Hogg Wild area 1% larger each; 41-80 1% damage per hit, 81-100 Slow, 100 Meat and dynamite (script), then damage
 void libAffx_HoggerSyncWild () {
     unit hero = libAffx_HoggerHero();
     int stacks;
@@ -214,6 +214,27 @@ bool libAffx_HoggerWildFirstHit (unit victim) {
     libAffx_HoggerWildCounted[owner] = libAffx_HoggerWildCast;
     return true;
 }
+// Hogwild, Stampede 100: a Hogg Wild hit on an enemy Hero has a 10% chance to drop Meat and a separate 10% chance to throw
+// dynamite at them (one roll per Hero per second: Hogg Wild can hit the same Hero up to 8 times a second)
+bool libAffx_HoggerWildLoot_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_HoggerHero();
+    unit victim = EventUnit();
+    int owner = UnitGetOwner(victim);
+    if (hero == null || EventUnitDamageSourcePlayer() != libAffx_player || !libAffx_HoggerIsEnemyHero(victim) || !UnitHasBehavior2(hero, "HoggerGoldenWildMarker")) {
+        return false;
+    }
+    if (libAffx_HoggerStacks("HoggerGoldenStampedeTokenCounter") < 100 || GameGetMissionTime() < libAffx_HoggerWildLootTime[owner] + 1.0) {
+        return false;
+    }
+    libAffx_HoggerWildLootTime[owner] = GameGetMissionTime();
+    if (RandomInt(1, 100) <= 10) {
+        UnitCreateEffectUnit(hero, "HoggerLootHoardCreateMeatUnitTargetPoint", victim);
+    }
+    if (RandomInt(1, 100) <= 10) {
+        UnitCreateEffectUnit(hero, "HoggerEzThroDynamiteInitialSet", victim);
+    }
+    return true;
+}
 // Hoard King: max Rage follows the Hoard stacks (1 per 5)
 void libAffx_HoggerKingSync () {
     unit hero = libAffx_HoggerHero();
@@ -266,7 +287,7 @@ bool libAffx_HoggerKingResist_Func (bool testConds, bool runActions) {
     UnitBehaviorSetDurationRemaining(hero, cc, left * (1.0 - libAffx_HoggerKingResist));
     return true;
 }
-// Every 0.25 seconds: Stampede 81 turns on Hogg Wild's Slow and 100 removes its wind-up; Hoard King's max Rage (1 per
+// Every 0.25 seconds: Stampede 81 turns on Hogg Wild's Slow; Hoard King's max Rage (1 per
 // 5 Hoard) and what its current Rage gives: 1% damage per point, and with Plunder (each stage grows to its full rate over its
 // stacks) 1-40 1% shorter crowd control per 2 Rage (up to 75%), 41-80 1% Movement Speed per point, 81-100 1% Life Steal per
 // 10 Rage
@@ -284,10 +305,6 @@ bool libAffx_HoggerTick_Func (bool testConds, bool runActions) {
         if (!libAffx_HoggerWildSlowOn && stacks > 80) {
             libAffx_HoggerWildSlowOn = true;
             CatalogFieldValueSetFixed(c_gameCatalogEffect, "HoggerGoldenWildSlowApply", "Chance", libAffx_player, 1.0);
-        }
-        if (!libAffx_HoggerWildQuick && stacks >= 100) {
-            libAffx_HoggerWildQuick = true;
-            CatalogFieldValueSet(c_gameCatalogAbil, "HoggerHoggWild", "CastIntroTime", libAffx_player, "0");
         }
     }
     if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
@@ -439,6 +456,7 @@ bool libAffx_HoggerStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerWildCast_Func"), libAffx_player, "HoggerHoggWildInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerMeat_Func"), libAffx_player, "HoggerRiverpawLootHoardApplyMeatHoT");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerTick_Func"), 0.25, c_timeGame);
+    TriggerAddEventUnitDamaged(TriggerCreate("libAffx_HoggerWildLoot_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
     libAffx_HoggerKingResistTrigger = TriggerCreate("libAffx_HoggerKingResist_Func");
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
     TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeRefresh);
