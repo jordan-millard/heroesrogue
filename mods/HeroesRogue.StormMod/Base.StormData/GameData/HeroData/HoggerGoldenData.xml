@@ -3,7 +3,7 @@
 xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/HeroesOfTheStorm_Gamedata/master/xsd/latest.xsd">
 
   <!-- ============================================================ -->
-  <!-- Golden Hogger. Starters: Brute (Staggering Blow: 3 seconds less cooldown, pulls and always Stuns, Basic Attacks on Heroes take 2 seconds off it), Hogwild (Hogg Wild: 2 charges; Pummel and Dust Devil) and Hoard King (Hoardapult and Secret Stash at level 1; Meat fills Rage, Rage adds damage, Hoard adds max Rage). Each damage effect has its own multipliers: starter power, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/HoggerGolden.galaxy. -->
+  <!-- Golden Hogger. Starters: Brute (Staggering Blow: 3 seconds less cooldown, pulls and always Stuns, Basic Attacks on Heroes take 2 seconds off it), Hogwild (Hogg Wild: 2 charges; Pummel, Dust Devil and Bloodthirst) and Hoard King (Hoardapult and Secret Stash at level 1; Meat fills Rage, Rage adds damage, Hoard adds max Rage). Each damage effect has its own multipliers: starter power, hit quest (accumulator) and takedown quest past its cap. Hits, quests and script boons are in HeroTriggers/HoggerGolden.galaxy. -->
   <!-- ============================================================ -->
   <CBehaviorBuff id="HoggerGoldenBruteMarker" parent="CarryBehaviorParent" />
   <CBehaviorBuff id="HoggerGoldenWildMarker" parent="CarryBehaviorParent" />
@@ -16,7 +16,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CEffectDamage>
 
   <!-- ===== Brute ===== -->
-  <!-- Staggering Blow has 3 seconds less cooldown, pulls enemies in instead of knocking them away and Stuns everything it moves when the pull ends; Basic Attacks against enemy Heroes take 2 seconds off it. Swing quest (10% of each map's gains kept for good): 0.5% Staggering Blow damage per enemy Hero hit. Brawn quest: takedowns within 6 seconds of a Staggering Blow hit; stacks 1-40 make its area 1% larger each, 41-80 make enemy Heroes hit deal 1% less damage each for 3 seconds (script turns it on at 41), 81-100 add 0.5% of Hogger's missing Health as damage each (script), at 100 it kills lane minions (script), then 2% damage each. -->
+  <!-- Staggering Blow has 3 seconds less cooldown, pulls enemies in instead of knocking them away and Stuns everything it moves when the pull ends; Basic Attacks against enemy Heroes take 2 seconds off it. Swing quest (10% of each map's gains kept for good): 1% Staggering Blow damage per enemy Hero hit. Brawn quest: takedowns within 6 seconds of a Staggering Blow hit; stacks 1-40 make its area 1% larger each, 41-80 make enemy Heroes hit deal 1% less damage each for 3 seconds (script turns it on at 41), 81-100 add 0.5% of Hogger's missing Health as damage each (script), at 100 it kills lane minions (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="HoggerGoldenSwingTokenCounter" parent="StormQuestToken">
     <Face value="HoggerGoldenSwingTokenCounter" />
     <Max value="100000" />
@@ -30,7 +30,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="HoggerGoldenSwingTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="HoggerStaggeringBlowDamage">
     <MultiplicativeModifierArray index="HoggerBrutePower" Modifier="0" />
@@ -64,7 +64,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Hogwild ===== -->
-  <!-- Hogg Wild stores 2 charges (8 second recharge); gain Pummel and Dust Devil. Rampage quest (10% of each map's gains kept for good): 0.5% Hogg Wild damage per enemy Hero hit, once per Hero per cast. Stampede quest: takedowns within 6 seconds of a Hogg Wild hit; stacks 1-40 make its area 1% larger each, 41-80 make each hit deal 1% more damage (the engine ticks at most 16 times a second, so faster ticks become harder ones), 81-100 Slow enemies hit 1% each for 1 second (script turns it on at 81), at 100 Hogg Wild has no wind-up (script), then 2% damage each. -->
+  <!-- Hogg Wild stores 2 charges (8 second recharge); gain Pummel, Dust Devil and Bloodthirst. Rampage quest (10% of each map's gains kept for good): 1% Hogg Wild damage per enemy Hero hit, once per Hero per cast. Stampede quest: takedowns within 6 seconds of a Hogg Wild hit; stacks 1-40 make its area 1% larger each, 41-80 make each hit deal 1% more damage (the engine ticks at most 16 times a second, so faster ticks become harder ones), 81-100 Slow enemies hit 1% each for 1 second (script turns it on at 81), at 100 Hogg Wild has no wind-up (script), then 2% damage each. -->
   <CBehaviorTokenCounter id="HoggerGoldenRampageTokenCounter" parent="StormQuestToken">
     <Face value="HoggerGoldenRampageTokenCounter" />
     <Max value="100000" />
@@ -78,7 +78,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MaxAccumulation value="100000" />
     <ApplicationRule value="Add" />
     <TokenId value="HoggerGoldenRampageTokenCounter" />
-    <Scale value="0.005" />
+    <Scale value="0.01" />
   </CAccumulatorToken>
   <CEffectDamage id="HoggerHoggWildDamage">
     <MultiplicativeModifierArray index="HoggerWildPower" Modifier="0" />
@@ -95,7 +95,7 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CButton>
 
   <!-- ===== Hoard King ===== -->
-  <!-- Gain Hoardapult and Secret Stash at level 1 (Shockwave can't be picked). Picking up Meat sets Rage to full, and each point of Rage adds 1% to all damage (script). Hoard quest (10% of each map's gains kept for good): 1 per Meat picked up, and 10 per takedown; each adds 1 maximum Rage (script). Plunder quest: every enemy Hero takedown (no hit window); past 100, 2% damage each. -->
+  <!-- Gain Hoardapult and Secret Stash at level 1 (Shockwave can't be picked). Picking up Meat sets Rage to full, and each point of Rage adds 1% to all damage (script). Hoard quest (10% of each map's gains kept for good): 1 per Meat picked up; each adds 1 maximum Rage (script). Plunder quest: every enemy Hero takedown (no hit window); stacks 1-40 cut crowd control on Hogger by 1% per 2 current Rage at 40 (up to 75%), 41-80 give 1% Movement Speed per point of Rage at 80, 81-100 give 1% Life Steal per 10 Rage at 100 (each stage grows over its stacks; all script), then 2% damage each. -->
   <CBehaviorTokenCounter id="HoggerGoldenHoardTokenCounter" parent="StormQuestToken">
     <Face value="HoggerGoldenHoardTokenCounter" />
     <Max value="100000" />
@@ -247,7 +247,8 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="HoggerGoldenWildSlowApply" />
     <EffectArray value="HoggerGoldenSewageApply" />
   </CEffectSet>
-  <!-- Hoard King: each Hoard stack adds 1 maximum Rage, and each point of Rage adds 1% to all damage (the script sets both) -->
+  <!-- Hoard King: each Hoard stack adds 1 maximum Rage; each point of Rage adds 1% to all damage, and Plunder adds Movement
+       Speed and Life Steal from Rage (the script sets them all) -->
   <CBehaviorBuff id="HoggerGoldenKingHoard" parent="CarryBehaviorParent">
     <Modification>
       <VitalMaxIncreaseAffectsCurrentArray index="Energy" value="0" />
@@ -258,6 +259,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <Modification>
       <DamageDealtFraction index="Basic" value="0" />
       <DamageDealtFraction index="Ability" value="0" />
+      <UnifiedMoveSpeedFactor value="0" />
+      <VitalDamageLeechArray index="Life">
+        <KindArray index="Basic" value="0" />
+        <KindArray index="Ability" value="0" />
+      </VitalDamageLeechArray>
+      <VitalDamageLeechScoreArray Value="Healing" />
     </Modification>
   </CBehaviorBuff>
   <!-- Loot Rain (Epic): the Hoardapult's pile drops 3 more chunks of Meat around it as it lands -->
@@ -278,9 +285,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="HoggerHoardapultMissileGroundImpactSet">
     <EffectArray value="HoggerGoldenLootRain" />
   </CEffectSet>
-  <!-- Heavy Loot (Legendary): Loot Hoard and Hoardapult Stun enemies they hit for 2 seconds -->
+  <!-- Heavy Loot (Legendary): Loot Hoard and Hoardapult Stun enemies they hit for 3 seconds -->
   <CBehaviorBuff id="HoggerGoldenHeavyLootStun" parent="StormStun">
-    <Duration value="2" />
+    <Duration value="3" />
   </CBehaviorBuff>
   <CEffectApplyBehavior id="HoggerGoldenHeavyLootApply">
     <Chance value="0" />

@@ -6,7 +6,8 @@ include "AffixTriggers"
 // Hogwild: Hogg Wild hits on enemy Heroes add Rampage (once per Hero per cast); takedowns add Stampede: area, then
 // damage per hit, then a Slow, then at 100 no wind-up, then 2% damage per stack.
 // Hoard King: picking up Meat adds Hoard (1 max Rage each) and fills Rage; each point of Rage adds 1% damage; every
-// takedown adds Plunder and 10 Hoard; past 100 Plunder, 2% damage per stack.
+// takedown adds Plunder: shorter crowd control, then Movement Speed, then Life Steal, all from current Rage; past 100,
+// 2% damage per stack.
 // ============================================================
 
 const fixed libAffx_HoggerTakedownWindow = 3.0;
@@ -25,12 +26,17 @@ int libAffx_HoggerWildPastApplied; // Hogwild: takedown quest stacks past the ca
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerKingTime; // per enemy player, last Hoard King hit
 int libAffx_HoggerKingAdded; // Hoard King: takedown stacks already applied to the catalog this game
 int libAffx_HoggerKingPastApplied; // Hoard King: takedown quest stacks past the cap applied as damage this game
+trigger libAffx_HoggerKingResistTrigger; // Hoard King: cuts crowd control on Hogger (Plunder 1-40)
 fixed libAffx_HoggerWildCast; // Hogwild: when Hogg Wild was last cast
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildCounted; // Hogwild: per enemy player, the cast that last added Rampage
 bool libAffx_HoggerWildSlowOn; // Hogwild: Stampede 81 turned on the Slow
 bool libAffx_HoggerWildQuick; // Hogwild: Stampede 100 removed the wind-up
 int libAffx_HoggerKingHoard = -1; // Hoard King: the Hoard stacks applied as max Rage
-int libAffx_HoggerKingRage; // Hoard King: the Rage applied as damage
+int libAffx_HoggerKingRage; // Hoard King: the Rage applied to its buff
+int libAffx_HoggerKingPlunder; // Hoard King: the Plunder stacks applied to its buff
+fixed libAffx_HoggerKingResist; // Hoard King: how much shorter crowd control on Hogger is (Plunder 1-40, from Rage)
+string libAffx_HoggerKingResistLast; // Hoard King: the last crowd control cut (one cut per behavior)
+fixed libAffx_HoggerKingResistTime; // Hoard King: when it was cut
 
 unit libAffx_HoggerHero() {
     return libGame_gv_players[libAffx_player].lv_heroUnit;
@@ -139,7 +145,7 @@ void libAffx_HoggerSyncWild () {
         UnitBehaviorAdd(hero, "HoggerWildPastCapDamage", hero, 1);
     }
 }
-// HoggerGoldenPlunderTokenCounter: no stage rewards: each takedown also adds 10 Hoard (takedown_any); past 100, damage
+// HoggerGoldenPlunderTokenCounter: stacks 1-40 shorter crowd control, 41-80 Movement Speed, 81-100 Life Steal, all from current Rage (libAffx_HoggerTick_Func); then damage
 void libAffx_HoggerSyncKing () {
     unit hero = libAffx_HoggerHero();
     int stacks;
@@ -236,12 +242,40 @@ bool libAffx_HoggerMeat_Func (bool testConds, bool runActions) {
     UnitSetPropertyFixed(hero, c_unitPropEnergyPercent, 100.0);
     return true;
 }
+// Hoard King, Plunder 1-40: Stuns, Roots, Silences and Slows on Hogger are cut when they land (1% per 2 current Rage at 40
+// stacks, up to 75%; a behavior in two of the categories is cut once)
+bool libAffx_HoggerKingResist_Func (bool testConds, bool runActions) {
+    unit hero = libAffx_HoggerHero();
+    string cc = EventUnitBehavior();
+    fixed left;
+    if (hero == null || EventUnit() != hero || libAffx_HoggerKingResist <= 0.0 || !UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
+        return false;
+    }
+    if (UnitBehaviorHasCategoryFlag(cc, c_behaviorCategoryUnreducible)) {
+        return true;
+    }
+    if (cc == libAffx_HoggerKingResistLast && GameGetMissionTime() == libAffx_HoggerKingResistTime) {
+        return false;
+    }
+    left = UnitBehaviorDuration(hero, cc);
+    if (left <= 0.0) {
+        return false;
+    }
+    libAffx_HoggerKingResistLast = cc;
+    libAffx_HoggerKingResistTime = GameGetMissionTime();
+    UnitBehaviorSetDurationRemaining(hero, cc, left * (1.0 - libAffx_HoggerKingResist));
+    return true;
+}
 // Every 0.25 seconds: Stampede 81 turns on Hogg Wild's Slow and 100 removes its wind-up; Hoard King's max Rage (1 per
-// Hoard) and its damage (1% per point of Rage)
+// Hoard) and what its current Rage gives: 1% damage per point, and with Plunder (each stage grows to its full rate over its
+// stacks) 1-40 1% shorter crowd control per 2 Rage (up to 75%), 41-80 1% Movement Speed per point, 81-100 1% Life Steal per
+// 10 Rage
 bool libAffx_HoggerTick_Func (bool testConds, bool runActions) {
     unit hero = libAffx_HoggerHero();
     int stacks;
     int rage;
+    int plunder;
+    fixed share;
     if (hero == null) {
         return false;
     }
@@ -262,10 +296,18 @@ bool libAffx_HoggerTick_Func (bool testConds, bool runActions) {
         if (!UnitIsAlive(hero)) {
             rage = 0;
         }
-        if (rage != libAffx_HoggerKingRage) {
+        plunder = libAffx_HoggerStacks("HoggerGoldenPlunderTokenCounter");
+        libAffx_HoggerKingResist = MinF(0.75, 0.005 * IntToFixed(rage) * IntToFixed(MinI(plunder, 40)) / 40.0);
+        if (rage != libAffx_HoggerKingRage || plunder != libAffx_HoggerKingPlunder) {
             libAffx_HoggerKingRage = rage;
+            libAffx_HoggerKingPlunder = plunder;
             CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.DamageDealtFraction[Basic]", libAffx_player, 0.01 * IntToFixed(rage));
             CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.DamageDealtFraction[Ability]", libAffx_player, 0.01 * IntToFixed(rage));
+            share = IntToFixed(MaxI(0, MinI(plunder - 40, 40))) / 40.0;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.UnifiedMoveSpeedFactor", libAffx_player, 0.01 * IntToFixed(rage) * share);
+            share = IntToFixed(MaxI(0, MinI(plunder - 80, 20))) / 20.0;
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.VitalDamageLeechArray[Life].KindArray[Basic]", libAffx_player, 0.001 * IntToFixed(rage) * share);
+            CatalogFieldValueSetFixed(c_gameCatalogBehavior, "HoggerGoldenKingFury", "Modification.VitalDamageLeechArray[Life].KindArray[Ability]", libAffx_player, 0.001 * IntToFixed(rage) * share);
             UnitBehaviorRemove(hero, "HoggerGoldenKingFury", 1);
         }
         if (rage > 0 && !UnitHasBehavior2(hero, "HoggerGoldenKingFury")) {
@@ -340,7 +382,6 @@ void libAffx_HoggerTakedownCross () {
     if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker") && FixedToInt(UnitGetTokenCount(hero, "HoggerGoldenPlunderTokenCounter")) == libAffx_HoggerTakedownBefore[3]) {
         libGame_gf_ModifyTokenCount(1, "HoggerGoldenPlunderTokenCounter", hero);
         libAffx_HoggerSyncKing();
-        libAffx_HoggerKingSync();
     }
 }
 // HeroTakedown: the takedown quests and takedown boons
@@ -359,9 +400,7 @@ bool libAffx_HoggerTakedown (bool testConds, bool runActions) {
     libAffx_HoggerTakedownCrossStart();
     if (UnitHasBehavior2(hero, "HoggerGoldenKingMarker")) {
         libGame_gf_ModifyTokenCount(1, "HoggerGoldenPlunderTokenCounter", hero);
-        libGame_gf_ModifyTokenCount(10, "HoggerGoldenHoardTokenCounter", hero);
         libAffx_HoggerSyncKing();
-        libAffx_HoggerKingSync();
         libAffx_HoggerQuestDing();
     }
     if (UnitHasBehavior2(hero, "HoggerGoldenBruteMarker") && libAffx_HoggerBruteTime[killedPlayer] > 0.0 && now - libAffx_HoggerBruteTime[killedPlayer] <= 6.0) {
@@ -400,6 +439,11 @@ bool libAffx_HoggerStart (bool testConds, bool runActions) {
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerWildCast_Func"), libAffx_player, "HoggerHoggWildInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerMeat_Func"), libAffx_player, "HoggerRiverpawLootHoardApplyMeatHoT");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerTick_Func"), 0.25, c_timeGame);
+    libAffx_HoggerKingResistTrigger = TriggerCreate("libAffx_HoggerKingResist_Func");
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryStun, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryDebuffRoot, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategoryDebuffSilence, c_unitBehaviorChangeCreate);
+    TriggerAddEventUnitBehaviorChangeFromCategory(libAffx_HoggerKingResistTrigger, null, c_behaviorCategorySlow, c_unitBehaviorChangeCreate);
     // also picks up stacks loaded from the bank
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerSync_Func"), 1.0, c_timeGame);
     return true;
