@@ -31894,10 +31894,10 @@
             <String String="Hogger">
                 <Field Id="HeroSpecific" />
             </String>
-            <String String="HoggerDustDevil">
+            <String String="HoggerBloodthirst">
                 <Field Id="TalentsAdd" />
             </String>
-            <String String="HoggerBloodthirst">
+            <String String="HoggerNoControl">
                 <Field Id="TalentsAdd" Index="1" />
             </String>
             <String String="HoggerGoldenDigIn">
@@ -31924,32 +31924,35 @@
             <String String="HoggerEzThroDynamiteJourneymanCookingTalentTokenCounter 0.5">
                 <Field Id="QuestRetain" Index="3" />
             </String>
-            <String String="1 1 Set Abil,HoggerHoggWild,Cost.Cooldown.TimeUse 7">
+            <String String="1 1 Set Abil,HoggerHoggWild,Cost.Cooldown.TimeUse 9">
                 <Field Id="CatalogModification" />
             </String>
-            <String String="1 1 Set Behavior,HoggerLootHoardTimedLife,Duration 30">
+            <String String="1 1 Set Abil,HoggerNoControl,Cost.Cooldown.TimeUse 30">
                 <Field Id="CatalogModification" Index="1" />
             </String>
-            <String String="1 1 Set Behavior,HoggerHoggWildCasterBuff,Duration 600">
+            <String String="1 1 Set Behavior,HoggerLootHoardTimedLife,Duration 30">
                 <Field Id="CatalogModification" Index="2" />
             </String>
-            <String String="1 1 Set Effect,HoggerHoggWildModifyCasterBuffDuration,Value 600">
+            <String String="1 1 Set Behavior,HoggerHoggWildCasterBuff,Duration 600">
                 <Field Id="CatalogModification" Index="3" />
             </String>
-            <String String="1 1 Set Effect,HoggerHoggWildLaunchMissile,ImpactLocation.ProjectionDistanceScale 300">
+            <String String="1 1 Set Effect,HoggerHoggWildModifyCasterBuffDuration,Value 600">
                 <Field Id="CatalogModification" Index="4" />
             </String>
-            <String String="1 1 Set Effect,HoggerHoggWildReflectMissile,ImpactLocation.ProjectionDistanceScale 300">
+            <String String="1 1 Set Effect,HoggerHoggWildLaunchMissile,ImpactLocation.ProjectionDistanceScale 300">
                 <Field Id="CatalogModification" Index="5" />
             </String>
-            <String String="1 1 Set Effect,HoggerHoggWildLaunchMissile,MeshCollisionReflectTargetDistance 300">
+            <String String="1 1 Set Effect,HoggerHoggWildReflectMissile,ImpactLocation.ProjectionDistanceScale 300">
                 <Field Id="CatalogModification" Index="6" />
             </String>
-            <String String="1 1 Set Effect,HoggerHoggWildReflectMissile,MeshCollisionReflectTargetDistance 300">
+            <String String="1 1 Set Effect,HoggerHoggWildLaunchMissile,MeshCollisionReflectTargetDistance 300">
                 <Field Id="CatalogModification" Index="7" />
             </String>
-            <String String="1 1 Set Effect,HoggerHoggWildDamage,MultiplicativeModifierArray[HoggerWildPower].Modifier 0">
+            <String String="1 1 Set Effect,HoggerHoggWildReflectMissile,MeshCollisionReflectTargetDistance 300">
                 <Field Id="CatalogModification" Index="8" />
+            </String>
+            <String String="1 1 Set Effect,HoggerHoggWildDamage,MultiplicativeModifierArray[HoggerWildPower].Modifier 0">
+                <Field Id="CatalogModification" Index="9" />
             </String>
             <String String="AffixAdded libAffx_HoggerStart">
                 <Field Id="Trigger" />
@@ -32035,8 +32038,8 @@
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
-        <Instances Id="HoggerNoControlBoon">
-            <String String="Assets/Textures/storm_ui_icon_hogger_e_variant.dds">
+        <Instances Id="HoggerDustDevilBoon">
+            <String String="Assets/Textures/storm_ui_icon_hogger_e.dds">
                 <Field Id="Icon" />
             </String>
             <String String="Rare">
@@ -32048,7 +32051,7 @@
             <User Type="Affix" Instance="HoggerHogwild">
                 <Field Id="AffixesRequired" />
             </User>
-            <String String="HoggerNoControl">
+            <String String="HoggerDustDevil">
                 <Field Id="TalentsAdd" />
             </String>
         </Instances>
