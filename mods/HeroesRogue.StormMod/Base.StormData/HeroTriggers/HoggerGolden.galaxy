@@ -3,7 +3,7 @@ include "AffixTriggers"
 // ============================================================
 // Golden Hogger. Brute: Staggering Blow hits on enemy Heroes add Swing; takedowns add Brawn: area, then weakening
 // Heroes hit, then missing-Health damage, then at 100 it kills lane minions, then 2% damage per stack.
-// Hogwild: Hogg Wild hits on enemy Heroes add Rampage (once per Hero per cast); takedowns add Stampede: area, then
+// Hogwild: Hogg Wild hits on enemy Heroes add Rampage (once per Hero per second); takedowns add Stampede: area, then
 // damage per hit, then a Slow, then at 100 hits on Heroes can drop Meat or throw dynamite, then 2% damage per stack.
 // Hoard King: picking up Meat adds Hoard (1 max Rage per 5) and half of max Rage; each point of Rage adds 1% damage; every
 // takedown adds Plunder: shorter crowd control, then Movement Speed, then Life Steal, all from current Rage; past 100,
@@ -27,8 +27,7 @@ fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerKingTime; // per enemy player,
 int libAffx_HoggerKingAdded; // Hoard King: takedown stacks already applied to the catalog this game
 int libAffx_HoggerKingPastApplied; // Hoard King: takedown quest stacks past the cap applied as damage this game
 trigger libAffx_HoggerKingResistTrigger; // Hoard King: cuts crowd control on Hogger (Plunder 1-40)
-fixed libAffx_HoggerWildCast; // Hogwild: when Hogg Wild was last cast
-fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildCounted; // Hogwild: per enemy player, the cast that last added Rampage
+fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildCounted; // Hogwild: per enemy player, when it last added Rampage
 bool libAffx_HoggerWildSlowOn; // Hogwild: Stampede 81 turned on the Slow
 fixed[libCore_gv_bALMaxPlayers + 1] libAffx_HoggerWildLootTime; // Hogwild: per enemy player, the last Stampede 100 loot roll
 int libAffx_HoggerKingHoard = -1; // Hoard King: the max Rage applied from Hoard (1 per 5 stacks)
@@ -201,17 +200,13 @@ bool libAffx_HoggerBlowCast_Func (bool testConds, bool runActions) {
     }
     return true;
 }
-// Hogwild: a Hogg Wild cast starts a new count, so each enemy Hero adds Rampage once per cast
-bool libAffx_HoggerWildCast_Func (bool testConds, bool runActions) {
-    libAffx_HoggerWildCast = GameGetMissionTime();
-    return true;
-}
-bool libAffx_HoggerWildFirstHit (unit victim) {
+// Hogwild: each enemy Hero adds Rampage at most once per second (Hogg Wild can hit the same Hero up to 8 times a second)
+bool libAffx_HoggerWildStackReady (unit victim) {
     int owner = UnitGetOwner(victim);
-    if (libAffx_HoggerWildCounted[owner] == libAffx_HoggerWildCast) {
+    if (GameGetMissionTime() < libAffx_HoggerWildCounted[owner] + 1.0) {
         return false;
     }
-    libAffx_HoggerWildCounted[owner] = libAffx_HoggerWildCast;
+    libAffx_HoggerWildCounted[owner] = GameGetMissionTime();
     return true;
 }
 // Hogwild, Stampede 100: a Hogg Wild hit on an enemy Hero has a 10% chance to drop Meat and a separate 10% chance to throw
@@ -352,7 +347,7 @@ bool libAffx_HoggerWildHit_Func (bool testConds, bool runActions) {
         return false;
     }
     libAffx_HoggerWildTime[UnitGetOwner(victim)] = GameGetMissionTime();
-    if (libAffx_HoggerWildFirstHit(victim)) {
+    if (libAffx_HoggerWildStackReady(victim)) {
         libGame_gf_ModifyTokenCount(1, "HoggerGoldenRampageTokenCounter", hero);
     }
     return true;
@@ -453,7 +448,6 @@ bool libAffx_HoggerStart (bool testConds, bool runActions) {
     TriggerAddEventUnitDamaged(trig, null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
     trig = TriggerCreate("libAffx_HoggerKingHit_Func");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerBlowCast_Func"), libAffx_player, "HoggerStaggeringBlowInitialSet");
-    TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerWildCast_Func"), libAffx_player, "HoggerHoggWildInitialSet");
     TriggerAddEventPlayerEffectUsed(TriggerCreate("libAffx_HoggerMeat_Func"), libAffx_player, "HoggerRiverpawLootHoardApplyMeatHoT");
     TriggerAddEventTimePeriodic(TriggerCreate("libAffx_HoggerTick_Func"), 0.25, c_timeGame);
     TriggerAddEventUnitDamaged(TriggerCreate("libAffx_HoggerWildLoot_Func"), null, c_unitDamageTypeAny, c_unitDamageEither, "HoggerHoggWildDamage");
