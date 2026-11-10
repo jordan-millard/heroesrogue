@@ -59,6 +59,12 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <MultiplicativeModifierArray index="MaievFanHit" Accumulator="MaievGoldenEdgeTokenCounterAccumulator" />
     <MultiplicativeModifierArray index="MaievFanLegacy" Modifier="0" />
   </CEffectDamage>
+  <CEffectDamage id="MaievFanOfKnivesBladeDanceDamage">
+    <MultiplicativeModifierArray index="MaievFanPower" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievFanCommon" Modifier="0" />
+    <MultiplicativeModifierArray index="MaievFanHit" Accumulator="MaievGoldenEdgeTokenCounterAccumulator" />
+    <MultiplicativeModifierArray index="MaievFanLegacy" Modifier="0" />
+  </CEffectDamage>
   <CButton id="MaievGoldenEdgeTokenCounter" parent="StormButtonParent">
     <Icon value="Assets\Textures\storm_ui_icon_maiev_knives.dds" />
   </CButton>
