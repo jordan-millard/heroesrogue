@@ -456,24 +456,44 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
 
 <!-- Mythic: your team's mercenaries, bosses, map objective units and vehicles get half the round's Mythic bonus (values
      set by libAffx_ApplyDifficulty) -->
-<!-- Savage Camps: mercenary and map boss Health and damage 3x -->
+<!-- Savage Camps: mercenaries and map bosses have 10x Health and 4x damage while neutral or the enemy's -->
 <CBehaviorBuff id="AffixSavageCampsFull" parent="CarryBehaviorParent">
   <Modification>
-    <DamageDealtFraction index="Basic" value="2" />
-    <DamageDealtFraction index="Ability" value="2" />
-    <DamageDealtFraction index="Splash" value="2" />
-    <VitalMaxFractionArray index="Life" value="2" />
+    <DamageDealtFraction index="Basic" value="3" />
+    <DamageDealtFraction index="Ability" value="3" />
+    <DamageDealtFraction index="Splash" value="3" />
+    <VitalMaxFractionArray index="Life" value="9" />
   </Modification>
 </CBehaviorBuff>
 
-<!-- Savage Camps: mercenary and map boss Health and damage 2x: half the bonus, for captured ones -->
+<!-- Savage Camps: half the bonus for the ones your team captures (5.5x Health, 2.5x damage) -->
 <CBehaviorBuff id="AffixSavageCampsHalf" parent="CarryBehaviorParent">
   <Modification>
-    <DamageDealtFraction index="Basic" value="1" />
-    <DamageDealtFraction index="Ability" value="1" />
-    <DamageDealtFraction index="Splash" value="1" />
-    <VitalMaxFractionArray index="Life" value="1" />
+    <DamageDealtFraction index="Basic" value="1.5" />
+    <DamageDealtFraction index="Ability" value="1.5" />
+    <DamageDealtFraction index="Splash" value="1.5" />
+    <VitalMaxFractionArray index="Life" value="4.5" />
   </Modification>
+</CBehaviorBuff>
+
+<!-- Savage Camps: marks the mercenaries and bosses still in their camps (neutral owner) -->
+<CBehaviorBuff id="AffixSavageCampsNeutral" parent="CarryBehaviorParent" />
+<!-- Savage Camps: enemy Heroes take no damage from neutral mercenaries and bosses (in a damage response the attacker
+     is the Caster) -->
+<CBehaviorBuff id="AffixSavageCampsHeroWard" parent="CarryBehaviorParent">
+  <DamageResponse Chance="1" ModifyFraction="0">
+    <ValidatorArray value="AffixSavageCampsCasterIsNeutralCamp" />
+  </DamageResponse>
+</CBehaviorBuff>
+
+<!-- Martyr's Ward: when an enemy Hero dies, the other enemy Heroes get a shield for 300% of their maximum Health for
+     10 seconds -->
+<CBehaviorBuff id="AffixMartyrsWardShield" parent="StormShield">
+  <Duration value="10" />
+  <DamageResponse>
+    <ModifyLimitVitalMaxFractionArray index="Life" value="3" />
+    <ModifyScoreArray index="0" Value="Healing" />
+  </DamageResponse>
 </CBehaviorBuff>
 
 <CBehaviorBuff id="AffixObjectiveDifficultyBehavior" parent="CarryBehaviorParent">

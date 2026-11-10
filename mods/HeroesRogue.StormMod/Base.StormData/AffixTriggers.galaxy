@@ -611,8 +611,8 @@ bool libAffx_BadBargainHeroKilled (bool testConds, bool runActions) {
 // ============================================================
 // Savage Camps
 // ============================================================
-// Mercenaries and map bosses: 3x Health and damage while neutral or the enemy's, 2x (half the bonus) once your team
-// captures them
+// Mercenaries and map bosses: 10x Health and 4x damage while neutral or the enemy's, half the bonus (5.5x Health, 2.5x
+// damage) once your team captures them. Enemy Heroes take no damage from the ones still in their camps (neutral owner).
 bool libAffx_SavageCampsIsTarget (unit unitVar) {
     string unitType = UnitGetType(unitVar);
     return UnitTypeTestAttribute(unitType, c_unitAttributeMerc) || UnitTypeTestAttribute(unitType, c_unitAttributeMapBoss);
@@ -621,10 +621,23 @@ void libAffx_SavageCampsUpdate (unit unitVar) {
     int owner;
     string want = "";
     fixed lifePercent;
-    if (unitVar == null || !UnitIsAlive(unitVar) || UnitTypeTestAttribute(UnitGetType(unitVar), c_unitAttributeHeroic)) {
+    bool neutral;
+    if (unitVar == null || !UnitIsAlive(unitVar)) {
         return;
     }
     owner = UnitGetOwner(unitVar);
+    if (UnitTypeTestAttribute(UnitGetType(unitVar), c_unitAttributeHeroic)) {
+        if (owner >= 6 && owner <= 10 && !UnitHasBehavior2(unitVar, "AffixSavageCampsHeroWard")) {
+            UnitBehaviorAdd(unitVar, "AffixSavageCampsHeroWard", unitVar, 1);
+        }
+        return;
+    }
+    neutral = libAffx_SavageCampsIsTarget(unitVar) && (owner == libCore_gv_cOMPUTER_Hostile || owner == libCore_gv_cOMPUTER_Neutral);
+    if (neutral && !UnitHasBehavior2(unitVar, "AffixSavageCampsNeutral")) {
+        UnitBehaviorAdd(unitVar, "AffixSavageCampsNeutral", unitVar, 1);
+    } else if (!neutral && UnitHasBehavior2(unitVar, "AffixSavageCampsNeutral")) {
+        UnitBehaviorRemove(unitVar, "AffixSavageCampsNeutral", 1);
+    }
     if (libAffx_SavageCampsIsTarget(unitVar)) {
         if (libAffx_IsOrderPlayer(owner)) {
             want = "AffixSavageCampsHalf";
@@ -663,11 +676,11 @@ bool libAffx_SavageCampsUnitChangeOwner (bool testConds, bool runActions) {
     return true;
 }
 // ============================================================
-// Blood Pact
+// Martyr's Ward (affix id BloodPact)
 // ============================================================
-// An enemy Hero dying fully heals the other enemy Heroes, and its respawn timer is twice as long (as Bad Bargain does
-// for allied Heroes)
-const fixed libAffx_BloodPactModifier = 1.0;
+// An enemy Hero dying gives the other enemy Heroes a shield for 300% of their maximum Health for 10 seconds, and its
+// respawn timer is 3 times as long (as Bad Bargain does for allied Heroes)
+const fixed libAffx_BloodPactModifier = 2.0;
 bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
     unit deadUnit = libGame_gf_HeroKilledUnit();
     int deadPlayer = libGame_gf_HeroKilledPlayer();
@@ -686,7 +699,7 @@ bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
     if (UnitTestState(deadUnit, c_unitStateHallucination)) {
         return false;
     }
-    // full heal for every other living enemy Hero
+    // shield every other living enemy Hero
     for (player = 6; player <= 10; player += 1) {
         heroGroup = libGame_gv_players[player].lv_heroUnitGroup;
         groupCount = UnitGroupCount(heroGroup, c_unitCountAll);
@@ -694,13 +707,13 @@ bool libAffx_BloodPactHeroKilled (bool testConds, bool runActions) {
             if (groupCount <= 0) { break; }
             heroUnit = UnitGroupUnitFromEnd(heroGroup, groupCount);
             if (heroUnit == null || heroUnit == deadUnit || !UnitIsAlive(heroUnit)) { continue; }
-            UnitSetPropertyFixed(heroUnit, c_unitPropLifePercent, 100.0);
+            UnitBehaviorAdd(heroUnit, "AffixMartyrsWardShield", heroUnit, 1);
         }
     }
     if (libGame_diabloUsedSouls[deadPlayer]) {
         return true;
     }
-    // twice the respawn time
+    // 3 times the respawn time
     if (UnitGetType(deadUnit) == "HeroMurky" && !((UnitIsAlive(libGame_gv_heroDeathMurkyRespawnEggs[deadPlayer]) == false) || (libGame_gv_heroDeathMurkyRespawnEggs[deadPlayer] == null))) {
         deathTime = libCore_gv_bALMurkyWithEggDeathTime * (1 + libAffx_BloodPactModifier);
     } else {

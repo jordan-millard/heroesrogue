@@ -402,4 +402,10 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   </CValidatorUnitCompareTokenCount>
 
 
+<!-- Savage Camps: the attacker (Caster in a damage response) is a mercenary or boss still in its camp -->
+<CValidatorUnitCompareBehaviorCount id="AffixSavageCampsCasterIsNeutralCamp">
+  <WhichUnit Value="Caster" />
+  <Compare value="GT" />
+  <Behavior value="AffixSavageCampsNeutral" />
+</CValidatorUnitCompareBehaviorCount>
 </Catalog>

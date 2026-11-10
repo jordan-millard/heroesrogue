@@ -4249,9 +4249,11 @@ Affix/Name/NoFountain=No Fountains
 Affix/Tooltip/NoFountain=All your Healing Fountains are destroyed.
 Affix/Tooltip/Append/NoFountain=
 Affix/Name/SavageCamps=Savage Camps
-Affix/Tooltip/SavageCamps=Mercenaries and bosses:<n/><c val="#TooltipRed">3x</c> Maximum Health and Damage while neutral or controlled by the enemy Team.<n/><c val="#TooltipRed">2x</c> Maximum Health and Damage for Mercenaries your Team captures (half the bonus).
-Affix/Name/BloodPact=Blood Pact
-Affix/Tooltip/BloodPact=Killing an enemy Hero fully heals all other enemy Heroes.<n/><c val="#TooltipNumbers">+100%</c> Respawn Timer for enemy Heroes.
+Affix/Tooltip/SavageCamps=Mercenaries and bosses:<n/><c val="#TooltipRed">10x</c> Maximum Health and <c val="#TooltipRed">4x</c> Damage while neutral or controlled by the enemy Team.<n/>Mercenaries your Team captures get half the bonus (<c val="#TooltipRed">5.5x</c> Maximum Health, <c val="#TooltipRed">2.5x</c> Damage).<n/>Enemy Heroes take no damage from neutral Mercenaries and bosses.
+Affix/Name/BloodPact=Martyr's Ward
+Affix/Tooltip/BloodPact=Killing an enemy Hero gives all other enemy Heroes a Shield for <c val="#TooltipRed">300%</c> of their maximum Health for <c val="#TooltipNumbers">10</c> seconds.<n/><c val="#TooltipNumbers">+200%</c> Respawn Timer for enemy Heroes.
+Behavior/Name/AffixMartyrsWardShield=Martyr's Ward
+Behavior/Tooltip/AffixMartyrsWardShield=Shielded.
 Affix/Name/BadBargain=Bad Bargain
 Affix/Tooltip/BadBargain=<c val="#TooltipRed">50%</c> <c val="747A84">(+50% per stack)</c> Respawn Timer for all allied Heroes.
 Affix/Tooltip/Append/BadBargain=<n/><n/>Current Total: <c val="#TooltipRed">+<d ref="$GalaxyVar:libAffx_BadBargainCurrentModifier$*100" precision="1"/>%</c> Respawn Timer
