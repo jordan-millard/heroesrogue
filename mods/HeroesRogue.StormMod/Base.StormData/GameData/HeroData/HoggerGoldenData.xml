@@ -217,6 +217,24 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
     <EffectArray value="HoggerGoldenPullHitStun" />
     <EffectArray value="HoggerGoldenFuelHit" />
   </CEffectSet>
+  <!-- Hogwild: base Hogg Wild sets its cooldown to 100% of the base 14 s when the tornado ends or is cancelled; with
+       the starter it is set back to the starter's 0.5 s right after (the charges keep the 8 s recharge) -->
+  <CValidatorUnitCompareBehaviorCount id="HoggerGoldenCasterIsHogwild">
+    <WhichUnit Value="Caster" />
+    <Compare value="GT" />
+    <Behavior value="HoggerGoldenWildMarker" />
+  </CValidatorUnitCompareBehaviorCount>
+  <CEffectModifyUnit id="HoggerGoldenWildEndCooldown">
+    <ValidatorArray value="HoggerGoldenCasterIsHogwild" />
+    <ImpactUnit Value="Caster" />
+    <Cost Abil="HoggerHoggWild,Execute" CooldownOperation="Set" CooldownTimeUse="0.5" />
+  </CEffectModifyUnit>
+  <CEffectSet id="HoggerHoggWildCasterBuffFinalSet">
+    <EffectArray value="HoggerGoldenWildEndCooldown" />
+  </CEffectSet>
+  <CEffectSet id="HoggerCancelHoggWildInitialSet">
+    <EffectArray value="HoggerGoldenWildEndCooldown" />
+  </CEffectSet>
   <!-- Hogwild, Stampede 81-100: enemies hit by Hogg Wild are Slowed 1% per stack for 1 second (the script turns it on from 81) -->
   <CBehaviorBuff id="HoggerGoldenWildSlow" parent="StormSlowParent">
     <InfoIcon value="Assets\Textures\storm_ui_icon_hogger_e.dds" />
