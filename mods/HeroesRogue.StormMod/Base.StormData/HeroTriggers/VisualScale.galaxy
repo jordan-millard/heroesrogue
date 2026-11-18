@@ -1,0 +1,182 @@
+include "AffixTriggers"
+
+// ============================================================
+// Visual scale: when a golden starter, quest or boon makes an ability's area bigger (search radius, rectangle width or
+// length), the game still draws its targeting guide, warning splat and impact models at base size. Each entry below
+// ties a search effect field to an actor field; every 0.5 seconds the player's value of the effect field is compared
+// with the base game's (player 0) and the actor field is set for the player to its own base value times that ratio.
+// Actors read their catalog values when they are created, so the next cast shows the new size (the same way golden
+// Murky's Pufferfish and E.T.C.'s ring are scaled).
+// Kael'thas (Sunwell upgrade), Murky, E.T.C.'s ring, Sonya, Stukov and Gul'dan's guide circles scale their own visuals
+// and are left out.
+// ============================================================
+
+const int libAffx_visMax = 96;
+int libAffx_visCount;
+string[libAffx_visMax + 1] libAffx_visEffect; // effect id
+string[libAffx_visMax + 1] libAffx_visEffectField; // e.g. AreaArray[0].Radius
+string[libAffx_visMax + 1] libAffx_visActor; // actor id
+string[libAffx_visMax + 1] libAffx_visActorField; // Scale, Width, Height or Radius
+string[libAffx_visMax + 1] libAffx_visActorBase; // the actor field's base value ("" until first read)
+fixed[libAffx_visMax + 1] libAffx_visEffectBase; // the effect field's base value (0 until first read)
+fixed[libAffx_visMax + 1] libAffx_visRatio; // ratio last written
+trigger libAffx_visTrigger;
+
+// actorBase: the actor field's base value when the actor data leaves it empty (e.g. an arc guide's Radius); "" reads it
+void libAffx_VisAdd (string effect, string effectField, string actorId, string actorField, string actorBase) {
+    if (libAffx_visCount >= libAffx_visMax) {
+        return;
+    }
+    libAffx_visCount += 1;
+    libAffx_visEffect[libAffx_visCount] = effect;
+    libAffx_visEffectField[libAffx_visCount] = effectField;
+    libAffx_visActor[libAffx_visCount] = actorId;
+    libAffx_visActorField[libAffx_visCount] = actorField;
+    libAffx_visActorBase[libAffx_visCount] = actorBase;
+    libAffx_visEffectBase[libAffx_visCount] = 0.0;
+    libAffx_visRatio[libAffx_visCount] = 1.0;
+}
+void libAffx_VisAddRadius (string effect, string actorId) {
+    libAffx_VisAdd(effect, "AreaArray[0].Radius", actorId, "Scale", "");
+}
+
+// Multiplies every number of a scale value ("1.2" or "1.33,0.92,1") by ratio
+string libAffx_VisScaleValue (string baseValue, fixed ratio) {
+    string words = StringReplaceWord(baseValue, ",", " ", c_stringReplaceAll, c_stringCase);
+    string result = "";
+    string word;
+    int i = 1;
+    word = StringWord(words, i);
+    while (word != "") {
+        if (result != "") {
+            result = result + ",";
+        }
+        result = result + FixedToString(StringToFixed(word) * ratio, 4);
+        i += 1;
+        word = StringWord(words, i);
+    }
+    if (result == "") {
+        result = FixedToString(ratio, 4);
+    }
+    return result;
+}
+
+void libAffx_VisSync (int i) {
+    fixed current;
+    fixed ratio;
+    if (libAffx_visEffectBase[i] <= 0.0) {
+        libAffx_visEffectBase[i] = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, libAffx_visEffect[i], libAffx_visEffectField[i], 0);
+        if (libAffx_visEffectBase[i] <= 0.0) {
+            return;
+        }
+    }
+    current = CatalogFieldValueGetAsFixed(c_gameCatalogEffect, libAffx_visEffect[i], libAffx_visEffectField[i], libAffx_player);
+    if (current <= 0.0) {
+        return;
+    }
+    ratio = current / libAffx_visEffectBase[i];
+    if (AbsF(ratio - libAffx_visRatio[i]) < 0.005) {
+        return;
+    }
+    if (libAffx_visActorBase[i] == "") {
+        libAffx_visActorBase[i] = CatalogFieldValueGet(c_gameCatalogActor, libAffx_visActor[i], libAffx_visActorField[i], libAffx_player);
+        if (libAffx_visActorBase[i] == "" || StringToFixed(libAffx_visActorBase[i]) == 0.0) {
+            libAffx_visActorBase[i] = "1";
+        }
+    }
+    CatalogFieldValueSet(c_gameCatalogActor, libAffx_visActor[i], libAffx_visActorField[i], libAffx_player, libAffx_VisScaleValue(libAffx_visActorBase[i], ratio));
+    libAffx_visRatio[i] = ratio;
+}
+
+bool libAffx_VisPeriodic_Func (bool testConds, bool runActions) {
+    int i;
+    for (i = 1; i <= libAffx_visCount; i += 1) {
+        libAffx_VisSync(i);
+    }
+    return true;
+}
+
+void libAffx_VisualScaleInit () {
+    if (libAffx_visTrigger != null) {
+        return;
+    }
+    // Stitches: Slam (Quake 41-80), gas cloud (Stench 1-40)
+    libAffx_VisAdd("StitchesSlamLargeSearch", "AreaArray[0].Radius", "StitchesSlamBaseGuide", "Radius", "9.5");
+    libAffx_VisAddRadius("StitchesSlamMediumSearch", "StitchesSlamModel");
+    libAffx_VisAddRadius("StitchesGoldenGasSearch", "StitchesGoldenGasPulse");
+    // Anub'arak: Aftershock follows Burrow Charge's radius
+    libAffx_VisAddRadius("AnubarakAftershockSearch", "AnubarakAftershockQuake");
+    // Azmodan: Globe of Annihilation
+    libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationCursorSplat");
+    libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationWarningModel");
+    libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationTideOfSinWarningModel");
+    // Chromie: Dragon's Breath; Sand Blast width
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathAllyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathEnemyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeAllyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeEnemyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathGround");
+    libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastGuide", "Width", "");
+    libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastFastForwardGuide", "Width", "");
+    // D.Va: Self-Destruct
+    libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructExplosion");
+    // Deathwing: Incinerate, Lava Burst
+    libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateSearchFX");
+    libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstCursorSplat");
+    libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstInitialFX");
+    libAffx_VisAddRadius("DeathwingLavaBurstBurnSearch", "DeathwingLavaBurstBurnFX");
+    // E.T.C.: Face Melt (the Amplified ring scales itself)
+    libAffx_VisAddRadius("FaceMeltSearch", "ETCFaceMeltCast");
+    // Gazlowe: Deth Lazor length
+    libAffx_VisAdd("GazloweDethLazorSearch", "AreaArray[0].RectangleHeight", "GazloweDethLazorGuide", "Height", "");
+    // Greymane: Gilnean Cocktail spread, Razor Swipe
+    libAffx_VisAddRadius("GreymaneGilneanCocktailSpreadSearchArea", "GreymaneGilneanCocktailSpread");
+    libAffx_VisAddRadius("GreymaneRazorSwipeHalfCircleSearchArea", "GreymaneRazorSwipe");
+    libAffx_VisAdd("GreymaneRazorSwipeSquareSearchArea", "AreaArray[0].RectangleWidth", "GreymaneRazorSwipeGuideNew", "Width", "");
+    libAffx_VisAdd("GreymaneRazorSwipeSquareSearchArea", "AreaArray[0].RectangleHeight", "GreymaneRazorSwipeGuideNew", "Height", "");
+    libAffx_VisAdd("GreymaneRazorSwipeSquareSearchArea", "AreaArray[0].RectangleWidth", "GreymaneRazorSwipeGuideUnfetteredAssault", "Width", "");
+    // Gul'dan: Corruption models (the guide circles scale themselves)
+    libAffx_VisAddRadius("GuldanCorruptionSearchArea", "GuldanCorruptionWarningModel");
+    libAffx_VisAddRadius("GuldanCorruptionSearchArea", "GuldanCorruptionEchoedCorruptionWarningModel");
+    libAffx_VisAddRadius("GuldanCorruptionSearchArea", "GuldanCorruptionModel");
+    // Hogger: Staggering Blow
+    libAffx_VisAddRadius("HoggerStaggeringBlowSearch1", "HoggerStaggeringBlowAoEModel");
+    // Kel'Thuzad: Death and Decay, Chains width
+    libAffx_VisAddRadius("KelThuzadDeathAndDecayDamageSearch", "KelThuzadDeathAndDecayImpact");
+    libAffx_VisAddRadius("KelThuzadDeathAndDecayDamageSearch", "KelThuzadDeathAndDecayExplosionImpact");
+    libAffx_VisAddRadius("KelThuzadDeathAndDecayRotSearch", "KelThuzadDeathAndDecayRotVisual");
+    libAffx_VisAdd("KelThuzadChainsEnemySearch", "AreaArray[0].RectangleWidth", "KelThuzadChainsGuide", "Width", "");
+    // Maiev: Vault spirit, Spirit of Vengeance width
+    libAffx_VisAddRadius("MaievGoldenVaultSpiritSearch", "MaievGoldenVaultSpiritExplosion");
+    libAffx_VisAddRadius("MaievGoldenVaultSpiritSearch", "MaievGoldenVaultSpiritModel");
+    libAffx_VisAdd("MaievSpiritOfVengeanceMissileScan", "AreaArray[0].RectangleWidth", "MaievSpiritOfVengeanceGuide", "Width", "");
+    // Malthael: Soul Rip, Death Shroud width
+    libAffx_VisAddRadius("MalthaelSoulRipSearch", "MalthaelSoulRipCastFX");
+    libAffx_VisAddRadius("MalthaelSoulRipSearch", "MalthaelSoulRipSoulCollectorCastFX");
+    libAffx_VisAdd("MalthaelDeathShroudSearch", "AreaArray[0].RectangleWidth", "MalthaelDeathShroudGuide", "Width", "");
+    // Orphea: Dread
+    libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadCircularCursorSplat");
+    libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadWarningModel");
+    libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadSearchFX");
+    libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadSearchPersistentFX");
+    // Tracer: Pulse Bomb
+    libAffx_VisAdd("TracerPulseBombGroundExplosionSearch", "AreaArray[1].Radius", "TracerPulseBombExplosionGroundWarningModel", "Scale", "");
+    libAffx_VisAdd("TracerPulseBombUnitExplosionSearch", "AreaArray[0].Radius", "TracerPulseBombExplosionUnitWarningModel", "Scale", "");
+    // Tychus: Frag Grenade
+    libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeCursorSplat");
+    libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeImpactGuideActor");
+    libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeExplosion");
+    // Xal'atath: Void Volley blasts
+    libAffx_VisAddRadius("XalatathVoidVolley2AoESearch", "XalatathVoidVolleyGroundImpact");
+    // Skillshot widths: Artanis Phase Prism, Cassia Lightning Fury, Hanzo Storm Bow, Mephisto Skull Missile, Qhira
+    // Grappling Hook, Raynor Penetrating Round
+    libAffx_VisAdd("ArtanisPhasePrismMissileScan", "AreaArray[0].RectangleWidth", "ArtanisPhasePrismGuide", "Width", "");
+    libAffx_VisAdd("AmazonLightningFuryMissileSearch", "AreaArray[0].RectangleWidth", "AmazonLightningFuryGuide", "Width", "");
+    libAffx_VisAdd("HanzoStormBowTargetSearch", "AreaArray[0].RectangleWidth", "HanzoStormBowGuide", "Width", "");
+    libAffx_VisAdd("MephistoSkullMissileSearch", "AreaArray[0].RectangleWidth", "MephistoSkullMissileGuide", "Width", "");
+    libAffx_VisAdd("NexusHunterGrapplingHookUnitSearch", "AreaArray[0].RectangleWidth", "NexusHunterGrapplingHookGuide", "Width", "");
+    libAffx_VisAdd("RaynorPenetratingRoundMissileScan", "AreaArray[0].RectangleWidth", "RaynorPenetratingRoundGuide", "Width", "");
+
+    libAffx_visTrigger = TriggerCreate("libAffx_VisPeriodic_Func");
+    TriggerAddEventTimePeriodic(libAffx_visTrigger, 0.5, c_timeGame);
+}
