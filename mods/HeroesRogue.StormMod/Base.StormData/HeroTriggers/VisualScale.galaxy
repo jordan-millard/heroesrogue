@@ -10,7 +10,9 @@ include "AffixTriggers"
 // Kael'thas (Sunwell upgrade), Murky, E.T.C.'s ring, Sonya, Stukov, Gul'dan's guide circles and Hanzo's Storm Bow guide
 // (no Width in its data; the base game scales it) scale their own visuals and are left out. Arc guides (CActorArc) don't
 // follow the cursor effect's radius; their Radius field is a size multiplier (1 = normal). Arc guides that size themselves
-// with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out.
+// with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out. Cursor circles (StormGuideVisualCircle)
+// are sized by their guide region, not their own Scale: each scaled one gets its own region copy in its hero's data file
+// (parent StormGuideRegionCircle) whose Radius, also a size multiplier, is set here.
 // ============================================================
 
 const int libAffx_visMax = 96;
@@ -120,7 +122,7 @@ void libAffx_VisualScaleInit () {
     // Anub'arak: Aftershock follows Burrow Charge's radius
     libAffx_VisAddRadius("AnubarakAftershockSearch", "AnubarakAftershockQuake");
     // Azmodan: Globe of Annihilation
-    libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationCursorSplat");
+    libAffx_VisAdd("AzmodanGlobeOfAnnihilationSearch", "AreaArray[0].Radius", "AzmodanGlobeOfAnnihilationGuideRegion", "Radius", "1");
     libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationWarningModel");
     libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationTideOfSinWarningModel");
     // Chromie: Dragon's Breath; Sand Blast width
@@ -135,7 +137,7 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructExplosion");
     // Deathwing: Incinerate, Lava Burst
     libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateSearchFX");
-    libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstCursorSplat");
+    libAffx_VisAdd("DeathwingLavaBurstExplosionSearch", "AreaArray[0].Radius", "DeathwingLavaBurstGuideRegion", "Radius", "1");
     libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstInitialFX");
     libAffx_VisAddRadius("DeathwingLavaBurstBurnSearch", "DeathwingLavaBurstBurnFX");
     // E.T.C.: Face Melt (the Amplified ring scales itself)
@@ -168,7 +170,7 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("MalthaelSoulRipSearch", "MalthaelSoulRipSoulCollectorCastFX");
     libAffx_VisAdd("MalthaelDeathShroudSearch", "AreaArray[0].RectangleWidth", "MalthaelDeathShroudGuide", "Width", "");
     // Orphea: Dread
-    libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadCircularCursorSplat");
+    libAffx_VisAdd("OrpheaDreadFinalSearchArea", "AreaArray[0].Radius", "OrpheaDreadCircularRegion", "Radius", "1");
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadWarningModel");
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadSearchFX");
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadSearchPersistentFX");
@@ -176,7 +178,7 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAdd("TracerPulseBombGroundExplosionSearch", "AreaArray[1].Radius", "TracerPulseBombExplosionGroundWarningModel", "Scale", "");
     libAffx_VisAdd("TracerPulseBombUnitExplosionSearch", "AreaArray[0].Radius", "TracerPulseBombExplosionUnitWarningModel", "Scale", "");
     // Tychus: Frag Grenade
-    libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeCursorSplat");
+    libAffx_VisAdd("GrenadeTargetSearch", "AreaArray[0].Radius", "TychusGrenadeGuideRegion", "Radius", "1");
     libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeImpactGuideActor");
     libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeExplosion");
     // Xal'atath: Void Volley blasts
