@@ -96,6 +96,16 @@ bool libAffx_VisPeriodic_Func (bool testConds, bool runActions) {
     return true;
 }
 
+// Lists the entries scaled now in chat (all: every entry); used by the dev "vis" test command
+void libAffx_VisPrint (bool all) {
+    int i;
+    for (i = 1; i <= libAffx_visCount; i += 1) {
+        if (libAffx_visRatio[i] != 1.0 || all) {
+            libAffx_DisplayChatMessage(StringToText("vis: " + libAffx_visActor[i] + " " + libAffx_visActorField[i] + " x" + FixedToString(libAffx_visRatio[i], 2) + " = " + CatalogFieldValueGet(c_gameCatalogActor, libAffx_visActor[i], libAffx_visActorField[i], libAffx_player)));
+        }
+    }
+}
+
 void libAffx_VisualScaleInit () {
     if (libAffx_visTrigger != null) {
         return;
