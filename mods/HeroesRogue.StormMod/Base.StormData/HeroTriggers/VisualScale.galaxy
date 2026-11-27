@@ -10,7 +10,9 @@ include "AffixTriggers"
 // Kael'thas (Sunwell upgrade), Murky, E.T.C.'s ring, Sonya, Stukov, Gul'dan's guide circles and Hanzo's Storm Bow guide
 // (no Width in its data; the base game scales it) scale their own visuals and are left out. Arc guides (CActorArc) don't
 // follow the cursor effect's radius; their Radius field is a size multiplier (1 = normal). Arc guides that size themselves
-// with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out.
+// with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out, and so are models a hero's own golden
+// script already scales (Azmodan's Globe warnings, Chromie's Dragon's Breath ground and warnings, Tracer's Pulse Bomb
+// warnings): scaling them here too drew them twice as big as they should be (Azmodan, tested 2026-11-27).
 // ============================================================
 
 const int libAffx_visMax = 96;
@@ -121,14 +123,9 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("AnubarakAftershockSearch", "AnubarakAftershockQuake");
     // Azmodan: Globe of Annihilation
     libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationCursorSplat");
-    libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationWarningModel");
-    libAffx_VisAddRadius("AzmodanGlobeOfAnnihilationSearch", "AzmodanGlobeOfAnnihilationTideOfSinWarningModel");
     // Chromie: Dragon's Breath; Sand Blast width
-    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathAllyWarningSplat");
-    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathEnemyWarningSplat");
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeAllyWarningSplat");
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeEnemyWarningSplat");
-    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathGround");
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastGuide", "Width", "");
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastFastForwardGuide", "Width", "");
     // D.Va: Self-Destruct
@@ -172,9 +169,6 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadWarningModel");
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadSearchFX");
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadSearchPersistentFX");
-    // Tracer: Pulse Bomb
-    libAffx_VisAdd("TracerPulseBombGroundExplosionSearch", "AreaArray[1].Radius", "TracerPulseBombExplosionGroundWarningModel", "Scale", "");
-    libAffx_VisAdd("TracerPulseBombUnitExplosionSearch", "AreaArray[0].Radius", "TracerPulseBombExplosionUnitWarningModel", "Scale", "");
     // Tychus: Frag Grenade
     libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeCursorSplat");
     libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeImpactGuideActor");
