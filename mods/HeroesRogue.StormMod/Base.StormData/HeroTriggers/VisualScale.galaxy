@@ -134,6 +134,9 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructExplosion");
     libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructRangeSplat");
     libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructRangeFalloffSplat");
+    // countdown ring on the mech (Cast: D.Va and allies; EnemyWarning: enemies)
+    libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructCast");
+    libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructEnemyWarning");
     // Deathwing: Incinerate, Lava Burst
     libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateSearchFX");
     libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateRangeSplat");
