@@ -12,7 +12,7 @@ include "AffixTriggers"
 // follow the cursor effect's radius; their Radius field is a size multiplier (1 = normal). Arc guides that size themselves
 // with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out, and so are models a hero's own golden
 // script already scales (Azmodan's Globe warnings, Chromie's Dragon's Breath ground and warnings, Tracer's Pulse Bomb
-// warnings): scaling them here too drew them twice as big as they should be (Azmodan, tested 2026-11-27).
+// warnings, Deathwing's Incinerate range ring): scaling them here too drew them twice as big as they should be (Azmodan, tested 2026-11-27).
 // ============================================================
 
 const int libAffx_visMax = 96;
@@ -139,7 +139,6 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructEnemyWarning");
     // Deathwing: Incinerate, Lava Burst
     libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateSearchFX");
-    libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateRangeSplat");
     libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstCursorSplat");
     libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstInitialFX");
     libAffx_VisAddRadius("DeathwingLavaBurstBurnSearch", "DeathwingLavaBurstBurnFX");
