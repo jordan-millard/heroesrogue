@@ -133,8 +133,8 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieGoldenEchoBreathGround");
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieGoldenEchoBreathAllyWarningSplat");
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieGoldenEchoBreathEnemyWarningSplat");
-    // The Dragon's Breath aiming guide is a quad whose Width (world units, 2 = the base Radius) draws the circle
-    libAffx_VisAdd("ChromieDragonsBreathSearchArea", "AreaArray[0].Radius", "ChromieDragonsBreathGuideVector1", "Width", "");
+    // The Dragon's Breath aiming guide is left at base size: its three circles sit at fixed spots along a fixed-length
+    // line, so growing them only made them overlap (tested 2026-11-27)
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastGuide", "Width", "");
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastFastForwardGuide", "Width", "");
     // D.Va: Self-Destruct
