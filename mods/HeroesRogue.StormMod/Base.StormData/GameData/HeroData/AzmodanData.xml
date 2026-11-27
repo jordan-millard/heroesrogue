@@ -545,11 +545,4 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CBehaviorBuff id="AzmodanGoldenRisen">
     <InfoFlags index="Hidden" value="1" />
   </CBehaviorBuff>
-  <!-- Globe of Annihilation cursor circle: its own guide region, whose Radius (a size multiplier) HeroTriggers/VisualScale.galaxy
-       sets per player when the search radius grows. The shared StormGuideRegionCircle always draws the base size. -->
-  <CActorRegionCircle id="AzmodanGlobeOfAnnihilationGuideRegion" parent="StormGuideRegionCircle" />
-  <CActorSplat id="AzmodanGlobeOfAnnihilationCursorSplat">
-    <Remove Terms="ActorCreation" Send="Create StormGuideRegionCircle" />
-    <On Terms="ActorCreation" Send="Create AzmodanGlobeOfAnnihilationGuideRegion" />
-  </CActorSplat>
 </Catalog>
