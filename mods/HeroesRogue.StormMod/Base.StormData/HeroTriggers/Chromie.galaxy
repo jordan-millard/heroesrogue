@@ -122,14 +122,11 @@ void libAffx_ChromieSyncBreath () {
         libAffx_CatalogReferenceModify("Effect,ChromieDragonsBreathOffsetPersistent,PeriodicPeriodArray[1]", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded2) * -0.006875, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieBreathAdded2 = wanted;
     }
-    // stage 3 (stacks 81 to 100): 1% of the 2 radius each, its center and its visuals
+    // stage 3 (stacks 81 to 100): 1% of the 2 radius each and its center (VisualScale.galaxy sizes the visuals, echoes included)
     wanted = MaxI(0, MinI(stacks - 80, 20));
     if (wanted != libAffx_ChromieBreathAdded3) {
         libAffx_CatalogReferenceModify("Effect,ChromieDragonsBreathSearchArea,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.02, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_CatalogReferenceModify("Effect,ChromieDragonsBreathMobiusLoopSearch,AreaArray[0].Radius", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.0075, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Actor,ChromieDragonsBreathGround,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Actor,ChromieDragonsBreathAllyWarningSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
-        libAffx_CatalogReferenceModify("Actor,ChromieDragonsBreathEnemyWarningSplat,Scale", libAffx_player, FixedToString(IntToFixed(wanted - libAffx_ChromieBreathAdded3) * 0.01, c_fixedPrecisionAny), c_upgradeOperationAdd);
         libAffx_ChromieBreathAdded3 = wanted;
     }
     // stacks past 100: 0.02 each to all damage

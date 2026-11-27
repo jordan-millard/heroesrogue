@@ -11,7 +11,7 @@ include "AffixTriggers"
 // (no Width in its data; the base game scales it) scale their own visuals and are left out. Arc guides (CActorArc) don't
 // follow the cursor effect's radius; their Radius field is a size multiplier (1 = normal). Arc guides that size themselves
 // with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out, and so are models a hero's own golden
-// script already scales (Azmodan's Globe warnings, Chromie's Dragon's Breath ground and warnings, Tracer's Pulse Bomb
+// script already scales (Azmodan's Globe warnings, Tracer's Pulse Bomb
 // warnings, Deathwing's Incinerate range ring): scaling them here too drew them twice as big as they should be (Azmodan, tested 2026-11-27).
 // ============================================================
 
@@ -126,6 +126,13 @@ void libAffx_VisualScaleInit () {
     // Chromie: Dragon's Breath; Sand Blast width
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeAllyWarningSplat");
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeEnemyWarningSplat");
+    // the eruption and warning rings, and the golden echo blasts' copies of them (a child actor doesn't get its parent's per-player Scale)
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathGround");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathAllyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathEnemyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieGoldenEchoBreathGround");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieGoldenEchoBreathAllyWarningSplat");
+    libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieGoldenEchoBreathEnemyWarningSplat");
     // The Dragon's Breath aiming guide is a quad whose Width (world units, 2 = the base Radius) draws the circle
     libAffx_VisAdd("ChromieDragonsBreathSearchArea", "AreaArray[0].Radius", "ChromieDragonsBreathGuideVector1", "Width", "");
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastGuide", "Width", "");
