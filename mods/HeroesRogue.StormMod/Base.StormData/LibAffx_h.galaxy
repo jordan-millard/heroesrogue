@@ -776,7 +776,11 @@ int[3] libAffx_flipTarget; // the curse the flip boon on offer will flip (shown 
 int[libCore_gv_bALMaxTeams + 1][libAffx_maxHeroes + 1] libAffx_heroCounter;
 
 int libAffx_goldenHeroesIndex;
-string[libAffx_maxHeroes + 1] libAffx_goldenHeroes;
+string[libAffx_maxHeroes + 1] libAffx_goldenHeroes; // heroes with golden starters (generic starters skip them)
+bool[libAffx_maxHeroes + 1] libAffx_goldenHeroIsFork; // added by the fork: the Golden Heroes option turns them off
+int libAffx_goldRingHeroesIndex;
+string[libAffx_maxHeroes + 1] libAffx_goldRingHeroes; // gold ring only (hero boons, no starters of their own)
+bool libAffx_goldenEnabled = true; // this run's Golden Heroes option (saved in the run bank on round 1)
 
 // ============================================================
 // Dialog IDs
@@ -793,6 +797,7 @@ int libAffx_dialogControlOptionsSpeedUpDeath;
 int libAffx_dialogControlOptionsSpeedUpGates;
 int libAffx_dialogControlOptionsDisplayPicksBans;
 int libAffx_dialogControlOptionsExtraMaps;
+int libAffx_dialogControlOptionsGolden;
 int libAffx_dialogControlOptionsAram1;
 int libAffx_dialogControlOptionsAram2;
 int libAffx_dialogControlOptionsAchievementsButton;
@@ -1088,6 +1093,11 @@ bool libAffx_PlayerHasAffix(string affixName); // Check if player has an affix
 bool libAffx_IsCurseLevel(int level);
 bool libAffx_IsQueueAffixNextGameLevel(int level); // Levels at which boons and curses will queue to the next game when not obtained in the current game.
 void libAffx_SetGoldenHero(string hero);
+void libAffx_SetForkGoldenHero(string hero);
+void libAffx_SetGoldRingHero(string hero);
+void libAffx_UpdateGoldRings();
+bool libAffx_GoldenOptionChecked();
+bool libAffx_IsForkGoldenHero(int heroIndex);
 int libAffx_GetAchievementId(string achievementName);
 void libAffx_ResetAllAchievements();
 void libAffx_GrantAchievement(int achievement);

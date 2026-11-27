@@ -458,6 +458,7 @@ bool libAffx_MapChoiceFirstRound_Func (bool testConds, bool runActions) {
 
     libAffx_SavePBUSettingsBank();
     libAffx_BankSaveValueInt("Hero", libAffx_playersHeroIndex[libAffx_player]);
+    libAffx_BankSaveValueInt("Golden", BoolToInt(libAffx_GoldenOptionChecked()));
     libAffx_BankSaveValueString("Map", libAffx_GetMapString(map));
     libAffx_BankSaveValueString("MapLoadAttempt", libAffx_GetMapString(map));
     libPBU2_heroPickAborted = true;

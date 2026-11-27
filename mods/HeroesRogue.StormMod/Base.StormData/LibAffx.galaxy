@@ -1637,6 +1637,8 @@ void libAffx_CreateOptionsDialog() {
     libAffx_dialogControlOptionsSpeedUpGates = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsSpeedup"));
     libAffx_dialogControlOptionsDisplayPicksBans = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsPicksBans"));
     libAffx_dialogControlOptionsExtraMaps = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsExtraMaps"));
+    libAffx_dialogControlOptionsGolden = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsGolden"));
+    libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsGolden, true);
     libAffx_dialogControlOptionsAram1 = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsAram1"));
     libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsAram1, true);
     libAffx_dialogControlOptionsAram2 = libAffx_CreateOptionDialogCheckbox(StringExternal("Label/Name/OptionsAram2"));
@@ -2256,6 +2258,7 @@ bool libAffx_OptionsClickedTrigger_Func (bool testConds, bool runActions) {
         if (eventDialog != libAffx_dialogControlOptionsButton && eventDialog != libAffx_dialogControlOptionsSpeedUpGates
         && eventDialog != libAffx_dialogControlOptionsSpeedUpDeath && eventDialog != libAffx_dialogControlOptionsDisplayPicksBans
         && eventDialog != libAffx_dialogControlOptionsExtraMaps && eventDialog != libAffx_dialogControlOptionsAram1
+        && eventDialog != libAffx_dialogControlOptionsGolden
         && eventDialog != libAffx_dialogControlOptionsAram2) {
             return false;
         }
@@ -2285,6 +2288,9 @@ bool libAffx_OptionsClickedTrigger_Func (bool testConds, bool runActions) {
         libAffx_AramUpdateOptions();
     } else if ((eventDialog == libAffx_dialogControlOptionsAram1 || eventDialog == libAffx_dialogControlOptionsAram2) && !libAffx_IsAchievementsDialogVisible()) {
         libAffx_SaveSettingsBank();
+    } else if (eventDialog == libAffx_dialogControlOptionsGolden && !libAffx_IsAchievementsDialogVisible()) {
+        libAffx_SaveSettingsBank();
+        libAffx_UpdateGoldRings();
     }
     return true;
 }
@@ -3826,6 +3832,7 @@ void libAffx_SaveSettingsBank() {
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "SpeedUpDeath", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsSpeedUpDeath, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "DisplayPicksBans", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsDisplayPicksBans, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "ExtraMaps", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsExtraMaps, libAffx_player)));
+    BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "GoldenHeroes", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsGolden, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge1", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsAram1, libAffx_player)));
     BankValueSetFromInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge2", BoolToInt(libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsAram2, libAffx_player)));
     BankSave(BankLastCreated());
@@ -3863,6 +3870,9 @@ void libAffx_LoadSettingsBank() {
         } else {
             libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsExtraMaps, false);
         }
+    }
+    if (BankKeyExists(BankLastCreated(), libAffx_BankSectionSettings, "GoldenHeroes")) {
+        libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsGolden, BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionSettings, "GoldenHeroes") == 1);
     }
     if (BankKeyExists(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge1")) {
         libAffx_SetDialogControlChecked(libAffx_dialogControlOptionsAram1, BankValueGetAsInt(BankLastCreated(), libAffx_BankSectionSettings, "AramChallenge1") == 1);
@@ -5642,6 +5652,55 @@ void libAffx_MapInitTrigger_Init () {
 void libAffx_SetGoldenHero(string hero) {
     libAffx_goldenHeroesIndex += 1;
     libAffx_goldenHeroes[libAffx_goldenHeroesIndex] = hero;
+    libAffx_goldenHeroIsFork[libAffx_goldenHeroesIndex] = false;
+}
+void libAffx_SetForkGoldenHero(string hero) {
+    libAffx_SetGoldenHero(hero);
+    libAffx_goldenHeroIsFork[libAffx_goldenHeroesIndex] = true;
+}
+void libAffx_SetGoldRingHero(string hero) {
+    libAffx_goldRingHeroesIndex += 1;
+    libAffx_goldRingHeroes[libAffx_goldRingHeroesIndex] = hero;
+}
+// Golden Heroes option: unchecked, the fork's golden heroes play as in the original mod (generic starters, no golden ones)
+bool libAffx_GoldenOptionChecked() {
+    if (libAffx_dialogControlOptionsGolden == c_invalidDialogControlId) {
+        return true;
+    }
+    return libNtve_gf_DialogItemIsChecked(libAffx_dialogControlOptionsGolden, libAffx_player);
+}
+// Whether heroIndex is one of the fork's golden heroes
+bool libAffx_IsForkGoldenHero(int heroIndex) {
+    int i;
+    for (i = 1; i <= libAffx_goldenHeroesIndex; i += 1) {
+        if (libAffx_goldenHeroIsFork[i] && libCore_gf_GetIndexFromHero(libAffx_goldenHeroes[i]) == heroIndex) {
+            return true;
+        }
+    }
+    return false;
+}
+// Gold ring on one hero select button
+void libAffx_SetGoldRing(string hero, bool show) {
+    int role;
+    int index;
+    for (role = libPBU2_ge_CurateHeroSelectionRole_Tank; role <= libPBU2_ge_CurateHeroSelectionRole_RangedAssassin2; role += 1) {
+        for (index = 1; index <= libPBU2_gv_curateHeroSelectionUIRoleHeroCountCol_C; index += 1) {
+            if (libPBU2_gv_curateHeroSelections[role][index] == hero) {
+                DialogControlSetVisible(libPBU2_gv_curateHeroSelectionUI.lv_heroButtonBordersAffixed[role][index], PlayerGroupAll(), show);
+            }
+        }
+    }
+}
+// Gold rings: golden heroes (the fork's only while the Golden Heroes option is on) and the ring-only heroes
+void libAffx_UpdateGoldRings() {
+    int i;
+    bool golden = libAffx_GoldenOptionChecked();
+    for (i = 1; i <= libAffx_goldenHeroesIndex; i += 1) {
+        libAffx_SetGoldRing(libAffx_goldenHeroes[i], golden || !libAffx_goldenHeroIsFork[i]);
+    }
+    for (i = 1; i <= libAffx_goldRingHeroesIndex; i += 1) {
+        libAffx_SetGoldRing(libAffx_goldRingHeroes[i], true);
+    }
 }
 
 bool libAffx_CurateHeroesTrigger_Func (bool testConds, bool runActions) {
@@ -5761,15 +5820,7 @@ bool libAffx_CurateHeroesTrigger_Func (bool testConds, bool runActions) {
         libPBU2_SetDifficulty(libAffx_difficulty);
     }
 
-    for (i = 1; i <= libAffx_goldenHeroesIndex; i += 1) {
-        for (role = libPBU2_ge_CurateHeroSelectionRole_Tank; role <= libPBU2_ge_CurateHeroSelectionRole_RangedAssassin2; role += 1) {
-            for (index = 1; index <= libPBU2_gv_curateHeroSelectionUIRoleHeroCountCol_C; index += 1) {
-                if (libPBU2_gv_curateHeroSelections[role][index] == libAffx_goldenHeroes[i]) {
-                    DialogControlSetVisible(libPBU2_gv_curateHeroSelectionUI.lv_heroButtonBordersAffixed[role][index], PlayerGroupAll(), true);
-                }
-            }
-        }
-    }
+    libAffx_UpdateGoldRings();
 
     return true;
 }
@@ -6301,6 +6352,9 @@ void libAffx_AffixSetHeroSpecific(int affix, string hero) {
 void libAffx_AffixSetHeroStartersOnly(int affix, bool allowed) {
     int i;
     for (i = 1; i <= libAffx_goldenHeroesIndex; i += 1) {
+        if (libAffx_goldenHeroIsFork[i] && !libAffx_goldenEnabled) {
+            continue; // Golden Heroes option off: this hero takes the generic starters
+        }
         libAffx_affixes[affix].allowedHero[libCore_gf_GetIndexFromHero(libAffx_goldenHeroes[i])] = allowed;
     }
 }
@@ -6478,6 +6532,7 @@ void libAffx_InitVariables () {
     libAffx_dialogControlOptionsSpeedUpGates = c_invalidDialogControlId;
     libAffx_dialogControlOptionsDisplayPicksBans = c_invalidDialogControlId;
     libAffx_dialogControlOptionsExtraMaps = c_invalidDialogControlId;
+    libAffx_dialogControlOptionsGolden = c_invalidDialogControlId;
     libAffx_dialogControlOptionsAram1 = c_invalidDialogControlId;
     libAffx_dialogControlOptionsAram2 = c_invalidDialogControlId;
     libAffx_dialogControlOptionsAchievementsButton = c_invalidDialogControlId;
@@ -6560,71 +6615,72 @@ void libAffx_InitVariables () {
     libAffx_SetGoldenHero("Probius");
     libAffx_SetGoldenHero("SgtHammer");
     libAffx_SetGoldenHero("Illidan");
-    libAffx_SetGoldenHero("Dryad");
-    libAffx_SetGoldenHero("Stukov");
-    libAffx_SetGoldenHero("Barbarian");
-    libAffx_SetGoldenHero("Junkrat");
-    libAffx_SetGoldenHero("Anubarak");
-    libAffx_SetGoldenHero("Falstad");
+    libAffx_SetForkGoldenHero("Dryad");
+    libAffx_SetForkGoldenHero("Stukov");
+    libAffx_SetForkGoldenHero("Barbarian");
+    libAffx_SetForkGoldenHero("Junkrat");
+    libAffx_SetForkGoldenHero("Anubarak");
+    libAffx_SetForkGoldenHero("Falstad");
     libAffx_SetGoldenHero("LostVikings");
-    libAffx_SetGoldenHero("Chen");
-    libAffx_SetGoldenHero("Tassadar");
-    libAffx_SetGoldenHero("Nova");
-    libAffx_SetGoldenHero("L90ETC");
-    libAffx_SetGoldenHero("Murky");
-    libAffx_SetGoldenHero("Genji");
-    libAffx_SetGoldenHero("Hogger");
-    libAffx_SetGoldenHero("Maiev");
-    libAffx_SetGoldenHero("Stitches");
-    libAffx_SetGoldenHero("DVa");
-    libAffx_SetGoldenHero("Dehaka");
-    libAffx_SetGoldenHero("Deathwing");
-    libAffx_SetGoldenHero("Artanis");
-    libAffx_SetGoldenHero("Malthael");
-    libAffx_SetGoldenHero("Valeera");
-    libAffx_SetGoldenHero("NexusHunter");
-    libAffx_SetGoldenHero("Raynor");
-    libAffx_SetGoldenHero("Tychus");
-    libAffx_SetGoldenHero("Mephisto");
-    libAffx_SetGoldenHero("Hanzo");
-    libAffx_SetGoldenHero("Greymane");
-    libAffx_SetGoldenHero("Tinker");
-    libAffx_SetGoldenHero("Fenix");
-    libAffx_SetGoldenHero("Chromie");
-    libAffx_SetGoldenHero("Amazon");
-    libAffx_SetGoldenHero("Azmodan");
-    libAffx_SetGoldenHero("Zagara");
-    libAffx_SetGoldenHero("KelThuzad");
-    libAffx_SetGoldenHero("Alarak");
-    libAffx_SetGoldenHero("Orphea");
-    libAffx_SetGoldenHero("Sylvanas");
-    libAffx_SetGoldenHero("Guldan");
-    libAffx_SetGoldenHero("Xalatath");
-    libAffx_SetGoldenHero("Zuljin");
-    libAffx_SetGoldenHero("Tracer");
-    libAffx_SetGoldenHero("Zeratul");
-    libAffx_SetGoldenHero("Kerrigan");
-    libAffx_SetGoldenHero("Kaelthas");
-    libAffx_SetGoldenHero("Jaina");
-    libAffx_SetGoldenHero("DemonHunter");
-    // Gold ring for every other customized hero: golden heroes still missing starters, and heroes with hero boons only
-    libAffx_SetGoldenHero("Abathur");
-    libAffx_SetGoldenHero("Butcher");
-    libAffx_SetGoldenHero("Alexstrasza");
-    libAffx_SetGoldenHero("Ana");
-    libAffx_SetGoldenHero("Anduin");
-    libAffx_SetGoldenHero("Auriel");
-    libAffx_SetGoldenHero("FaerieDragon");
-    libAffx_SetGoldenHero("Deckard");
-    libAffx_SetGoldenHero("Monk");
-    libAffx_SetGoldenHero("LiLi");
-    libAffx_SetGoldenHero("Medic");
-    libAffx_SetGoldenHero("Lucio");
-    libAffx_SetGoldenHero("Malfurion");
-    libAffx_SetGoldenHero("Rehgar");
-    libAffx_SetGoldenHero("Uther");
-    libAffx_SetGoldenHero("Whitemane");
-    libAffx_SetGoldenHero("Zarya");
+    libAffx_SetForkGoldenHero("Chen");
+    libAffx_SetForkGoldenHero("Tassadar");
+    libAffx_SetForkGoldenHero("Nova");
+    libAffx_SetForkGoldenHero("L90ETC");
+    libAffx_SetForkGoldenHero("Murky");
+    libAffx_SetForkGoldenHero("Genji");
+    libAffx_SetForkGoldenHero("Hogger");
+    libAffx_SetForkGoldenHero("Maiev");
+    libAffx_SetForkGoldenHero("Stitches");
+    libAffx_SetForkGoldenHero("DVa");
+    libAffx_SetForkGoldenHero("Dehaka");
+    libAffx_SetForkGoldenHero("Deathwing");
+    libAffx_SetForkGoldenHero("Artanis");
+    libAffx_SetForkGoldenHero("Malthael");
+    libAffx_SetForkGoldenHero("Valeera");
+    libAffx_SetForkGoldenHero("NexusHunter");
+    libAffx_SetForkGoldenHero("Raynor");
+    libAffx_SetForkGoldenHero("Tychus");
+    libAffx_SetForkGoldenHero("Mephisto");
+    libAffx_SetForkGoldenHero("Hanzo");
+    libAffx_SetForkGoldenHero("Greymane");
+    libAffx_SetForkGoldenHero("Tinker");
+    libAffx_SetForkGoldenHero("Fenix");
+    libAffx_SetForkGoldenHero("Chromie");
+    libAffx_SetForkGoldenHero("Amazon");
+    libAffx_SetForkGoldenHero("Azmodan");
+    libAffx_SetForkGoldenHero("Zagara");
+    libAffx_SetForkGoldenHero("KelThuzad");
+    libAffx_SetForkGoldenHero("Alarak");
+    libAffx_SetForkGoldenHero("Orphea");
+    libAffx_SetForkGoldenHero("Sylvanas");
+    libAffx_SetForkGoldenHero("Guldan");
+    libAffx_SetForkGoldenHero("Xalatath");
+    libAffx_SetForkGoldenHero("Zuljin");
+    libAffx_SetForkGoldenHero("Tracer");
+    libAffx_SetForkGoldenHero("Zeratul");
+    libAffx_SetForkGoldenHero("Kerrigan");
+    libAffx_SetForkGoldenHero("Kaelthas");
+    libAffx_SetForkGoldenHero("Jaina");
+    libAffx_SetForkGoldenHero("DemonHunter");
+    // Abathur and Butcher: one golden starter each. The healers and Zarya have hero boons but no starters of their own, so
+    // they only get the gold ring and keep the generic starters (bdfbd08 put them on the golden list and left them none).
+    libAffx_SetForkGoldenHero("Abathur");
+    libAffx_SetForkGoldenHero("Butcher");
+    libAffx_SetGoldRingHero("Alexstrasza");
+    libAffx_SetGoldRingHero("Ana");
+    libAffx_SetGoldRingHero("Anduin");
+    libAffx_SetGoldRingHero("Auriel");
+    libAffx_SetGoldRingHero("FaerieDragon");
+    libAffx_SetGoldRingHero("Deckard");
+    libAffx_SetGoldRingHero("Monk");
+    libAffx_SetGoldRingHero("LiLi");
+    libAffx_SetGoldRingHero("Medic");
+    libAffx_SetGoldRingHero("Lucio");
+    libAffx_SetGoldRingHero("Malfurion");
+    libAffx_SetGoldRingHero("Rehgar");
+    libAffx_SetGoldRingHero("Uther");
+    libAffx_SetGoldRingHero("Whitemane");
+    libAffx_SetGoldRingHero("Zarya");
 
     libAffx_InitVariables_completed = true;
 }
@@ -6644,6 +6700,14 @@ int libAffx_InitAffixesHero () {
     }
     return BankValueGetAsInt(BankLastCreated(), libAffx_BankSection, "Hero");
 }
+// This run's Golden Heroes option, saved with the hero on round 1 (on when missing)
+bool libAffx_InitAffixesGolden () {
+    BankLoad("PlayerSettings", libAffx_player);
+    if (!BankKeyExists(BankLastCreated(), libAffx_BankSection, "Golden")) {
+        return true;
+    }
+    return BankValueGetAsInt(BankLastCreated(), libAffx_BankSection, "Golden") != 0;
+}
 // Whether an AffixData.xml instance is loaded this game: generic affixes always are, hero-specific ones only for the
 // player's Hero. Saves key affixes by name, so the ones left out keep their bank values.
 bool libAffx_AffixLoadsForHero (string affixInstance, int heroIndex) {
@@ -6655,6 +6719,10 @@ bool libAffx_AffixLoadsForHero (string affixInstance, int heroIndex) {
     index = libCore_gf_GetIndexFromHero(heroSpecific);
     if (index <= 0 || index > libAffx_maxHeroes) {
         return true; // an unknown Hero name leaves the affix open to every Hero, as libAffx_AffixSetHeroSpecific does
+    }
+    if (index == heroIndex && !libAffx_goldenEnabled && libAffx_IsForkGoldenHero(heroIndex)
+        && StringCase(UserDataGetString("Affix", affixInstance, "Rarity", 1), false) == "starter") {
+        return false; // Golden Heroes option off: no golden starters (their boons need one, so they never roll either)
     }
     return index == heroIndex;
 }
@@ -6709,6 +6777,7 @@ void libAffx_InitAffixes () {
 
     affixCountLoaded = UserDataInstanceCount("Affix");
     heroIndex = libAffx_InitAffixesHero();
+    libAffx_goldenEnabled = libAffx_InitAffixesGolden();
     i = 0;
     for (instanceIndex = 1; instanceIndex <= affixCountLoaded; instanceIndex += 1) {
         affixInstance = UserDataInstance("Affix", instanceIndex);
@@ -6828,6 +6897,10 @@ void libAffx_InitAffixes () {
                 if (heroExclusion != "" && heroExclusion != null) {
                     libAffx_AffixSetHero(i, heroExclusion, false);
                 }
+            }
+            // Golden Heroes option off: Butcher and Abathur get All Talents back (their golden starter replaced it)
+            if (!libAffx_goldenEnabled && affixInstance == "AllTalents" && libAffx_IsForkGoldenHero(heroIndex)) {
+                libAffx_affixes[i].allowedHero[heroIndex] = true;
             }
         }
         libAffx_AffixSetMapAll(i, true);

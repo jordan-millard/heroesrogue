@@ -277,4 +277,9 @@ xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/jamiephan/Heroe
   <CEffectSet id="StrafeInitialSet">
     <EffectArray value="VallaShadowCloakApply" />
   </CEffectSet>
+  <!-- Repeating Arrow (level 4): Vault resets Hungering Arrow. The base effect only takes 15 seconds off its cooldown,
+       which does nothing once Hungering Hunter gives it charges; it now also refunds a charge and its recharge time. -->
+  <CEffectModifyUnit id="DemonHunterVaultMasteryModifyCooldown">
+    <Cost Abil="DemonHunterHungeringArrow,Execute" CooldownOperation="Add" CooldownTimeUse="-15" ChargeCountUse="-1" ChargeTimeUse="-15" />
+  </CEffectModifyUnit>
 </Catalog>

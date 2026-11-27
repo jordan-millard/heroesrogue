@@ -7,8 +7,9 @@ include "AffixTriggers"
 // with the base game's (player 0) and the actor field is set for the player to its own base value times that ratio.
 // Actors read their catalog values when they are created, so the next cast shows the new size (the same way golden
 // Murky's Pufferfish and E.T.C.'s ring are scaled).
-// Kael'thas (Sunwell upgrade), Murky, E.T.C.'s ring, Sonya, Stukov and Gul'dan's guide circles scale their own visuals
-// and are left out.
+// Kael'thas (Sunwell upgrade), Murky, E.T.C.'s ring, Sonya, Stukov, Gul'dan's guide circles and Hanzo's Storm Bow guide
+// (no Width in its data; the base game scales it) scale their own visuals and are left out. Arc guides (CActorArc) take their
+// size from the ability's cursor effect, so they are left out too.
 // ============================================================
 
 const int libAffx_visMax = 96;
@@ -110,8 +111,8 @@ void libAffx_VisualScaleInit () {
     if (libAffx_visTrigger != null) {
         return;
     }
-    // Stitches: Slam (Quake 41-80), gas cloud (Stench 1-40)
-    libAffx_VisAdd("StitchesSlamLargeSearch", "AreaArray[0].Radius", "StitchesSlamBaseGuide", "Radius", "9.5");
+    // Stitches: Slam (Quake 41-80), gas cloud (Stench 1-40). The Slam aiming arc sizes itself from StitchesSlamLargeSearch
+    // (its cursor effect); setting its Radius drew it several times too big.
     libAffx_VisAddRadius("StitchesSlamMediumSearch", "StitchesSlamModel");
     libAffx_VisAddRadius("StitchesGoldenGasSearch", "StitchesGoldenGasPulse");
     // Anub'arak: Aftershock follows Burrow Charge's radius
@@ -178,11 +179,10 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeExplosion");
     // Xal'atath: Void Volley blasts
     libAffx_VisAddRadius("XalatathVoidVolley2AoESearch", "XalatathVoidVolleyGroundImpact");
-    // Skillshot widths: Artanis Phase Prism, Cassia Lightning Fury, Hanzo Storm Bow, Mephisto Skull Missile, Qhira
-    // Grappling Hook, Raynor Penetrating Round
+    // Skillshot widths: Artanis Phase Prism, Cassia Lightning Fury, Mephisto Skull Missile, Qhira Grappling Hook, Raynor
+    // Penetrating Round
     libAffx_VisAdd("ArtanisPhasePrismMissileScan", "AreaArray[0].RectangleWidth", "ArtanisPhasePrismGuide", "Width", "");
     libAffx_VisAdd("AmazonLightningFuryMissileSearch", "AreaArray[0].RectangleWidth", "AmazonLightningFuryGuide", "Width", "");
-    libAffx_VisAdd("HanzoStormBowTargetSearch", "AreaArray[0].RectangleWidth", "HanzoStormBowGuide", "Width", "");
     libAffx_VisAdd("MephistoSkullMissileSearch", "AreaArray[0].RectangleWidth", "MephistoSkullMissileGuide", "Width", "");
     libAffx_VisAdd("NexusHunterGrapplingHookUnitSearch", "AreaArray[0].RectangleWidth", "NexusHunterGrapplingHookGuide", "Width", "");
     libAffx_VisAdd("RaynorPenetratingRoundMissileScan", "AreaArray[0].RectangleWidth", "RaynorPenetratingRoundGuide", "Width", "");
