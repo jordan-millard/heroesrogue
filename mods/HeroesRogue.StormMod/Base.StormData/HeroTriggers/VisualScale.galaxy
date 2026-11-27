@@ -126,12 +126,17 @@ void libAffx_VisualScaleInit () {
     // Chromie: Dragon's Breath; Sand Blast width
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeAllyWarningSplat");
     libAffx_VisAddRadius("ChromieDragonsBreathSearchArea", "ChromieDragonsBreathDragonsEyeEnemyWarningSplat");
+    // The Dragon's Breath aiming guide is a quad whose Width (world units, 2 = the base Radius) draws the circle
+    libAffx_VisAdd("ChromieDragonsBreathSearchArea", "AreaArray[0].Radius", "ChromieDragonsBreathGuideVector1", "Width", "");
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastGuide", "Width", "");
     libAffx_VisAdd("ChromieSandBlastMissileScan", "AreaArray[0].RectangleWidth", "ChromieSandBlastFastForwardGuide", "Width", "");
     // D.Va: Self-Destruct
     libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructExplosion");
+    libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructRangeSplat");
+    libAffx_VisAddRadius("DVaMechSelfDestructDetonationSearch", "DVaMechSelfDestructRangeFalloffSplat");
     // Deathwing: Incinerate, Lava Burst
     libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateSearchFX");
+    libAffx_VisAddRadius("DeathwingIncinerateSearch", "DeathwingIncinerateRangeSplat");
     libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstCursorSplat");
     libAffx_VisAddRadius("DeathwingLavaBurstExplosionSearch", "DeathwingLavaBurstInitialFX");
     libAffx_VisAddRadius("DeathwingLavaBurstBurnSearch", "DeathwingLavaBurstBurnFX");
@@ -151,6 +156,7 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("GuldanCorruptionSearchArea", "GuldanCorruptionModel");
     // Hogger: Staggering Blow
     libAffx_VisAddRadius("HoggerStaggeringBlowSearch1", "HoggerStaggeringBlowAoEModel");
+    libAffx_VisAdd("HoggerStaggeringBlowSearch1", "AreaArray[0].Radius", "HoggerStaggeringBlowArc", "Radius", "1"); // arc guide: multiplier like Stitches
     // Kel'Thuzad: Death and Decay, Chains width
     libAffx_VisAddRadius("KelThuzadDeathAndDecayDamageSearch", "KelThuzadDeathAndDecayImpact");
     libAffx_VisAddRadius("KelThuzadDeathAndDecayDamageSearch", "KelThuzadDeathAndDecayExplosionImpact");
@@ -163,6 +169,7 @@ void libAffx_VisualScaleInit () {
     // Malthael: Soul Rip, Death Shroud width
     libAffx_VisAddRadius("MalthaelSoulRipSearch", "MalthaelSoulRipCastFX");
     libAffx_VisAddRadius("MalthaelSoulRipSearch", "MalthaelSoulRipSoulCollectorCastFX");
+    libAffx_VisAddRadius("MalthaelSoulRipSearch", "MalthaelSoulRipRangeSplat");
     libAffx_VisAdd("MalthaelDeathShroudSearch", "AreaArray[0].RectangleWidth", "MalthaelDeathShroudGuide", "Width", "");
     // Orphea: Dread
     libAffx_VisAddRadius("OrpheaDreadFinalSearchArea", "OrpheaDreadCircularCursorSplat");
@@ -175,6 +182,7 @@ void libAffx_VisualScaleInit () {
     libAffx_VisAddRadius("GrenadeTargetSearch", "TychusGrenadeExplosion");
     // Xal'atath: Void Volley blasts
     libAffx_VisAddRadius("XalatathVoidVolley2AoESearch", "XalatathVoidVolleyGroundImpact");
+    libAffx_VisAddRadius("XalatathVoidVolley2AoESearch", "XalatathVoidVolleyCursorSplat");
     // Skillshot widths: Artanis Phase Prism, Cassia Lightning Fury, Mephisto Skull Missile, Qhira Grappling Hook, Raynor
     // Penetrating Round
     libAffx_VisAdd("ArtanisPhasePrismMissileScan", "AreaArray[0].RectangleWidth", "ArtanisPhasePrismGuide", "Width", "");
