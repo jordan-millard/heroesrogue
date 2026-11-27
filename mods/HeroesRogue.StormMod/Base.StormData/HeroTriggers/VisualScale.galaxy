@@ -8,8 +8,9 @@ include "AffixTriggers"
 // Actors read their catalog values when they are created, so the next cast shows the new size (the same way golden
 // Murky's Pufferfish and E.T.C.'s ring are scaled).
 // Kael'thas (Sunwell upgrade), Murky, E.T.C.'s ring, Sonya, Stukov, Gul'dan's guide circles and Hanzo's Storm Bow guide
-// (no Width in its data; the base game scales it) scale their own visuals and are left out. Arc guides (CActorArc) take their
-// size from the ability's cursor effect, so they are left out too.
+// (no Width in its data; the base game scales it) scale their own visuals and are left out. Arc guides (CActorArc) don't
+// follow the cursor effect's radius; their Radius field is a size multiplier (1 = normal). Arc guides that size themselves
+// with a SetScale message on creation (Greymane's Gilnean Cocktail) are left out.
 // ============================================================
 
 const int libAffx_visMax = 96;
@@ -111,8 +112,9 @@ void libAffx_VisualScaleInit () {
     if (libAffx_visTrigger != null) {
         return;
     }
-    // Stitches: Slam (Quake 41-80), gas cloud (Stench 1-40). The Slam aiming arc sizes itself from StitchesSlamLargeSearch
-    // (its cursor effect); setting its Radius drew it several times too big.
+    // Stitches: Slam (Quake 41-80), gas cloud (Stench 1-40). The Slam aiming arc's Radius is a size multiplier (empty = 1,
+    // tested in game 2026-11-27; 9.5 drew it far off screen), so it scales from 1 like a model's Scale.
+    libAffx_VisAdd("StitchesSlamLargeSearch", "AreaArray[0].Radius", "StitchesSlamBaseGuide", "Radius", "1");
     libAffx_VisAddRadius("StitchesSlamMediumSearch", "StitchesSlamModel");
     libAffx_VisAddRadius("StitchesGoldenGasSearch", "StitchesGoldenGasPulse");
     // Anub'arak: Aftershock follows Burrow Charge's radius
